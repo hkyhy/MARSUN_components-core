@@ -1,0 +1,28 @@
+meta:
+  project_name: "@marsun/components-core"
+
+tasks:
+  - id: M001-1
+    milestone: M001
+    name: 仓库初始化与 CI/Pages
+    status: 已完成
+    priority: P0
+    kind: chore
+    tags: [frontend, infra]
+    note: "chore(infra): init components-core with CI, Pages, and npm publish"
+  - id: M001-2
+    milestone: M001
+    name: npm 发布流水线配置
+    status: 已完成
+    priority: P0
+    kind: ops
+    tags: [infra]
+    note: GitHub Actions publish.yml + HKYHY_PACKAGE_PUBLISH
+  - id: M002-1
+    milestone: M002
+    name: 修复 SCSS 与 @kne/button-group dts 错误
+    status: 已完成
+    priority: P0
+    kind: bug
+    tags: [frontend]
+    note: "fix(build): resolve dts errors for scss and @kne/button-group"

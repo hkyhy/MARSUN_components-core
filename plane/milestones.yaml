@@ -1,0 +1,35 @@
+meta:
+  project_name: "@marsun/components-core"
+  template: plane/pm-export/华茂里程碑模板.xlsx
+  output: plane/pm-export/@marsun-components-core——里程碑.xlsx
+  sheet: "🎉 里程碑"
+
+project:
+  name: "@marsun/components-core"
+  start: "2026-06-26"
+  end: "2026-12-31"
+  owner_default: 前端
+
+milestones:
+  - id: M001
+    roadmap_no: 1
+    name: 基础设施与工程化
+    goal: 仓库初始化、CI、GitHub Pages 与 npm 发布流水线
+    deliverables: CI workflow、Pages 部署、publish workflow
+    status: 已完成
+    priority: P0
+    plan_date: "2026-06-26"
+    actual_date: "2026-06-26"
+    owner: 前端
+    tasks: M001-1,M001-2
+  - id: M002
+    roadmap_no: 2
+    name: 库构建与类型
+    goal: 确保 dist 类型声明与 SCSS 模块正确生成
+    deliverables: 无 dts 构建错误、可发布 npm 包
+    status: 已完成
+    priority: P0
+    plan_date: "2026-06-26"
+    actual_date: "2026-06-26"
+    owner: 前端
+    tasks: M002-1

@@ -1,0 +1,12 @@
+platform:
+  name: "@marsun/components-core"
+  code_prefix: CC-0.1
+
+repo_root: .
+
+milestones:
+  data: plane/milestones.yaml
+
+projects_tasks:
+  projects: plane/projects.yaml
+  tasks: plane/tasks.yaml

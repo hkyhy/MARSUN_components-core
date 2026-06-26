@@ -1,0 +1,21 @@
+# Plane 项目配置
+# 勿在此文件写入 PLANE_API_KEY
+
+meta:
+  name: "@marsun/components-core"
+  owner_default: 前端
+
+plane:
+  project_id: "01c34082-612e-49b5-8bdd-cdc3873a55c8"
+  project_url: "https://plane.webinfra.cloud/my/projects/01c34082-612e-49b5-8bdd-cdc3873a55c8/issues/"
+
+paths:
+  milestones: plane/milestones.yaml
+  manifest: plane/sync_manifest.yaml
+  taxonomy: plane/taxonomy.yaml
+
+sources:
+  roadmap:
+    - roadmap.md
+    - README.md
+    - docs/roadmap.md
