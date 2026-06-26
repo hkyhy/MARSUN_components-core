@@ -26,6 +26,14 @@ tasks:
     kind: bug
     tags: [infra]
     note: "fix(publish): rename npm package to @hkyhy/marsun-components-core, v0.1.2"
+  - id: M001-4
+    milestone: M001
+    name: 升级 Node 24 并修复 Pages 部署
+    status: 已完成
+    priority: P1
+    kind: ops
+    tags: [infra]
+    note: "chore(ci): Node 24, split pages build/deploy, README Pages 首次部署说明"
   - id: M002-1
     milestone: M002
     name: 修复 SCSS 与 @kne/button-group dts 错误
