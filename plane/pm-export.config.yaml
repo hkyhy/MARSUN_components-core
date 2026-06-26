@@ -1,5 +1,5 @@
 platform:
-  name: "@marsun/components-core"
+  name: "@hkyhy/marsun-components-core"
   code_prefix: CC-0.1
 
 repo_root: .

@@ -2,7 +2,7 @@
 # 勿在此文件写入 PLANE_API_KEY
 
 meta:
-  name: "@marsun/components-core"
+  name: "@hkyhy/marsun-components-core"
   owner_default: 前端
 
 plane:

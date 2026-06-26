@@ -1,5 +1,5 @@
 meta:
-  project_name: "@marsun/components-core"
+  project_name: "@hkyhy/marsun-components-core"
 
 tasks:
   - id: M001-1
@@ -18,6 +18,14 @@ tasks:
     kind: ops
     tags: [infra]
     note: GitHub Actions publish.yml + HKYHY_PACKAGE_PUBLISH
+  - id: M001-3
+    milestone: M001
+    name: npm 包名改为 @hkyhy scope
+    status: 已完成
+    priority: P0
+    kind: bug
+    tags: [infra]
+    note: "fix(publish): rename npm package to @hkyhy/marsun-components-core, v0.1.2"
   - id: M002-1
     milestone: M002
     name: 修复 SCSS 与 @kne/button-group dts 错误
