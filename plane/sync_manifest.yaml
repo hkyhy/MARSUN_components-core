@@ -34,6 +34,14 @@ tasks:
     kind: ops
     tags: [infra]
     note: "chore(ci): Node 24, split pages build/deploy, README Pages 首次部署说明"
+  - id: M001-5
+    milestone: M001
+    name: 升级 GitHub Actions 版本并完善 Pages 404 指引
+    status: 已完成
+    priority: P2
+    kind: chore
+    tags: [infra, docs]
+    note: "chore(ci): checkout@v5, upload-pages-artifact@v4, deploy-pages@v5, README Pages 404 排查"
   - id: M002-1
     milestone: M002
     name: 修复 SCSS 与 @kne/button-group dts 错误
