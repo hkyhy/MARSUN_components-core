@@ -1,0 +1,102 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.auth-demo-root {
+  display: block;
+}
+
+.auth-demo-container {
+  margin-bottom: 8px;
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--font-color-grey);
+}
+
+.auth-demo-wrapper {
+  font-size: var(--font-size-small);
+  color: var(--font-color-grey);
+}
+
+.auth-demo-inner {
+  white-space: pre-wrap !important;
+  font-size: 12px !important;
+  padding: 12px !important;
+  display: block !important;
+}
+
+.auth-demo-header {
+  display: block;
+}
+
+.auth-demo-body {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-small);
+}
+
+.auth-demo-footer {
+  width: 80px;
+  text-align: center;
+}
+
+.auth-demo-row {
+  font-size: 12px !important;
+  color: var(--font-color-grey-1) !important;
+}

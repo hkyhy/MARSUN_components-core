@@ -1,0 +1,14 @@
+.filter-number-range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-number-range-separator {
+  color: var(--font-color-grey-1);
+}
+
+.filter-number-range-unit {
+  font-size: var(--font-size-small);
+  color: var(--font-color-grey);
+}

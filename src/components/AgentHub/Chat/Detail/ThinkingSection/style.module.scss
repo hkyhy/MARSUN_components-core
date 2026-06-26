@@ -1,0 +1,734 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+  
+  
+   
+     
+  
+
+   
+     
+  
+
+
+  
+  
+   
+     
+     
+  
+
+
+  
+  
+   
+     
+  
+
+   
+     
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.thinking-section-thinking-section {
+  margin-bottom: 8px;
+}
+
+.thinking-section-thinking-toggle {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 0;
+  color: var(--font-color-grey-1);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--font-color-grey);
+  }
+}
+
+.thinking-section-thinking-toggle-icon-wrap {
+  position: relative;
+  display: flex;
+  height: 14px;
+  width: 14px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.thinking-section-thinking-ping-ring {
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  border-radius: 9999px;
+  background-color: var(--primary-color-fill);
+  animation: thinkingPing 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.thinking-section-thinking-dot-active {
+  position: relative;
+  height: 6px;
+  width: 6px;
+  border-radius: 9999px;
+  background-color: var(--primary-color);
+}
+
+.thinking-section-thinking-dot-idle {
+  height: 6px;
+  width: 6px;
+  border-radius: 9999px;
+  background-color: var(--font-color-grey-2);
+  transition: background-color 0.2s ease;
+
+  :global(.group:hover) & {
+    background-color: var(--font-color-grey-1);
+  }
+}
+
+.thinking-section-thinking-status-label {
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.thinking-section-thinking-status-label-active {
+  color: var(--font-color-grey);
+}
+
+.thinking-section-thinking-chevron {
+  flex-shrink: 0;
+  color: var(--font-color-grey-2);
+  transition: transform 0.2s ease;
+}
+
+.thinking-section-thinking-chevron-expanded {
+  transform: rotate(180deg);
+}
+
+.thinking-section-thinking-expand-grid {
+  display: grid;
+  transition: grid-template-rows 200ms ease-out;
+}
+
+.thinking-section-thinking-expand-grid-open {
+  grid-template-rows: 1fr;
+}
+
+.thinking-section-thinking-expand-grid-closed {
+  grid-template-rows: 0fr;
+}
+
+.thinking-section-thinking-expand-inner {
+  overflow: hidden;
+}
+
+.thinking-section-thinking-scroll-area {
+  position: relative;
+  margin-top: 6px;
+  max-height: 144px;
+  overflow-y: auto;
+}
+
+.thinking-section-thinking-content {
+  border-left: 1px solid var(--font-color-grey-3);
+  padding-left: 10px;
+  margin-left: 4px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--font-color-grey-1);
+  word-break: break-word;
+
+  :global(p) {
+    margin-top: 2px;
+    margin-bottom: 2px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  :global(ul),
+  :global(ol) {
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+
+  :global(li) {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.thinking-section-thinking-cursor {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: middle;
+  background-color: rgba(153, 153, 153, 0.8);
+  animation: typingPulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.thinking-section-thinking-empty-cursor-wrap {
+  margin-top: 6px;
+  margin-left: 4px;
+  border-left: 1px solid var(--font-color-grey-3);
+  padding-left: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.thinking-section-thinking-empty-cursor {
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  vertical-align: middle;
+  background-color: rgba(153, 153, 153, 0.8);
+  animation: typingPulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

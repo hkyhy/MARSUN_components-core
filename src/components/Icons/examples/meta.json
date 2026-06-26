@@ -1,0 +1,24 @@
+{
+  "title": "Icons 图标",
+  "description": "Lucide 图标封装与交互预览",
+  "examples": [
+    {
+      "title": "Icon Playground",
+      "description": "切换图标、尺寸、颜色、旋转",
+      "component": "@/components/Icons/examples/IconPlaygroundDemo",
+      "sourcePath": "@/components/Icons/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "IconProps",
+      "rows": [
+        { "prop": "size", "desc": "尺寸", "type": "number | string", "defaultVal": "1em" },
+        { "prop": "color", "desc": "颜色", "type": "string" },
+        { "prop": "spin", "desc": "旋转动画", "type": "boolean" },
+        { "prop": "rotate", "desc": "旋转角度", "type": "number" }
+      ]
+    }
+  ]
+}

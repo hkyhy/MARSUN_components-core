@@ -1,0 +1,32 @@
+{
+  "title": "Auth 权限控制",
+  "description": "基于角色的权限管理方案，支持页面级和按钮级权限控制。",
+  "examples": [
+    {
+      "title": "hasPermission 权限判断",
+      "description": "判断当前用户是否拥有指定权限，返回 boolean",
+      "component": "@/components/Auth/examples/AuthDemo",
+      "sourcePath": "@/components/Auth/examples/AuthDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "PermissionGuard 权限守卫",
+      "description": "包裹需要权限控制的区域，无权限时隐藏内容或显示 fallback",
+      "component": "@/components/Auth/examples/PermissionGuardDemo",
+      "sourcePath": "@/components/Auth/examples/PermissionGuardDemo/index.tsx"
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "PermissionGuardProps",
+      "rows": [
+        { "prop": "roles", "desc": "允许访问的角色列表，为空则所有已登录用户可访问", "type": "string[]" },
+        { "prop": "permission", "desc": "允许访问的权限 key", "type": "string" },
+        { "prop": "display", "desc": "展示控制", "type": "MaybeFn<boolean>" },
+        { "prop": "hidden", "desc": "隐藏控制", "type": "MaybeFn<boolean>" },
+        { "prop": "fallback", "desc": "无权限时的回退内容", "type": "React.ReactNode" },
+        { "prop": "children", "desc": "受保护的内容", "type": "React.ReactNode", "required": true }
+      ]
+    }
+  ]
+}

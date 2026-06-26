@@ -1,0 +1,58 @@
+{
+  "title": "VirtualScrollbar 虚拟滚动条",
+  "description": "覆盖式虚拟滚动条，隐藏原生滚动条，thumb 悬浮不占布局宽度。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "纵向与双向滚动示例，悬停或滚动时显示自定义 thumb",
+      "component": "@/components/VirtualScrollbar/examples/VirtualScrollbarBasicDemo",
+      "sourcePath": "@/components/VirtualScrollbar/examples/VirtualScrollbarBasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "VirtualScrollbarProps",
+      "rows": [
+        {
+          "prop": "children",
+          "desc": "滚动内容",
+          "type": "React.ReactNode",
+          "required": true
+        },
+        {
+          "prop": "direction",
+          "desc": "滚动方向",
+          "type": "'vertical' | 'horizontal' | 'both'",
+          "defaultVal": "'vertical'"
+        },
+        {
+          "prop": "autoHide",
+          "desc": "滚动/悬停后自动隐藏 thumb",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "className",
+          "desc": "viewport 容器 className",
+          "type": "string"
+        },
+        {
+          "prop": "wrapperClassName",
+          "desc": "外层容器 className",
+          "type": "string"
+        },
+        {
+          "prop": "style",
+          "desc": "外层容器 style",
+          "type": "React.CSSProperties"
+        },
+        {
+          "prop": "onScroll",
+          "desc": "viewport 滚动回调",
+          "type": "React.UIEventHandler<HTMLDivElement>"
+        }
+      ]
+    }
+  ]
+}

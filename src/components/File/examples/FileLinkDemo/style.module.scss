@@ -1,0 +1,163 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.file-link-demo-preview {
+  display: block;
+}
+
+.file-link-demo-scroll {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--font-color-grey);
+  margin-bottom: 8px;
+}
+
+.file-link-demo-viewport {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--font-color-grey);
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.file-link-demo-thumb {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-link-demo-track {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}

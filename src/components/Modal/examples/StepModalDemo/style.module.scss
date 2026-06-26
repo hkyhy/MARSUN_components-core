@@ -1,0 +1,68 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.step-modal-demo-inner {
+  display: block;
+}
+
+.step-modal-demo-header {
+  font-size: var(--font-size-small);
+  color: var(--font-color-grey);
+}
+
+.step-modal-demo-body {
+  background-color: var(--bg-color-grey);
+  padding: 12px;
+}
+
+.step-modal-demo-footer {
+  padding: 12px;
+}
+
+.step-modal-demo-row {
+  padding-left: 16px; padding-right: 16px;
+  padding-top: 8px; padding-bottom: 8px;
+  color: var(--bg-color-white);
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

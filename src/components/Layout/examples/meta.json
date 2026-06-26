@@ -1,0 +1,46 @@
+{
+  "title": "Layout 页面布局",
+  "description": "统一的页面头部布局容器，集成标题、返回按钮、操作按钮区与页面说明提示。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "PageHeaderLayout 标题 + 操作按钮组合",
+      "component": "@/components/Layout/examples/PageHeaderLayoutDemo",
+      "sourcePath": "@/components/Layout/examples/PageHeaderLayoutDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "PageHeaderLayoutProps",
+      "rows": [
+        {
+          "prop": "title",
+          "desc": "页面标题",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "onBack",
+          "desc": "返回按钮点击回调",
+          "type": "() => void"
+        },
+        {
+          "prop": "actions",
+          "desc": "右侧操作区内容",
+          "type": "React.ReactNode"
+        },
+        {
+          "prop": "description",
+          "desc": "页面说明提示，显示在头部下方",
+          "type": "React.ReactNode"
+        },
+        {
+          "prop": "children",
+          "desc": "页面主体内容",
+          "type": "React.ReactNode"
+        }
+      ]
+    }
+  ]
+}

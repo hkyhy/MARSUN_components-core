@@ -1,0 +1,168 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.file-preview-modal-body {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-preview-modal-row {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--font-color-grey-1);
+}
+
+.file-preview-modal-toolbar {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.file-preview-modal-form {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top-width: 1px; border-top-style: solid;
+  border-color: var(--font-color-grey-4);
+}
+
+.file-preview-modal-modal {
+  @include flex-row(4px);
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--primary-color-bg-active);
+  }
+}

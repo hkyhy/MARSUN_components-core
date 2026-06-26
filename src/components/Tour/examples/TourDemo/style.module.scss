@@ -1,0 +1,98 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.tour-demo-container {
+  display: block;
+}
+
+.tour-demo-wrapper {
+  font-size: var(--font-size-small);
+  color: var(--font-color-grey);
+}
+
+.tour-demo-inner {
+  border-radius: 8px;
+  border-width: 1px; border-style: solid;
+  padding: 16px;
+}
+
+.tour-demo-header {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--font-color-grey);
+}
+
+.tour-demo-body {
+  white-space: pre-wrap !important;
+  font-size: 12px !important;
+  padding: 12px !important;
+  display: block !important;
+}
+
+.tour-demo-footer {
+  border-radius: 8px;
+  border-width: 1px; border-style: solid;
+  padding: 16px;
+}
+
+.tour-demo-row {
+  font-size: var(--font-size-small);
+  color: var(--font-color-grey);
+  padding-left: 16px;
+}
+
+.tour-demo-col {
+  margin-bottom: 8px !important;
+}

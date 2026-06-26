@@ -1,0 +1,199 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.upload-root {
+  max-width: xl;
+}
+
+.upload-container {
+  font-size: 12px;
+  color: var(--font-color-grey);
+}
+
+.upload-wrapper {
+  color: var(--primary-color);
+  cursor: pointer;
+  &:hover { text-decoration: underline; }
+}
+
+.upload-inner {
+  display: block;
+}
+
+.upload-header {
+  font-size: var(--font-size-small);
+  color: var(--font-color-grey);
+}
+
+.upload-body {
+  border-radius: 8px;
+  border-width: 1px; border-style: solid;
+  padding: 16px;
+}
+
+.upload-footer {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--font-color-grey);
+}
+
+.upload-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  font-size: var(--font-size-small);
+}
+
+.upload-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-small);
+}
+
+.upload-wrap {
+  display: block;
+}
+
+.upload-panel {
+  font-size: 12px;
+}
+
+.upload-card {
+  padding: 12px;
+  font-size: var(--font-size-small);
+}
+
+.upload-item {
+  font-size: var(--font-size-small);
+  margin-top: 8px;
+  display: block;
+}
+
+.upload-link {
+  margin-top: 12px;
+}
+
+.upload-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.upload-value {
+  color: var(--font-color-grey-1);
+  flex-shrink: 0;
+}
+
+.upload-meta {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.upload-icon {
+  margin: 0 !important;
+  flex-shrink: 0;
+}
+
+.upload-title {
+  font-size: 12px;
+  margin-left: 0 !important;
+  flex-shrink: 0;
+}
+
+.upload-desc {
+  flex-shrink: 0;
+}
+
+.upload-actions {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.upload-toolbar {
+  color: var(--font-color-grey);
+  &:hover { border-color: var(--primary-color); }
+  &:hover { color: var(--primary-color); }
+}
+
+.upload-list {
+  margin-top: 8px;
+}
+
+.upload-file-row {
+  @include flex-between;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: var(--bg-color-grey);
+  border: 1px solid var(--font-color-grey-4);
+}
+
+.upload-file-row-error {
+  border-color: rgba(245, 63, 63, 0.35);
+  color: var(--error-color);
+}
+
+.upload-drag-icon {
+  font-size: 30px;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+}
+
+.upload-text {
+  /* antd Upload.Dragger text hook */
+}

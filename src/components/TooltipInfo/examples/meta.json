@@ -1,0 +1,56 @@
+{
+  "title": "TooltipInfo 详情提示",
+  "description": "用于在 Tooltip 中展示结构化详情信息，内部统一使用 CommonDescriptions 渲染。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "hover 触发元素展示 DescriptionItem 详情",
+      "component": "@/components/TooltipInfo/examples/TooltipInfoDemo",
+      "sourcePath": "@/components/TooltipInfo/examples/TooltipInfoDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "TooltipInfoProps",
+      "rows": [
+        {
+          "prop": "content",
+          "desc": "详情描述项，内部使用 CommonDescriptions 渲染",
+          "type": "DescriptionItem[]",
+          "required": true
+        },
+        {
+          "prop": "children",
+          "desc": "触发 Tooltip 的元素",
+          "type": "React.ReactNode",
+          "required": true
+        },
+        {
+          "prop": "column",
+          "desc": "CommonDescriptions 列数",
+          "type": "number",
+          "defaultVal": "1"
+        },
+        {
+          "prop": "hidden",
+          "desc": "为 true 或 content 为空时不展示 Tooltip",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "placement",
+          "desc": "Tooltip 位置",
+          "type": "TooltipProps['placement']",
+          "defaultVal": "'top'"
+        },
+        {
+          "prop": "mouseEnterDelay",
+          "desc": "鼠标移入后延时显示",
+          "type": "number",
+          "defaultVal": "0.3"
+        }
+      ]
+    }
+  ]
+}

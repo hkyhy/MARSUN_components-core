@@ -1,0 +1,94 @@
+{
+  "title": "Upload 文件上传",
+  "description": "通用文件上传组件，基于 antd Upload 封装，支持类型校验、大小限制、批量上传、OSS 上传等。",
+  "examples": [
+    {
+      "title": "面板模式",
+      "description": "variant=panel 拖拽上传面板",
+      "component": "@/components/Upload/examples/UploadPanelDemo",
+      "sourcePath": "@/components/Upload/examples/UploadPanelDemo/index.tsx"
+    },
+    {
+      "title": "按钮模式",
+      "description": "variant=button 按钮触发上传",
+      "component": "@/components/Upload/examples/UploadButtonDemo",
+      "sourcePath": "@/components/Upload/examples/UploadButtonDemo/index.tsx"
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "CommonUploadProps",
+      "rows": [
+        {
+          "prop": "value / onChange",
+          "desc": "Form 受控值与回调",
+          "type": "UploadFile[] / (fileList)=>void"
+        },
+        {
+          "prop": "fileSize",
+          "desc": "单文件大小限制(字节)",
+          "type": "number",
+          "defaultVal": "500MB"
+        },
+        {
+          "prop": "maxLength",
+          "desc": "最大上传数量",
+          "type": "number"
+        },
+        {
+          "prop": "accept",
+          "desc": "允许的文件类型",
+          "type": "string"
+        },
+        {
+          "prop": "multiple",
+          "desc": "是否允许多选",
+          "type": "boolean"
+        },
+        {
+          "prop": "size",
+          "desc": "尺寸",
+          "type": "'small' | 'middle' | 'large'",
+          "defaultVal": "'middle'"
+        },
+        {
+          "prop": "variant",
+          "desc": "UI 变体：panel 面板 / button 按钮",
+          "type": "'panel' | 'button'",
+          "defaultVal": "'button'"
+        },
+        {
+          "prop": "showFileList",
+          "desc": "是否展示文件列表",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "renderTips",
+          "desc": "自定义提示区渲染",
+          "type": "() => ReactNode"
+        },
+        {
+          "prop": "onSave",
+          "desc": "保存回调",
+          "type": "(fileList)=>void"
+        },
+        {
+          "prop": "ossUpload",
+          "desc": "是否走 OSS 直传",
+          "type": "boolean"
+        },
+        {
+          "prop": "onUpload",
+          "desc": "自定义上传函数",
+          "type": "(options) => Promise<void>"
+        },
+        {
+          "prop": "concurrentCount",
+          "desc": "并发数",
+          "type": "number"
+        }
+      ]
+    }
+  ]
+}

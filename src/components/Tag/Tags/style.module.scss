@@ -1,0 +1,14 @@
+@use '@/styles/mixins' as *;
+
+.tags-tag-list {
+  @include flex-row(4px);
+  flex-wrap: wrap;
+}
+
+.tags-tag-list-nowrap {
+  flex-wrap: nowrap;
+}
+
+.tags-tag-list-tooltip {
+  max-width: 320px;
+}

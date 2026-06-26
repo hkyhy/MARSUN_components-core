@@ -1,0 +1,94 @@
+{
+  "title": "Stat 统计卡片",
+  "description": "数据统计卡片组件，支持单个展示与列表网格布局。",
+  "examples": [
+    {
+      "title": "单个卡片",
+      "description": "StatCard 基础展示，带前缀图标和自定义颜色",
+      "component": "@/components/Stat/examples/StatCardSingleDemo",
+      "sourcePath": "@/components/Stat/examples/StatCardSingleDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "卡片列表",
+      "description": "StatCardList 网格布局，自动计算列数",
+      "component": "@/components/Stat/examples/StatCardListDemo",
+      "sourcePath": "@/components/Stat/examples/StatCardListDemo/index.tsx"
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "StatCardProps",
+      "rows": [
+        {
+          "prop": "title",
+          "desc": "标题",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "value",
+          "desc": "数值",
+          "type": "number",
+          "required": true
+        },
+        {
+          "prop": "prefix",
+          "desc": "前缀图标",
+          "type": "React.ReactNode"
+        },
+        {
+          "prop": "color",
+          "desc": "数值颜色",
+          "type": "string"
+        },
+        {
+          "prop": "onClick",
+          "desc": "点击回调",
+          "type": "() => void"
+        },
+        {
+          "prop": "inline",
+          "desc": "内联模式（无 Card 包裹）",
+          "type": "boolean"
+        },
+        {
+          "prop": "fontSize",
+          "desc": "内联模式字体大小",
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "componentName": "StatCardListProps",
+      "rows": [
+        {
+          "prop": "items",
+          "desc": "统计项列表",
+          "type": "StatItem[]",
+          "required": true
+        },
+        {
+          "prop": "gutter",
+          "desc": "行列间距",
+          "type": "[number, number]"
+        },
+        {
+          "prop": "className",
+          "desc": "容器 className",
+          "type": "string"
+        },
+        {
+          "prop": "inline",
+          "desc": "内联模式",
+          "type": "boolean"
+        },
+        {
+          "prop": "fontSize",
+          "desc": "内联模式字体大小",
+          "type": "number"
+        }
+      ]
+    }
+  ]
+}

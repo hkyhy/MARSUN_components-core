@@ -1,0 +1,46 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.step-modal-root {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-modal-container {
+  flex: 1;
+}
+
+.step-modal-wrapper {
+  margin-bottom: 24px;
+}

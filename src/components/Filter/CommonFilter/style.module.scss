@@ -1,0 +1,87 @@
+.common-filter-root {
+  background-color: var(--bg-color-white);
+  margin-bottom: 16px;
+}
+
+.common-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.common-filter-label {
+  flex-shrink: 0;
+  font-size: var(--font-size-default);
+  font-weight: 500;
+  color: #374151;
+}
+
+.common-filter-content {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.common-filter-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 6px;
+  row-gap: 8px;
+}
+
+.common-filter-extra {
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.common-filter-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+}
+
+.common-filter-selected-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.common-filter-selected-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--font-color-grey);
+}
+
+.common-filter-selected-tags {
+  flex: 1;
+}
+
+.common-filter-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.common-filter-tag-label {
+  font-size: 12px;
+}
+
+.common-filter-tag-close {
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 2px;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.common-filter-clear-btn {
+  padding: 0 !important;
+  height: auto !important;
+  font-size: 12px;
+}

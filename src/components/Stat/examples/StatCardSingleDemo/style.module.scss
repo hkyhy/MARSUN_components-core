@@ -1,0 +1,50 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.stat-card-single-demo-wrapper {
+  display: block;
+}
+
+.stat-card-single-demo-header {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--font-color-grey);
+}
+
+.stat-card-single-demo-body {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 1024px;
+}

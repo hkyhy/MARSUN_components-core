@@ -1,0 +1,74 @@
+.virtual-scrollbar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+}
+
+.virtual-scrollbar__viewport {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.virtual-scrollbar__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.virtual-scrollbar__track {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.virtual-scrollbar__track--vertical {
+  top: 2px;
+  right: 2px;
+  bottom: 2px;
+  width: 6px;
+}
+
+.virtual-scrollbar__track--horizontal {
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  height: 6px;
+}
+
+.virtual-scrollbar--active .virtual-scrollbar__track,
+.virtual-scrollbar:hover .virtual-scrollbar__track {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.virtual-scrollbar__thumb {
+  position: absolute;
+  border-radius: 16px;
+  background-color: rgba(102, 102, 102, 0.45);
+  transition: background-color 0.15s ease;
+}
+
+.virtual-scrollbar__track--vertical .virtual-scrollbar__thumb {
+  left: 0;
+  right: 0;
+  min-height: 24px;
+}
+
+.virtual-scrollbar__track--horizontal .virtual-scrollbar__thumb {
+  top: 0;
+  bottom: 0;
+  min-width: 24px;
+}
+
+.virtual-scrollbar__thumb:hover,
+.virtual-scrollbar__thumb:active {
+  background-color: rgba(102, 102, 102, 0.65);
+}

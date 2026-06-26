@@ -1,0 +1,4 @@
+[
+  { "title": "欢迎使用", "description": "这是导览第一步", "placement": "bottom" },
+  { "title": "快捷操作", "description": "常用功能入口", "placement": "left" }
+]

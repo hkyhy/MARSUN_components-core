@@ -1,0 +1,344 @@
+{
+  "title": "Chat 问答助手",
+  "description": "AgentHub 问答模块的助手卡片、消息气泡、引用来源、对话输入框、会话侧边栏等组件。",
+  "examples": [
+    {
+      "title": "引用角标",
+      "description": "CitationInlineBadge 行内引用序号角标，嵌入在回答正文中",
+      "component": "@/components/AgentHub/Chat/examples/CitationInlineBadgeBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/CitationInlineBadgeBasicDemo/index.tsx"
+    },
+    {
+      "title": "对话输入框",
+      "description": "ChatInput 支持 Enter 发送、Shift+Enter 换行，生成中显示停止按钮",
+      "component": "@/components/AgentHub/Chat/examples/ChatInputBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ChatInputBasicDemo/index.tsx"
+    },
+    {
+      "title": "消息气泡",
+      "description": "MessageItem 用户/助手消息、Markdown 渲染、流式打字与引用摘要",
+      "component": "@/components/AgentHub/Chat/examples/MessageItemBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/MessageItemBasicDemo/index.tsx"
+    },
+    {
+      "title": "引用来源面板",
+      "description": "CitationPanel 展示引用文档列表，支持高亮定位与展开详情",
+      "component": "@/components/AgentHub/Chat/examples/CitationPanelBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/CitationPanelBasicDemo/index.tsx"
+    },
+    {
+      "title": "助手卡片",
+      "description": "ChatCard 助手列表卡片，展示关联知识库与操作按钮",
+      "component": "@/components/AgentHub/Chat/examples/ChatCardBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ChatCardBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "对话场景",
+      "description": "消息列表 + 输入框 + 引用面板的完整对话交互",
+      "component": "@/components/AgentHub/Chat/examples/ChatConversationDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ChatConversationDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "会话侧边栏",
+      "description": "SessionSidebar 展示 Agent 标题、新建会话入口与历史对话列表，位于消息区左侧",
+      "component": "@/components/AgentHub/Chat/examples/SessionSidebarBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/SessionSidebarBasicDemo/index.tsx"
+    },
+    {
+      "title": "会话操作按钮",
+      "description": "SessionActionButtons 页面头部清空对话操作",
+      "component": "@/components/AgentHub/Chat/examples/SessionActionButtonsBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/SessionActionButtonsBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "会话对话布局",
+      "description": "左侧会话侧边栏 + 消息区 + 引用面板，支持会话切换滚动到底部与点击角标打开引用来源",
+      "component": "@/components/AgentHub/Chat/examples/ChatSessionLayoutDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ChatSessionLayoutDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "CitationInlineBadgeProps",
+      "rows": [
+        {
+          "prop": "number",
+          "desc": "引用序号",
+          "type": "number",
+          "required": true
+        },
+        {
+          "prop": "onClick",
+          "desc": "点击角标回调",
+          "type": "() => void"
+        }
+      ]
+    },
+    {
+      "componentName": "ChatInputProps",
+      "rows": [
+        {
+          "prop": "value",
+          "desc": "输入内容",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "loading",
+          "desc": "是否正在生成回复",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "prop": "onChange",
+          "desc": "内容变更回调",
+          "type": "(v: string) => void",
+          "required": true
+        },
+        {
+          "prop": "onSend",
+          "desc": "发送回调",
+          "type": "() => void",
+          "required": true
+        },
+        {
+          "prop": "onStop",
+          "desc": "停止生成回调",
+          "type": "() => void"
+        },
+        {
+          "prop": "placeholder",
+          "desc": "占位提示",
+          "type": "string",
+          "defaultVal": "输入问题… Enter 发送，Shift+Enter 换行"
+        }
+      ]
+    },
+    {
+      "componentName": "MessageItemProps",
+      "rows": [
+        {
+          "prop": "message",
+          "desc": "聊天消息对象",
+          "type": "ChatMessage",
+          "required": true
+        },
+        {
+          "prop": "onCitationClick",
+          "desc": "点击引用角标或来源摘要回调",
+          "type": "(citations: Citation[], index?: number) => void"
+        },
+        {
+          "prop": "onTypingChange",
+          "desc": "助手消息打字机状态变化回调",
+          "type": "(typing: boolean) => void"
+        },
+        {
+          "prop": "onEditMessage",
+          "desc": "用户消息重新编辑确认回调（Popover 内确认后触发，含 messageId）",
+          "type": "(messageId: string, content: string) => void"
+        },
+        {
+          "prop": "onResendMessage",
+          "desc": "用户消息重新发送回调（将内容回填到输入框）",
+          "type": "(content: string) => void"
+        },
+        {
+          "prop": "editDisabled",
+          "desc": "是否禁用重新编辑（生成中）",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "componentName": "MessageEditPopoverProps",
+      "rows": [
+        {
+          "prop": "open",
+          "desc": "是否展开",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "prop": "value",
+          "desc": "编辑中的内容",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "originalContent",
+          "desc": "原始消息内容",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "onOpenChange",
+          "desc": "展开状态变化",
+          "type": "(open: boolean) => void",
+          "required": true
+        },
+        {
+          "prop": "onChange",
+          "desc": "内容变更",
+          "type": "(value: string) => void",
+          "required": true
+        },
+        {
+          "prop": "onConfirm",
+          "desc": "确认编辑",
+          "type": "() => void",
+          "required": true
+        },
+        {
+          "prop": "onCancel",
+          "desc": "取消编辑",
+          "type": "() => void",
+          "required": true
+        },
+        {
+          "prop": "children",
+          "desc": "锚点元素（编辑图标按钮）",
+          "type": "React.ReactNode",
+          "required": true
+        }
+      ]
+    },
+    {
+      "componentName": "CitationPanelProps",
+      "rows": [
+        {
+          "prop": "citations",
+          "desc": "引用来源列表",
+          "type": "Citation[]",
+          "required": true
+        },
+        {
+          "prop": "highlightedIndex",
+          "desc": "高亮定位的引用下标",
+          "type": "number"
+        },
+        {
+          "prop": "onClose",
+          "desc": "关闭面板回调",
+          "type": "() => void"
+        }
+      ]
+    },
+    {
+      "componentName": "ChatCardProps",
+      "rows": [
+        {
+          "prop": "chat",
+          "desc": "问答助手对象",
+          "type": "ChatAssistant",
+          "required": true
+        },
+        {
+          "prop": "datasets",
+          "desc": "知识库列表（用于解析关联名称）",
+          "type": "Dataset[]",
+          "required": true
+        },
+        {
+          "prop": "onStartChat",
+          "desc": "开始对话",
+          "type": "(chat: ChatAssistant) => void",
+          "required": true
+        },
+        {
+          "prop": "onEdit",
+          "desc": "编辑助手",
+          "type": "(chat: ChatAssistant) => void",
+          "required": true
+        },
+        {
+          "prop": "onDelete",
+          "desc": "删除助手",
+          "type": "(chat: ChatAssistant) => void",
+          "required": true
+        }
+      ]
+    },
+    {
+      "componentName": "SessionSidebarProps",
+      "rows": [
+        {
+          "prop": "title",
+          "desc": "当前 Agent 标题",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "sessions",
+          "desc": "历史会话列表",
+          "type": "ChatSession[]",
+          "required": true
+        },
+        {
+          "prop": "activeSessionId",
+          "desc": "当前激活的会话 ID",
+          "type": "string"
+        },
+        {
+          "prop": "loading",
+          "desc": "会话列表加载中",
+          "type": "boolean"
+        },
+        {
+          "prop": "disabled",
+          "desc": "禁用切换与新建（如流式生成中）",
+          "type": "boolean"
+        },
+        {
+          "prop": "onSelect",
+          "desc": "切换会话回调",
+          "type": "(sessionId: string) => void",
+          "required": true
+        },
+        {
+          "prop": "onCreateSession",
+          "desc": "新建会话回调（标题栏 + 按钮）",
+          "type": "() => void",
+          "required": true
+        },
+        {
+          "prop": "onClearSession",
+          "desc": "清空当前选中会话内容",
+          "type": "(sessionId: string) => void",
+          "required": true
+        },
+        {
+          "prop": "onDeleteSession",
+          "desc": "删除指定会话",
+          "type": "(sessionId: string) => void",
+          "required": true
+        }
+      ]
+    },
+    {
+      "componentName": "SessionActionButtonsProps",
+      "rows": [
+        {
+          "prop": "streaming",
+          "desc": "是否正在流式生成",
+          "type": "boolean"
+        },
+        {
+          "prop": "clearDisabled",
+          "desc": "是否禁用清空对话",
+          "type": "boolean"
+        },
+        {
+          "prop": "onClearConversation",
+          "desc": "清空当前对话回调",
+          "type": "() => void",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

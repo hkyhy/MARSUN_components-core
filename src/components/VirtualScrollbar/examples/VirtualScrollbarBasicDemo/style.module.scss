@@ -1,0 +1,89 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.virtual-scrollbar-basic-demo-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.virtual-scrollbar-basic-demo-col {
+  margin-bottom: 8px;
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--font-color-grey);
+}
+
+.virtual-scrollbar-basic-demo-wrap {
+  height: 220px;
+  border: 1px solid var(--font-color-grey-4);
+  border-radius: 8px;
+  background-color: var(--bg-color-white);
+}
+
+.virtual-scrollbar-basic-demo-panel {
+  padding: 8px;
+}
+
+.virtual-scrollbar-basic-demo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.virtual-scrollbar-basic-demo-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background-color: var(--bg-color-grey);
+}
+
+.virtual-scrollbar-basic-demo-link {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--font-color);
+}
+
+.virtual-scrollbar-basic-demo-label {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--font-color-grey-1);
+}
+
+.virtual-scrollbar-basic-demo-value {
+  padding: 8px;
+}
+
+.virtual-scrollbar-basic-demo-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 640px;
+}
+
+.virtual-scrollbar-basic-demo-icon {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background-color: var(--bg-color-grey);
+  font-size: var(--font-size-small);
+  white-space: nowrap;
+}

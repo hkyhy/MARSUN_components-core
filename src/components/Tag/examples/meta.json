@@ -1,0 +1,111 @@
+{
+  "title": "Tag 语义化标签",
+  "description": "统一颜色体系的语义化标签，适用于状态标识、分类标记等场景。",
+  "examples": [
+    {
+      "title": "基本用法",
+      "description": "所有预定义语义颜色的展示",
+      "component": "@/components/Tag/examples/SemanticTagBasicDemo",
+      "sourcePath": "@/components/Tag/examples/SemanticTagBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "审核状态场景",
+      "description": "在列表页 Table、简历详情页等场景下的状态标签使用",
+      "component": "@/components/Tag/examples/SemanticTagReviewDemo",
+      "sourcePath": "@/components/Tag/examples/SemanticTagReviewDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "多标签组合场景",
+      "description": "多个标签并列展示，如已推荐简历+已退票等多状态并存",
+      "component": "@/components/Tag/examples/SemanticTagMultiDemo",
+      "sourcePath": "@/components/Tag/examples/SemanticTagMultiDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "SemanticTagProps",
+      "rows": [
+        {
+          "prop": "children",
+          "desc": "标签文本",
+          "type": "React.ReactNode",
+          "required": true
+        },
+        {
+          "prop": "color",
+          "desc": "语义化颜色（推荐使用 SEMANTIC_COLORS）",
+          "type": "SemanticColor | string",
+          "defaultVal": "'default'"
+        },
+        {
+          "prop": "...Tag props",
+          "desc": "继承 antd Tag 其余属性",
+          "type": "TagProps"
+        }
+      ]
+    },
+    {
+      "componentName": "SEMANTIC_COLORS",
+      "rows": [
+        {
+          "prop": "DEFAULT",
+          "desc": "默认/中性",
+          "type": "'default'"
+        },
+        {
+          "prop": "INFO",
+          "desc": "信息/提示",
+          "type": "'blue'"
+        },
+        {
+          "prop": "PROCESSING",
+          "desc": "进行中/处理中",
+          "type": "'processing'"
+        },
+        {
+          "prop": "SUCCESS",
+          "desc": "成功/已完成",
+          "type": "'green'"
+        },
+        {
+          "prop": "WARNING",
+          "desc": "警告/待处理",
+          "type": "'orange'"
+        },
+        {
+          "prop": "DANGER",
+          "desc": "危险/紧急",
+          "type": "'red'"
+        },
+        {
+          "prop": "SPECIAL",
+          "desc": "特殊/待复查",
+          "type": "'purple'"
+        },
+        {
+          "prop": "VOLCANO",
+          "desc": "火山/领导审批",
+          "type": "'volcano'"
+        },
+        {
+          "prop": "CYAN",
+          "desc": "青色/辅助",
+          "type": "'cyan'"
+        },
+        {
+          "prop": "GOLD",
+          "desc": "金色/高优先级",
+          "type": "'gold'"
+        },
+        {
+          "prop": "LIME",
+          "desc": "石灰/低优先级",
+          "type": "'lime'"
+        }
+      ]
+    }
+  ]
+}

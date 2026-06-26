@@ -1,0 +1,76 @@
+{
+  "title": "Descriptions 描述列表",
+  "description": "通用描述列表组件，用于展示只读字段信息。基于 antd Descriptions 封装。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "将 DescriptionItem 数组渲染为标准描述列表",
+      "component": "@/components/Descriptions/examples/CommonDescriptionsDemo",
+      "sourcePath": "@/components/Descriptions/examples/CommonDescriptionsDemo/index.tsx"
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "CommonDescriptionsProps",
+      "rows": [
+        {
+          "prop": "content",
+          "desc": "描述项数组",
+          "type": "DescriptionItem[]",
+          "required": true
+        },
+        {
+          "prop": "column",
+          "desc": "列数配置，支持响应式对象",
+          "type": "number | ResponsiveValue",
+          "defaultVal": "3"
+        },
+        {
+          "prop": "bordered",
+          "desc": "是否带边框",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "size",
+          "desc": "尺寸",
+          "type": "'small' | 'default' | 'middle'",
+          "defaultVal": "'default'"
+        },
+        {
+          "prop": "title",
+          "desc": "标题文本",
+          "type": "React.ReactNode"
+        },
+        {
+          "prop": "extra",
+          "desc": "操作区",
+          "type": "React.ReactNode"
+        }
+      ]
+    },
+    {
+      "componentName": "DescriptionItem",
+      "rows": [
+        {
+          "prop": "label",
+          "desc": "标签文本",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "value",
+          "desc": "值内容",
+          "type": "React.ReactNode",
+          "required": true
+        },
+        {
+          "prop": "span",
+          "desc": "占列数",
+          "type": "number",
+          "defaultVal": "1"
+        }
+      ]
+    }
+  ]
+}

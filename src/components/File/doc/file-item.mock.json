@@ -1,0 +1,4 @@
+[
+  { "id": "f1", "name": "示例文档.pdf", "size": 1048576, "mimeType": "application/pdf", "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", "tags": ["示例", "PDF"] },
+  { "id": "f2", "name": "示意图.png", "size": 204800, "mimeType": "image/png", "url": "https://via.placeholder.com/400x300.png", "tags": ["图片"] }
+]

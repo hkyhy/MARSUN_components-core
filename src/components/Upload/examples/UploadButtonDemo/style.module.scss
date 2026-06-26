@@ -1,0 +1,91 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.upload-button-demo-root {
+  max-width: xl;
+}
+
+.upload-button-demo-container {
+  font-size: 12px;
+  color: var(--font-color-grey);
+}
+
+.upload-button-demo-wrapper {
+  color: var(--primary-color);
+  cursor: pointer;
+  &:hover { text-decoration: underline; }
+}
+
+.upload-button-demo-actions {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.upload-button-demo-upload-text {
+  /* antd Upload.Dragger text hook */
+}

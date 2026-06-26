@@ -1,0 +1,27 @@
+:global(.tooltip-info-overlay) {
+  :global(.ant-tooltip-container),
+  :global(.ant-tooltip-inner) {
+    min-width: 220px;
+    max-width: 360px;
+    padding: 8px 12px;
+  }
+
+  :global(.ant-descriptions) {
+    width: 100%;
+    min-width: 0;
+
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+  }
+
+  :global(.ant-descriptions-item-label) {
+    white-space: nowrap;
+  }
+
+  :global(.ant-descriptions-item-content) {
+    white-space: normal;
+    word-break: break-word;
+  }
+}

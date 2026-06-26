@@ -1,0 +1,27 @@
+@use '@/styles/mixins' as *;
+
+.page-header-layout-root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-header-layout-container {
+  display: flex;
+  align-items: center;
+}
+
+.page-header-layout-wrapper {
+  font-size: var(--font-size-18);
+  font-weight: 600;
+}
+
+.page-header-layout-inner {
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background-color: var(--primary-color-bg);
+  border: 1px solid var(--primary-color-border);
+  border-radius: 4px;
+  font-size: var(--font-size-small);
+  color: var(--primary-color);
+}

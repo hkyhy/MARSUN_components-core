@@ -1,0 +1,62 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.permission-guard-demo-root {
+  display: block;
+}
+
+.permission-guard-demo-col {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--font-color-grey);
+}
+
+.permission-guard-demo-wrap {
+  color: var(--font-color-grey-1);
+  font-size: var(--font-size-small);
+}
+
+.permission-guard-demo-panel {
+  font-size: var(--font-size-small);
+}

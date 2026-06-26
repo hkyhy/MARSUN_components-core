@@ -1,0 +1,228 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.knowledge-card-wrapper {
+  background-color: var(--bg-color-white);
+  border-radius: 12px;
+  border-width: 1px; border-style: solid;
+  border-color: var(--font-color-grey-4);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  &:hover { border-color: var(--primary-color-border); }
+  &:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+}
+
+.knowledge-card-inner {
+  height: 4px;
+  background-color: var(--primary-color);
+}
+
+.knowledge-card-header {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.knowledge-card-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.knowledge-card-footer {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: var(--primary-color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.knowledge-card-row {
+  font-size: var(--font-size-large);
+  color: var(--primary-color);
+}
+
+.knowledge-card-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.knowledge-card-wrap {
+  font-size: var(--font-size-small);
+  display: block;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.knowledge-card-panel {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.knowledge-card-card {
+  font-size: 12px;
+  margin-bottom: 12px !important;
+}
+
+.knowledge-card-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.knowledge-card-link {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--bg-color-grey);
+  border-radius: 8px;
+  padding-top: 8px; padding-bottom: 8px;
+}
+
+.knowledge-card-label {
+  font-size: var(--font-size-small);
+}
+
+.knowledge-card-value {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.knowledge-card-meta {
+  margin-top: 12px;
+}
+
+.knowledge-card-icon {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--font-color-grey-1);
+  margin-bottom: 4px;
+}
+
+.knowledge-card-title {
+  padding-left: 16px; padding-right: 16px;
+  padding-top: 8px; padding-bottom: 8px;
+  border-top-width: 1px; border-top-style: solid;
+  display: flex;
+  align-items: center;
+}

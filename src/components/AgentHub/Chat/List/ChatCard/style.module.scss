@@ -1,0 +1,697 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+  
+  
+   
+     
+  
+
+   
+     
+  
+
+
+  
+  
+   
+     
+     
+  
+
+
+  
+  
+   
+     
+  
+
+   
+     
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.chat-card-chat-card {
+  background-color: var(--bg-color-white);
+  border-radius: 12px;
+  border: 1px solid var(--font-color-grey-4);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--primary-color-border);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.chat-card-header {
+  background-color: var(--primary-color-bg);
+  padding: 16px 16px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-card-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background-color: var(--primary-color);
+}
+
+.chat-card-avatar-icon {
+  color: #fff;
+  font-size: var(--font-size-large);
+}
+
+.chat-card-title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-card-title {
+  font-size: var(--font-size-small);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-card-status-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.chat-card-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.chat-card-status-dot-active {
+  background-color: var(--success-color);
+}
+
+.chat-card-status-dot-inactive {
+  background-color: var(--font-color-grey-2);
+}
+
+.chat-card-status-text-active {
+  font-size: 12px;
+  color: var(--success-color);
+}
+
+.chat-card-status-text-inactive {
+  font-size: 12px;
+  color: var(--font-color-grey-1);
+}
+
+.chat-card-body {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-card-desc {
+  font-size: var(--font-size-small);
+  margin-bottom: 12px !important;
+}
+
+.chat-card-tags {
+  margin-top: auto;
+}
+
+.chat-card-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.chat-card-tag {
+  font-size: 12px;
+}
+
+.chat-card-empty-kb {
+  font-size: 12px;
+}
+
+.chat-card-footer {
+  padding: 8px 16px;
+  border-top: 1px solid var(--bg-color-grey-1);
+  display: flex;
+  align-items: center;
+}

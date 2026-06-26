@@ -1,0 +1,27 @@
+.filter-date-range-quick-options {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-date-range-quick-option {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: var(--font-size-small);
+
+  &:hover {
+    background-color: var(--primary-color-bg);
+  }
+}
+
+.filter-date-range-quick-option-active {
+  background-color: var(--primary-color);
+  color: var(--bg-color-white);
+  font-weight: 500;
+}
+
+.filter-date-range-picker {
+  width: 100%;
+}

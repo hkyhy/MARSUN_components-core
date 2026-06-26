@@ -1,0 +1,44 @@
+{
+  "title": "Form 表单组件",
+  "description": "泛化选择控件与步骤表单，支持 props 数据或 fetchUrl + transformData。",
+  "examples": [
+    {
+      "title": "FetchTreeSelect",
+      "description": "树形选择：props 传入 treeData，或 fetchUrl + transformData",
+      "component": "@/components/Form/examples/FetchTreeSelectDemo",
+      "sourcePath": "@/components/Form/examples/FetchTreeSelectDemo/index.tsx"
+    },
+    {
+      "title": "FetchSelect",
+      "description": "下拉选择：props 传入 options，或 fetchUrl + transformData",
+      "component": "@/components/Form/examples/FetchSelectDemo",
+      "sourcePath": "@/components/Form/examples/FetchSelectDemo/index.tsx"
+    },
+    {
+      "title": "步骤式表单弹窗",
+      "description": "StepForm 在 StepModal 基础上集成 Form 校验",
+      "component": "@/components/Form/examples/StepFormDemo",
+      "sourcePath": "@/components/Form/examples/StepFormDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "FetchTreeSelectProps",
+      "rows": [
+        { "prop": "treeData", "desc": "props 模式树数据（优先）", "type": "TreeNodeOption[]" },
+        { "prop": "fetchUrl", "desc": "fetch 模式 URL", "type": "string" },
+        { "prop": "transformData", "desc": "将 API 响应转为 treeData", "type": "(raw: unknown) => TreeNodeOption[]" },
+        { "prop": "...TreeSelectProps", "desc": "继承 antd TreeSelect", "type": "Omit<TreeSelectProps, 'treeData' | 'loading'>" }
+      ]
+    },
+    {
+      "componentName": "FetchSelectProps",
+      "rows": [
+        { "prop": "options", "desc": "props 模式选项（优先）", "type": "SelectOptionItem[]" },
+        { "prop": "fetchUrl", "desc": "fetch 模式 URL", "type": "string" },
+        { "prop": "transformData", "desc": "将 API 响应转为 options", "type": "(raw: unknown) => SelectOptionItem[]" }
+      ]
+    }
+  ]
+}

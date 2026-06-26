@@ -1,0 +1,162 @@
+{
+  "title": "KnowledgeBase 知识库",
+  "description": "AgentHub 知识库模块的卡片、文档列表、解析状态标签与筛选栏等组件。",
+  "examples": [
+    {
+      "title": "解析状态标签",
+      "description": "ParseStatusTag 展示文档解析各阶段状态",
+      "component": "@/components/AgentHub/KnowledgeBase/examples/ParseStatusTagBasicDemo",
+      "sourcePath": "@/components/AgentHub/KnowledgeBase/examples/ParseStatusTagBasicDemo.tsx"
+    },
+    {
+      "title": "筛选栏",
+      "description": "KBFilterBar 按知识库名称关键词筛选",
+      "component": "@/components/AgentHub/KnowledgeBase/examples/KnowledgeBaseFilterDemo",
+      "sourcePath": "@/components/AgentHub/KnowledgeBase/examples/KnowledgeBaseFilterDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "知识库卡片",
+      "description": "KnowledgeCard 展示文档数、分块数、解析进度与操作按钮",
+      "component": "@/components/AgentHub/KnowledgeBase/examples/KnowledgeCardBasicDemo",
+      "sourcePath": "@/components/AgentHub/KnowledgeBase/examples/KnowledgeCardBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "文档列表",
+      "description": "DocumentTable 知识库内文档管理表格，含解析/停止/删除操作",
+      "component": "@/components/AgentHub/KnowledgeBase/examples/DocumentTableBasicDemo",
+      "sourcePath": "@/components/AgentHub/KnowledgeBase/examples/DocumentTableBasicDemo.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "ParseStatusTagProps",
+      "rows": [
+        {
+          "prop": "status",
+          "desc": "解析状态（UNSTART / RUNNING / DONE / FAIL / CANCEL）",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "componentName": "KBFilterBarProps",
+      "rows": [
+        {
+          "prop": "keyword",
+          "desc": "搜索关键词",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "onKeywordChange",
+          "desc": "关键词变更回调",
+          "type": "(v: string) => void",
+          "required": true
+        }
+      ]
+    },
+    {
+      "componentName": "KnowledgeCardProps",
+      "rows": [
+        {
+          "prop": "dataset",
+          "desc": "知识库对象",
+          "type": "Dataset",
+          "required": true
+        },
+        {
+          "prop": "onView",
+          "desc": "查看文档",
+          "type": "(dataset: Dataset) => void",
+          "required": true
+        },
+        {
+          "prop": "onUpload",
+          "desc": "上传文档",
+          "type": "(dataset: Dataset) => void",
+          "required": true
+        },
+        {
+          "prop": "onEdit",
+          "desc": "编辑知识库",
+          "type": "(dataset: Dataset) => void",
+          "required": true
+        },
+        {
+          "prop": "onDelete",
+          "desc": "删除知识库",
+          "type": "(dataset: Dataset) => void",
+          "required": true
+        }
+      ]
+    },
+    {
+      "componentName": "DocumentTableProps",
+      "rows": [
+        {
+          "prop": "datasetId",
+          "desc": "知识库 ID",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "data",
+          "desc": "文档列表",
+          "type": "KBDocument[]",
+          "required": true
+        },
+        {
+          "prop": "loading",
+          "desc": "加载状态",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "prop": "total",
+          "desc": "文档总数",
+          "type": "number",
+          "required": true
+        },
+        {
+          "prop": "page",
+          "desc": "当前页码",
+          "type": "number",
+          "required": true
+        },
+        {
+          "prop": "pageSize",
+          "desc": "每页条数",
+          "type": "number",
+          "required": true
+        },
+        {
+          "prop": "onPageChange",
+          "desc": "分页变更",
+          "type": "(page, pageSize) => void",
+          "required": true
+        },
+        {
+          "prop": "onParse",
+          "desc": "开始解析",
+          "type": "(doc: KBDocument) => void",
+          "required": true
+        },
+        {
+          "prop": "onStopParse",
+          "desc": "停止解析",
+          "type": "(doc: KBDocument) => void",
+          "required": true
+        },
+        {
+          "prop": "onDelete",
+          "desc": "删除文档",
+          "type": "(doc: KBDocument) => void",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "title": "Tour 引导教程",
+  "description": "基于 antd Tour 的应用引导组件，支持 steps 锚点定位与 localStorage 完成记录。",
+  "examples": [
+    {
+      "title": "AppTour 引导组件",
+      "description": "通过 steps + target 锚点定位，支持 storageKey 记录完成状态",
+      "component": "@/components/Tour/examples/TourDemo",
+      "sourcePath": "@/components/Tour/examples/TourDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "AppTourProps",
+      "rows": [
+        { "prop": "steps", "desc": "引导步骤列表", "type": "AppTourStep[]", "required": true },
+        { "prop": "storageKey", "desc": "localStorage 键名，记录是否已完成", "type": "string" },
+        { "prop": "autoOpen", "desc": "首次是否自动打开", "type": "boolean", "defaultVal": "true" }
+      ]
+    },
+    {
+      "componentName": "AppTourStep",
+      "rows": [
+        { "prop": "title", "desc": "步骤标题", "type": "string", "required": true },
+        { "prop": "description", "desc": "步骤说明", "type": "React.ReactNode", "required": true },
+        { "prop": "target", "desc": "锚点元素获取函数", "type": "() => HTMLElement" },
+        { "prop": "placement", "desc": "气泡位置", "type": "TourPlacement" }
+      ]
+    }
+  ]
+}

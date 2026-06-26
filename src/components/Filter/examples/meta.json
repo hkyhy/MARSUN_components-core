@@ -1,0 +1,240 @@
+{
+  "title": "Filter 筛选栏",
+  "description": "统一筛选区域，包含多种筛选器组件，支持选中标签联动清除。",
+  "examples": [
+    {
+      "title": "完整筛选栏",
+      "description": "CommonFilter 完整组合：下拉、输入、日期范围、数字范围筛选器",
+      "component": "@/components/Filter/examples/CommonFilterDemo",
+      "sourcePath": "@/components/Filter/examples/CommonFilterDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "单选筛选器",
+      "description": "FilterSelect 基础用法与可搜索模式",
+      "component": "@/components/Filter/examples/FilterSelectDemo",
+      "sourcePath": "@/components/Filter/examples/FilterSelectDemo/index.tsx"
+    },
+    {
+      "title": "输入框筛选器",
+      "description": "FilterInput 关键词搜索输入框",
+      "component": "@/components/Filter/examples/FilterInputDemo",
+      "sourcePath": "@/components/Filter/examples/FilterInputDemo.tsx"
+    },
+    {
+      "title": "日期范围筛选器",
+      "description": "FilterDateRange 日期区间选择，支持快捷选项",
+      "component": "@/components/Filter/examples/FilterDateRangeDemo",
+      "sourcePath": "@/components/Filter/examples/FilterDateRangeDemo.tsx"
+    },
+    {
+      "title": "数字范围筛选器",
+      "description": "FilterNumberRange 数值区间选择，支持单位后缀",
+      "component": "@/components/Filter/examples/FilterNumberRangeDemo",
+      "sourcePath": "@/components/Filter/examples/FilterNumberRangeDemo.tsx"
+    },
+    {
+      "title": "树形选择筛选器",
+      "description": "FilterTreeSelect 部门树形下拉选择，支持搜索和自动加载",
+      "component": "@/components/Filter/examples/FilterTreeSelectDemo",
+      "sourcePath": "@/components/Filter/examples/FilterTreeSelectDemo/index.tsx"
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "BaseFilterProps (公共属性)",
+      "rows": [
+        {
+          "prop": "filterKey",
+          "desc": "筛选项唯一标识",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "label",
+          "desc": "显示标签",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "active",
+          "desc": "是否有值（控制选中态样式）",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "componentName": "FilterSelectProps",
+      "rows": [
+        {
+          "prop": "options",
+          "desc": "选项列表",
+          "type": "FilterOption[]",
+          "required": true
+        },
+        {
+          "prop": "value",
+          "desc": "选中值",
+          "type": "string | number | undefined"
+        },
+        {
+          "prop": "onChange",
+          "desc": "值变更回调",
+          "type": "(value) => void"
+        },
+        {
+          "prop": "placeholder",
+          "desc": "占位符",
+          "type": "string"
+        },
+        {
+          "prop": "searchable",
+          "desc": "是否可搜索",
+          "type": "boolean"
+        },
+        {
+          "prop": "multiple",
+          "desc": "是否多选",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "componentName": "FilterInputProps",
+      "rows": [
+        {
+          "prop": "value",
+          "desc": "输入值",
+          "type": "string"
+        },
+        {
+          "prop": "onChange",
+          "desc": "值变更回调",
+          "type": "(value) => void"
+        },
+        {
+          "prop": "placeholder",
+          "desc": "占位符",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "componentName": "FilterDateRangeProps",
+      "rows": [
+        {
+          "prop": "value",
+          "desc": "日期区间 [start, end]",
+          "type": "[string, string] | null"
+        },
+        {
+          "prop": "onChange",
+          "desc": "值变更回调",
+          "type": "(value) => void"
+        },
+        {
+          "prop": "showQuickOptions",
+          "desc": "是否显示快捷选项",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "quickOptions",
+          "desc": "自定义快捷选项",
+          "type": "QuickOption[]"
+        }
+      ]
+    },
+    {
+      "componentName": "FilterNumberRangeProps",
+      "rows": [
+        {
+          "prop": "value",
+          "desc": "数值区间 [min, max]",
+          "type": "[number|undefined, number|undefined]|null"
+        },
+        {
+          "prop": "onChange",
+          "desc": "值变更回调",
+          "type": "(value) => void"
+        },
+        {
+          "prop": "unit",
+          "desc": "单位后缀",
+          "type": "string"
+        },
+        {
+          "prop": "minPlaceholder / maxPlaceholder",
+          "desc": "最小/最大值占位符",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "componentName": "FilterTreeSelectProps",
+      "rows": [
+        {
+          "prop": "treeData",
+          "desc": "树形数据（优先于自动加载）",
+          "type": "Department[]"
+        },
+        {
+          "prop": "autoLoadDept",
+          "desc": "是否自动加载部门树",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "value",
+          "desc": "选中值",
+          "type": "string | undefined"
+        },
+        {
+          "prop": "onChange",
+          "desc": "值变更回调",
+          "type": "(value: string | undefined) => void"
+        },
+        {
+          "prop": "showSearch",
+          "desc": "是否显示搜索框",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "multiple",
+          "desc": "是否多选",
+          "type": "boolean",
+          "defaultVal": "false"
+        }
+      ]
+    },
+    {
+      "componentName": "CommonFilterProps",
+      "rows": [
+        {
+          "prop": "children",
+          "desc": "子筛选器组件",
+          "type": "React.ReactNode",
+          "required": true
+        },
+        {
+          "prop": "onClearAll",
+          "desc": "清空全部额外回调（内部已通过 onRemove 自动清空）",
+          "type": "() => void"
+        },
+        {
+          "prop": "label",
+          "desc": "左侧标签文字",
+          "type": "string",
+          "defaultVal": "\"筛选\""
+        },
+        {
+          "prop": "selectedTagMaxLength",
+          "desc": "已选标签 value 最大字符数，超出显示 ... 并在 hover 时展示完整内容",
+          "type": "number",
+          "defaultVal": "20"
+        }
+      ]
+    }
+  ]
+}

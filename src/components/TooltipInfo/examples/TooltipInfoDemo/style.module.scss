@@ -1,0 +1,22 @@
+.tooltip-info-demo-root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  min-height: 120px;
+  padding: 32px 24px;
+  border-radius: 6px;
+  background-color: var(--bg-color-grey, #fafafa);
+}
+
+.tooltip-info-demo-container {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.tooltip-info-demo-wrapper {
+  cursor: pointer;
+}

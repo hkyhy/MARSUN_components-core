@@ -1,0 +1,9 @@
+{
+  "sessions": [
+    { "id": "s1", "title": "示例会话", "updatedAt": "2025-01-01T10:00:00Z" }
+  ],
+  "messages": [
+    { "id": "m1", "role": "user", "content": "你好" },
+    { "id": "m2", "role": "assistant", "content": "你好，有什么可以帮您？" }
+  ]
+}

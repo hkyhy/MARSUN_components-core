@@ -1,0 +1,15 @@
+@use '@/styles/mixins' as *;
+
+.stat-card-clickable {
+  cursor: pointer;
+
+  :global(.ant-statistic-content) {
+    display: flex !important;
+    align-items: center;
+
+    :global(.ant-statistic-content-prefix) {
+      display: flex !important;
+      align-items: center;
+    }
+  }
+}

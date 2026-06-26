@@ -1,0 +1,116 @@
+{
+  "title": "Modal 弹窗组件",
+  "description": "步骤式弹窗等通用弹窗封装，将多步骤流程封装在同一个 Modal 中，自动管理步骤导航、标题切换和底部按钮。",
+  "examples": [
+    {
+      "title": "步骤式弹窗",
+      "description": "StepModal 将多步骤流程封装在 Modal 中，自动管理步骤导航、标题切换和底部按钮",
+      "component": "@/components/Modal/examples/StepModalDemo",
+      "sourcePath": "@/components/Modal/examples/StepModalDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "StepModalProps",
+      "rows": [
+        {
+          "prop": "title",
+          "desc": "弹窗标题（覆盖步骤标题）",
+          "type": "string"
+        },
+        {
+          "prop": "steps",
+          "desc": "步骤列表",
+          "type": "StepItem[]",
+          "required": true
+        },
+        {
+          "prop": "current",
+          "desc": "当前步骤 key",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "open",
+          "desc": "弹窗是否打开",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "prop": "onCancel",
+          "desc": "取消/关闭回调",
+          "type": "() => void",
+          "required": true
+        },
+        {
+          "prop": "onStepChange",
+          "desc": "切换步骤回调",
+          "type": "(key: string) => void"
+        },
+        {
+          "prop": "width",
+          "desc": "弹窗宽度",
+          "type": "number",
+          "defaultVal": "600"
+        },
+        {
+          "prop": "showSteps",
+          "desc": "是否显示 Steps 导航条",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "maskClosable",
+          "desc": "是否允许点击遮罩关闭",
+          "type": "boolean",
+          "defaultVal": "false"
+        }
+      ]
+    },
+    {
+      "componentName": "StepItem",
+      "rows": [
+        {
+          "prop": "key",
+          "desc": "步骤唯一标识",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "title",
+          "desc": "步骤标题",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "description",
+          "desc": "步骤描述",
+          "type": "string"
+        },
+        {
+          "prop": "content",
+          "desc": "步骤内容，支持 JSX 或函数延迟求值",
+          "type": "ReactNode | (() => ReactNode)",
+          "required": true
+        },
+        {
+          "prop": "footer",
+          "desc": "底部按钮区域，不传则自动渲染",
+          "type": "ReactNode | (() => ReactNode)"
+        },
+        {
+          "prop": "allowBack",
+          "desc": "是否允许返回上一步",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "beforeEnter",
+          "desc": "进入该步骤前的校验",
+          "type": "() => boolean | Promise<boolean>"
+        }
+      ]
+    }
+  ]
+}

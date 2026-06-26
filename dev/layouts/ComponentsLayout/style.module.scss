@@ -1,0 +1,58 @@
+.components-layout-root {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f5f5f5;
+}
+
+.components-layout-container {
+  background-color: #fff !important;
+  border-right: 1px solid #f0f0f0;
+  overflow: hidden !important;
+}
+
+.components-layout-wrapper {
+  height: 100%;
+}
+
+.components-layout-inner {
+  padding: 24px 20px 16px;
+}
+
+.components-layout-header {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.components-layout-body {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #999;
+}
+
+.components-layout-footer {
+  margin: 0 12px 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.components-layout-row {
+  padding: 0 8px !important;
+  border: none !important;
+}
+
+.components-layout-col {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+.components-layout-wrap {
+  background-color: #f5f5f5;
+  padding: 8px;
+  min-height: 100%;
+}
+
+.components-layout-panel {
+  margin: 0 auto;
+  max-width: 1200px;
+}

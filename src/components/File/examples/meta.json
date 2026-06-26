@@ -1,0 +1,56 @@
+{
+  "title": "File 文件展示",
+  "description": "文件展示与预览组件，支持文件项、文件链接及多种文件类型的在线预览。",
+  "examples": [
+    {
+      "title": "FileItemView 文件项",
+      "description": "展示文件图标、名称、状态 slot 和操作按钮",
+      "component": "@/components/File/examples/FileItemBasicDemo",
+      "sourcePath": "@/components/File/examples/FileItemBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "FileLink 文件链接",
+      "description": "以链接形式展示文件",
+      "component": "@/components/File/examples/FileLinkDemo",
+      "sourcePath": "@/components/File/examples/FileLinkDemo/index.tsx"
+    },
+    {
+      "title": "多文件项组合",
+      "description": "组合 FileItemView / FileLink 展示文件列表（消费方自行编排）",
+      "component": "@/components/File/examples/FileListDemo",
+      "sourcePath": "@/components/File/examples/FileListDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "FilePreview 文件预览",
+      "description": "文件预览弹窗，支持图片、PDF、视频、Excel、文本等格式",
+      "component": "@/components/File/examples/FilePreviewDemo",
+      "sourcePath": "@/components/File/examples/FilePreviewDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "FileItemViewProps",
+      "rows": [
+        { "prop": "file", "desc": "文件数据", "type": "FileDisplayItem", "required": true },
+        { "prop": "status", "desc": "状态标签 slot", "type": "React.ReactNode" },
+        { "prop": "showDownload", "desc": "是否显示下载按钮", "type": "boolean", "defaultVal": "true" },
+        { "prop": "showDelete", "desc": "是否显示删除按钮", "type": "boolean", "defaultVal": "false" },
+        { "prop": "actions", "desc": "自定义操作项", "type": "FileItemAction[]" }
+      ]
+    },
+    {
+      "componentName": "FileDisplayItem",
+      "rows": [
+        { "prop": "id", "desc": "唯一标识", "type": "string", "required": true },
+        { "prop": "name", "desc": "文件名；缺省且提供 url 时从 url 路径解析", "type": "string" },
+        { "prop": "size", "desc": "文件大小（字节）", "type": "number" },
+        { "prop": "mimeType", "desc": "MIME 类型", "type": "string" },
+        { "prop": "url", "desc": "下载/预览地址", "type": "string" },
+        { "prop": "tags", "desc": "标签列表", "type": "string[]" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+@use '@/styles/mixins' as *;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.stat-card-demo-wrapper {
+  display: block;
+}
+
+.stat-card-demo-inner {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--font-color-grey);
+}

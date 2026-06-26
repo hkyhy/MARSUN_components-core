@@ -1,0 +1,71 @@
+@use '@/styles/mixins' as *;
+
+.filter-select-search {
+  margin-bottom: 12px;
+}
+
+.filter-select-options {
+  max-height: 300px;
+  overflow: auto;
+}
+
+.filter-select-option {
+  @include flex-row(8px);
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: var(--font-size-small);
+
+  &:hover {
+    background-color: var(--bg-color-grey);
+  }
+}
+
+.filter-select-option-selected {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.filter-select-option-check {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--primary-color);
+}
+
+.filter-select-empty {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  text-align: center;
+  font-size: var(--font-size-small);
+  color: var(--font-color-grey-1);
+}
+
+.filter-select-selected-bar {
+  margin-top: 8px;
+  border-top-width: 1px;
+  border-top-style: solid;
+  padding-top: 8px;
+}
+
+.filter-select-selected-label {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--font-color-grey-1);
+}
+
+.filter-select-selected-tag {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--bg-color-grey-1);
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: 12px;
+}
+
+.filter-select-selected-remove {
+  font-size: 10px;
+}
