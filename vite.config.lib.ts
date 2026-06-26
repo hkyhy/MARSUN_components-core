@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
+      tsconfigPath: resolve(__dirname, 'tsconfig.build.json'),
       include: ['src'],
       exclude: ['src/**/examples/**', 'src/**/doc/**', 'src/**/__tests__/**'],
       rollupTypes: true,

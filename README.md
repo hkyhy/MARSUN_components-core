@@ -74,8 +74,10 @@ npm run typecheck
 
 ### 发布版本（npm）
 
-1. 在 [npm](https://www.npmjs.com/) 创建组织/scope `@marsun`（或使用已有 scope）
-2. 在 GitHub 仓库 **Settings → Secrets → Actions** 添加 `HKYHY_PACKAGE_PUBLISH`（npm Access Token，类型 Automation 或 Publish）
+`@marsun/components-core` 为 **scoped 包**，发布账号须对 npm 上的 `@marsun` 组织有发布权限，否则会报 `404 Scope not found`。
+
+1. 使用发布账号登录 [npm](https://www.npmjs.com/)，创建组织 **marsun**（[Create Organization](https://www.npmjs.com/org/create)），或将发布 token 所属用户加入该组织
+2. 在 GitHub 仓库 **Settings → Secrets → Actions** 添加 `HKYHY_PACKAGE_PUBLISH`（npm Access Token，需包含 **Bypass 2FA** 或 Automation 类型，并对 `@marsun` 有 publish 权限）
 3. 更新 `package.json` 的 `version`，提交后打 tag 并推送：
 
 ```bash
