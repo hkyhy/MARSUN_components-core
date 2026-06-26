@@ -68,6 +68,8 @@ npm run typecheck
 
 ### GitHub Pages
 
+**首次部署前**（仅需一次）：仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。未启用时 workflow 会在 deploy 阶段报 `Not Found`。
+
 - 推送 `main` 后由 `.github/workflows/pages.yml` 自动部署
 - 项目页 base path：`/MARSUN_components-core/`
 - 本地模拟 Pages 构建：`VITE_BASE_PATH=/MARSUN_components-core/ npm run build:showcase && npm run preview:showcase`
