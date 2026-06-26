@@ -68,7 +68,11 @@ npm run typecheck
 
 ### GitHub Pages
 
-**首次部署前**（仅需一次）：仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。未启用时 workflow 会在 deploy 阶段报 `Not Found`。
+**deploy 报 404 时**：说明仓库尚未启用 Pages，按下列步骤操作（仅需一次）：
+
+1. 打开 https://github.com/hkyhy/MARSUN_components-core/settings/pages
+2. **Build and deployment → Source** 选择 **GitHub Actions**（不要选 Deploy from a branch）
+3. 保存后，到 **Actions → Deploy GitHub Pages → Re-run all jobs**
 
 - 推送 `main` 后由 `.github/workflows/pages.yml` 自动部署
 - 项目页 base path：`/MARSUN_components-core/`

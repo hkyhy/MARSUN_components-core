@@ -1,3 +1,5 @@
+# 首次部署前：Settings → Pages → Source 选「GitHub Actions」
+# https://github.com/hkyhy/MARSUN_components-core/settings/pages
 name: Deploy GitHub Pages
 
 on:
@@ -19,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
@@ -34,7 +36,7 @@ jobs:
         env:
           VITE_BASE_PATH: /MARSUN_components-core/
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist-showcase
 
@@ -47,4 +49,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
