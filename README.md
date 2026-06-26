@@ -1,4 +1,4 @@
-# @marsun/components-core
+# @hkyhy/marsun-components-core
 
 Marsun 纯 UI 组件库（React 19 + antd 6）。从 `maoyang_data-asset-system` 的 Common / AgentHub 拆分，**不含业务数据**。
 
@@ -12,15 +12,15 @@ Marsun 纯 UI 组件库（React 19 + antd 6）。从 `maoyang_data-asset-system`
 ## 安装
 
 ```bash
-npm install @marsun/components-core antd react react-dom
+npm install @hkyhy/marsun-components-core antd react react-dom
 ```
 
-> 包名 `@marsun/components-core` 发布至 [npm](https://www.npmjs.com/package/@marsun/components-core)（需 GitHub Secret `HKYHY_PACKAGE_PUBLISH` 与 tag `v*` 触发发布，见下方「发布版本」）。
+> 发布至 [npm](https://www.npmjs.com/package/@hkyhy/marsun-components-core)（GitHub Secret `HKYHY_PACKAGE_PUBLISH` + tag `v*` 触发，见「发布版本」）。
 
 ## 快速开始
 
 ```tsx
-import { MarsunCoreProvider, SemanticTag, FetchTreeSelect } from '@marsun/components-core';
+import { MarsunCoreProvider, SemanticTag, FetchTreeSelect } from '@hkyhy/marsun-components-core';
 
 <MarsunCoreProvider
   auth={{
@@ -74,11 +74,10 @@ npm run typecheck
 
 ### 发布版本（npm）
 
-`@marsun/components-core` 为 **scoped 包**，发布账号须对 npm 上的 `@marsun` 组织有发布权限，否则会报 `404 Scope not found`。
+包名为 **`@hkyhy/marsun-components-core`**（npm scope 与 GitHub 发布账号 `hkyhy` 对齐；若需 `@marsun` 须先在 npm 创建该组织）。
 
-1. 使用发布账号登录 [npm](https://www.npmjs.com/)，创建组织 **marsun**（[Create Organization](https://www.npmjs.com/org/create)），或将发布 token 所属用户加入该组织
-2. 在 GitHub 仓库 **Settings → Secrets → Actions** 添加 `HKYHY_PACKAGE_PUBLISH`（npm Access Token，需包含 **Bypass 2FA** 或 Automation 类型，并对 `@marsun` 有 publish 权限）
-3. 更新 `package.json` 的 `version`，提交后打 tag 并推送：
+1. 在 GitHub 仓库 **Settings → Secrets → Actions** 配置 `HKYHY_PACKAGE_PUBLISH`（npm Automation Token，对 `@hkyhy` 有 publish 权限）
+2. 更新 `package.json` 的 `version`，提交后打 tag 并推送：
 
 ```bash
 npm version patch   # 或 minor / major
@@ -87,14 +86,14 @@ git push origin main --tags
 
 推送 `v*` tag 后 `.github/workflows/publish.yml` 自动执行 `npm publish`（仅发布 `dist/`，不含 dev showcase）。
 
-也可在 Actions 中手动运行 **Publish npm**，填写已有 tag（如 `v0.1.0`）。
+也可在 Actions 中手动运行 **Publish npm**，填写已有 tag（如 `v0.1.2`）。
 
 ## 后续接入 maoyang
 
 发布 npm 后，在 `maoyang_data-asset-system` 批量替换：
 
 ```ts
-import { SemanticTag, FetchTreeSelect } from '@marsun/components-core';
+import { SemanticTag, FetchTreeSelect } from '@hkyhy/marsun-components-core';
 // 业务 wrapper 留在 maoyang
 import { DepartmentSelect } from '@/components/Common/Form/DepartmentSelect';
 ```

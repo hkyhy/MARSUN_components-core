@@ -21,7 +21,7 @@ const ComponentsLayout: React.FC = () => {
       <Sider width={240} theme="light" className={styles['components-layout-container']}>
         <VirtualScrollbar wrapperClassName={styles['components-layout-wrapper']}>
           <div className={styles['components-layout-inner']}>
-            <div className={styles['components-layout-header']}>@marsun/components-core</div>
+            <div className={styles['components-layout-header']}>@hkyhy/marsun-components-core</div>
             <div className={styles['components-layout-body']}>src/components/</div>
           </div>
           <div className={styles['components-layout-footer']} />
