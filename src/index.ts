@@ -27,7 +27,8 @@ export * from './components/Stat';
 export * from './components/Tag';
 export * from './components/TooltipInfo';
 export * from './components/Tour';
-export * from './components/Upload';
+export { default as CommonUpload } from './components/Upload';
+export type { CommonUploadProps, CommonUploadRef, UploadVariant } from './components/Upload';
 export * from './components/VirtualScrollbar';
 export * from './components/Icons';
 

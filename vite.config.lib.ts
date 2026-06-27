@@ -10,7 +10,7 @@ export default defineConfig({
       tsconfigPath: resolve(__dirname, 'tsconfig.build.json'),
       include: ['src'],
       exclude: ['src/**/examples/**', 'src/**/doc/**', 'src/**/__tests__/**'],
-      rollupTypes: true,
+      rollupTypes: false,
     }),
   ],
   resolve: {

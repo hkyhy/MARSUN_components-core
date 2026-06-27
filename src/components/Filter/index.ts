@@ -44,7 +44,7 @@ export { FilterNumberRange };
 
 // 树形选择
 import FilterTreeSelect from './FilterTreeSelect';
-export type { FilterTreeSelectProps } from './FilterTreeSelect';
+export type { FilterTreeSelectProps, TreeFilterNode } from './FilterTreeSelect';
 export { FilterTreeSelect };
 
 // 筛选状态 Hook
