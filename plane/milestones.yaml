@@ -21,7 +21,7 @@ milestones:
     plan_date: "2026-06-26"
     actual_date: "2026-06-26"
     owner: 前端
-    tasks: M001-1,M001-2,M001-3,M001-4,M001-5
+    tasks: M001-1,M001-2,M001-3,M001-4,M001-5,M001-6
   - id: M002
     roadmap_no: 2
     name: 库构建与类型
