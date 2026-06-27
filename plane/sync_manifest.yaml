@@ -50,3 +50,11 @@ tasks:
     kind: bug
     tags: [frontend]
     note: "fix(build): resolve dts errors for scss and @kne/button-group"
+  - id: M002-2
+    milestone: M002
+    name: 修复 npm 包导出与构建产物
+    status: 已完成
+    priority: P0
+    kind: bug
+    tags: [frontend]
+    note: "fix(build): Upload/CommonUpload export, TreeFilterNode type, global.css stub, rollupTypes off, v0.1.4"
