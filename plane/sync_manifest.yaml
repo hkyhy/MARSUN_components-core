@@ -44,12 +44,12 @@ tasks:
     note: "chore(ci): checkout@v5, upload-pages-artifact@v4, deploy-pages@v5, README Pages 404 排查"
   - id: M001-6
     milestone: M001
-    name: 版本变更自动打 tag 并触发 publish
+    name: main push 自动 bump 版本并 npm publish
     status: 已完成
     priority: P1
     kind: ops
     tags: [infra]
-    note: "feat(publish): post-commit + version-tag.yml auto tag on package.json bump"
+    note: "feat(publish): release.yml auto patch+tag+publish on main push"
   - id: M002-1
     milestone: M002
     name: 修复 SCSS 与 @kne/button-group dts 错误
