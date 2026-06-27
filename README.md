@@ -80,26 +80,17 @@ npm run typecheck
 
 ### 发布版本（npm）
 
-包名为 **`@hkyhy/marsun-components-core`**（npm scope 与 GitHub 发布账号 `hkyhy` 对齐；若需 `@marsun` 须先在 npm 创建该组织）。
+包名为 **`@hkyhy/marsun-components-core`**（npm scope 与 GitHub 发布账号 `hkyhy` 对齐）。
 
 1. 在 GitHub 仓库 **Settings → Secrets → Actions** 配置 `HKYHY_PACKAGE_PUBLISH`（npm Automation Token，对 `@hkyhy` 有 publish 权限）
-2. 首次克隆后启用本地自动打 tag（可选）：
+2. **推送 `main` 即自动发布**：`.github/workflows/release.yml` 会 patch 版本号、提交 `chore(release): v* `、打 tag 并 `npm publish`（`chore(release)` 提交本身不会再次触发，避免循环）
+3. 日常只需正常开发提交并 push：
 
 ```bash
-git config core.hooksPath .githooks
+git push origin main
 ```
 
-3. 更新 `package.json` 的 `version` 并提交；若本次 commit 变更了 version，将**自动创建** `v*` tag：
-   - **本地**：`.githooks/post-commit` → `scripts/version-tag-if-changed.mjs`
-   - **CI**：推送 `main` 后 `version-tag.yml` 检测 version 变更并 push tag
-4. `v*` tag 推送后 `.github/workflows/publish.yml` 自动 `npm publish`
-
-```bash
-npm version patch   # 或 minor / major（会改 version 并 commit）
-git push origin main --tags
-```
-
-也可在 Actions 中手动运行 **Publish npm**，填写已有 tag（如 `v0.1.4`）。
+也可在 Actions 中手动运行 **Publish npm**，填写已有 tag 重新发布。
 
 ## 后续接入 maoyang
 
