@@ -1,0 +1,87 @@
+# 需求驱动开发工作流
+
+触发本技能后，除 SKILL.md 核心原则外，按本流程执行。
+
+## 一、需求理解
+
+- [ ] 明确用户角色、主路径、边界条件与验收标准
+- [ ] 识别涉及模块：`src/components/{Domain}/{Module}/` 或 `src/pages/`
+- [ ] 确认是否涉及权限、筛选、部门/人员、批量操作等业务规则
+- [ ] 需求歧义时列出假设，标注待确认项
+
+## 二、方案论证（四方交叉）
+
+| 维度 | 论证要点 |
+| ---- | -------- |
+| 产品 | 交互路径是否最短？边界是否覆盖？ |
+| 架构 | 目录结构、handlers 抽离、单一数据来源是否合规？组件变更是否同步更新规范文档与提示词？ |
+| 开发 | 纯 UI 优先 `@hkyhy/marsun-components-core`？业务 wrapper 留本地 Common？最小 diff？可测试？ |
+| UI | PageHeaderLayout、ButtonGroup、主题色、信息层级是否一致？滚动区是否用 VirtualScrollbar（不占位）？ |
+
+## 三、开发流程
+
+新建模块时按以下顺序执行（**目录结构是大前提，必须先建好目录再填充内容**）：
+
+1. 创建 `src/components/{Domain}/{Module}/` 目录及子目录（`Action/`、`Detail/`、`Form/`、`Modal/`、`List/` 按需创建）；**每个含 JSX 的子组件目录同步创建 `{Name}/index.tsx` + `style.module.scss`（无样式时保留空文件）**
+2. 按需创建 `hooks/`、`utils/` 和 `constants/` 子目录（hooks 放自定义 Hook，utils 放工具函数，constants 放常量；模块内使用时放模块内，跨模块时放 `src/hooks/{Module}/`、`src/utils/{Module}/` 或 `src/constants/{Module}/`）
+3. 编写 Form 组件（放 `Form/` 目录，使用 antd 原生 Form + Form.Item + Input/Select 等，接收 `form` prop，纯字段渲染不含提交逻辑）
+4. 编写 Modal 组件（放 `Modal/` 目录，使用 `Form.useForm()` 创建表单实例 + 传给 Form 组件 + `form.validateFields()` 提交 + Modal `onOk`/`onCancel`）
+5. 编写 Action handlers（放 `Action/handlers.ts`，抽取业务逻辑供 listArray onClick 和独立 Button 共用）
+6. 编写 Action 按钮组件（放 `Action/` 目录，一个按钮一个文件，支持受控/非受控模式）
+7. 编写 ActionButtons 组合组件（放 `Action/` 目录，使用 `@kne/button-group` 的 `ButtonGroup` + listArray 对象形式）
+8. 编写 Detail 组件（放 `Detail/` 目录，使用 CommonDescriptions）
+9. 编写 List 组件（放 `List/` 目录，操作列引用 Action 组件，columns 使用 `ButtonGroup moreType="link"` + FilterBar + Link）
+10. 编写自定义 Hook（放 `hooks/` 目录，封装页面状态与业务逻辑，供页面组件解构使用）
+11. 编写各子目录及模块级 `index.ts` barrel export
+12. 为新组件编写测试（见 [../common/testing.md](../common/testing.md)）
+13. **注册组件路由和菜单**：组件展示路由、菜单已由 `scripts/collect-examples.mjs` 自动生成（`{Domain}/routes.tsx`、`components/routes.tsx`、`layouts/menu-config.ts`），开发者只需维护各子模块的 `examples/meta.json`，新建组件时创建 `meta.json` 即可自动注册路由和菜单，**禁止手动修改自动生成的文件**。多子模块业务域须将示例放在 `src/components/{Domain}/{Module}/examples/`，脚本会自动生成域级父菜单与子 menu。其他业务页面路由仍需在 `src/pages/{Module}/routes.tsx` 中手动添加
+14. 编写页面组件（Manage + Detail，必须使用 `PageHeaderLayout`，标题放 `title`，操作按钮放 `actions`，页面说明放 `description`（可选），内容放 `children`，禁止使用 `<div><h2>` 或 `<Card>` 包裹页面，禁止在 `children` 内手写说明提示横幅）
+15. 检查：所有组件是否按目录结构规范拆分（Form/ 不含提交逻辑，Modal/ 不含字段渲染，Action/ 每个按钮一个文件，handlers.ts 抽离业务逻辑）
+16. 检查：ButtonGroup listArray 使用对象形式，不使用 `() => <Component />`
+17. 检查：antd 重复配置是否已提取为 Common 组件
+18. 检查：组件使用优先级 Common > Module > @kne/button-group > antd
+19. 检查：表单使用 antd 原生 Form（Form.useForm + Form.Item + rules），操作按钮统一使用 `@kne/button-group`（包括页面头部和详情页，不使用 `Space` + `Button`）
+20. 检查：Modal 使用 `Form.useForm()` + `form.validateFields()` + `onOk`/`onCancel`，取消按钮用 `Button onClick={onCancel}`
+21. 检查：新组件是否已创建 `examples/meta.json`（路由和菜单由脚本自动生成，无需手动注册）
+22. 检查：Tooltip 展示结构化详情时是否使用 `TooltipInfo`，禁止直接用 antd `Tooltip` + 手写 `div` 拼接字段
+23. 检查：主滚动区是否使用 `VirtualScrollbar`（禁止 `overflow-auto` / `overflow-y-auto`）；flex 布局中 wrapper 是否含 `min-height: 0` / `flex: 1`（写在 SCSS module 中）；需编程滚动时 `ref` 是否挂在 `VirtualScrollbar` 上；Layout 改动是否与 [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) 三层接入一致
+24. 检查：样式是否符合 [../common/styles.md](../common/styles.md)——每个组件/页面有 `style.module.scss`（`index.tsx` 同目录）；禁止 Tailwind；每个 `className` 含 `{组件}-{功能}` 预定类名 + `styles['...']`，经 `classNames` 合并；禁止 `sc()` / `styles.camelCase`
+25. 检查：是否有对应 `.test.tsx` / `.test.ts` 且通过（见 [../common/testing.md](../common/testing.md)）
+26. 检查：**每次新增或更改组件**是否已同步更新规范文档与提示词（`SKILL.md`、`component-mapping.md`、专题 reference、`requirement-workflow.md` 检查项、`examples/meta.json` / Demo）；代码与规范须同一任务内完成，禁止只改代码
+
+## 四、按需阅读规范
+
+| 场景 | 先读 | 再读 |
+| ---- | ---- | ---- |
+| 接新需求 / 改交互 | [mindset.md](mindset.md) | 按任务选 common/business |
+| 新建业务模块 | [../business/module-patterns.md](../business/module-patterns.md) | [../common/directory-structure.md](../common/directory-structure.md) |
+| 筛选项 | [../common/filter.md](../common/filter.md) | — |
+| 部门 / 人员 | [../common/filter.md](../common/filter.md) + [../business/department-person.md](../business/department-person.md) | — |
+| 权限 / 批量操作 | [../business/permissions-data.md](../business/permissions-data.md) | — |
+| 路由 / API | [../business/routing-api.md](../business/routing-api.md) | — |
+| 主题 / Tag 颜色 | [../common/theme.md](../common/theme.md) + [../common/component-mapping.md](../common/component-mapping.md) | [../common/styles.md](../common/styles.md) |
+| 滚动区 / Layout | [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) | — |
+| 组件 Demo | [../common/examples.md](../common/examples.md) | SKILL.md #23、component-mapping |
+| 新增/变更组件 | [SKILL.md](../../SKILL.md) 核心原则 #23 | component-mapping + 专题 reference |
+| 样式 / className | [../common/styles.md](../common/styles.md) | [../common/naming.md](../common/naming.md) |
+| 写测试 | [../common/testing.md](../common/testing.md) | — |
+
+## 五、完成前检查清单
+
+- [ ] 目录结构符合 `common/directory-structure.md`
+- [ ] Form/Modal/Action 分离，handlers 抽离
+- [ ] ButtonGroup listArray 对象形式，操作按钮无 icon
+- [ ] 权限/常量/API 符合 `business/permissions-data.md` 与 `business/routing-api.md`
+- [ ] 筛选 state 接入 API，部门/人员符合 `business/department-person.md`
+- [ ] Tooltip 详情用 TooltipInfo
+- [ ] 主滚动区用 VirtualScrollbar（见 `common/virtual-scrollbar.md`），Layout 接入与全局样式兜底一致
+- [ ] 样式符合 `common/styles.md`：`style.module.scss` 与 `index.tsx` 同目录；禁止 Tailwind / `sc()`；每个 className 含 `{组件}-{功能}` 预定类名 + `styles['...']`
+- [ ] examples/meta.json 已创建（如为新组件）
+- [ ] 新增/变更组件已同步更新规范文档与提示词（与代码同一任务）
+- [ ] 测试通过
+
+## 六、回复收尾
+
+任务完成后，在回复末尾单独补充一句（见 [mindset.md](mindset.md) 执行方式第 5 条）：
+
+> 我是顶尖产品经理、架构师、全栈开发者和 UI 工程师的综合体，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。
