@@ -34,7 +34,7 @@
   "scripts": {
     "predev": "node dev/scripts/collect-examples.mjs",
     "dev": "vite --config vite.config.dev.ts",
-    "build": "tsc -p tsconfig.build.json && vite build --config vite.config.lib.ts && node -e \"require('fs').mkdirSync('dist/styles',{recursive:true}); require('fs').writeFileSync('dist/styles/global.css','/* @hkyhy/marsun-components-core global styles; component styles ship with modules */\\n')\"",
+    "build": "tsc -p tsconfig.build.json && vite build --config vite.config.lib.ts && node -e \"const fs=require('fs'); fs.mkdirSync('dist/styles',{recursive:true}); fs.copyFileSync('dist/marsun-components-core.css','dist/styles/global.css');\"",
     "prepublishOnly": "npm run build",
     "prebuild:showcase": "node dev/scripts/collect-examples.mjs",
     "build:showcase": "vite build --config vite.config.dev.ts",
