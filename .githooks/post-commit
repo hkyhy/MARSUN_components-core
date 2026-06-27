@@ -1,0 +1,3 @@
+#!/bin/sh
+# Auto-create v{version} tag when package.json version changes in a commit.
+node scripts/version-tag-if-changed.mjs || true
