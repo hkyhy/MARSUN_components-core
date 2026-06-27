@@ -58,3 +58,11 @@ tasks:
     kind: bug
     tags: [frontend]
     note: "fix(build): Upload/CommonUpload export, TreeFilterNode type, global.css stub, rollupTypes off, v0.1.4"
+  - id: M002-3
+    milestone: M002
+    name: global.css 使用真实打包样式
+    status: 已完成
+    priority: P1
+    kind: bug
+    tags: [frontend]
+    note: "fix(build): copy dist/marsun-components-core.css to dist/styles/global.css"
