@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -29,8 +29,13 @@
     },
     "./styles": "./dist/styles/global.css"
   },
-  "sideEffects": ["**/*.css", "**/*.scss"],
-  "files": ["dist"],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "predev": "node dev/scripts/collect-examples.mjs",
     "dev": "vite --config vite.config.dev.ts",
