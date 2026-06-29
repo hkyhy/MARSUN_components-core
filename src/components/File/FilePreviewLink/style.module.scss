@@ -10,6 +10,11 @@
   }
 }
 
+.file-preview-link-wrap {
+  align-items: flex-start;
+  max-width: 100%;
+}
+
 .file-preview-link-disabled {
   display: inline-flex;
   align-items: center;
@@ -27,6 +32,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.file-preview-link-name-wrap {
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+  word-break: break-all;
+  line-height: 1.5;
 }
 
 .file-preview-link-type {

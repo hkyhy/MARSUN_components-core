@@ -12,6 +12,8 @@ export interface FilePreviewLinkProps {
   onDownload?: (file: FileDisplayItem) => void;
   disabled?: boolean;
   showType?: boolean;
+  /** 文件名超长时换行展示（默认单行省略） */
+  nameWrap?: boolean;
   className?: string;
 }
 
@@ -22,21 +24,31 @@ const FilePreviewLink: React.FC<FilePreviewLinkProps> = ({
   onDownload,
   disabled = false,
   showType = true,
+  nameWrap = false,
   className,
 }) => {
   const [open, setOpen] = useState(false);
   const resolvedFile = normalizeFileDisplayItem(file);
 
+  const nameClassName = classNames(
+    styles['file-preview-link-name'],
+    nameWrap && styles['file-preview-link-name-wrap'],
+  );
+
   if (disabled) {
     return (
       <span
-        className={classNames(styles['file-preview-link-disabled'], className)}
+        className={classNames(
+          styles['file-preview-link-disabled'],
+          className,
+          nameWrap && styles['file-preview-link-wrap'],
+        )}
         title={resolvedFile.name}
       >
         <span className={styles['file-preview-link-inner']}>
           {getFileIcon(resolvedFile.name, resolvedFile.mimeType)}
         </span>
-        <span className={styles['file-preview-link-name']}>{resolvedFile.name}</span>
+        <span className={nameClassName}>{resolvedFile.name}</span>
         {showType && (
           <span className={styles['file-preview-link-type']}>
             {getFileTypeName(resolvedFile.name, resolvedFile.mimeType)}
@@ -49,7 +61,12 @@ const FilePreviewLink: React.FC<FilePreviewLinkProps> = ({
   return (
     <>
       <a
-        className={classNames('file-preview-link', styles['file-preview-link'], className)}
+        className={classNames(
+          'file-preview-link',
+          styles['file-preview-link'],
+          className,
+          nameWrap && styles['file-preview-link-wrap'],
+        )}
         onClick={(e) => {
           e.preventDefault();
           setOpen(true);
@@ -60,7 +77,7 @@ const FilePreviewLink: React.FC<FilePreviewLinkProps> = ({
         <span className={styles['file-preview-link-inner']}>
           {getFileIcon(resolvedFile.name, resolvedFile.mimeType)}
         </span>
-        <span className={styles['file-preview-link-name']}>{resolvedFile.name}</span>
+        <span className={nameClassName}>{resolvedFile.name}</span>
         {showType && (
           <span className={styles['file-preview-link-type']}>
             {getFileTypeName(resolvedFile.name, resolvedFile.mimeType)}

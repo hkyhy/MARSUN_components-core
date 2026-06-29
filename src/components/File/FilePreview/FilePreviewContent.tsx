@@ -22,6 +22,12 @@ async function renderExcel(container: HTMLElement, data: ArrayBuffer) {
     import('@js-preview/excel'),
     import('@js-preview/excel/lib/index.css'),
   ]);
+  const height = Math.max(
+    container.parentElement?.clientHeight ?? 0,
+    Math.round(window.innerHeight * 0.65),
+    480,
+  );
+  container.style.height = `${height}px`;
   const instance = jsPreviewExcel.init(container);
   await instance.preview(data);
   return () => instance.destroy();
@@ -159,7 +165,7 @@ const FilePreviewContent: React.FC<FilePreviewContentProps> = ({
   if (needsBlobPreview(kind)) {
     return (
       <div className={classNames(styles['file-preview-office'], styles['file-preview-office-wrap'])}>
-        <Spin spinning={loading}>
+        <Spin spinning={loading} wrapperClassName={styles['file-preview-office-spin']}>
           {error ? <Empty description={error} /> : <div ref={containerRef} className={styles['file-preview-office-inner']} />}
         </Spin>
       </div>
