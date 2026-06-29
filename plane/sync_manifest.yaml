@@ -82,3 +82,11 @@ tasks:
     kind: feat
     tags: [frontend, file]
     note: "feat(file): FilePreviewLink、Office 预览、Modal UI 优化，v0.1.7"
+  - id: M003-2
+    milestone: M003
+    name: Excel 预览高度与 FilePreviewLink 文件名换行
+    status: 已完成
+    priority: P1
+    kind: fix
+    tags: [frontend, file]
+    note: "fix(file): Office 容器固定 70vh 高度；FilePreviewLink nameWrap 支持超长文件名换行"
