@@ -3,6 +3,7 @@ export {
   getFileExtension,
   getFileIcon,
   getFileTypeName,
+  normalizeExtension,
   normalizeFileDisplayItem,
   parseFileNameFromUrl,
 } from './fileDisplay';

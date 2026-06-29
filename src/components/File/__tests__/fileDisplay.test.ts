@@ -30,4 +30,10 @@ describe('normalizeFileDisplayItem', () => {
       }).name,
     ).toBe('dummy.pdf');
   });
+
+  it('strips leading dot from extension', () => {
+    expect(
+      normalizeFileDisplayItem({ id: '3', name: 'a.xlsx', extension: '.xlsx' }).extension,
+    ).toBe('xlsx');
+  });
 });

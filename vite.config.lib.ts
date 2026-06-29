@@ -48,6 +48,9 @@ export default defineConfig({
         'remark-gfm',
         'mermaid',
         'prism-react-renderer',
+        '@js-preview/excel',
+        'docx-preview',
+        'pptx-preview',
       ],
       output: {
         preserveModules: true,

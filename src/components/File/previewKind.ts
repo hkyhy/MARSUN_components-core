@@ -1,5 +1,5 @@
 import { SEMANTIC_COLORS } from '@/components/Tag/SemanticTag';
-import { getFileExtension } from './fileDisplay';
+import { getFileExtension, normalizeExtension } from './fileDisplay';
 import type { FileDisplayItem } from './types';
 
 export type PreviewKind =
@@ -30,7 +30,7 @@ export function getPreviewKind(file: FileDisplayItem): PreviewKind {
   if (mime.startsWith('video/')) return 'video';
   if (mime.startsWith('audio/')) return 'audio';
 
-  const ext = (file.extension ?? getFileExtension(file.name ?? '')).toLowerCase();
+  const ext = normalizeExtension(file.extension) || getFileExtension(file.name ?? '');
   if (IMAGE_EXTS.includes(ext)) return 'image';
   if (PDF_EXTS.includes(ext)) return 'pdf';
   if (EXCEL_EXTS.includes(ext)) return 'excel';

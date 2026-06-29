@@ -35,6 +35,12 @@ export function getFileExtension(name: string): string {
   return dot >= 0 ? name.slice(dot + 1).toLowerCase() : '';
 }
 
+/** 规范化扩展名：去除前导点并转小写（兼容 .xlsx 与 xlsx） */
+export function normalizeExtension(extension?: string | null): string {
+  if (!extension) return '';
+  return extension.replace(/^\./, '').toLowerCase();
+}
+
 /** 从 URL 路径解析文件名（decodeURIComponent，失败时回退为「未命名文件」） */
 export function parseFileNameFromUrl(url: string): string {
   const trimmed = url.trim();
@@ -61,12 +67,13 @@ export function parseFileNameFromUrl(url: string): string {
 /** 补全 name / extension：name 缺省时从 url 解析 */
 export function normalizeFileDisplayItem(file: FileDisplayItem): FileDisplayItem & { name: string } {
   const name = file.name?.trim() || (file.url ? parseFileNameFromUrl(file.url) : '未命名文件');
-  const extension = file.extension ?? getFileExtension(name);
+  const rawExtension = file.extension ?? getFileExtension(name);
+  const extension = normalizeExtension(rawExtension) || undefined;
 
   return {
     ...file,
     name,
-    extension: extension || file.extension,
+    extension,
   };
 }
 
