@@ -1,0 +1,22 @@
+.file-preview-link-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.file-preview-link-demo-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--font-color-grey-1);
+}
+
+.file-preview-link-demo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-preview-link-demo-section {
+  margin-top: 8px;
+  margin-bottom: 0;
+}

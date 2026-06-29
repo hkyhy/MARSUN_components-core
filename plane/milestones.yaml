@@ -33,3 +33,13 @@ milestones:
     actual_date: "2026-06-26"
     owner: 前端
     tasks: M002-1,M002-2,M002-3
+  - id: M003
+    roadmap_no: 3
+    name: File 文件预览
+    goal: 支持文件名链接打开预览 Modal，含 Office 客户端渲染
+    deliverables: FilePreviewLink、FilePreview 增强、示例与文档
+    status: 进行中
+    priority: P0
+    plan_date: "2026-06-29"
+    owner: 前端
+    tasks: M003-1

@@ -23,6 +23,12 @@
       "block": true
     },
     {
+      "title": "FilePreviewLink 预览链接",
+      "description": "点击文件名打开预览弹窗，弹窗内支持下载",
+      "component": "@/components/File/examples/FilePreviewLinkDemo",
+      "sourcePath": "@/components/File/examples/FilePreviewLinkDemo/index.tsx"
+    },
+    {
       "title": "FilePreview 文件预览",
       "description": "文件预览弹窗，支持图片、PDF、视频、Excel、文本等格式",
       "component": "@/components/File/examples/FilePreviewDemo",
@@ -31,6 +37,17 @@
     }
   ],
   "apiDoc": [
+    {
+      "componentName": "FilePreviewLinkProps",
+      "rows": [
+        { "prop": "file", "desc": "文件数据", "type": "FileDisplayItem", "required": true },
+        { "prop": "url", "desc": "预览 URL", "type": "string" },
+        { "prop": "downloadUrl", "desc": "下载 URL（缺省回退预览 URL）", "type": "string" },
+        { "prop": "onDownload", "desc": "自定义下载回调", "type": "(file) => void" },
+        { "prop": "disabled", "desc": "禁用点击", "type": "boolean", "defaultVal": "false" },
+        { "prop": "showType", "desc": "是否展示文件类型", "type": "boolean", "defaultVal": "true" }
+      ]
+    },
     {
       "componentName": "FileItemViewProps",
       "rows": [

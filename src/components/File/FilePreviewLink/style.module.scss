@@ -1,0 +1,36 @@
+.file-preview-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-small);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.file-preview-link-disabled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-small);
+  color: var(--font-color-grey-1);
+  cursor: not-allowed;
+}
+
+.file-preview-link-inner {
+  flex-shrink: 0;
+}
+
+.file-preview-link-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-preview-link-type {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--font-color-grey-1);
+}

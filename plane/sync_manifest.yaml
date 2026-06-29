@@ -74,3 +74,11 @@ tasks:
     kind: bug
     tags: [frontend]
     note: "fix(build): copy dist/marsun-components-core.css to dist/styles/global.css"
+  - id: M003-1
+    milestone: M003
+    name: FilePreviewLink 与 Office 客户端预览
+    status: 已完成
+    priority: P0
+    kind: feat
+    tags: [frontend, file]
+    note: "feat(file): FilePreviewLink、Office 预览、Modal UI 优化，v0.1.7"

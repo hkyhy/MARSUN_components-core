@@ -314,6 +314,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         block: true
       },
       {
+        title: 'FilePreviewLink 预览链接',
+        description: '点击文件名打开预览弹窗，弹窗内支持下载',
+        component: React.lazy(() => import('@/components/File/examples/FilePreviewLinkDemo')),
+        sourcePath: () => import('@/components/File/examples/FilePreviewLinkDemo/index.tsx?raw')
+      },
+      {
         title: 'FilePreview 文件预览',
         description: '文件预览弹窗，支持图片、PDF、视频、Excel、文本等格式',
         component: React.lazy(() => import('@/components/File/examples/FilePreviewDemo')),
@@ -322,6 +328,17 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       }
     ],
     apiDoc: [
+      {
+        componentName: 'FilePreviewLinkProps',
+        rows: [
+          { prop: 'file', desc: '文件数据', type: 'FileDisplayItem', required: true },
+          { prop: 'url', desc: '预览 URL', type: 'string' },
+          { prop: 'downloadUrl', desc: '下载 URL（缺省回退预览 URL）', type: 'string' },
+          { prop: 'onDownload', desc: '自定义下载回调', type: '(file) => void' },
+          { prop: 'disabled', desc: '禁用点击', type: 'boolean', defaultVal: 'false' },
+          { prop: 'showType', desc: '是否展示文件类型', type: 'boolean', defaultVal: 'true' }
+        ]
+      },
       {
         componentName: 'FileItemViewProps',
         rows: [
@@ -336,7 +353,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         componentName: 'FileDisplayItem',
         rows: [
           { prop: 'id', desc: '唯一标识', type: 'string', required: true },
-          { prop: 'name', desc: '文件名', type: 'string', required: true },
+          { prop: 'name', desc: '文件名；缺省且提供 url 时从 url 路径解析', type: 'string' },
           { prop: 'size', desc: '文件大小（字节）', type: 'number' },
           { prop: 'mimeType', desc: 'MIME 类型', type: 'string' },
           { prop: 'url', desc: '下载/预览地址', type: 'string' },
