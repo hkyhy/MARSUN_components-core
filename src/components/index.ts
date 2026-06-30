@@ -13,3 +13,5 @@ export { default as CommonUpload } from './Upload';
 export type { CommonUploadProps, CommonUploadRef, UploadVariant } from './Upload';
 export * from './VirtualScrollbar';
 export * from './Icons';
+export * from './Sparkline';
+export * from './LlmFormattedText';

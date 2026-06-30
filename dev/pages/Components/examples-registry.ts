@@ -565,6 +565,35 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       }
     ]
   },
+  '/components/llmformattedtext': {
+    title: 'LlmFormattedText LLM 结构化文本',
+    description: '将 LLM 输出的纯文本解析为摘要、原因、建议等结构化区块并展示。',
+    examples: [
+      {
+        title: '基础用法',
+        description: '结构化解析、纯文本与加载态',
+        component: React.lazy(() => import('@/components/LlmFormattedText/examples/LlmFormattedTextBasicDemo')),
+        sourcePath: () => import('@/components/LlmFormattedText/examples/LlmFormattedTextBasicDemo/index.tsx?raw'),
+        block: true
+      }
+    ],
+    apiDoc: [
+      {
+        componentName: 'LlmFormattedTextProps',
+        rows: [
+          { prop: 'text', desc: 'LLM 输出的纯文本', type: 'string', defaultVal: '\'\'' },
+          { prop: 'loading', desc: '强制显示加载态（也可由文本内容自动识别）', type: 'boolean', defaultVal: 'false' },
+          { prop: 'className', desc: '自定义 className', type: 'string' }
+        ]
+      },
+      {
+        componentName: 'parseLlmText',
+        rows: [
+          { prop: 'text', desc: '待解析文本，返回 summary / sections / loading', type: 'string', required: true }
+        ]
+      }
+    ]
+  },
   '/components/modal': {
     title: 'Modal 弹窗组件',
     description: '步骤式弹窗等通用弹窗封装，将多步骤流程封装在同一个 Modal 中，自动管理步骤导航、标题切换和底部按钮。',
@@ -602,6 +631,31 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'footer', desc: '底部按钮区域，不传则自动渲染', type: 'ReactNode | (() => ReactNode)' },
           { prop: 'allowBack', desc: '是否允许返回上一步', type: 'boolean', defaultVal: 'true' },
           { prop: 'beforeEnter', desc: '进入该步骤前的校验', type: '() => boolean | Promise<boolean>' }
+        ]
+      }
+    ]
+  },
+  '/components/sparkline': {
+    title: 'Sparkline 微型趋势折线',
+    description: '响应式 SVG 微型折线图，适用于统计卡片、表格单元格等紧凑场景。',
+    examples: [
+      {
+        title: '基础用法',
+        description: '不同趋势与颜色的 Sparkline 展示',
+        component: React.lazy(() => import('@/components/Sparkline/examples/SparklineBasicDemo')),
+        sourcePath: () => import('@/components/Sparkline/examples/SparklineBasicDemo/index.tsx?raw'),
+        block: true
+      }
+    ],
+    apiDoc: [
+      {
+        componentName: 'SparklineProps',
+        rows: [
+          { prop: 'data', desc: '数值序列', type: 'number[]', defaultVal: '[]' },
+          { prop: 'width', desc: 'SVG viewBox 宽度', type: 'number', defaultVal: '200' },
+          { prop: 'height', desc: 'SVG 高度', type: 'number', defaultVal: '28' },
+          { prop: 'color', desc: '折线与末点颜色', type: 'string', defaultVal: '\'#52525b\'' },
+          { prop: 'className', desc: '自定义 className', type: 'string' }
         ]
       }
     ]

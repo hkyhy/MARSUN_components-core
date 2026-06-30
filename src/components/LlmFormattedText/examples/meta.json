@@ -1,0 +1,48 @@
+{
+  "title": "LlmFormattedText LLM 结构化文本",
+  "description": "将 LLM 输出的纯文本解析为摘要、原因、建议等结构化区块并展示。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "结构化解析、纯文本与加载态",
+      "component": "@/components/LlmFormattedText/examples/LlmFormattedTextBasicDemo",
+      "sourcePath": "@/components/LlmFormattedText/examples/LlmFormattedTextBasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "LlmFormattedTextProps",
+      "rows": [
+        {
+          "prop": "text",
+          "desc": "LLM 输出的纯文本",
+          "type": "string",
+          "defaultVal": "''"
+        },
+        {
+          "prop": "loading",
+          "desc": "强制显示加载态（也可由文本内容自动识别）",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "className",
+          "desc": "自定义 className",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "componentName": "parseLlmText",
+      "rows": [
+        {
+          "prop": "text",
+          "desc": "待解析文本，返回 summary / sections / loading",
+          "type": "string",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

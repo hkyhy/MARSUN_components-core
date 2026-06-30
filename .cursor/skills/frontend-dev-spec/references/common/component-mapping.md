@@ -44,6 +44,8 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 | `TooltipInfo` | `TooltipInfo` |
 | `PageHeaderLayout` | `Layout/PageHeaderLayout` |
 | `VirtualScrollbar` | `VirtualScrollbar` |
+| `Sparkline` | 微型趋势折线（S3 质量分析等） |
+| `LlmFormattedText` / `parseLlmText` | LLM 结构化文本展示 |
 | `SemanticTag` / `SEMANTIC_COLORS` | `Tag/SemanticTag` |
 | `CommonFilter` + `Filter*` | `Filter/*` |
 | `FetchSelect` / `FetchTreeSelect` | `Form/FetchSelect` 等 |

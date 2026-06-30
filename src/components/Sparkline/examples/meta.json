@@ -1,0 +1,49 @@
+{
+  "title": "Sparkline 微型趋势折线",
+  "description": "响应式 SVG 微型折线图，适用于统计卡片、表格单元格等紧凑场景。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "不同趋势与颜色的 Sparkline 展示",
+      "component": "@/components/Sparkline/examples/SparklineBasicDemo",
+      "sourcePath": "@/components/Sparkline/examples/SparklineBasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "SparklineProps",
+      "rows": [
+        {
+          "prop": "data",
+          "desc": "数值序列",
+          "type": "number[]",
+          "defaultVal": "[]"
+        },
+        {
+          "prop": "width",
+          "desc": "SVG viewBox 宽度",
+          "type": "number",
+          "defaultVal": "200"
+        },
+        {
+          "prop": "height",
+          "desc": "SVG 高度",
+          "type": "number",
+          "defaultVal": "28"
+        },
+        {
+          "prop": "color",
+          "desc": "折线与末点颜色",
+          "type": "string",
+          "defaultVal": "'#52525b'"
+        },
+        {
+          "prop": "className",
+          "desc": "自定义 className",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

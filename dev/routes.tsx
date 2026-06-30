@@ -15,7 +15,9 @@ export const showcaseRoutes = (
     <Route path="form" element={<ExamplePage />} />
     <Route path="icons" element={<ExamplePage />} />
     <Route path="layout" element={<ExamplePage />} />
+    <Route path="llmformattedtext" element={<ExamplePage />} />
     <Route path="modal" element={<ExamplePage />} />
+    <Route path="sparkline" element={<ExamplePage />} />
     <Route path="stat" element={<ExamplePage />} />
     <Route path="tag" element={<ExamplePage />} />
     <Route path="tooltipinfo" element={<ExamplePage />} />
