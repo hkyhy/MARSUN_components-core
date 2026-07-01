@@ -44,7 +44,17 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
       mouseEnterDelay={mouseEnterDelay}
       destroyOnHidden
       classNames={{ root: ['tooltip-info-overlay', overlayClassName].filter(Boolean).join(' ') }}
-      styles={{ container: { maxWidth: 360, padding: '8px 12px', ...overlayStyle } }}
+      styles={{
+        container: {
+          maxWidth: 360,
+          padding: '8px 12px',
+          background: 'var(--tooltip-info-bg, var(--bg-color-white, #ffffff))',
+          color: 'var(--tooltip-info-color, var(--font-color, #222222))',
+          boxShadow:
+            '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12)',
+          ...overlayStyle,
+        },
+      }}
       getPopupContainer={() => document.body}
       title={<CommonDescriptions content={content} column={column} size="small" />}
       {...rest}

@@ -2,7 +2,14 @@
 export { MarsunCoreProvider, useMarsunAuth, useMarsunCore, useMarsunFetch } from './provider';
 export type { MarsunCoreProviderProps, MarsunAuthContext, MarsunFetchContext } from './provider';
 
-export { generateTheme, applyThemeToCssVariables, DEFAULT_PRIMARY_COLOR, PALETTE } from './theme';
+export {
+  generateTheme,
+  applyThemeToCssVariables,
+  applyCssTokenOverrides,
+  DEFAULT_PRIMARY_COLOR,
+  PALETTE,
+  LAYOUT_TOKENS,
+} from './theme';
 
 // Hooks & utils
 export { useFetchData, fetchWithTimeout } from './hooks/useFetchData';

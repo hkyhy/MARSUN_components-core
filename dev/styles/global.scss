@@ -66,3 +66,8 @@ body,
     padding: 0;
   }
 }
+
+/* Lucide 图标在 antd Button 内跟随按钮文字色（primary 上为白色） */
+.ant-btn-icon .marsun-icon {
+  color: inherit;
+}

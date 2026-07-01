@@ -1,0 +1,139 @@
+/**
+ * Marsun Components Core — 公共 Design Tokens
+ * 项目接入：import '@hkyhy/marsun-components-core/tokens'
+ * 动态主色与透明度系列由 applyThemeToCssVariables() 在运行时覆盖
+ */
+:root {
+  /* 基础颜色（与 antd theme token 同步，由 applyThemeToCssVariables 维护） */
+  --primary-color: #1677ff;
+  --success-color: #027a48;
+  --info-color: #155acf;
+  --error-color: #d14343;
+  --warning-color: #f09700;
+
+  /* 布局 */
+  --layout-header-height: 56px;
+  --layout-sider-width: 220px;
+
+  /* 字号（与 antd theme token 对齐） */
+  --font-size-default: 14px;
+  --font-size-small: 12px;
+  --font-size-large: 16px;
+  --font-size-18: 18px;
+  --font-size-24: 24px;
+
+  /* 行高（与 antd theme token 对齐） */
+  --line-height-default: 1.8;
+  --line-height-middle: 2;
+  --line-height-small: 1.5;
+  --line-height-large: 2.2;
+
+  /* 字体颜色（与 antd theme token 对齐） */
+  --font-color: #222222;
+  --font-color-disabled: rgba(0, 0, 0, 0.25);
+  --font-color-grey: #666666;
+  --font-color-grey-1: #999999;
+  --font-color-grey-2: #cccccc;
+  --font-color-grey-3: #dddddd;
+  --font-color-grey-4: #eeeeee;
+
+  /* 背景色（与 antd theme token 对齐） */
+  --bg-color-white: #ffffff;
+  --bg-color-grey: #fafafa;
+  --bg-color-grey-1: #f8f8f8;
+  --bg-color-grey-2: #f3f3f3;
+  --bg-color-grey-3: #f1f1f1;
+  --bg-color-grey-4: #fafcff;
+
+  /* 标签 */
+  --tag-default: #666666;
+  --tag-success: #027a48;
+  --tag-progress: #f09700;
+  --tag-danger: #d14343;
+  --tag-info: #155acf;
+  --tag-other: #6740c3;
+
+  /* primary 透明度系列（由 applyThemeToCssVariables 维护） */
+  --primary-color-bg: rgba(22, 119, 255, 0.06);
+  --primary-color-bg-hover: rgba(22, 119, 255, 0.1);
+  --primary-color-bg-active: rgba(22, 119, 255, 0.16);
+  --primary-color-border: rgba(22, 119, 255, 0.2);
+  --primary-color-fill: rgba(22, 119, 255, 0.1);
+
+  /* success 透明度系列（由 applyThemeToCssVariables 维护） */
+  --success-color-bg: rgba(2, 122, 72, 0.06);
+  --success-color-bg-hover: rgba(2, 122, 72, 0.1);
+  --success-color-bg-active: rgba(2, 122, 72, 0.16);
+  --success-color-border: rgba(2, 122, 72, 0.2);
+  --success-color-fill: rgba(2, 122, 72, 0.1);
+
+  /* info 透明度系列（由 applyThemeToCssVariables 维护） */
+  --info-color-bg: rgba(21, 90, 207, 0.06);
+  --info-color-bg-hover: rgba(21, 90, 207, 0.1);
+  --info-color-bg-active: rgba(21, 90, 207, 0.16);
+  --info-color-border: rgba(21, 90, 207, 0.2);
+  --info-color-fill: rgba(21, 90, 207, 0.1);
+
+  /* error 透明度系列（由 applyThemeToCssVariables 维护） */
+  --error-color-bg: rgba(209, 67, 67, 0.06);
+  --error-color-bg-hover: rgba(209, 67, 67, 0.1);
+  --error-color-bg-active: rgba(209, 67, 67, 0.16);
+  --error-color-border: rgba(209, 67, 67, 0.2);
+  --error-color-fill: rgba(209, 67, 67, 0.1);
+
+  /* warning 透明度系列（由 applyThemeToCssVariables 维护） */
+  --warning-color-bg: rgba(240, 151, 0, 0.06);
+  --warning-color-bg-hover: rgba(240, 151, 0, 0.1);
+  --warning-color-bg-active: rgba(240, 151, 0, 0.16);
+  --warning-color-border: rgba(240, 151, 0, 0.2);
+  --warning-color-fill: rgba(240, 151, 0, 0.1);
+
+  /* 文件类型图标颜色 */
+  --file-icon-word: #1677ff;
+  --file-icon-pdf: #f5222d;
+  --file-icon-excel: #00b42a;
+  --file-icon-ppt: #ff7d00;
+  --file-icon-image: #722ed1;
+  --file-icon-markdown: #595959;
+  --file-icon-visio: #13c2c2;
+  --file-icon-archive: #eb2f96;
+  --file-icon-folder: #faad14;
+  --file-icon-other: #8c8c8c;
+
+  /* Tooltip — 简单提示白底深字；详情卡片见 TooltipInfo（--tooltip-info-*） */
+  --tooltip-bg: #ffffff;
+  --tooltip-color: #222222;
+  --tooltip-info-bg: var(--bg-color-white);
+  --tooltip-info-color: var(--font-color);
+}
+
+/* 与 maoyang _antd-overrides 一致：箭头与气泡同色；CSS 变量兜底（弹层挂 body 时 theme 仍生效） */
+.ant-tooltip {
+  z-index: 1200;
+}
+
+.ant-tooltip .ant-tooltip-container {
+  color: var(--tooltip-color);
+  background-color: var(--tooltip-bg);
+  border: 1px solid var(--font-color-grey-3);
+  box-shadow:
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12);
+}
+
+.ant-tooltip .ant-tooltip-arrow::before {
+  background: var(--tooltip-bg) !important;
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+/* Lucide 图标在 antd Button 内跟随按钮文字色 */
+.ant-btn-icon .marsun-icon {
+  color: inherit;
+}

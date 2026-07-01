@@ -1,4 +1,5 @@
 import type { ThemeConfig } from 'antd';
+import { LAYOUT_TOKENS, PALETTE } from './constants';
 
 /**
  * Marsun Components Core - Ant Design 主题配置
@@ -8,40 +9,6 @@ import type { ThemeConfig } from 'antd';
  * 2. Semantic Token（语义层）：别名 token，映射全局 token 的语义用途
  * 3. Component Token（组件层）：按组件定制，替代 global.css 中的 :global 覆盖
  */
-
-/** ========== 基础色板（与 CSS 变量一一对应） ========== */
-const PALETTE = {
-  /** 主色 */
-  primary: '#1677ff',
-  /** 成功色 */
-  success: '#027A48',
-  /** 信息色 */
-  info: '#155ACF',
-  /** 错误/危险色 */
-  error: '#D14343',
-  /** 警告色 */
-  warning: '#F09700',
-
-  /** 字体色 */
-  textBase: '#222222',
-  textSecondary: '#666666',
-  textTertiary: '#999999',
-  textDisabled: 'rgba(0, 0, 0, 0.25)',
-
-  /** 边框色 */
-  borderBase: '#cccccc',
-  borderLight: '#dddddd',
-  borderLighter: '#eeeeee',
-  borderSeparator: '#f3f3f3',
-
-  /** 背景色 */
-  bgWhite: '#ffffff',
-  bgGrey: '#fafafa',
-  bgGreyLight: '#f8f8f8',
-  bgGreyNormal: '#f3f3f3',
-  bgGreyDark: '#f1f1f1',
-  bgBlueTint: '#fafcff',
-} as const;
 
 /**
  * 根据主色生成完整的 Ant Design 主题配置
@@ -69,7 +36,7 @@ export function generateTheme(primaryColor: string): ThemeConfig {
       colorBgContainer: PALETTE.bgWhite,
       colorBgLayout: PALETTE.bgGrey,
       colorBgElevated: PALETTE.bgWhite,
-      colorBgSpotlight: PALETTE.bgGreyDark,
+      // colorTextLightSolid 勿改为 tooltip 深色 — Button primary 文字依赖此 token（须为浅色）
 
       // 边框
       colorBorder: PALETTE.borderSeparator,
@@ -131,6 +98,9 @@ export function generateTheme(primaryColor: string): ThemeConfig {
       controlHeightSM: 24,
       controlHeightLG: 40,
       controlHeightXS: 16,
+
+      // ====== 弹层 ======
+      zIndexPopupBase: LAYOUT_TOKENS.zIndexPopupBase,
     },
 
     components: {
@@ -148,6 +118,8 @@ export function generateTheme(primaryColor: string): ThemeConfig {
         borderRadius: 4,
         borderRadiusSM: 4,
         borderRadiusLG: 4,
+        primaryColor: PALETTE.bgWhite,
+        dangerColor: PALETTE.bgWhite,
       },
 
       // ====== Table ======
@@ -229,8 +201,9 @@ export function generateTheme(primaryColor: string): ThemeConfig {
 
       // ====== Tooltip ======
       Tooltip: {
-        colorBgSpotlight: PALETTE.bgWhite,
-        colorTextLightSolid: PALETTE.textBase,
+        colorBgSpotlight: PALETTE.tooltipBg,
+        colorTextLightSolid: PALETTE.tooltipColor,
+        zIndexPopup: LAYOUT_TOKENS.zIndexPopupBase,
       },
 
       // ====== Popover ======
@@ -366,10 +339,72 @@ export function applyThemeToCssVariables(primaryColor: string): void {
   root.style.setProperty('--error-color', PALETTE.error);
   root.style.setProperty('--warning-color', PALETTE.warning);
 
-  // 各颜色透明度系列
+  root.style.setProperty('--layout-header-height', LAYOUT_TOKENS.headerHeight);
+  root.style.setProperty('--layout-sider-width', LAYOUT_TOKENS.siderWidth);
+
+  root.style.setProperty('--font-size-default', LAYOUT_TOKENS.fontSizeDefault);
+  root.style.setProperty('--font-size-small', LAYOUT_TOKENS.fontSizeSmall);
+  root.style.setProperty('--font-size-large', LAYOUT_TOKENS.fontSizeLarge);
+  root.style.setProperty('--font-size-18', LAYOUT_TOKENS.fontSize18);
+  root.style.setProperty('--font-size-24', LAYOUT_TOKENS.fontSize24);
+
+  root.style.setProperty('--line-height-default', LAYOUT_TOKENS.lineHeightDefault);
+  root.style.setProperty('--line-height-middle', LAYOUT_TOKENS.lineHeightMiddle);
+  root.style.setProperty('--line-height-small', LAYOUT_TOKENS.lineHeightSmall);
+  root.style.setProperty('--line-height-large', LAYOUT_TOKENS.lineHeightLarge);
+
+  root.style.setProperty('--font-color', PALETTE.textBase);
+  root.style.setProperty('--font-color-disabled', PALETTE.textDisabled);
+  root.style.setProperty('--font-color-grey', PALETTE.textSecondary);
+  root.style.setProperty('--font-color-grey-1', PALETTE.textTertiary);
+  root.style.setProperty('--font-color-grey-2', PALETTE.borderBase);
+  root.style.setProperty('--font-color-grey-3', PALETTE.borderLight);
+  root.style.setProperty('--font-color-grey-4', PALETTE.borderLighter);
+
+  root.style.setProperty('--bg-color-white', PALETTE.bgWhite);
+  root.style.setProperty('--bg-color-grey', PALETTE.bgGrey);
+  root.style.setProperty('--bg-color-grey-1', PALETTE.bgGreyLight);
+  root.style.setProperty('--bg-color-grey-2', PALETTE.bgGreyNormal);
+  root.style.setProperty('--bg-color-grey-3', PALETTE.bgGreyDark);
+  root.style.setProperty('--bg-color-grey-4', PALETTE.bgBlueTint);
+
+  root.style.setProperty('--tag-default', PALETTE.tagDefault);
+  root.style.setProperty('--tag-success', PALETTE.tagSuccess);
+  root.style.setProperty('--tag-progress', PALETTE.tagProgress);
+  root.style.setProperty('--tag-danger', PALETTE.tagDanger);
+  root.style.setProperty('--tag-info', PALETTE.tagInfo);
+  root.style.setProperty('--tag-other', PALETTE.tagOther);
+
+  root.style.setProperty('--file-icon-word', PALETTE.fileIconWord);
+  root.style.setProperty('--file-icon-pdf', PALETTE.fileIconPdf);
+  root.style.setProperty('--file-icon-excel', PALETTE.fileIconExcel);
+  root.style.setProperty('--file-icon-ppt', PALETTE.fileIconPpt);
+  root.style.setProperty('--file-icon-image', PALETTE.fileIconImage);
+  root.style.setProperty('--file-icon-markdown', PALETTE.fileIconMarkdown);
+  root.style.setProperty('--file-icon-visio', PALETTE.fileIconVisio);
+  root.style.setProperty('--file-icon-archive', PALETTE.fileIconArchive);
+  root.style.setProperty('--file-icon-folder', PALETTE.fileIconFolder);
+  root.style.setProperty('--file-icon-other', PALETTE.fileIconOther);
+
+  root.style.setProperty('--tooltip-bg', PALETTE.tooltipBg);
+  root.style.setProperty('--tooltip-color', PALETTE.tooltipColor);
+  root.style.setProperty('--tooltip-info-bg', PALETTE.bgWhite);
+  root.style.setProperty('--tooltip-info-color', PALETTE.textBase);
+
   setColorVariants(root, 'primary-color', primaryColor);
   setColorVariants(root, 'success-color', PALETTE.success);
   setColorVariants(root, 'info-color', PALETTE.info);
   setColorVariants(root, 'error-color', PALETTE.error);
   setColorVariants(root, 'warning-color', PALETTE.warning);
+}
+
+/** 项目级 CSS 变量覆盖（在 applyThemeToCssVariables 之后调用） */
+export function applyCssTokenOverrides(
+  overrides: Record<string, string>,
+  target: HTMLElement = document.documentElement,
+): void {
+  Object.entries(overrides).forEach(([key, value]) => {
+    const varName = key.startsWith('--') ? key : `--${key}`;
+    target.style.setProperty(varName, value);
+  });
 }

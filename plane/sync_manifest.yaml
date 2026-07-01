@@ -90,3 +90,51 @@ tasks:
     kind: fix
     tags: [frontend, file]
     note: "fix(file): Office 容器固定 70vh 高度；FilePreviewLink nameWrap 支持超长文件名换行"
+  - id: M003-3
+    milestone: M003
+    name: 主题 Token 与 Tooltip/Button 对比度修复
+    status: 已完成
+    priority: P0
+    kind: fix
+    tags: [frontend, theme]
+    note: tokens.css、generateTheme Button.primaryColor、Tooltip z-index 与阴影
+  - id: M003-4
+    milestone: M003
+    name: Filter 组件增强与示例
+    status: 进行中
+    priority: P1
+    kind: feat
+    tags: [frontend, filter]
+    note: FilterSelect/DateRange/Trigger 重构、单测与 showcase
+  - id: M003-5
+    milestone: M003
+    name: ChatPanel 与子组件导出
+    status: 进行中
+    priority: P1
+    kind: feat
+    tags: [frontend, chat]
+    note: ChatPanel、ChatSuggestionRow、examples 与包根导出
+  - id: M003-6
+    milestone: M003
+    name: Icons 全局 CSS 与导出整理
+    status: 进行中
+    priority: P2
+    kind: fix
+    tags: [frontend, icons]
+    note: icons.global.css、index 导出
+  - id: M003-7
+    milestone: M003
+    name: version-check 升版防跳号脚本
+    status: 进行中
+    priority: P1
+    kind: chore
+    tags: [infra]
+    note: scripts/version-check.mjs、npm run version:check
+  - id: M003-8
+    milestone: M003
+    name: 发布 v0.1.13
+    status: 进行中
+    priority: P0
+    kind: chore
+    tags: [release]
+    note: chore(release) v0.1.13 — theme/filter/chat 累积发布
