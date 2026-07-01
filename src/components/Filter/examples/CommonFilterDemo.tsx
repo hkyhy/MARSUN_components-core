@@ -4,13 +4,14 @@ import {
   FilterInput,
   FilterNumberRange,
   FilterSelect,
+  type FilterSelectValue,
 } from '@/components';
 import React, { useState } from 'react';
 import { DEPT_OPTIONS, STATUS_OPTIONS } from './mock';
 
 const CommonFilterDemo: React.FC = () => {
-  const [status, setStatus] = useState<string | number | undefined>(undefined);
-  const [dept, setDept] = useState<string | number | undefined>(undefined);
+  const [status, setStatus] = useState<FilterSelectValue>(undefined);
+  const [dept, setDept] = useState<FilterSelectValue>(undefined);
   const [keyword, setKeyword] = useState<string | undefined>(undefined);
   const [dateRange, setDateRange] = useState<[string, string] | null>(null);
   const [scoreRange, setScoreRange] = useState<[number | undefined, number | undefined] | null>(

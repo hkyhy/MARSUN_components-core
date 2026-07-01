@@ -26,6 +26,8 @@ function matchPersonOptionSearch(opt: PersonOption, keyword: string): boolean {
 
 type FilterSelectValue = string | number | (string | number)[] | undefined;
 
+export type { FilterSelectValue };
+
 function arraysEqual(
   a?: (string | number)[],
   b?: (string | number)[],

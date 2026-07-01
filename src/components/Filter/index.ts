@@ -24,7 +24,7 @@ export { FilterPopover };
 
 // 下拉选择
 import FilterSelect from './FilterSelect';
-export type { FilterSelectProps } from './FilterSelect';
+export type { FilterSelectProps, FilterSelectValue } from './FilterSelect';
 export { FilterSelect };
 
 // 输入框

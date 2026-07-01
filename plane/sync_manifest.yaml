@@ -146,3 +146,11 @@ tasks:
     kind: chore
     tags: [infra, release]
     note: publish.yml on push tags v*；重推 v0.1.13 触发 npm publish
+  - id: M003-10
+    milestone: M003
+    name: Filter 示例 typecheck 修复以发布 v0.1.13
+    status: 已完成
+    priority: P0
+    kind: fix
+    tags: [frontend, filter, release]
+    note: FilterSelectValue 导出；CommonFilterDemo/FilterSelectDemo onChange 类型对齐
