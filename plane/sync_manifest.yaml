@@ -138,3 +138,11 @@ tasks:
     kind: chore
     tags: [release]
     note: chore(release) v0.1.13 — theme/filter/chat 累积发布
+  - id: M003-9
+    milestone: M003
+    name: npm 发布 workflow 支持 tag push 触发
+    status: 已完成
+    priority: P1
+    kind: chore
+    tags: [infra, release]
+    note: publish.yml on push tags v*；重推 v0.1.13 触发 npm publish
