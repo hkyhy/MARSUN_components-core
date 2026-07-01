@@ -154,3 +154,11 @@ tasks:
     kind: fix
     tags: [frontend, filter, release]
     note: FilterSelectValue 导出；CommonFilterDemo/FilterSelectDemo onChange 类型对齐
+  - id: M003-11
+    milestone: M003
+    name: package.json version 对齐 npm 0.1.15
+    status: 已完成
+    priority: P1
+    kind: chore
+    tags: [release, infra]
+    note: version 0.1.15 与 npm 一致；version-check 增加 --apply-published / version:sync

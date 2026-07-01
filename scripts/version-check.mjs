@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * 升版前核对：工作区 version 须为 max(HEAD commit, npm latest) 的 patch+1，禁止跳号。
+ * 核对 package.json version 与 npm / Git 一致。
  *
- *   node scripts/version-check.mjs
- *   node scripts/version-check.mjs --apply   # 写回 package.json version（不 commit）
+ *   node scripts/version-check.mjs              # 检查
+ *   node scripts/version-check.mjs --apply-published  # 对齐 npm 最新已发布版
+ *   node scripts/version-check.mjs --apply      # 设为 npm 最新 +1 patch（待发布）
  */
 import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -38,6 +39,12 @@ function readPkgVersion() {
   return JSON.parse(readFileSync(pkgPath, 'utf8')).version;
 }
 
+function writePkgVersion(version) {
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  pkg.version = version;
+  writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+}
+
 function gitHeadVersion() {
   try {
     const raw = execSync('git show HEAD:package.json', { cwd: root, encoding: 'utf8' });
@@ -58,48 +65,53 @@ function npmLatestVersion() {
   }
 }
 
-const apply = process.argv.includes('--apply');
+const applyPublished = process.argv.includes('--apply-published');
+const applyNext = process.argv.includes('--apply');
 const working = readPkgVersion();
 const head = gitHeadVersion();
 const npmLatest = npmLatestVersion();
-
-const baseline = [head, npmLatest].filter(Boolean).reduce(
-  (best, v) => (best === null || cmp(v, best) > 0 ? v : best),
-  null,
-);
-
-const suggested = baseline ? bumpPatch(baseline) : working;
+const nextPatch = npmLatest ? bumpPatch(npmLatest) : null;
 
 console.log('marsun_components-core version check');
 console.log(`  working (package.json):  ${working}`);
 console.log(`  last git commit:         ${head ?? '(none)'}`);
-console.log(`  npm latest:              ${npmLatest ?? '(unpublished / unreachable)'}`);
-console.log(`  baseline (max):          ${baseline ?? '(none)'}`);
-console.log(`  suggested next patch:    ${suggested}`);
+console.log(`  npm latest (published):  ${npmLatest ?? '(unreachable)'}`);
+if (npmLatest) console.log(`  next patch (unreleased): ${nextPatch}`);
 
 let ok = true;
-if (baseline && cmp(working, suggested) > 0) {
-  console.error(`\n✗ 工作区 ${working} 高于建议下一版 ${suggested}（相对 baseline ${baseline} 跳号）`);
-  ok = false;
-} else if (baseline && cmp(working, baseline) < 0) {
-  console.error(`\n✗ 工作区 ${working} 低于 baseline ${baseline}，不可回退`);
-  ok = false;
-} else if (baseline && working !== suggested && cmp(working, baseline) === 0) {
-  console.warn(`\n⚠ 工作区仍为 ${working}，发布前应升为 ${suggested}`);
-  ok = false;
+let target = null;
+
+if (npmLatest) {
+  if (cmp(working, npmLatest) < 0) {
+    console.error(`\n✗ 工作区 ${working} 落后于 npm 已发布 ${npmLatest}，package.json 须与实发版一致`);
+    console.error('  修复: node scripts/version-check.mjs --apply-published');
+    ok = false;
+    target = npmLatest;
+  } else if (cmp(working, npmLatest) === 0) {
+    console.log('\n✓ 与 npm 已发布版一致');
+  } else if (cmp(working, nextPatch) === 0) {
+    console.log('\n✓ 待发布下一 patch（npm +1）');
+  } else if (cmp(working, nextPatch) > 0) {
+    console.error(`\n✗ 工作区 ${working} 跳号（npm ${npmLatest}，下一版应为 ${nextPatch}）`);
+    ok = false;
+  } else {
+    console.error(`\n✗ 工作区 ${working} 无效：应为 ${npmLatest}（已发布）或 ${nextPatch}（待发布）`);
+    ok = false;
+  }
 } else {
-  console.log('\n✓ version 与 baseline 一致或为建议下一版');
+  console.log('\n⚠ 无法查询 npm，仅跳过 npm 对齐检查');
 }
 
-if (apply) {
-  if (working !== suggested) {
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-    pkg.version = suggested;
-    writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
-    console.log(`\n→ 已写回 package.json version = ${suggested}`);
-    process.exit(0);
-  }
-  console.log('\n→ version 已是建议值，未修改');
+if (applyPublished && npmLatest) {
+  writePkgVersion(npmLatest);
+  console.log(`\n→ 已写回 package.json version = ${npmLatest}（对齐 npm）`);
+  process.exit(0);
+}
+
+if (applyNext && npmLatest) {
+  const next = bumpPatch(npmLatest);
+  writePkgVersion(next);
+  console.log(`\n→ 已写回 package.json version = ${next}（待发布）`);
   process.exit(0);
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.13",
+  "version": "0.1.15",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -42,6 +42,7 @@
     "dev": "vite --config vite.config.dev.ts",
     "version:check": "node scripts/version-check.mjs",
     "version:check:apply": "node scripts/version-check.mjs --apply",
+    "version:sync": "node scripts/version-check.mjs --apply-published",
     "build": "tsc -p tsconfig.build.json && vite build --config vite.config.lib.ts && node -e \"const fs=require('fs');const path=require('path');fs.mkdirSync('dist/styles',{recursive:true});fs.mkdirSync('dist/theme',{recursive:true});fs.copyFileSync('dist/marsun-components-core.css','dist/styles/global.css');fs.copyFileSync(path.join('src','theme','tokens.css'),'dist/theme/tokens.css');\"",
     "prepublishOnly": "npm run build",
     "prebuild:showcase": "node dev/scripts/collect-examples.mjs",
