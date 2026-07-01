@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.12",
+    "version": "0.1.12",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -27,7 +27,8 @@
       "import": "./dist/theme/index.js",
       "types": "./dist/theme/index.d.ts"
     },
-    "./styles": "./dist/styles/global.css"
+    "./styles": "./dist/styles/global.css",
+    "./tokens": "./dist/theme/tokens.css"
   },
   "sideEffects": [
     "**/*.css",
@@ -39,7 +40,9 @@
   "scripts": {
     "predev": "node dev/scripts/collect-examples.mjs",
     "dev": "vite --config vite.config.dev.ts",
-    "build": "tsc -p tsconfig.build.json && vite build --config vite.config.lib.ts && node -e \"const fs=require('fs'); fs.mkdirSync('dist/styles',{recursive:true}); fs.copyFileSync('dist/marsun-components-core.css','dist/styles/global.css');\"",
+    "version:check": "node scripts/version-check.mjs",
+    "version:check:apply": "node scripts/version-check.mjs --apply",
+    "build": "tsc -p tsconfig.build.json && vite build --config vite.config.lib.ts && node -e \"const fs=require('fs');const path=require('path');fs.mkdirSync('dist/styles',{recursive:true});fs.mkdirSync('dist/theme',{recursive:true});fs.copyFileSync('dist/marsun-components-core.css','dist/styles/global.css');fs.copyFileSync(path.join('src','theme','tokens.css'),'dist/theme/tokens.css');\"",
     "prepublishOnly": "npm run build",
     "prebuild:showcase": "node dev/scripts/collect-examples.mjs",
     "build:showcase": "vite build --config vite.config.dev.ts",

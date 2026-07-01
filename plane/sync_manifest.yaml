@@ -125,7 +125,7 @@ tasks:
   - id: M003-7
     milestone: M003
     name: version-check 升版防跳号脚本
-    status: 进行中
+    status: 已完成
     priority: P1
     kind: chore
     tags: [infra]
