@@ -133,7 +133,7 @@ tasks:
   - id: M003-8
     milestone: M003
     name: 发布 v0.1.13
-    status: 进行中
+    status: 已完成
     priority: P0
     kind: chore
     tags: [release]

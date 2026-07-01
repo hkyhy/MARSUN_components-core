@@ -40,7 +40,8 @@ AgentHub/KnowledgeBase/examples/
 
 1. **从小到大、从简到繁**：先展示最简单的基础用法，再展示复杂场景
 2. **每个 Demo 一个独立目录**：`{DemoName}/index.tsx` + `style.module.scss`；Demo 目录名以 `Demo` 结尾，格式 `{组件/模块名}{场景}Demo`（如 `TagBasicDemo`、`SemanticTagReviewDemo`），**禁止**在通用模板中写死某一子模块的具体 Demo 名
-3. **场景化拆分**：不同使用场景（如基础用法 vs 审核状态场景 vs 多标签组合场景）各自独立 Demo
+3. **子组件须有独立 Demo**：对外导出的子组件（如 `FilterTrigger`、`MessageActions`）须有独立 Demo，不可仅在父组件 Demo 中间接出现
+4. **场景化拆分**：不同使用场景（如基础用法 vs 审核状态场景 vs 多标签组合场景）各自独立 Demo
 4. **单组件多 Demo**：如 Tag 组件拆分为 `SemanticTagBasicDemo` + `SemanticTagReviewDemo` + `SemanticTagMultiDemo`
 5. **示例中不嵌入代码展示**：源码展示由 `ExamplePage` 统一处理
 
@@ -141,11 +142,12 @@ src/components/Feedback/examples/meta.json              → /components/feedback
 
 每个 ExampleGroup 必须有 `apiDoc` 字段，在示例最下方用 API Table 展示：
 
-- 每个 Props 接口一个 Table
+- 每个 Props 接口一个 Table；`componentName` 与导出 Props 类型名一致（如 `ChatPanelProps`）
 - 列：属性 | 说明 | 类型 | 默认值
 - 必填属性用 `required: true` 标记
 - 继承 antd 的 Props 用 `...XxxProps` 行说明
 - 常量（如 `SEMANTIC_COLORS`）也作为独立 Table 展示
+- **marsun_components-core 新增导出时**：同任务更新 `meta.json` 的 `examples` 与 `apiDoc`
 
 ### 8.7 新增多子模块业务域
 

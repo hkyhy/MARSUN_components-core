@@ -15,11 +15,52 @@ npm install @hkyhy/marsun-components-core antd react react-dom
 
 | 项 | 说明 |
 | --- | --- |
-| 安装 | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.5"` |
+| 安装（**提交态**） | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.12"`（**具体 semver**，与 npm **已发布**版一致；升版流程见 [marsun-core-version.md](./marsun-core-version.md)） |
+| 本地联调（**勿改 package.json**） | 环境变量 + Vite alias，见下「本地链」；`package.json` / lockfile **保持 semver** |
 | 全局 Provider | 根节点包裹 `MarsunCoreProvider`（`auth` / `fetch` 由业务注入） |
-| 样式 | `import '@hkyhy/marsun-components-core/styles'`（按需） |
-| 主题 | `generateTheme` / `applyThemeToCssVariables` 从 `@hkyhy/marsun-components-core/theme` |
+| 样式 | `import '@hkyhy/marsun-components-core/styles'` |
+| 公共 Token | `import '@hkyhy/marsun-components-core/tokens'`（在 global.scss 或 main 最早加载） |
+| 主题 | `generateTheme` / `applyThemeToCssVariables` / `applyCssTokenOverrides` 从 `@hkyhy/marsun-components-core/theme` |
 | Showcase | https://hkyhy.github.io/MARSUN_components-core/ |
+
+### 本地链：环境变量（不写 `file:`）
+
+在业务项目 **`.env.local`**（gitignore，勿提交）：
+
+```bash
+# 启用本地 core（相对 vite.config.ts 所在目录的默认路径 ../../marsun_components-core）
+MARSUN_CORE_LOCAL=1
+
+# 或显式指定相对/绝对路径（优先于 MARSUN_CORE_LOCAL 默认）
+# MARSUN_CORE_LOCAL_PATH=../../marsun_components-core
+```
+
+`vite.config.ts` 接入（共享 helper 见 [marsun-core-vite-alias.mjs](./marsun-core-vite-alias.mjs)）：
+
+```ts
+import { marsunCoreViteAlias } from './scripts/marsun-core-vite-alias.mjs';
+// 或从 .cursor/skills/frontend-dev-spec/references/common/marsun-core-vite-alias.mjs 引用
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      ...marsunCoreViteAlias(__dirname, { defaultRelativePath: '../../marsun_components-core' }),
+    },
+  },
+});
+```
+
+联调前在 `marsun_components-core` 执行 `npm run build`（或 watch）。**禁止**为本地链改 `package.json` 为 `file:`；也**禁止** `npm link` 后 commit 带 `link: true` 的 lockfile。
+
+**禁止提交 `file:` 依赖**：Git 中的 `package.json` / `package-lock.json` 不得出现 `"@hkyhy/marsun-components-core": "file:..."`、指向 monorepo 兄弟目录的 `resolved`，或 `"link": true` 的本地链。Agent/commit 前检查：
+
+```bash
+rg '"@hkyhy/marsun-components-core".*file:' package.json   # 须为空
+rg 'marsun_components-core|"link": true' package-lock.json  # 须为空（相对路径链）
+```
+
+**semver 须已发布**：`package.json` 中的版本号须在 npm 上可解析。**core 升版**须先核对上次 Git commit 与 npm 最新版，再 patch +1，禁止跳号（如 0.1.12 → 0.1.21）；见 [marsun-core-version.md](./marsun-core-version.md) 与 `marsun_components-core` 的 `node scripts/version-check.mjs`。
 
 **导入约定**：npm 包内 Common 已拍平导出，优先从包根 import，业务 wrapper 仍从 `@/components/Common/...`：
 
@@ -52,6 +93,35 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 | `FileItemView` / `FileLink` / `FilePreview` | `File/*` |
 | `MarsunCoreProvider` | 新增，替代分散的 auth/fetch context |
 | `DepartmentSelect` 等 | **无**，保留本地业务 wrapper |
+
+### AgentHub 导出（`@hkyhy/marsun-components-core`）
+
+包根 `export *` 自 `AgentHub/Chat` 与 `AgentHub/KnowledgeBase`，优先从包根 import：
+
+```ts
+import {
+  ChatPanel,
+  SessionSidebar,
+  CitationPanel,
+  MessageActions,
+  useChat,
+  useSSECompletion,
+  DocumentTable,
+  KnowledgeCard,
+} from '@hkyhy/marsun-components-core';
+```
+
+| 子模块 | 主要导出 |
+| --- | --- |
+| Chat / Detail | `ChatPanel`, `ChatInput`, `MessageItem`, `MessageActions`, `CitationPanel`, `CitationInlineBadge`, `ThinkingSection`, `MermaidBlock`, … |
+| Chat / List | `ChatCard`, `ChatFilterBar`, `SessionSidebar` |
+| Chat / Action | `ChatCreateButton`, `ChatManageActionButtons`, `SessionActionButtons` |
+| Chat / hooks | `useChat`, `useChatSessions`, `useSSECompletion`, `useTypewriter`, `useAutoScrollToBottom` |
+| Chat / utils | `prepareCitationContent`, `parseSessionMessages`, `sanitizeMermaidChart`, … |
+| KnowledgeBase / Detail | `DocumentTable`, `ParseStatusTag` |
+| KnowledgeBase / List | `KnowledgeCard`, `KBFilterBar` |
+| KnowledgeBase / Action | `CreateButton`, `ManageActionButtons` |
+| 守卫 | `AgentHubAccessGuard`, `AgentHubSessionAccessGuard`, `AgentHubIndexRedirect` |
 
 ### Common 组件（本地或 npm）
 

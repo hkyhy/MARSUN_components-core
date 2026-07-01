@@ -7,6 +7,7 @@ description: |
   当页面或模块存在可滚动区域时，必须使用 VirtualScrollbar（来自 `@hkyhy/marsun-components-core`），禁止在主滚动区使用 overflow-auto / overflow-y-auto；Layout 级接入方式见 references/common/virtual-scrollbar.md。
   当创建组件示例（examples/meta.json）时，多子模块业务域（如 Common、AgentHub）须按 {Domain}/{Module}/examples/ 组织，脚本自动生成域级父 menu 与子 menu。
   每次新增或更改组件（含 Common 封装、Props/行为变更、全局接入方式变更）时，须同步更新对应的规范文档与提示词（SKILL.md、references、component-mapping 等），代码与规范同一任务内完成。
+  marsun_components-core 新增或变更导出时，须同步包根 index.ts、examples/meta.json（含子组件 Demo 与 apiDoc）及 component-mapping.md。
   此技能提供统一的目录结构、命名规范、组件拆分方式和代码模板，确保所有模块遵循一致的架构风格。
 ---
 
@@ -48,6 +49,11 @@ description: |
 22. **虚拟滚动条** `(common)`：主滚动区统一使用 `VirtualScrollbar`（`@/components/Common`），隐藏原生滚动条、thumb 悬浮不占宽度。`wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['{组件}-{功能}'])`；`ref` 指向 viewport 以支持 `scrollTo` / `onScroll` / 自动滚底。Layout 与 Chat 等全局接入点见 [common/virtual-scrollbar.md](references/common/virtual-scrollbar.md)。禁止在主滚动区写 `overflow-auto`；antd 弹层等无法包裹场景用 `global.scss` 细窄原生滚动条兜底
 23. **规范文档与提示词同步** `(common)`：**每次新增组件或更改组件**（新建 Common/Module 组件、调整 Props/行为/使用约束、变更 Layout 或全局接入方式），须在同一任务内同步更新对应规范文档与提示词，禁止只改代码不更规范。至少核对：`SKILL.md`（核心原则/description 触发条件）、`references/common/component-mapping.md`（Common 映射表）、专题 reference（如 `virtual-scrollbar.md`、`styles.md`）、`references/prompts/requirement-workflow.md`（检查清单/流程）、`examples/meta.json` 与 Demo（如有组件展示）
 24. **样式统一 SCSS Modules** `(common)`：（1）统一 SCSS，模块样式用 `style.module.scss`；（2）每个页面、每个含 JSX 的组件（含子组件、嵌套子组件、Demo）均维护 `style.module.scss`，无样式时保留空文件，目录 `{Name}/index.tsx` + `{Name}/style.module.scss`，禁止 TSX 与 scss 分离；（3）禁止 Tailwind CSS；（4）统一 `classNames(...)` 合并，禁止 `sc()` 等 helper，每个 className 含预定语义类名（kebab-case）；（5）预定 className 格式 `{组件名-kebab}-{功能定位-kebab}`，SCSS 同名，TS 用 `styles['kebab-name']`。公共样式放 `src/styles/`。详见 [common/styles.md](references/common/styles.md)
+25. **npm 全量导出** `(common)`：`marsun_components-core` 每个对外组件、子组件、hook、utils、types 须经模块 `index.ts` → 包根 `src/index.ts` 导出；禁止仅 showcase 内 deep import。新增符号时同步更新 `component-mapping.md` 与 `examples/meta.json`
+26. **公共 Token 三层接入** `(common)`：静态默认值 `import '@hkyhy/marsun-components-core/tokens'` → 运行时 `applyThemeToCssVariables(primaryColor)` → 项目 `tokens.css` 仅扩展领域变量。CSS 变量命名统一 `--primary-color` / `--font-color-grey-*`，禁止项目自建 `--color-primary` 平行体系。详见 [common/theme.md](references/common/theme.md)
+27. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；见 [task-naming.md](references/common/task-naming.md)「Commit 与 Plane 同步」
+28. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**（与 npm 已发布版一致），禁止 `file:` / lockfile `link: true`；**本地联调**用 `MARSUN_CORE_LOCAL` / `MARSUN_CORE_LOCAL_PATH` + Vite alias，**不得**改 package.json。详见 [component-mapping.md](references/common/component-mapping.md)、[marsun-core-vite-alias.mjs](references/common/marsun-core-vite-alias.mjs)
+29. **core 升版防跳号** `(common)`：改 `marsun_components-core/package.json` version 前须 `node scripts/version-check.mjs`，以 **上次 Git commit 版** 与 **npm 最新版** 的较大值为 baseline，下一版仅 **patch +1**；见 [marsun-core-version.md](references/common/marsun-core-version.md)
 
 ---
 

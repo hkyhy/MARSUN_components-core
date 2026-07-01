@@ -20,7 +20,20 @@ npm install @hkyhy/marsun-components-core antd react react-dom
 ## 快速开始
 
 ```tsx
-import { MarsunCoreProvider, SemanticTag, FetchTreeSelect } from '@hkyhy/marsun-components-core';
+import '@hkyhy/marsun-components-core/styles';
+import '@hkyhy/marsun-components-core/tokens';
+
+import {
+  MarsunCoreProvider,
+  SemanticTag,
+  ChatPanel,
+  SessionSidebar,
+  applyThemeToCssVariables,
+  generateTheme,
+} from '@hkyhy/marsun-components-core';
+
+const primaryColor = '#1677ff';
+applyThemeToCssVariables(primaryColor);
 
 <MarsunCoreProvider
   auth={{
@@ -29,16 +42,28 @@ import { MarsunCoreProvider, SemanticTag, FetchTreeSelect } from '@hkyhy/marsun-
     hasAnyRole: (roles) => roles.some((r) => userRoles.includes(r)),
   }}
   fetch={{ baseUrl: '/api', headers: { Authorization: `Bearer ${token}` } }}
+  primaryColor={primaryColor}
+  themeConfig={generateTheme(primaryColor)}
 >
   <SemanticTag color="primary">标签</SemanticTag>
-  <FetchTreeSelect
-    treeData={treeData}
-    // 或 fetch 模式：
-    // fetchUrl="/departments/tree"
-    // transformData={(raw) => raw.data}
+  <ChatPanel
+    messages={[]}
+    inputValue=""
+    onInputChange={() => {}}
+    onSend={() => {}}
   />
 </MarsunCoreProvider>
 ```
+
+### 主题与 Token
+
+| 导入路径 | 用途 |
+| --- | --- |
+| `@hkyhy/marsun-components-core/tokens` | 静态 CSS 变量默认值（布局、灰阶、标签色等） |
+| `@hkyhy/marsun-components-core/theme` | `generateTheme`, `applyThemeToCssVariables`, `PALETTE`, `LAYOUT_TOKENS` |
+| `@hkyhy/marsun-components-core/styles` | 组件库打包样式 |
+
+项目可在 `src/styles/tokens.css` 扩展领域变量，详见 showcase 内 `frontend-dev-spec` → `theme.md`。
 
 ## 设计原则
 
