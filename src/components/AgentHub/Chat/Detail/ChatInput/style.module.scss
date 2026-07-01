@@ -885,6 +885,12 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
+
+  :global(.ant-btn-icon) {
+    font-size: 16px;
+    line-height: 0;
+    color: inherit;
+  }
 }
 
 .chat-input-header {

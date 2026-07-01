@@ -15,10 +15,29 @@
       "sourcePath": "@/components/AgentHub/Chat/examples/ChatInputBasicDemo/index.tsx"
     },
     {
+      "title": "对话面板",
+      "description": "ChatPanel 消息列表 + 建议问题 + 输入框的完整对话容器",
+      "component": "@/components/AgentHub/Chat/examples/ChatPanelBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ChatPanelBasicDemo/index.tsx",
+      "block": true
+    },
+    {
       "title": "消息气泡",
       "description": "MessageItem 用户/助手消息、Markdown 渲染、流式打字与引用摘要",
       "component": "@/components/AgentHub/Chat/examples/MessageItemBasicDemo",
       "sourcePath": "@/components/AgentHub/Chat/examples/MessageItemBasicDemo/index.tsx"
+    },
+    {
+      "title": "消息操作栏",
+      "description": "MessageActions 编辑/复制/重发/点赞/点踩等操作按钮组",
+      "component": "@/components/AgentHub/Chat/examples/MessageActionsBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/MessageActionsBasicDemo/index.tsx"
+    },
+    {
+      "title": "思考过程",
+      "description": "ThinkingSection 展示助手推理过程，支持思考中动画",
+      "component": "@/components/AgentHub/Chat/examples/ThinkingSectionBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ThinkingSectionBasicDemo/index.tsx"
     },
     {
       "title": "引用来源面板",
@@ -116,6 +135,39 @@
           "type": "string",
           "defaultVal": "输入问题… Enter 发送，Shift+Enter 换行"
         }
+      ]
+    },
+    {
+      "componentName": "ChatPanelProps",
+      "rows": [
+        { "prop": "messages", "desc": "消息列表", "type": "ChatMessage[]", "required": true },
+        { "prop": "inputValue", "desc": "输入框内容", "type": "string", "required": true },
+        { "prop": "onInputChange", "desc": "输入变更", "type": "(v: string) => void", "required": true },
+        { "prop": "onSend", "desc": "发送", "type": "() => void", "required": true },
+        { "prop": "title", "desc": "面板标题", "type": "string" },
+        { "prop": "subtitle", "desc": "副标题", "type": "string" },
+        { "prop": "showSuggestions", "desc": "是否展示建议问题", "type": "boolean" },
+        { "prop": "suggestions", "desc": "建议问题列表", "type": "string[]" },
+        { "prop": "onCitationClick", "desc": "引用角标点击", "type": "MessageItemProps['onCitationClick']" }
+      ]
+    },
+    {
+      "componentName": "MessageActionsProps",
+      "rows": [
+        { "prop": "items", "desc": "操作项列表", "type": "MessageActionItem[]", "required": true },
+        { "prop": "align", "desc": "对齐方式", "type": "'left' | 'right'", "defaultVal": "right" },
+        { "prop": "editPopover", "desc": "编辑 Popover 配置", "type": "Omit<MessageEditPopoverProps, 'children'>" },
+        { "prop": "actionsVisible", "desc": "是否强制显示操作栏", "type": "boolean" }
+      ]
+    },
+    {
+      "componentName": "ThinkingSectionProps",
+      "rows": [
+        { "prop": "thinking", "desc": "思考过程文本", "type": "string", "required": true },
+        { "prop": "isThinking", "desc": "是否思考中", "type": "boolean" },
+        { "prop": "isTyping", "desc": "是否打字机输出", "type": "boolean" },
+        { "prop": "citations", "desc": "引用列表", "type": "Citation[]" },
+        { "prop": "onCitationClick", "desc": "引用角标点击", "type": "(citations: Citation[], index?: number) => void" }
       ]
     },
     {

@@ -109,7 +109,7 @@ tasks:
   - id: M003-5
     milestone: M003
     name: ChatPanel 与子组件导出
-    status: 进行中
+    status: 已完成
     priority: P1
     kind: feat
     tags: [frontend, chat]
