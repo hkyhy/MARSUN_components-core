@@ -13,8 +13,8 @@ interface FilterTriggerProps extends Omit<BaseFilterProps, 'filterKey'> {
 
 /**
  * 筛选触发按钮
- * 未选中：文字 + 下箭头
- * 选中：主题色背景 + 白字 + 上箭头
+ * 未选中：灰色文字 + 下箭头
+ * 已选：主题色文字 + 浅底 + 上箭头
  */
 const FilterTrigger: React.FC<FilterTriggerProps> = ({
   label,

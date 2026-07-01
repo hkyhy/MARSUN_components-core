@@ -24,12 +24,27 @@ function matchPersonOptionSearch(opt: PersonOption, keyword: string): boolean {
     .some((s) => String(s).toLowerCase().includes(lower));
 }
 
+type FilterSelectValue = string | number | (string | number)[] | undefined;
+
+function arraysEqual(
+  a?: (string | number)[],
+  b?: (string | number)[],
+): boolean {
+  if (!a?.length && !b?.length) return true;
+  if (!a || !b || a.length !== b.length) return false;
+  const sortedA = [...a].map(String).sort();
+  const sortedB = [...b].map(String).sort();
+  return sortedA.every((v, i) => v === sortedB[i]);
+}
+
 interface FilterSelectProps extends BaseFilterProps {
   options: FilterOption[];
-  value?: string | number | undefined;
-  onChange?: (value: string | number | undefined) => void;
+  value?: FilterSelectValue;
+  onChange?: (value: FilterSelectValue) => void;
   /** 默认值：与默认值相同时视为未筛选（不展示已选标签与选中态） */
   defaultValue?: string | number;
+  /** 多选默认值：与默认集合相同时视为未筛选 */
+  defaultValues?: (string | number)[];
   placeholder?: string;
   searchable?: boolean;
   /** 是否多选 */
@@ -39,13 +54,38 @@ interface FilterSelectProps extends BaseFilterProps {
 }
 
 function toDisplayValue(
-  value: string | number | undefined,
+  value: FilterSelectValue,
   defaultValue: string | number | undefined,
+  defaultValues: (string | number)[] | undefined,
   multiple: boolean,
 ): string | number | (string | number)[] | undefined {
-  if (multiple) return value ?? [];
+  if (multiple) {
+    const arr = Array.isArray(value) ? value : value != null && value !== '' ? [value] : [];
+    if (defaultValues?.length && arraysEqual(arr, defaultValues)) {
+      return [];
+    }
+    return arr;
+  }
   if (defaultValue !== undefined && value === defaultValue) return undefined;
   return value;
+}
+
+function formatValueLabel(
+  displayVal: string | number | (string | number)[] | undefined,
+  options: FilterOption[],
+  multiple: boolean,
+  isPersonVariant: boolean,
+): string {
+  if (multiple) {
+    const arr = (displayVal as (string | number)[]) || [];
+    return arr.length > 0
+      ? arr.map((v) => options.find((o) => o.value === v)?.label ?? String(v)).join('、')
+      : '';
+  }
+  if (displayVal == null) return '';
+  const opt = options.find((o) => o.value === displayVal);
+  if (!opt) return String(displayVal);
+  return isPersonVariant ? formatPersonValueLabel(opt as PersonOption) : opt.label;
 }
 
 const FilterSelect: React.FC<FilterSelectProps> = ({
@@ -55,6 +95,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   value,
   onChange,
   defaultValue,
+  defaultValues,
   searchable = false,
   multiple = false,
   variant = 'default',
@@ -65,7 +106,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   const isPersonVariant = variant === 'person';
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const displayValue = toDisplayValue(value, defaultValue, multiple);
+  const displayValue = toDisplayValue(value, defaultValue, defaultValues, multiple);
   const [localValue, setLocalValue] = useState<string | number | (string | number)[] | undefined>(
     displayValue ?? (multiple ? [] : undefined),
   );
@@ -82,11 +123,16 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
     [],
   );
 
+  const revertToCommitted = () => {
+    const next = displayValue ?? (multiple ? [] : undefined);
+    setLocalValue(next);
+    setSearchText('');
+  };
+
   // 同步外部 value 到内部 localValue
   useEffect(() => {
-    const nextDisplayValue = toDisplayValue(value, defaultValue, multiple);
+    const nextDisplayValue = toDisplayValue(value, defaultValue, defaultValues, multiple);
     setLocalValue(nextDisplayValue ?? (multiple ? [] : undefined));
-    // 外部清空时同时清空搜索文本
     if (
       nextDisplayValue === undefined ||
       nextDisplayValue === null ||
@@ -94,21 +140,12 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
     ) {
       setSearchText('');
     }
-  }, [value, defaultValue, multiple]);
+  }, [value, defaultValue, defaultValues, multiple]);
 
-  // 从 options 反查 valueLabel
-  const valueLabel = useMemo(() => {
-    if (multiple) {
-      const arr = (localValue as (string | number)[]) || [];
-      return arr.length > 0
-        ? arr.map((v) => options.find((o) => o.value === v)?.label ?? String(v)).join('、')
-        : '';
-    }
-    if (localValue == null) return '';
-    const opt = options.find((o) => o.value === localValue);
-    if (!opt) return String(localValue);
-    return isPersonVariant ? formatPersonValueLabel(opt as PersonOption) : opt.label;
-  }, [options, localValue, multiple, isPersonVariant]);
+  const committedValueLabel = useMemo(
+    () => formatValueLabel(displayValue, options, multiple, isPersonVariant),
+    [options, displayValue, multiple, isPersonVariant],
+  );
 
   useEffect(() => {
     if (!registerFn) return;
@@ -117,18 +154,17 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       registerFn.unregister(filterKey);
       return;
     }
-    if (valueLabel && !multiple) {
-      // 多选由 CommonFilter 的 clearAll 统一处理，单选直接注册
+    if (committedValueLabel) {
       registerFn.register(filterKey, {
         label,
-        valueLabel,
+        valueLabel: committedValueLabel,
         onRemove: handleRemove,
       });
     } else {
       registerFn.unregister(filterKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valueLabel, filterKey, label, hidden, display, multiple, handleRemove]);
+  }, [committedValueLabel, filterKey, label, hidden, display, handleRemove]);
 
   const visibilityCtx = { filterKey, label, value };
   if (!resolveFilterVisible({ display, hidden }, visibilityCtx)) return null;
@@ -142,15 +178,20 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
     : options;
 
   const handleConfirm = () => {
-    onChange?.(localValue as string | number | undefined);
+    onChange?.(localValue as FilterSelectValue);
     setOpen(false);
   };
 
-  const handleReset = () => {
-    setLocalValue(multiple ? [] : undefined);
-    setSearchText('');
-    onChange?.(undefined);
+  const handleDiscardDraft = () => {
+    revertToCommitted();
     setOpen(false);
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && multiple) {
+      revertToCommitted();
+    }
+    setOpen(nextOpen);
   };
 
   const handleClickOption = (optVal: string | number) => {
@@ -164,7 +205,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       }
       setLocalValue(next);
       onChange?.(next);
-      setOpen(false); // 单选自动收起
+      setOpen(false);
     }
   };
 
@@ -174,21 +215,19 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
     setLocalValue(next);
   };
 
+  const isActive = multiple
+    ? Array.isArray(displayValue) && displayValue.length > 0
+    : displayValue != null && displayValue !== '';
+
   return (
     <FilterPopover
       label={label}
-      active={
-        active ||
-        (multiple
-          ? Array.isArray(localValue) && localValue.length > 0
-          : localValue != null && localValue !== '')
-      }
+      active={active || isActive}
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={handleOpenChange}
       onConfirm={multiple ? handleConfirm : undefined}
-      onReset={multiple ? handleReset : undefined}
+      onReset={multiple ? handleDiscardDraft : undefined}
     >
-      {/* 搜索框 */}
       {searchable && (
         <Search
           placeholder={`搜索${label}`}
@@ -200,7 +239,6 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
         />
       )}
 
-      {/* 选项列表 */}
       <div className={classNames('filter-select-options', styles['filter-select-options'])}>
         {filteredOptions.map((opt) => (
           <div
@@ -210,10 +248,16 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
                 localValue === opt.value &&
                 classNames('filter-select-option-selected', styles['filter-select-option-selected']),
             )}
-            onClick={() => handleClickOption(opt.value)}
+            onClick={() =>
+              multiple ? handleToggleMulti(opt.value) : handleClickOption(opt.value)
+            }
           >
             {multiple && (
-              <Checkbox checked={(localValue as (string | number)[])?.includes(opt.value)} />
+              <Checkbox
+                checked={(localValue as (string | number)[])?.includes(opt.value)}
+                onChange={() => handleToggleMulti(opt.value)}
+                onClick={(e) => e.stopPropagation()}
+              />
             )}
             {isPersonVariant ? (
               <PersonOptionRow option={opt as PersonOption} />
@@ -230,7 +274,6 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
         )}
       </div>
 
-      {/* 多选已选 */}
       {multiple && (localValue as (string | number)[])?.length > 0 && (
         <div className={classNames('filter-select-selected-bar', styles['filter-select-selected-bar'])}>
           <div className={classNames('filter-select-selected-label', styles['filter-select-selected-label'])}>已选：</div>

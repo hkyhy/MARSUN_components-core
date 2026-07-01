@@ -20,10 +20,29 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatInputBasicDemo/index.tsx?raw')
       },
       {
+        title: '对话面板',
+        description: 'ChatPanel 消息列表 + 建议问题 + 输入框的完整对话容器',
+        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ChatPanelBasicDemo')),
+        sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatPanelBasicDemo/index.tsx?raw'),
+        block: true
+      },
+      {
         title: '消息气泡',
         description: 'MessageItem 用户/助手消息、Markdown 渲染、流式打字与引用摘要',
         component: React.lazy(() => import('@/components/AgentHub/Chat/examples/MessageItemBasicDemo')),
         sourcePath: () => import('@/components/AgentHub/Chat/examples/MessageItemBasicDemo/index.tsx?raw')
+      },
+      {
+        title: '消息操作栏',
+        description: 'MessageActions 编辑/复制/重发/点赞/点踩等操作按钮组',
+        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/MessageActionsBasicDemo')),
+        sourcePath: () => import('@/components/AgentHub/Chat/examples/MessageActionsBasicDemo/index.tsx?raw')
+      },
+      {
+        title: '思考过程',
+        description: 'ThinkingSection 展示助手推理过程，支持思考中动画',
+        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ThinkingSectionBasicDemo')),
+        sourcePath: () => import('@/components/AgentHub/Chat/examples/ThinkingSectionBasicDemo/index.tsx?raw')
       },
       {
         title: '引用来源面板',
@@ -83,6 +102,39 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'onSend', desc: '发送回调', type: '() => void', required: true },
           { prop: 'onStop', desc: '停止生成回调', type: '() => void' },
           { prop: 'placeholder', desc: '占位提示', type: 'string', defaultVal: '输入问题… Enter 发送，Shift+Enter 换行' }
+        ]
+      },
+      {
+        componentName: 'ChatPanelProps',
+        rows: [
+          { prop: 'messages', desc: '消息列表', type: 'ChatMessage[]', required: true },
+          { prop: 'inputValue', desc: '输入框内容', type: 'string', required: true },
+          { prop: 'onInputChange', desc: '输入变更', type: '(v: string) => void', required: true },
+          { prop: 'onSend', desc: '发送', type: '() => void', required: true },
+          { prop: 'title', desc: '面板标题', type: 'string' },
+          { prop: 'subtitle', desc: '副标题', type: 'string' },
+          { prop: 'showSuggestions', desc: '是否展示建议问题', type: 'boolean' },
+          { prop: 'suggestions', desc: '建议问题列表', type: 'string[]' },
+          { prop: 'onCitationClick', desc: '引用角标点击', type: 'MessageItemProps[\'onCitationClick\']' }
+        ]
+      },
+      {
+        componentName: 'MessageActionsProps',
+        rows: [
+          { prop: 'items', desc: '操作项列表', type: 'MessageActionItem[]', required: true },
+          { prop: 'align', desc: '对齐方式', type: '\'left\' | \'right\'', defaultVal: 'right' },
+          { prop: 'editPopover', desc: '编辑 Popover 配置', type: 'Omit<MessageEditPopoverProps, \'children\'>' },
+          { prop: 'actionsVisible', desc: '是否强制显示操作栏', type: 'boolean' }
+        ]
+      },
+      {
+        componentName: 'ThinkingSectionProps',
+        rows: [
+          { prop: 'thinking', desc: '思考过程文本', type: 'string', required: true },
+          { prop: 'isThinking', desc: '是否思考中', type: 'boolean' },
+          { prop: 'isTyping', desc: '是否打字机输出', type: 'boolean' },
+          { prop: 'citations', desc: '引用列表', type: 'Citation[]' },
+          { prop: 'onCitationClick', desc: '引用角标点击', type: '(citations: Citation[], index?: number) => void' }
         ]
       },
       {
@@ -402,6 +454,24 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: 'FilterTreeSelect 部门树形下拉选择，支持搜索和自动加载',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTreeSelectDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterTreeSelectDemo/index.tsx?raw')
+      },
+      {
+        title: '筛选触发器',
+        description: 'FilterTrigger 未选中 / 已选中 / 可展开三种状态',
+        component: React.lazy(() => import('@/components/Filter/examples/FilterTriggerDemo')),
+        sourcePath: () => import('@/components/Filter/examples/FilterTriggerDemo/index.tsx?raw')
+      },
+      {
+        title: '筛选面板',
+        description: 'FilterPanel 带确定/取消底栏的面板容器',
+        component: React.lazy(() => import('@/components/Filter/examples/FilterPanelDemo')),
+        sourcePath: () => import('@/components/Filter/examples/FilterPanelDemo/index.tsx?raw')
+      },
+      {
+        title: '筛选 Popover',
+        description: 'FilterPopover 触发器 + 面板组合，确定后提交草稿值',
+        component: React.lazy(() => import('@/components/Filter/examples/FilterPopoverDemo')),
+        sourcePath: () => import('@/components/Filter/examples/FilterPopoverDemo/index.tsx?raw')
       }
     ],
     apiDoc: [
@@ -468,6 +538,39 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'onClearAll', desc: '清空全部额外回调（内部已通过 onRemove 自动清空）', type: '() => void' },
           { prop: 'label', desc: '左侧标签文字', type: 'string', defaultVal: '"筛选"' },
           { prop: 'selectedTagMaxLength', desc: '已选标签 value 最大字符数，超出显示 ... 并在 hover 时展示完整内容', type: 'number', defaultVal: '20' }
+        ]
+      },
+      {
+        componentName: 'FilterTriggerProps',
+        rows: [
+          { prop: 'label', desc: '显示标签', type: 'string', required: true },
+          { prop: 'active', desc: '是否有值（控制选中态样式）', type: 'boolean' },
+          { prop: 'open', desc: 'Popover 展开态（控制箭头方向）', type: 'boolean' },
+          { prop: 'onClick', desc: '点击回调', type: '(e: React.MouseEvent) => void' },
+          { prop: 'children', desc: '自定义触发内容', type: 'React.ReactNode' }
+        ]
+      },
+      {
+        componentName: 'FilterPanelProps',
+        rows: [
+          { prop: 'children', desc: '面板内容', type: 'React.ReactNode', required: true },
+          { prop: 'onConfirm', desc: '确定回调', type: '() => void' },
+          { prop: 'onReset', desc: '取消回调', type: '() => void' },
+          { prop: 'confirmText', desc: '确定按钮文字', type: 'string', defaultVal: '确定' },
+          { prop: 'width', desc: '面板最大宽度', type: 'number', defaultVal: '360' }
+        ]
+      },
+      {
+        componentName: 'FilterPopoverProps',
+        rows: [
+          { prop: 'label', desc: '筛选项标签', type: 'string', required: true },
+          { prop: 'active', desc: '是否有值', type: 'boolean' },
+          { prop: 'children', desc: '面板内容', type: 'React.ReactNode', required: true },
+          { prop: 'open', desc: '受控展开状态', type: 'boolean' },
+          { prop: 'onOpenChange', desc: '展开状态变更', type: '(open: boolean) => void' },
+          { prop: 'onConfirm', desc: '确定回调', type: '() => void' },
+          { prop: 'onReset', desc: '取消回调', type: '() => void' },
+          { prop: 'width', desc: '面板宽度', type: 'number' }
         ]
       }
     ]

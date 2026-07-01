@@ -37,8 +37,16 @@ const BUILT_IN_OPTIONS: QuickOption[] = [
 interface FilterDateRangeProps extends BaseFilterProps {
   value?: [string, string] | null;
   onChange?: (value: [string, string] | null) => void;
+  /** 默认区间：与默认相同时视为未筛选 */
+  defaultValue?: [string, string];
   showQuickOptions?: boolean;
   quickOptions?: QuickOption[];
+}
+
+function isSameRange(a?: [string, string] | null, b?: [string, string]): boolean {
+  if (!a?.[0] || !a?.[1]) return !b?.[0] || !b?.[1];
+  if (!b?.[0] || !b?.[1]) return false;
+  return a[0] === b[0] && a[1] === b[1];
 }
 
 const FilterDateRange: React.FC<FilterDateRangeProps> = ({
@@ -46,32 +54,43 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   label,
   value,
   onChange,
+  defaultValue,
   showQuickOptions = true,
   quickOptions,
   active,
   hidden,
 }) => {
+  const [open, setOpen] = useState(false);
   const [dates, setDates] = useState<[Dayjs | null, Dayjs | null] | null>(
     value ? [dayjs(value[0]), dayjs(value[1])] : null,
   );
   const [activeQuickKey, setActiveQuickKey] = useState<string | null>(null);
 
-  // ── 自动注册到 CommonFilter ──
   const registerFn = useFilterRegister();
 
-  // 同步外部 value 到内部 dates
+  const revertToCommitted = () => {
+    if (value?.[0] && value?.[1]) {
+      setDates([dayjs(value[0]), dayjs(value[1])]);
+    } else {
+      setDates(null);
+    }
+    setActiveQuickKey(null);
+  };
+
   useEffect(() => {
-    if (value) {
+    if (value?.[0] && value?.[1]) {
       setDates([dayjs(value[0]), dayjs(value[1])]);
     } else {
       setDates(null);
     }
   }, [value]);
 
+  const hasNonDefaultValue = !!value?.[0] && !isSameRange(value, defaultValue);
+
   const valueLabel = useMemo(() => {
-    if (!value?.[0] || !value?.[1]) return '';
+    if (!hasNonDefaultValue || !value?.[0] || !value?.[1]) return '';
     return `${value[0]} ~ ${value[1]}`;
-  }, [value]);
+  }, [hasNonDefaultValue, value]);
 
   useEffect(() => {
     if (!registerFn) return;
@@ -87,7 +106,6 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valueLabel, filterKey, label, hidden]);
 
-  // hidden 处理 - 必须在所有 hooks 之后
   if (resolveHidden(hidden)) return null;
 
   const handleConfirm = () => {
@@ -96,12 +114,19 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
     } else {
       onChange?.(null);
     }
+    setOpen(false);
   };
 
-  const handleReset = () => {
-    setDates(null);
-    setActiveQuickKey(null);
-    onChange?.(null);
+  const handleDiscardDraft = () => {
+    revertToCommitted();
+    setOpen(false);
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      revertToCommitted();
+    }
+    setOpen(nextOpen);
   };
 
   const opts = quickOptions ?? (showQuickOptions ? BUILT_IN_OPTIONS : []);
@@ -109,11 +134,12 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   return (
     <FilterPopover
       label={label}
-      active={active || !!value?.[0]}
+      active={active || hasNonDefaultValue}
+      open={open}
+      onOpenChange={handleOpenChange}
       onConfirm={handleConfirm}
-      onReset={handleReset}
+      onReset={handleDiscardDraft}
     >
-      {/* 快捷选项 */}
       {opts.length > 0 && (
         <div className={classNames('filter-date-range-quick-options', styles['filter-date-range-quick-options'])}>
           {opts.map((opt) => (

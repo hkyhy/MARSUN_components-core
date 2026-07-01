@@ -38,6 +38,24 @@
       "description": "FilterTreeSelect 部门树形下拉选择，支持搜索和自动加载",
       "component": "@/components/Filter/examples/FilterTreeSelectDemo",
       "sourcePath": "@/components/Filter/examples/FilterTreeSelectDemo/index.tsx"
+    },
+    {
+      "title": "筛选触发器",
+      "description": "FilterTrigger 未选中 / 已选中 / 可展开三种状态",
+      "component": "@/components/Filter/examples/FilterTriggerDemo",
+      "sourcePath": "@/components/Filter/examples/FilterTriggerDemo/index.tsx"
+    },
+    {
+      "title": "筛选面板",
+      "description": "FilterPanel 带确定/取消底栏的面板容器",
+      "component": "@/components/Filter/examples/FilterPanelDemo",
+      "sourcePath": "@/components/Filter/examples/FilterPanelDemo/index.tsx"
+    },
+    {
+      "title": "筛选 Popover",
+      "description": "FilterPopover 触发器 + 面板组合，确定后提交草稿值",
+      "component": "@/components/Filter/examples/FilterPopoverDemo",
+      "sourcePath": "@/components/Filter/examples/FilterPopoverDemo/index.tsx"
     }
   ],
   "apiDoc": [
@@ -234,6 +252,39 @@
           "type": "number",
           "defaultVal": "20"
         }
+      ]
+    },
+    {
+      "componentName": "FilterTriggerProps",
+      "rows": [
+        { "prop": "label", "desc": "显示标签", "type": "string", "required": true },
+        { "prop": "active", "desc": "是否有值（控制选中态样式）", "type": "boolean" },
+        { "prop": "open", "desc": "Popover 展开态（控制箭头方向）", "type": "boolean" },
+        { "prop": "onClick", "desc": "点击回调", "type": "(e: React.MouseEvent) => void" },
+        { "prop": "children", "desc": "自定义触发内容", "type": "React.ReactNode" }
+      ]
+    },
+    {
+      "componentName": "FilterPanelProps",
+      "rows": [
+        { "prop": "children", "desc": "面板内容", "type": "React.ReactNode", "required": true },
+        { "prop": "onConfirm", "desc": "确定回调", "type": "() => void" },
+        { "prop": "onReset", "desc": "取消回调", "type": "() => void" },
+        { "prop": "confirmText", "desc": "确定按钮文字", "type": "string", "defaultVal": "确定" },
+        { "prop": "width", "desc": "面板最大宽度", "type": "number", "defaultVal": "360" }
+      ]
+    },
+    {
+      "componentName": "FilterPopoverProps",
+      "rows": [
+        { "prop": "label", "desc": "筛选项标签", "type": "string", "required": true },
+        { "prop": "active", "desc": "是否有值", "type": "boolean" },
+        { "prop": "children", "desc": "面板内容", "type": "React.ReactNode", "required": true },
+        { "prop": "open", "desc": "受控展开状态", "type": "boolean" },
+        { "prop": "onOpenChange", "desc": "展开状态变更", "type": "(open: boolean) => void" },
+        { "prop": "onConfirm", "desc": "确定回调", "type": "() => void" },
+        { "prop": "onReset", "desc": "取消回调", "type": "() => void" },
+        { "prop": "width", "desc": "面板宽度", "type": "number" }
       ]
     }
   ]
