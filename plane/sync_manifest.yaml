@@ -117,7 +117,7 @@ tasks:
   - id: M003-6
     milestone: M003
     name: Icons 全局 CSS 与导出整理
-    status: 进行中
+    status: 已完成
     priority: P2
     kind: fix
     tags: [frontend, icons]

@@ -1,4 +1,5 @@
 import type { LucideIcon, LucideProps } from 'lucide-react';
+import './icons.global.css';
 import {
   ArrowLeft as ArrowLeftIcon,
   ArrowLeftRight as ArrowLeftRightIcon,
@@ -82,12 +83,19 @@ export type IconProps = LucideProps & {
 
 const createIcon = (Icon: LucideIcon, options?: { filled?: boolean }) => {
   const WrappedIcon = React.forwardRef<SVGSVGElement, IconProps>(
-    ({ spin, rotate, className, style, strokeWidth, fill, ...props }, ref) => (
+    ({ spin, rotate, className, style, strokeWidth, fill, color, ...props }, ref) => (
       <Icon
         ref={ref}
         size="1em"
-        className={[className, spin ? 'animate-spin' : ''].filter(Boolean).join(' ') || undefined}
-        style={rotate ? { ...style, transform: `rotate(${rotate}deg)` } : style}
+        className={['marsun-icon', className, spin ? 'animate-spin' : ''].filter(Boolean).join(' ') || undefined}
+        style={{
+          display: 'inline-block',
+          verticalAlign: '-0.125em',
+          ...(color ? {} : { color: 'inherit' }),
+          ...(rotate ? { transform: `rotate(${rotate}deg)` } : null),
+          ...style,
+        }}
+        color={color ?? 'currentColor'}
         strokeWidth={strokeWidth ?? (options?.filled ? 0 : 2)}
         fill={fill ?? (options?.filled ? 'currentColor' : 'none')}
         aria-hidden={props['aria-label'] ? undefined : true}
