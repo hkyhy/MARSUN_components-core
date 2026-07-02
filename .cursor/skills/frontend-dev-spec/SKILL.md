@@ -52,8 +52,8 @@ description: |
 25. **npm 全量导出** `(common)`：`marsun_components-core` 每个对外组件、子组件、hook、utils、types 须经模块 `index.ts` → 包根 `src/index.ts` 导出；禁止仅 showcase 内 deep import。新增符号时同步更新 `component-mapping.md` 与 `examples/meta.json`
 26. **公共 Token 三层接入** `(common)`：静态默认值 `import '@hkyhy/marsun-components-core/tokens'` → 运行时 `applyThemeToCssVariables(primaryColor)` → 项目 `tokens.css` 仅扩展领域变量。CSS 变量命名统一 `--primary-color` / `--font-color-grey-*`，禁止项目自建 `--color-primary` 平行体系。详见 [common/theme.md](references/common/theme.md)
 27. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；见 [task-naming.md](references/common/task-naming.md)「Commit 与 Plane 同步」
-28. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**（与 npm 已发布版一致），禁止 `file:` / lockfile `link: true`；**本地联调**用 `MARSUN_CORE_LOCAL` / `MARSUN_CORE_LOCAL_PATH` + Vite alias，**不得**改 package.json。详见 [component-mapping.md](references/common/component-mapping.md)、[marsun-core-vite-alias.mjs](references/common/marsun-core-vite-alias.mjs)
-29. **core 升版防跳号** `(common)`：改 `marsun_components-core/package.json` version 前须 `node scripts/version-check.mjs`，以 **上次 Git commit 版** 与 **npm 最新版** 的较大值为 baseline，下一版仅 **patch +1**；见 [marsun-core-version.md](references/common/marsun-core-version.md)
+28. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**，且**版本号与 npm 已发布最新版一致**（如 `^0.1.15`）；禁止 `file:` / lockfile `link: true`；本地联调用 `MARSUN_CORE_LOCAL` + Vite alias。详见 [component-mapping.md](references/common/component-mapping.md)
+29. **core 版本与实版一致** `(common)`：`marsun_components-core/package.json` 的 `version` **必须**等于 npm 已发布版（发布后）或 npm+1 patch（待发布）；业务依赖须同步；提交前 `npm view` + `node scripts/version-check.mjs`。见 [marsun-core-version.md](references/common/marsun-core-version.md)
 
 ---
 

@@ -15,7 +15,7 @@ npm install @hkyhy/marsun-components-core antd react react-dom
 
 | 项 | 说明 |
 | --- | --- |
-| 安装（**提交态**） | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.12"`（**具体 semver**，与 npm **已发布**版一致；升版流程见 [marsun-core-version.md](./marsun-core-version.md)） |
+| 安装（**提交态**） | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.15"`（**须与 npm 已发布最新版一致**；核对 `npm view @hkyhy/marsun-components-core version`） |
 | 本地联调（**勿改 package.json**） | 环境变量 + Vite alias，见下「本地链」；`package.json` / lockfile **保持 semver** |
 | 全局 Provider | 根节点包裹 `MarsunCoreProvider`（`auth` / `fetch` 由业务注入） |
 | 样式 | `import '@hkyhy/marsun-components-core/styles'` |
@@ -60,7 +60,22 @@ rg '"@hkyhy/marsun-components-core".*file:' package.json   # 须为空
 rg 'marsun_components-core|"link": true' package-lock.json  # 须为空（相对路径链）
 ```
 
-**semver 须已发布**：`package.json` 中的版本号须在 npm 上可解析。**core 升版**须先核对上次 Git commit 与 npm 最新版，再 patch +1，禁止跳号（如 0.1.12 → 0.1.21）；见 [marsun-core-version.md](./marsun-core-version.md) 与 `marsun_components-core` 的 `node scripts/version-check.mjs`。
+**semver 须已发布且与实版一致**：
+
+| 仓库 | `package.json` 字段 | 规则 |
+| --- | --- | --- |
+| `marsun_components-core` | `"version"` | **必须**等于 npm 已发布最新版（发布后）或「npm 最新 +1 patch」（待发布前唯一允许超前） |
+| 业务项目 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版（如 `^0.1.15`），与 lockfile 解析版本一致 |
+
+提交前核对：
+
+```bash
+npm view @hkyhy/marsun-components-core version --registry https://registry.npmjs.org
+# core 仓库：node scripts/version-check.mjs
+# 业务项目：rg '"@hkyhy/marsun-components-core"' package.json
+```
+
+**禁止** package.json 版本落后于 npm（如 npm 0.1.15 而文件仍写 0.1.13）、跳号、或 `file:` 链。升版流程见 [marsun-core-version.md](./marsun-core-version.md)。
 
 **导入约定**：npm 包内 Common 已拍平导出，优先从包根 import，业务 wrapper 仍从 `@/components/Common/...`：
 
