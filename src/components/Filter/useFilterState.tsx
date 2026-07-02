@@ -11,6 +11,8 @@ interface FilterRegistration {
   valueLabel: string;
   /** 移除回调 */
   onRemove: () => void;
+  /** 是否允许移除标签，默认 true */
+  removable?: boolean;
 }
 
 /** Context 类型 */
@@ -55,7 +57,13 @@ export function useFilterState(): UseFilterStateReturn {
   const register = useCallback((key: string, reg: FilterRegistration) => {
     setRegistrations((prev) => {
       const existing = prev[key];
-      if (existing?.label === reg.label && existing?.valueLabel === reg.valueLabel) {
+      if (
+        existing &&
+        existing.label === reg.label &&
+        existing.valueLabel === reg.valueLabel &&
+        (existing.removable ?? true) === (reg.removable ?? true) &&
+        existing.onRemove === reg.onRemove
+      ) {
         return prev;
       }
       return { ...prev, [key]: reg };
@@ -85,6 +93,7 @@ export function useFilterState(): UseFilterStateReturn {
         label: r.label,
         valueLabel: r.valueLabel,
         onRemove: r.onRemove,
+        removable: r.removable ?? true,
       }));
   }, [registrations]);
 

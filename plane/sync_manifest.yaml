@@ -162,3 +162,11 @@ tasks:
     kind: chore
     tags: [release, infra]
     note: version 0.1.15 与 npm 一致；version-check 增加 --apply-published / version:sync
+  - id: M003-12
+    milestone: M003
+    name: FilterSelect minSelection 与不可移除标签
+    status: 已完成
+    priority: P1
+    kind: feature
+    tags: [frontend, filter]
+    note: minSelection 下限、CommonFilter 标签 X disabled、清空后注册同步

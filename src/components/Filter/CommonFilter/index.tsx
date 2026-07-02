@@ -118,9 +118,14 @@ const CommonFilter: React.FC<CommonFilterProps> = ({
                       </span>
                       {valueNode}
                       <X
-                        className={classNames('common-filter-tag-close', styles['common-filter-tag-close'])}
+                        className={classNames(
+                          'common-filter-tag-close',
+                          styles['common-filter-tag-close'],
+                          s.removable === false && styles['common-filter-tag-close-disabled'],
+                        )}
                         onClick={(e) => {
                           e.preventDefault();
+                          if (s.removable === false) return;
                           s.onRemove();
                         }}
                       />

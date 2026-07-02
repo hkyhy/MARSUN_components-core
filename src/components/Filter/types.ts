@@ -21,6 +21,8 @@ export interface SelectedItem {
   label: string;
   valueLabel: string;
   onRemove: () => void;
+  /** 为 false 时不允许移除（如多选至少保留一项） */
+  removable?: boolean;
 }
 
 /** 所有筛选组件共用的 Props */

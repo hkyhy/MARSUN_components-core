@@ -66,6 +66,15 @@
   font-size: 12px;
 }
 
+.filter-select-selected-tag-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .filter-select-selected-remove {
   font-size: 10px;
+}
+
+.filter-select-selected-remove-disabled {
+  opacity: 0.45;
 }

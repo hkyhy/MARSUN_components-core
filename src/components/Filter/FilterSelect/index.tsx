@@ -51,6 +51,8 @@ interface FilterSelectProps extends BaseFilterProps {
   searchable?: boolean;
   /** 是否多选 */
   multiple?: boolean;
+  /** 多选至少保留项数；达到下限时不允许移除已选标签 */
+  minSelection?: number;
   /** 人员选项：展示部门与联系方式 */
   variant?: 'default' | 'person';
 }
@@ -81,11 +83,11 @@ function formatValueLabel(
   if (multiple) {
     const arr = (displayVal as (string | number)[]) || [];
     return arr.length > 0
-      ? arr.map((v) => options.find((o) => o.value === v)?.label ?? String(v)).join('、')
+      ? arr.map((v) => options.find((o) => String(o.value) === String(v))?.label ?? String(v)).join('、')
       : '';
   }
   if (displayVal == null) return '';
-  const opt = options.find((o) => o.value === displayVal);
+  const opt = options.find((o) => String(o.value) === String(displayVal));
   if (!opt) return String(displayVal);
   return isPersonVariant ? formatPersonValueLabel(opt as PersonOption) : opt.label;
 }
@@ -100,6 +102,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   defaultValues,
   searchable = false,
   multiple = false,
+  minSelection,
   variant = 'default',
   active,
   hidden,
@@ -118,12 +121,21 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  const handleRemove = useMemo(
-    () => () => {
+  const handleRemove = useMemo(() => {
+    const selectedArr = Array.isArray(displayValue)
+      ? displayValue
+      : displayValue != null && displayValue !== ''
+        ? [displayValue]
+        : [];
+    const canRemove =
+      !multiple ||
+      minSelection == null ||
+      selectedArr.length > minSelection;
+    return () => {
+      if (!canRemove) return;
       onChangeRef.current?.(undefined);
-    },
-    [],
-  );
+    };
+  }, [displayValue, minSelection, multiple]);
 
   const revertToCommitted = () => {
     const next = displayValue ?? (multiple ? [] : undefined);
@@ -157,10 +169,18 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       return;
     }
     if (committedValueLabel) {
+      const selectedArr = Array.isArray(displayValue)
+        ? displayValue
+        : displayValue != null && displayValue !== ''
+          ? [displayValue]
+          : [];
+      const removable =
+        !multiple || minSelection == null || selectedArr.length > minSelection;
       registerFn.register(filterKey, {
         label,
         valueLabel: committedValueLabel,
         onRemove: handleRemove,
+        removable,
       });
     } else {
       registerFn.unregister(filterKey);
@@ -213,6 +233,9 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
 
   const handleToggleMulti = (optVal: string | number) => {
     const arr = (localValue as (string | number)[]) || [];
+    if (arr.includes(optVal) && minSelection != null && arr.length <= minSelection) {
+      return;
+    }
     const next = arr.includes(optVal) ? arr.filter((v) => v !== optVal) : [...arr, optVal];
     setLocalValue(next);
   };
@@ -281,15 +304,27 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
           <div className={classNames('filter-select-selected-label', styles['filter-select-selected-label'])}>已选：</div>
           <Space size={[4, 4]} wrap>
             {(localValue as (string | number)[]).map((v) => {
-              const opt = options.find((o) => o.value === v);
+              const opt = options.find((o) => String(o.value) === String(v));
+              const arr = (localValue as (string | number)[]) || [];
+              const tagRemovable = minSelection == null || arr.length > minSelection;
               return (
                 <span
                   key={String(v)}
-                  className={classNames('filter-select-selected-tag', styles['filter-select-selected-tag'])}
-                  onClick={() => handleToggleMulti(v)}
+                  className={classNames(
+                    'filter-select-selected-tag',
+                    styles['filter-select-selected-tag'],
+                    !tagRemovable && styles['filter-select-selected-tag-disabled'],
+                  )}
+                  onClick={() => tagRemovable && handleToggleMulti(v)}
                 >
                   {opt?.label ?? String(v)}
-                  <X className={classNames('filter-select-selected-remove', styles['filter-select-selected-remove'])} />
+                  <X
+                    className={classNames(
+                      'filter-select-selected-remove',
+                      styles['filter-select-selected-remove'],
+                      !tagRemovable && styles['filter-select-selected-remove-disabled'],
+                    )}
+                  />
                 </span>
               );
             })}
