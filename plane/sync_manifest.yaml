@@ -44,12 +44,12 @@ tasks:
     note: "chore(ci): checkout@v5, upload-pages-artifact@v4, deploy-pages@v5, README Pages 404 排查"
   - id: M001-6
     milestone: M001
-    name: main push 自动 bump 版本并 npm publish
+    name: chore(release) push 触发 npm publish
     status: 已完成
     priority: P1
     kind: ops
-    tags: [infra]
-    note: "feat(publish): release.yml auto patch+tag+publish on main push"
+    tags: [infra, release]
+    note: "release.yml 仅 chore(release) push → 校验 version、打 tag、npm publish；feat push 不 bump"
   - id: M002-1
     milestone: M002
     name: 修复 SCSS 与 @kne/button-group dts 错误
@@ -170,3 +170,11 @@ tasks:
     kind: feature
     tags: [frontend, filter]
     note: minSelection 下限、CommonFilter 标签 X disabled、清空后注册同步
+  - id: M003-13
+    milestone: M003
+    name: 发布流程改为 chore(release) push 触发 CI
+    status: 已完成
+    priority: P1
+    kind: chore
+    tags: [infra, release, docs]
+    note: "移除 feat push 自动 patch；publish.yml 仅 workflow_dispatch 补发；同步 version-check 与技能文档"

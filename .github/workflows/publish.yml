@@ -1,13 +1,11 @@
-name: Publish npm
+# 补发：workflow_dispatch 指定已有 tag 重新 publish（日常发版走 release.yml）
+name: Publish npm (manual retry)
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing git tag to publish (e.g. v0.1.0)'
+        description: 'Existing git tag to publish (e.g. v0.1.17)'
         required: true
         type: string
 
@@ -22,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', inputs.tag) || github.ref }}
+          ref: ${{ format('refs/tags/{0}', inputs.tag) }}
 
       - uses: actions/setup-node@v4
         with:

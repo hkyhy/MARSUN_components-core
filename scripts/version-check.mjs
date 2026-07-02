@@ -2,9 +2,12 @@
 /**
  * 核对 package.json version 与 npm / Git 一致。
  *
- *   node scripts/version-check.mjs              # 检查
+ *   node scripts/version-check.mjs                    # 检查
  *   node scripts/version-check.mjs --apply-published  # 对齐 npm 最新已发布版
- *   node scripts/version-check.mjs --apply      # 设为 npm 最新 +1 patch（待发布）
+ *   node scripts/version-check.mjs --apply            # 写回 npm+1（准备 chore(release) commit，非 publish）
+ *
+ * 发布：chore(release): vX.Y.Z commit + push main → CI release.yml 打 tag 并 npm publish。
+ * 禁止本地 npm publish。
  */
 import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -76,26 +79,24 @@ console.log('marsun_components-core version check');
 console.log(`  working (package.json):  ${working}`);
 console.log(`  last git commit:         ${head ?? '(none)'}`);
 console.log(`  npm latest (published):  ${npmLatest ?? '(unreachable)'}`);
-if (npmLatest) console.log(`  next patch (unreleased): ${nextPatch}`);
+if (npmLatest) console.log(`  next patch (chore commit): ${nextPatch}`);
 
 let ok = true;
-let target = null;
 
 if (npmLatest) {
   if (cmp(working, npmLatest) < 0) {
     console.error(`\n✗ 工作区 ${working} 落后于 npm 已发布 ${npmLatest}，package.json 须与实发版一致`);
-    console.error('  修复: node scripts/version-check.mjs --apply-published');
+    console.error('  修复: npm run version:sync');
     ok = false;
-    target = npmLatest;
   } else if (cmp(working, npmLatest) === 0) {
-    console.log('\n✓ 与 npm 已发布版一致');
+    console.log('\n✓ 与 npm 已发布版一致（feat/fix 开发态）');
   } else if (cmp(working, nextPatch) === 0) {
-    console.log('\n✓ 待发布下一 patch（npm +1）');
+    console.log('\n✓ 待 chore(release) commit（npm +1）；提交后 push main，由 CI publish');
   } else if (cmp(working, nextPatch) > 0) {
     console.error(`\n✗ 工作区 ${working} 跳号（npm ${npmLatest}，下一版应为 ${nextPatch}）`);
     ok = false;
   } else {
-    console.error(`\n✗ 工作区 ${working} 无效：应为 ${npmLatest}（已发布）或 ${nextPatch}（待发布）`);
+    console.error(`\n✗ 工作区 ${working} 无效：应为 ${npmLatest}（已发布）或 ${nextPatch}（chore(release) 前）`);
     ok = false;
   }
 } else {
@@ -111,7 +112,8 @@ if (applyPublished && npmLatest) {
 if (applyNext && npmLatest) {
   const next = bumpPatch(npmLatest);
   writePkgVersion(next);
-  console.log(`\n→ 已写回 package.json version = ${next}（待发布）`);
+  console.log(`\n→ 已写回 package.json version = ${next}`);
+  console.log('  下一步: git commit -m "chore(release): v' + next + '" && git push（勿本地 npm publish）');
   process.exit(0);
 }
 

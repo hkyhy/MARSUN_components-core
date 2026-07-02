@@ -15,7 +15,7 @@ npm install @hkyhy/marsun-components-core antd react react-dom
 
 | 项 | 说明 |
 | --- | --- |
-| 安装（**提交态**） | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.15"`（**须与 npm 已发布最新版一致**；核对 `npm view @hkyhy/marsun-components-core version`） |
+| 安装（**提交态**） | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.17"`（**须与 npm 已发布最新版一致**；核对 `npm view @hkyhy/marsun-components-core version`） |
 | 本地联调（**勿改 package.json**） | 环境变量 + Vite alias，见下「本地链」；`package.json` / lockfile **保持 semver** |
 | 全局 Provider | 根节点包裹 `MarsunCoreProvider`（`auth` / `fetch` 由业务注入） |
 | 样式 | `import '@hkyhy/marsun-components-core/styles'` |
@@ -64,8 +64,10 @@ rg 'marsun_components-core|"link": true' package-lock.json  # 须为空（相对
 
 | 仓库 | `package.json` 字段 | 规则 |
 | --- | --- | --- |
-| `marsun_components-core` | `"version"` | **必须**等于 npm 已发布最新版（发布后）或「npm 最新 +1 patch」（待发布前唯一允许超前） |
-| 业务项目 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版（如 `^0.1.15`），与 lockfile 解析版本一致 |
+| `marsun_components-core` | `"version"` | feat 开发时 **= npm 已发布最新**；仅 `chore(release)` commit 内允许 **npm+1 patch** |
+| 业务项目 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版，与 lockfile 解析版本一致 |
+
+**core 发版**：`chore(release): vX.Y.Z` push main → CI publish；**禁止**本地 `npm publish`。见 [marsun-core-version.md](./marsun-core-version.md)。
 
 提交前核对：
 

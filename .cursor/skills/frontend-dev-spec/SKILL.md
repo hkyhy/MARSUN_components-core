@@ -53,7 +53,7 @@ description: |
 26. **公共 Token 三层接入** `(common)`：静态默认值 `import '@hkyhy/marsun-components-core/tokens'` → 运行时 `applyThemeToCssVariables(primaryColor)` → 项目 `tokens.css` 仅扩展领域变量。CSS 变量命名统一 `--primary-color` / `--font-color-grey-*`，禁止项目自建 `--color-primary` 平行体系。详见 [common/theme.md](references/common/theme.md)
 27. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；见 [task-naming.md](references/common/task-naming.md)「Commit 与 Plane 同步」
 28. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**，且**版本号与 npm 已发布最新版一致**（如 `^0.1.15`）；禁止 `file:` / lockfile `link: true`；本地联调用 `MARSUN_CORE_LOCAL` + Vite alias。详见 [component-mapping.md](references/common/component-mapping.md)
-29. **core 版本与实版一致** `(common)`：`marsun_components-core/package.json` 的 `version` **必须**等于 npm 已发布版（发布后）或 npm+1 patch（待发布）；业务依赖须同步；提交前 `npm view` + `node scripts/version-check.mjs`。见 [marsun-core-version.md](references/common/marsun-core-version.md)
+29. **core 版本与实版一致** `(common)`：`marsun_components-core` feat 开发时 `package.json` version **= npm 已发布最新**；发版仅通过 `chore(release): vX.Y.Z` commit + push 触发 CI publish，**禁止本地 npm publish**；`npm run version:check:apply` 仅写回 npm+1 准备 chore commit。见 [marsun-core-version.md](references/common/marsun-core-version.md)
 
 ---
 
