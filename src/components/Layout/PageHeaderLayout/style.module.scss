@@ -1,5 +1,12 @@
 @use '@/styles/mixins' as *;
 
+.page-header-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .page-header-layout-root {
   display: flex;
   align-items: center;

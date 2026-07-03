@@ -5,6 +5,8 @@ description: |
   当用户要求开发新功能模块、新建组件、重构组件结构、样式/className/SCSS Modules 规范、Tailwind 迁移、或涉及 src/components 或 src/pages 目录下的文件操作时，应使用此技能。
   当需要在 Tooltip 中展示结构化详情（如添加人/添加时间）时，必须使用 TooltipInfo（来自 `@hkyhy/marsun-components-core` 或本地 Common 封装）。
   当页面或模块存在可滚动区域时，必须使用 VirtualScrollbar（来自 `@hkyhy/marsun-components-core`），禁止在主滚动区使用 overflow-auto / overflow-y-auto；Layout 级接入方式见 references/common/virtual-scrollbar.md。
+  当模块页或列表页存在数据加载态时，必须使用 core 的 PageSpin + PageShellProvider（App Layout 包裹 Provider；页面用 ModulePageShell / PageHeaderLayout 的 spinning 或 usePageShellLoading）；禁止业务内手写「加载中…」叠层。见 references/common/page-loading.md。
+  当使用图标时，必须从 `@hkyhy/marsun-components-core` 导入 Icons（禁止业务项目直接 import lucide-react）；Header 刷新操作使用 `refreshAction` + `RefreshCw` spin。
   当创建组件示例（examples/meta.json）时，多子模块业务域（如 Common、AgentHub）须按 {Domain}/{Module}/examples/ 组织，脚本自动生成域级父 menu 与子 menu。
   每次新增或更改组件（含 Common 封装、Props/行为变更、全局接入方式变更）时，须同步更新对应的规范文档与提示词（SKILL.md、references、component-mapping 等），代码与规范同一任务内完成。
   marsun_components-core 新增或变更导出时，须同步包根 index.ts、examples/meta.json（含子组件 Demo 与 apiDoc）及 component-mapping.md。
@@ -17,7 +19,11 @@ description: |
 
 ## 角色大前提
 
-你是顶尖产品经理、架构师、全栈开发者和 UI 工程师的综合体，具有超高审美。实现需求前须从用户价值、模块边界、可维护实现、界面一致性多轮四维交叉论证；结合本技能 references 与对话上下文给出方案后再编码。**每次任务结束**，在回复末尾补充：「我是顶尖产品经理、架构师、全栈开发者和 UI 工程师的综合体，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。」
+你是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，并具有顶尖审美。实现需求前须从用户价值、模块边界、可维护实现、界面一致性多轮四维交叉论证；结合本技能 references 与对话上下文给出方案后再编码。
+
+**每次任务开始**，在回复开头单独补充一句：「我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，具有顶尖审美，接下来，我将根据需求从用户价值、模块边界、可维护实现、界面一致性多轮四维交叉论证，结合对话上下文给出方案后，完全按照 frontend-dev-spec 规范来进行编码。」
+
+**每次任务结束**，在回复末尾单独补充一句：「我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。」
 
 完整版见 [references/prompts/mindset.md](references/prompts/mindset.md)。
 
@@ -43,17 +49,19 @@ description: |
 16. **批量操作状态校验** `(business)`：批量操作必须校验文件状态，只有符合对应状态的文件才能被操作。状态校验常量（如 `SUBMIT_REVIEW_STATUSES`、`DELETE_STATUSES`）统一维护在 `Action/handlers.ts` 并 `export`，使用 `ReviewStatus` 枚举值。通过 `filterByStatus()` 函数过滤可操作项，UI 上展示可操作数量并提示不可操作项
 17. **第三方库优先** `(business)`：操作按钮组统一使用 `@kne/button-group`（包括页面头部操作和详情页操作），表单统一使用 **antd 原生 Form**（`Form.useForm()` + `Form.Item` + `rules`）
 18. **列表项可见性用 `hidden` 属性** `(business)`：`ButtonGroup` listArray、`StatCardList` items 等列表项配置，统一使用 `hidden` 属性控制可见性，禁止使用 `switch(role)` 返回不同数组或 `{condition && <List/>}` 条件渲染不同列表。将所有可能的项目放在一个扁平数组中，通过 `hidden: !hasAnyRole([...])` 控制每项的可见性
-19. **列表操作按钮不需要 icon** `(business)`：`ButtonGroup` listArray 中不添加 `icon` 属性，操作按钮只显示文字。菜单项（MenuItem）、Timeline 图标、Tree 图标等非操作按钮场景可保留 icon
-20. **主题配置集中管理** `(common)`：Ant Design Theme Token & Semantic Token 统一在 `src/styles/theme.ts` 中配置，通过 `generateTheme(primaryColor)` 生成完整 `ThemeConfig`，通过 `applyThemeToCssVariables(primaryColor)` 同步到 CSS 变量。禁止在 `main.tsx` 中直接内联 theme 配置
-21. **组件示例规范** `(common)`：每个组件的 Demo 示例放 `examples/` 目录，遵循从小到大、从简到繁原则拆分为多个文件。源码通过 `import('...?raw')` 动态导入真实源码。每个 `examples/` 目录维护 `meta.json` 配置文件（不含 `route`，由脚本自动生成）。脚本 `scripts/collect-examples.mjs` 自动扫描所有 `meta.json` 并生成 `examples-registry.ts`（route 从目录结构自动推导）。**含多个子模块的业务域**（路径深度 ≥ 2，如 `Common/Auth`、`AgentHub/Chat`）自动归入域级父菜单（如 Common、AgentHub），各子模块为子 menu；**单模块**（路径深度 = 1，如 `Dashboard`）为顶层 menu 项。Vite 插件 `scripts/vite-plugin-examples.mjs` 监听 `components/` 变化自动重新生成。代码展示区标题栏在底部，多示例默认 antd `Masonry` 两列瀑布流（`columns={2}`），`block: true` 全宽独占一行。每个组件组必须有 `apiDoc` 字段，在示例最下方用 API Table 展示 Props 接口
-22. **虚拟滚动条** `(common)`：主滚动区统一使用 `VirtualScrollbar`（`@/components/Common`），隐藏原生滚动条、thumb 悬浮不占宽度。`wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['{组件}-{功能}'])`；`ref` 指向 viewport 以支持 `scrollTo` / `onScroll` / 自动滚底。Layout 与 Chat 等全局接入点见 [common/virtual-scrollbar.md](references/common/virtual-scrollbar.md)。禁止在主滚动区写 `overflow-auto`；antd 弹层等无法包裹场景用 `global.scss` 细窄原生滚动条兜底
-23. **规范文档与提示词同步** `(common)`：**每次新增组件或更改组件**（新建 Common/Module 组件、调整 Props/行为/使用约束、变更 Layout 或全局接入方式），须在同一任务内同步更新对应规范文档与提示词，禁止只改代码不更规范。至少核对：`SKILL.md`（核心原则/description 触发条件）、`references/common/component-mapping.md`（Common 映射表）、专题 reference（如 `virtual-scrollbar.md`、`styles.md`）、`references/prompts/requirement-workflow.md`（检查清单/流程）、`examples/meta.json` 与 Demo（如有组件展示）
-24. **样式统一 SCSS Modules** `(common)`：（1）统一 SCSS，模块样式用 `style.module.scss`；（2）每个页面、每个含 JSX 的组件（含子组件、嵌套子组件、Demo）均维护 `style.module.scss`，无样式时保留空文件，目录 `{Name}/index.tsx` + `{Name}/style.module.scss`，禁止 TSX 与 scss 分离；（3）禁止 Tailwind CSS；（4）统一 `classNames(...)` 合并，禁止 `sc()` 等 helper，每个 className 含预定语义类名（kebab-case）；（5）预定 className 格式 `{组件名-kebab}-{功能定位-kebab}`，SCSS 同名，TS 用 `styles['kebab-name']`。公共样式放 `src/styles/`。详见 [common/styles.md](references/common/styles.md)
-25. **npm 全量导出** `(common)`：`marsun_components-core` 每个对外组件、子组件、hook、utils、types 须经模块 `index.ts` → 包根 `src/index.ts` 导出；禁止仅 showcase 内 deep import。新增符号时同步更新 `component-mapping.md` 与 `examples/meta.json`
-26. **公共 Token 三层接入** `(common)`：静态默认值 `import '@hkyhy/marsun-components-core/tokens'` → 运行时 `applyThemeToCssVariables(primaryColor)` → 项目 `tokens.css` 仅扩展领域变量。CSS 变量命名统一 `--primary-color` / `--font-color-grey-*`，禁止项目自建 `--color-primary` 平行体系。详见 [common/theme.md](references/common/theme.md)
-27. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；见 [task-naming.md](references/common/task-naming.md)「Commit 与 Plane 同步」
-28. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**，且**版本号与 npm 已发布最新版一致**（如 `^0.1.15`）；禁止 `file:` / lockfile `link: true`；本地联调用 `MARSUN_CORE_LOCAL` + Vite alias。详见 [component-mapping.md](references/common/component-mapping.md)
-29. **core 版本与实版一致** `(common)`：`marsun_components-core` feat 开发时 `package.json` version **= npm 已发布最新**；发版仅通过 `chore(release): vX.Y.Z` commit + push 触发 CI publish，**禁止本地 npm publish**；`npm run version:check:apply` 仅写回 npm+1 准备 chore commit。见 [marsun-core-version.md](references/common/marsun-core-version.md)
+19. **图标统一从 core 导出** `(common)`：业务项目禁止直接 `import from 'lucide-react'` 或 `@ant-design/icons`；统一从 `@hkyhy/marsun-components-core` 导入 Icons（如 `RefreshCw`、`CircleAlert`），加载态用 `spin` prop。缺图标时先在 `marsun_components-core` 的 `Icons` 模块补导出，再业务引用。详见 [component-mapping.md](references/common/component-mapping.md) Icons 节
+20. **ButtonGroup 操作按钮 icon 规则** `(business)`：常规 CRUD（编辑/删除/导出等）listArray **不加 icon**，只显示文字；**刷新**等需语义识别的 Header/工具栏操作使用 `refreshAction`（`Action/refreshAction.tsx`）或 listArray 的 `icon: <RefreshCw spin={loading} />`。菜单项、Timeline、Tree 等非 ButtonGroup 操作场景可保留 icon
+21. **主题配置集中管理** `(common)`：Ant Design Theme Token & Semantic Token 统一在 `src/styles/theme.ts` 中配置，通过 `generateTheme(primaryColor)` 生成完整 `ThemeConfig`，通过 `applyThemeToCssVariables(primaryColor)` 同步到 CSS 变量。禁止在 `main.tsx` 中直接内联 theme 配置
+22. **组件示例规范** `(common)`：每个组件的 Demo 示例放 `examples/` 目录，遵循从小到大、从简到繁原则拆分为多个文件。源码通过 `import('...?raw')` 动态导入真实源码。每个 `examples/` 目录维护 `meta.json` 配置文件（不含 `route`，由脚本自动生成）。脚本 `scripts/collect-examples.mjs` 自动扫描所有 `meta.json` 并生成 `examples-registry.ts`（route 从目录结构自动推导）。**含多个子模块的业务域**（路径深度 ≥ 2，如 `Common/Auth`、`AgentHub/Chat`）自动归入域级父菜单（如 Common、AgentHub），各子模块为子 menu；**单模块**（路径深度 = 1，如 `Dashboard`）为顶层 menu 项。Vite 插件 `scripts/vite-plugin-examples.mjs` 监听 `components/` 变化自动重新生成。代码展示区标题栏在底部，多示例默认 antd `Masonry` 两列瀑布流（`columns={2}`），`block: true` 全宽独占一行。每个组件组必须有 `apiDoc` 字段，在示例最下方用 API Table 展示 Props 接口
+23. **虚拟滚动条** `(common)`：主滚动区统一使用 `VirtualScrollbar`（`@/components/Common`），隐藏原生滚动条、thumb 悬浮不占宽度。`wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['{组件}-{功能}'])`；`ref` 指向 viewport 以支持 `scrollTo` / `onScroll` / 自动滚底。Layout 与 Chat 等全局接入点见 [common/virtual-scrollbar.md](references/common/virtual-scrollbar.md)。禁止在主滚动区写 `overflow-auto`；antd 弹层等无法包裹场景用 `global.scss` 细窄原生滚动条兜底
+24. **规范文档与提示词同步** `(common)`：**每次新增组件或更改组件**（新建 Common/Module 组件、调整 Props/行为/使用约束、变更 Layout 或全局接入方式），须在同一任务内同步更新对应规范文档与提示词，禁止只改代码不更规范。至少核对：`SKILL.md`（核心原则/description 触发条件）、`references/common/component-mapping.md`（Common 映射表）、专题 reference（如 `virtual-scrollbar.md`、`styles.md`）、`references/prompts/requirement-workflow.md`（检查清单/流程）、`examples/meta.json` 与 Demo（如有组件展示）
+25. **样式统一 SCSS Modules** `(common)`：（1）统一 SCSS，模块样式用 `style.module.scss`；（2）每个页面、每个含 JSX 的组件（含子组件、嵌套子组件、Demo）均维护 `style.module.scss`，无样式时保留空文件，目录 `{Name}/index.tsx` + `{Name}/style.module.scss`，禁止 TSX 与 scss 分离；（3）禁止 Tailwind CSS；（4）统一 `classNames(...)` 合并，禁止 `sc()` 等 helper，每个 className 含预定语义类名（kebab-case）；（5）预定 className 格式 `{组件名-kebab}-{功能定位-kebab}`，SCSS 同名，TS 用 `styles['kebab-name']`。公共样式放 `src/styles/`。详见 [common/styles.md](references/common/styles.md)
+26. **npm 全量导出** `(common)`：`marsun_components-core` 每个对外组件、子组件、hook、utils、types 须经模块 `index.ts` → 包根 `src/index.ts` 导出；禁止仅 showcase 内 deep import。新增符号时同步更新 `component-mapping.md` 与 `examples/meta.json`
+27. **公共 Token 三层接入** `(common)`：静态默认值 `import '@hkyhy/marsun-components-core/tokens'` → 运行时 `applyThemeToCssVariables(primaryColor)` → 项目 `tokens.css` 仅扩展领域变量。CSS 变量命名统一 `--primary-color` / `--font-color-grey-*`，禁止项目自建 `--color-primary` 平行体系。详见 [common/theme.md](references/common/theme.md)
+28. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；见 [task-naming.md](references/common/task-naming.md)「Commit 与 Plane 同步」
+29. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**，且**版本号与 npm 已发布最新版一致**（如 `^0.1.15`）；禁止 `file:` / lockfile `link: true`；本地联调用 `MARSUN_CORE_LOCAL` + Vite alias。详见 [component-mapping.md](references/common/component-mapping.md)
+30. **core 版本与实版一致** `(common)`：`marsun_components-core` feat 开发时 `package.json` version **= npm 已发布最新**；发版仅通过 `chore(release): vX.Y.Z` commit + push 触发 CI publish，**禁止本地 npm publish**；`npm run version:check:apply` 仅写回 npm+1 准备 chore commit。见 [marsun-core-version.md](references/common/marsun-core-version.md)
+31. **模块页全局 Loading** `(common)`：`PageSpin`、`PageShellProvider`、`usePageShellLoading`、`ModulePageShell` 来自 `@hkyhy/marsun-components-core`；App Layout 须包 `PageShellProvider`；页面用 `spinning` 或 `usePageShellLoading`，禁止局部 loading 文案叠层。见 [page-loading.md](references/common/page-loading.md)
 
 ---
 
@@ -77,6 +85,7 @@ description: |
 | 主题 Token、颜色          | [common/theme.md](references/common/theme.md)                             |
 | SCSS Modules、样式目录    | [common/styles.md](references/common/styles.md)                           |
 | 虚拟滚动条 / Layout 滚动  | [common/virtual-scrollbar.md](references/common/virtual-scrollbar.md)     |
+| 模块页全局 Loading        | [common/page-loading.md](references/common/page-loading.md)             |
 | Filter 筛选组件           | [common/filter.md](references/common/filter.md)                           |
 | 组件 Examples / meta.json | [common/examples.md](references/common/examples.md)                       |
 | 测试                      | [common/testing.md](references/common/testing.md)                         |
@@ -101,6 +110,7 @@ description: |
 | 权限 / 批量操作      | business/permissions-data                  | —                          |
 | 主题 / Tag 颜色      | common/theme + common/component-mapping    | common/styles                          |
 | 滚动区 / Layout 接入 | common/virtual-scrollbar                   | —                          |
+| 模块页 loading       | common/page-loading                        | common/component-mapping   |
 | 组件 Demo            | common/examples                            | —                          |
 | 新增/变更组件        | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow |
 | 样式 / className / SCSS | common/styles                              | common/naming              |

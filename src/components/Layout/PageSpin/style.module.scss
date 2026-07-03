@@ -1,0 +1,13 @@
+.page-spin {
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+
+  :global(.ant-spin-container) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+}

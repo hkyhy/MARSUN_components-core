@@ -33,8 +33,10 @@
 
 > **核心原则**：
 >
-> 1. **列表操作按钮不需要 icon**：`ButtonGroup` listArray 中不添加 `icon` 属性，操作按钮只显示文字。菜单项（MenuItem）、Timeline 图标、Tree 图标等非操作按钮场景可保留 icon。
-> 2. **FilterSelect 单选选中项显示对号**：`FilterSelect` 单选模式下，选中项右侧显示 `CheckOutlined`（对号），而非 `CloseOutlined`（叉号）。取消选中通过"重置"按钮操作，不通过点击对号。
+> 1. **图标来源**：业务项目统一 `import { RefreshCw, ... } from '@hkyhy/marsun-components-core'`，禁止 `lucide-react` / `@ant-design/icons`。
+> 2. **ButtonGroup CRUD 无 icon**：表格/详情页 listArray 中编辑/删除等只显示文字。
+> 3. **Header 刷新带 icon**：使用 `Action/refreshAction.tsx`，`icon: <RefreshCw spin={loading} size={16} />`。
+> 4. **FilterSelect 单选选中项显示对号**：`FilterSelect` 单选模式下，选中项右侧显示 `CheckOutlined`（对号），而非 `CloseOutlined`（叉号）。取消选中通过"重置"按钮操作，不通过点击对号。
 
 
 ## 〇、列表项可见性：`hidden` 属性模式

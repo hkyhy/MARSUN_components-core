@@ -83,7 +83,7 @@ npm view @hkyhy/marsun-components-core version --registry https://registry.npmjs
 
 ```ts
 // 纯 UI — 来自 npm
-import { SemanticTag, TooltipInfo, CommonFilter, VirtualScrollbar } from '@hkyhy/marsun-components-core';
+import { SemanticTag, TooltipInfo, CommonFilter, VirtualScrollbar, RefreshCw, CircleAlert, PageShellProvider, ModulePageShell, usePageShellLoading } from '@hkyhy/marsun-components-core';
 
 // 业务域 — 留在 maoyang 本地
 import { DepartmentSelect } from '@/components/Common/Form/DepartmentSelect';
@@ -101,7 +101,11 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 | `CommonDescriptions` | `Descriptions/CommonDescriptions` |
 | `TooltipInfo` | `TooltipInfo` |
 | `PageHeaderLayout` | `Layout/PageHeaderLayout` |
+| `PageSpin` | 模块 body 整页 Spin（flex 高度链） |
+| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册 |
+| `ModulePageShell` | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步 |
 | `VirtualScrollbar` | `VirtualScrollbar` |
+| `Icons`（`RefreshCw`、`CircleAlert` 等） | 统一图标库；业务禁止 `lucide-react` |
 | `Sparkline` | 微型趋势折线（S3 质量分析等） |
 | `LlmFormattedText` / `parseLlmText` | LLM 结构化文本展示 |
 | `SemanticTag` / `SEMANTIC_COLORS` | `Tag/SemanticTag` |
@@ -146,7 +150,8 @@ import {
 | --------------------- | -------------------------------------------------- | --------------------------------------------------------------------- |
 | `Descriptions`　　　  | `CommonDescriptions`　　　　　　　　　　　　　　　 | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                   |
 | `Tooltip`（详情）　   | `TooltipInfo`　　　　　　　　　　　　　　　　　　  | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情 |
-| 页面头部布局　　　　  | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `children`           |
+| 页面头部布局　　　　  | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `spinning` + `children` |
+| 模块页壳（AppShell） | `ModulePageShell` + `PageShellProvider`　　　　　  | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [page-loading.md](page-loading.md) |
 | 可滚动区域　　　　　  | `VirtualScrollbar`　　　　　　　　　　　　　　　　 | `wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['...'])`；`ref` → viewport；见 [virtual-scrollbar.md](virtual-scrollbar.md) |
 | 模块/页面样式         | `style.module.scss`                               | 每模块/页面必选（无样式时空文件）；见 [styles.md](styles.md) |
 | `Tag`（状态展示）　　 | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`  | 传入 `status` / `role`　　　　　　　　　　　　　　                    |
@@ -160,13 +165,24 @@ import {
 | `RangePicker`（筛选） | `FilterDateRange`　　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                   |
 | 数字范围（筛选）　　  | `FilterNumberRange`　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange` + `unit`　　　　                   |
 
+### Icons（`@hkyhy/marsun-components-core`）
+
+| 场景 | 用法 | 禁止 |
+| --- | --- | --- |
+| 页面/侧栏/列表装饰 icon | `import { RefreshCw, CircleAlert, LayoutGrid } from '@hkyhy/marsun-components-core'` | 业务项目 `import from 'lucide-react'` |
+| 加载中刷新 | `<RefreshCw spin={loading} size={16} />` | 手写 CSS 旋转或 lucide 直引 |
+| Header 刷新 ButtonGroup 项 | `refreshAction({ onClick, loading })` → `{ icon: <RefreshCw spin={loading} /> }` | 无 icon 的纯文字刷新（Header 须带 icon） |
+| 路由/面包屑 icon 类型 | `FC<IconProps>` from core | `LucideIcon` from lucide-react |
+
+完整列表见 core `ICON_NAMES` / `ICON_REGISTRY`；缺图标时在 `marsun_components-core/src/components/Icons` 补导出后再业务引用。
+
 ### @kne/button-group
 
 | 场景                     | 组件                                     | 替代                               |
 | ------------------------ | ---------------------------------------- | ---------------------------------- |
 | 操作按钮组（Table）      | `ButtonGroup moreType="link"` + 对象数组 | `Dropdown` + `Button`              |
 | 操作按钮组（详情页）     | `ButtonGroup` + 对象数组                 | `Space` + 多个 `Button`            |
-| 页面头部操作             | `ButtonGroup` + 对象数组                 | `Space` + `Button`                 |
+| 页面头部操作             | `ButtonGroup` + 对象数组；刷新用 `refreshAction` + `RefreshCw` icon | `Space` + `Button` + lucide-react |
 | 确认操作（listArray 中） | 对象 `message`/`isDelete` 属性           | `ConfirmLink`/`ConfirmButton` 组件 |
 | 确认操作（独立按钮）     | `ConfirmButton` / `ConfirmLink`          | `Modal.confirm` / `Popconfirm`     |
 | 带加载按钮               | `LoadingButton`                          | `Button` + 手动 `loading`          |

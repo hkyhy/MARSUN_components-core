@@ -1,12 +1,19 @@
 {
   "title": "Layout 页面布局",
-  "description": "统一的页面头部布局容器，集成标题、返回按钮、操作按钮区与页面说明提示。",
+  "description": "PageHeaderLayout、ModulePageShell 与 PageSpin；App 根节点须包裹 PageShellProvider 以支持全局 loading。",
   "examples": [
     {
-      "title": "基础用法",
-      "description": "PageHeaderLayout 标题 + 操作按钮组合",
+      "title": "PageHeaderLayout",
+      "description": "标题 + 操作按钮 + body Spin",
       "component": "@/components/Layout/examples/PageHeaderLayoutDemo",
       "sourcePath": "@/components/Layout/examples/PageHeaderLayoutDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "ModulePageShell",
+      "description": "toolbar + body 内置 PageSpin",
+      "component": "@/components/Layout/examples/ModulePageShellDemo",
+      "sourcePath": "@/components/Layout/examples/ModulePageShellDemo/index.tsx",
       "block": true
     }
   ],
@@ -14,32 +21,39 @@
     {
       "componentName": "PageHeaderLayoutProps",
       "rows": [
-        {
-          "prop": "title",
-          "desc": "页面标题",
-          "type": "string",
-          "required": true
-        },
-        {
-          "prop": "onBack",
-          "desc": "返回按钮点击回调",
-          "type": "() => void"
-        },
-        {
-          "prop": "actions",
-          "desc": "右侧操作区内容",
-          "type": "React.ReactNode"
-        },
-        {
-          "prop": "description",
-          "desc": "页面说明提示，显示在头部下方",
-          "type": "React.ReactNode"
-        },
-        {
-          "prop": "children",
-          "desc": "页面主体内容",
-          "type": "React.ReactNode"
-        }
+        { "prop": "title", "desc": "页面标题", "type": "string", "required": true },
+        { "prop": "onBack", "desc": "返回按钮点击回调", "type": "() => void" },
+        { "prop": "actions", "desc": "右侧操作区内容", "type": "React.ReactNode" },
+        { "prop": "description", "desc": "页面说明提示", "type": "React.ReactNode" },
+        { "prop": "spinning", "desc": "页面级 loading（与 usePageShellLoading 合并）", "type": "boolean" },
+        { "prop": "children", "desc": "页面主体内容", "type": "React.ReactNode" }
+      ]
+    },
+    {
+      "componentName": "ModulePageShellProps",
+      "rows": [
+        { "prop": "title", "desc": "同步到 PageShellProvider 的标题", "type": "string" },
+        { "prop": "description", "desc": "同步到 PageShellProvider 的描述", "type": "React.ReactNode" },
+        { "prop": "actions", "desc": "同步到 PageShellProvider 的顶栏操作", "type": "Record<string, unknown>[]" },
+        { "prop": "breadcrumb", "desc": "面包屑（不参与 Spin）", "type": "React.ReactNode" },
+        { "prop": "toolbar", "desc": "工具栏（不参与 Spin）", "type": "React.ReactNode" },
+        { "prop": "spinning", "desc": "页面级 loading", "type": "boolean" },
+        { "prop": "syncPageMeta", "desc": "是否同步 meta 到 Provider", "type": "boolean" },
+        { "prop": "children", "desc": "body 内容", "type": "React.ReactNode" }
+      ]
+    },
+    {
+      "componentName": "PageSpinProps",
+      "rows": [
+        { "prop": "spinning", "desc": "是否显示遮罩", "type": "boolean", "required": true },
+        { "prop": "children", "desc": "被遮罩的内容", "type": "React.ReactNode", "required": true },
+        { "prop": "className", "desc": "Spin wrapper 附加类名", "type": "string" }
+      ]
+    },
+    {
+      "componentName": "usePageShellLoading",
+      "rows": [
+        { "prop": "spinning", "desc": "深层组件注册 loading 态", "type": "boolean", "required": true }
       ]
     }
   ]

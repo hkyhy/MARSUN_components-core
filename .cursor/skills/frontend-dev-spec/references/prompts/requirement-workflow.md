@@ -16,7 +16,7 @@
 | 产品 | 交互路径是否最短？边界是否覆盖？ |
 | 架构 | 目录结构、handlers 抽离、单一数据来源是否合规？组件变更是否同步更新规范文档与提示词？ |
 | 开发 | 纯 UI 优先 `@hkyhy/marsun-components-core`？业务 wrapper 留本地 Common？最小 diff？可测试？ |
-| UI | PageHeaderLayout、ButtonGroup、主题色、信息层级是否一致？滚动区是否用 VirtualScrollbar（不占位）？ |
+| UI | PageHeaderLayout、ButtonGroup、主题色、信息层级是否一致？滚动区是否用 VirtualScrollbar（不占位）？数据加载是否用 PageShellProvider + ModulePageShell/PageHeaderLayout spinning（禁止局部 loading 文案）？ |
 
 ## 三、开发流程
 
@@ -35,7 +35,7 @@
 11. 编写各子目录及模块级 `index.ts` barrel export
 12. 为新组件编写测试（见 [../common/testing.md](../common/testing.md)）
 13. **注册组件路由和菜单**：组件展示路由、菜单已由 `scripts/collect-examples.mjs` 自动生成（`{Domain}/routes.tsx`、`components/routes.tsx`、`layouts/menu-config.ts`），开发者只需维护各子模块的 `examples/meta.json`，新建组件时创建 `meta.json` 即可自动注册路由和菜单，**禁止手动修改自动生成的文件**。多子模块业务域须将示例放在 `src/components/{Domain}/{Module}/examples/`，脚本会自动生成域级父菜单与子 menu。其他业务页面路由仍需在 `src/pages/{Module}/routes.tsx` 中手动添加
-14. 编写页面组件（Manage + Detail，必须使用 `PageHeaderLayout`，标题放 `title`，操作按钮放 `actions`，页面说明放 `description`（可选），内容放 `children`，禁止使用 `<div><h2>` 或 `<Card>` 包裹页面，禁止在 `children` 内手写说明提示横幅）
+14. 编写页面组件（Manage + Detail，必须使用 `PageHeaderLayout`，标题放 `title`，操作按钮放 `actions`，页面说明放 `description`（可选），内容放 `children`；列表/详情 loading 用 `spinning={pageLoading}` 或子组件 `usePageShellLoading`；App 根 Layout 须包 `PageShellProvider`，见 [../common/page-loading.md](../common/page-loading.md)；禁止使用 `<div><h2>` 或 `<Card>` 包裹页面，禁止在 `children` 内手写说明提示横幅或「加载中…」）
 15. 检查：所有组件是否按目录结构规范拆分（Form/ 不含提交逻辑，Modal/ 不含字段渲染，Action/ 每个按钮一个文件，handlers.ts 抽离业务逻辑）
 16. 检查：ButtonGroup listArray 使用对象形式，不使用 `() => <Component />`
 17. 检查：antd 重复配置是否已提取为 Common 组件
@@ -47,8 +47,9 @@
 23. 检查：主滚动区是否使用 `VirtualScrollbar`（禁止 `overflow-auto` / `overflow-y-auto`）；flex 布局中 wrapper 是否含 `min-height: 0` / `flex: 1`（写在 SCSS module 中）；需编程滚动时 `ref` 是否挂在 `VirtualScrollbar` 上；Layout 改动是否与 [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) 三层接入一致
 24. 检查：样式是否符合 [../common/styles.md](../common/styles.md)——每个组件/页面有 `style.module.scss`（`index.tsx` 同目录）；禁止 Tailwind；每个 `className` 含 `{组件}-{功能}` 预定类名 + `styles['...']`，经 `classNames` 合并；禁止 `sc()` / `styles.camelCase`
 25. 检查：是否有对应 `.test.tsx` / `.test.ts` 且通过（见 [../common/testing.md](../common/testing.md)）
-26. 检查：**每次新增或更改组件**是否已同步更新规范文档与提示词（`SKILL.md`、`component-mapping.md`、专题 reference、`requirement-workflow.md` 检查项、`examples/meta.json` / Demo）；代码与规范须同一任务内完成，禁止只改代码
-27. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping.md](../common/component-mapping.md)、[../common/marsun-core-version.md](../common/marsun-core-version.md)）
+26. 检查：模块页 loading 是否通过 `PageShellProvider` + `ModulePageShell`/`PageHeaderLayout` `spinning` 或 `usePageShellLoading` 实现，禁止局部 loading 文案与 Spin 叠层（见 [../common/page-loading.md](../common/page-loading.md)）
+27. 检查：**每次新增或更改组件**是否已同步更新规范文档与提示词（`SKILL.md`、`component-mapping.md`、专题 reference、`requirement-workflow.md` 检查项、`examples/meta.json` / Demo）；代码与规范须同一任务内完成，禁止只改代码
+28. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping.md](../common/component-mapping.md)、[../common/marsun-core-version.md](../common/marsun-core-version.md)）
 
 ## 四、按需阅读规范
 
@@ -61,7 +62,7 @@
 | 权限 / 批量操作 | [../business/permissions-data.md](../business/permissions-data.md) | — |
 | 路由 / API | [../business/routing-api.md](../business/routing-api.md) | — |
 | 主题 / Tag 颜色 | [../common/theme.md](../common/theme.md) + [../common/component-mapping.md](../common/component-mapping.md) | [../common/styles.md](../common/styles.md) |
-| 滚动区 / Layout | [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) | — |
+| 滚动区 / Layout | [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) | [../common/page-loading.md](../common/page-loading.md) |
 | 组件 Demo | [../common/examples.md](../common/examples.md) | SKILL.md #23、component-mapping |
 | 新增/变更组件 | [SKILL.md](../../SKILL.md) 核心原则 #23 | component-mapping + 专题 reference |
 | 样式 / className | [../common/styles.md](../common/styles.md) | [../common/naming.md](../common/naming.md) |
@@ -71,7 +72,8 @@
 
 - [ ] 目录结构符合 `common/directory-structure.md`
 - [ ] Form/Modal/Action 分离，handlers 抽离
-- [ ] ButtonGroup listArray 对象形式，操作按钮无 icon
+- [ ] ButtonGroup listArray 对象形式；CRUD 操作无 icon；Header 刷新用 `refreshAction` + `RefreshCw`
+- [ ] 图标均从 `@hkyhy/marsun-components-core` 导入，业务代码无 `lucide-react`
 - [ ] 权限/常量/API 符合 `business/permissions-data.md` 与 `business/routing-api.md`
 - [ ] 筛选 state 接入 API，部门/人员符合 `business/department-person.md`
 - [ ] Tooltip 详情用 TooltipInfo
@@ -82,8 +84,14 @@
 - [ ] `@hkyhy/marsun-components-core` 版本与 npm 实版一致（`npm view` 核对；无 `file:` lock）
 - [ ] 测试通过
 
+## 五、回复开头
+
+任务开始时，在回复开头单独补充一句（见 [mindset.md](mindset.md) 执行方式第 0 条）：
+
+> 我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，具有顶尖审美，接下来，我将根据需求从用户价值、模块边界、可维护实现、界面一致性多轮四维交叉论证，结合对话上下文给出方案后，完全按照 frontend-dev-spec 规范来进行编码。
+
 ## 六、回复收尾
 
 任务完成后，在回复末尾单独补充一句（见 [mindset.md](mindset.md) 执行方式第 5 条）：
 
-> 我是顶尖产品经理、架构师、全栈开发者和 UI 工程师的综合体，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。
+> 我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。

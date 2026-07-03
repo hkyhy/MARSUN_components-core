@@ -178,3 +178,11 @@ tasks:
     kind: chore
     tags: [infra, release, docs]
     note: "移除 feat push 自动 patch；publish.yml 仅 workflow_dispatch 补发；同步 version-check 与技能文档"
+  - id: M003-14
+    milestone: M003
+    name: PageSpin/PageShell/ModulePageShell 页面加载与壳层
+    status: 已完成
+    priority: P1
+    kind: feature
+    tags: [frontend, layout, release]
+    note: "PageSpin 全页 Spin；PageShellProvider 元信息；ModulePageShell 通用壳；PageHeaderLayout spinning"
