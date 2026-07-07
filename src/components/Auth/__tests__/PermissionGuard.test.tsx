@@ -1,47 +1,62 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import MarsunCoreProvider from '@/provider/MarsunCoreProvider';
+import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
 import PermissionGuard from '../PermissionGuard';
-import { useAuthStore } from '@/stores/authStore';
 
-vi.mock('@/stores/authStore', () => ({
-  useAuthStore: vi.fn(),
-}));
+afterEach(() => {
+  cleanup();
+});
 
-const mockUseAuthStore = vi.mocked(useAuthStore);
+function renderGuard(
+  auth: {
+    isAuthenticated: boolean;
+    hasAnyRole?: (roles: string[]) => boolean;
+    hasPermission?: (p: string) => boolean;
+  },
+  ui: React.ReactElement,
+) {
+  return render(<MarsunCoreProvider auth={auth}>{ui}</MarsunCoreProvider>);
+}
 
 describe('PermissionGuard', () => {
   it('renders children when no roles specified', () => {
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: true, hasAnyRole: vi.fn() } as never);
-    render(<PermissionGuard>Content</PermissionGuard>);
+    renderGuard({ isAuthenticated: true }, <PermissionGuard>Content</PermissionGuard>);
     expect(screen.getByText('Content')).toBeInTheDocument();
   });
 
   it('renders fallback when not authenticated', () => {
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: false, hasAnyRole: vi.fn() } as never);
-    render(<PermissionGuard fallback={<span>No Access</span>}>Content</PermissionGuard>);
+    renderGuard(
+      { isAuthenticated: false },
+      <PermissionGuard fallback={<span>No Access</span>}>Content</PermissionGuard>,
+    );
     expect(screen.queryByText('Content')).not.toBeInTheDocument();
     expect(screen.getByText('No Access')).toBeInTheDocument();
   });
 
   it('renders children when user has matching role', () => {
-    const hasAnyRole = vi.fn().mockReturnValue(true);
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: true, hasAnyRole } as never);
-    render(<PermissionGuard roles={['SYSTEM_ADMIN']}>Admin Content</PermissionGuard>);
+    const hasAnyRole = (roles: string[]) => roles.includes('SYSTEM_ADMIN');
+    renderGuard(
+      { isAuthenticated: true, hasAnyRole },
+      <PermissionGuard roles={['SYSTEM_ADMIN']}>Admin Content</PermissionGuard>,
+    );
     expect(screen.getByText('Admin Content')).toBeInTheDocument();
-    expect(hasAnyRole).toHaveBeenCalledWith(['SYSTEM_ADMIN']);
   });
 
   it('renders fallback when user lacks role', () => {
-    const hasAnyRole = vi.fn().mockReturnValue(false);
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: true, hasAnyRole } as never);
-    render(<PermissionGuard roles={['SYSTEM_ADMIN']} fallback={null}>Admin Content</PermissionGuard>);
+    renderGuard(
+      { isAuthenticated: true, hasAnyRole: () => false },
+      <PermissionGuard roles={['SYSTEM_ADMIN']} fallback={null}>
+        Admin Content
+      </PermissionGuard>,
+    );
     expect(screen.queryByText('Admin Content')).not.toBeInTheDocument();
   });
 
   it('renders null as default fallback', () => {
-    const hasAnyRole = vi.fn().mockReturnValue(false);
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: true, hasAnyRole } as never);
-    const { container } = render(<PermissionGuard roles={['SYSTEM_ADMIN']}>Hidden</PermissionGuard>);
+    const { container } = renderGuard(
+      { isAuthenticated: true, hasAnyRole: () => false },
+      <PermissionGuard roles={['SYSTEM_ADMIN']}>Hidden</PermissionGuard>,
+    );
     expect(container.innerHTML).toBe('');
   });
 });

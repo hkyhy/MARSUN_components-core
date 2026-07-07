@@ -21,6 +21,82 @@ export {
   type Visibility,
 } from './utils/resolveMaybeFn';
 export { formatFileSize } from './utils/format';
+export { toDateRange, toDateTimeRange } from './utils/date';
+export {
+  REDIRECT_URL_PARAM,
+  resolveRedirectUrl,
+  buildLocationRedirectUrl,
+  buildLoginPath,
+  readRedirectUrlFromSearch,
+} from './utils/authRedirect';
+export {
+  DEFAULT_LAST_ACTIVITY_STORAGE_KEY,
+  getLastActivityTime,
+  touchLastActivity,
+  clearLastActivity,
+} from './utils/sessionActivity';
+export {
+  USER_ROLE_PERMISSIONS_KEY,
+  PERMISSION_DEFINITIONS_KEY,
+  PERMISSIONS_STORAGE_KEY,
+  loadUserRolePermissions,
+  saveUserRolePermissions,
+  loadPermissionDefinitions,
+  savePermissionDefinitions,
+  getStoredUserPermissions,
+  getStoredPermissionMap,
+} from './utils/permissionStorage';
+export { createMarsunRequest } from './utils/createMarsunRequest';
+export type {
+  MarsunApiResponse,
+  CreateMarsunRequestOptions,
+  MarsunRequestClient,
+} from './utils/createMarsunRequest';
+export type {
+  UserRolePermissions,
+  PermissionDefinition,
+  PermissionDefinitionsResponse,
+} from './types/auth';
+export {
+  buildDepartmentPathMapFromTree,
+  buildDepartmentPathMapFromFlat,
+  getDepartmentPath,
+  buildLeafDepartmentPathMap,
+  buildDepartmentPathMaps,
+  mergeDepartmentPathMaps,
+  toDepartmentPathMaps,
+} from './utils/department/departmentPath';
+export type { DepartmentPathMaps } from './utils/department/departmentPath';
+export {
+  flattenDepartments,
+  findDepartmentRootId,
+  collectDepartmentIds,
+  getNormalUserAccessibleDepartmentIds,
+  extractDepartmentSubtree,
+  getNormalUserDepartmentTree,
+  intersectDepartmentIds,
+} from './utils/department/departmentScope';
+export type { DepartmentTreeNode, FlatDepartment } from './utils/department/types';
+export {
+  EMPLOYEE_ID_SIX_DIGIT_PATTERN,
+  EMPLOYEE_ID_FORMAT_MESSAGE,
+  employeeIdFormatRule,
+  isValidEmployeeIdFormat,
+} from './utils/user/employeeId';
+export {
+  normalizeRawPersonList,
+  normalizePersonDtos,
+  resolvePersonDepartmentName,
+  toPersonOptions,
+  toReviewerPersonOptions,
+  formatPersonValueLabel,
+  toPersonSelectOptions,
+  buildPersonOptionLookup,
+  resolveSelectPersonOption,
+  createPersonSelectFilter,
+  matchPersonOptionSearch,
+} from './utils/personOption';
+export type { PersonOptionDto, ReviewerOptionDto, PersonSelectOption } from './utils/personOption';
 
 // Components
 export * from './components/Auth';

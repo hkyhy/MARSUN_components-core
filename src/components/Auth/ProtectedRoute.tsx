@@ -1,4 +1,5 @@
 import { useMarsunAuth } from '@/provider';
+import { buildLocationRedirectUrl, buildLoginPath } from '@/utils/authRedirect';
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
@@ -21,8 +22,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const location = useLocation();
 
   if (!isAuthenticated) {
-    const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
-    return <Navigate to={`${loginPath}?redirect=${redirect}`} replace />;
+    return (
+      <Navigate
+        to={buildLoginPath(
+          buildLocationRedirectUrl(location.pathname, location.search, location.hash),
+          loginPath,
+        )}
+        replace
+      />
+    );
   }
 
   if (roles && roles.length > 0 && !hasAnyRole?.(roles)) {

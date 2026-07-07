@@ -1,42 +1,67 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import MarsunCoreProvider from '@/provider/MarsunCoreProvider';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../ProtectedRoute';
-import { useAuthStore } from '@/stores/authStore';
 
-vi.mock('@/stores/authStore', () => ({
-  useAuthStore: vi.fn(),
-}));
+afterEach(() => {
+  cleanup();
+});
 
-const mockUseAuthStore = vi.mocked(useAuthStore);
-
-const renderWithRouter = (ui: React.ReactElement) =>
-  render(<MemoryRouter>{ui}</MemoryRouter>);
+function renderProtected(
+  auth: {
+    isAuthenticated: boolean;
+    hasAnyRole?: (roles: string[]) => boolean;
+    hasPermission?: (p: string) => boolean;
+  },
+  ui: React.ReactElement,
+  initialPath = '/protected',
+) {
+  return render(
+    <MarsunCoreProvider auth={auth}>
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Routes>
+          <Route path="/protected" element={ui} />
+          <Route path="/login" element={<div>Login Page</div>} />
+          <Route path="/" element={<div>Home</div>} />
+        </Routes>
+      </MemoryRouter>
+    </MarsunCoreProvider>,
+  );
+}
 
 describe('ProtectedRoute', () => {
-  it('redirects to /login when not authenticated', () => {
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: false, hasAnyRole: vi.fn() } as never);
-    renderWithRouter(<ProtectedRoute>Protected Content</ProtectedRoute>);
-    expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
+  it('redirects to login when not authenticated', async () => {
+    renderProtected({ isAuthenticated: false }, <ProtectedRoute>Protected Content</ProtectedRoute>);
+    await waitFor(() => {
+      expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
+      expect(screen.getByText('Login Page')).toBeInTheDocument();
+    });
   });
 
   it('renders children when authenticated and no roles required', () => {
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: true, hasAnyRole: vi.fn() } as never);
-    renderWithRouter(<ProtectedRoute>Protected Content</ProtectedRoute>);
+    renderProtected({ isAuthenticated: true }, <ProtectedRoute>Protected Content</ProtectedRoute>);
     expect(screen.getByText('Protected Content')).toBeInTheDocument();
   });
 
   it('renders children when authenticated and role matches', () => {
-    const hasAnyRole = vi.fn().mockReturnValue(true);
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: true, hasAnyRole } as never);
-    renderWithRouter(<ProtectedRoute roles={['SYSTEM_ADMIN']}>Admin Panel</ProtectedRoute>);
+    renderProtected(
+      { isAuthenticated: true, hasAnyRole: (roles) => roles.includes('SYSTEM_ADMIN') },
+      <ProtectedRoute roles={['SYSTEM_ADMIN']}>Admin Panel</ProtectedRoute>,
+    );
     expect(screen.getByText('Admin Panel')).toBeInTheDocument();
   });
 
-  it('redirects to /dashboard when role does not match', () => {
-    const hasAnyRole = vi.fn().mockReturnValue(false);
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: true, hasAnyRole } as never);
-    renderWithRouter(<ProtectedRoute roles={['SYSTEM_ADMIN']}>Admin Panel</ProtectedRoute>);
-    expect(screen.queryByText('Admin Panel')).not.toBeInTheDocument();
+  it('redirects to fallback when role does not match', async () => {
+    renderProtected(
+      { isAuthenticated: true, hasAnyRole: () => false },
+      <ProtectedRoute roles={['SYSTEM_ADMIN']} fallbackPath="/">
+        Admin Panel
+      </ProtectedRoute>,
+    );
+    await waitFor(() => {
+      expect(screen.queryByText('Admin Panel')).not.toBeInTheDocument();
+      expect(screen.getByText('Home')).toBeInTheDocument();
+    });
   });
 });

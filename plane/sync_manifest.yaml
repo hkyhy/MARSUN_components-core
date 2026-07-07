@@ -186,3 +186,21 @@ tasks:
     kind: feature
     tags: [frontend, layout, release]
     note: "PageSpin 全页 Spin；PageShellProvider 元信息；ModulePageShell 通用壳；PageHeaderLayout spinning"
+
+  - id: M003-15
+    milestone: M003
+    name: 通用 utils 下沉与 createMarsunRequest
+    status: 已完成
+    priority: P0
+    kind: feature
+    tags: [frontend, utils, release]
+    note: date/auth/department/permission/session/personOption、createMarsunRequest、File download；axios peerDep；v0.1.19
+
+  - id: M003-16
+    milestone: M003
+    name: Prettier ESLint Husky 格式化工具链
+    status: 已完成
+    priority: P1
+    kind: chore
+    tags: [frontend, infra]
+    note: .prettierrc、eslint.config.js、lint-staged、prepare husky；对齐 code-formatting.md

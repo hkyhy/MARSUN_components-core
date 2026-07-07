@@ -9,6 +9,7 @@ export interface FilterOption {
 
 /** 人员展示选项（仅 UI 字段，数据由消费方提供） */
 export interface PersonOption extends FilterOption {
+  departmentId?: string;
   departmentName?: string;
   email?: string;
   phone?: string;
