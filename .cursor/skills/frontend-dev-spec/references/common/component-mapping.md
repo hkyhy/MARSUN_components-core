@@ -106,18 +106,18 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 
 跨项目纯工具从包根 import，业务项目 **禁止** 复制实现：
 
-| 分类       | 主要导出                                                                              |
-| ---------- | ------------------------------------------------------------------------------------- |
-| 日期       | `toDateRange`, `toDateTimeRange`                                                      |
-| 登录重定向 | `buildLoginPath`, `readRedirectUrlFromSearch`, `REDIRECT_URL_PARAM`                   |
-| 会话空闲   | `getLastActivityTime`, `touchLastActivity`, `DEFAULT_LAST_ACTIVITY_STORAGE_KEY`       |
-| 权限存储   | `loadUserRolePermissions`, `getStoredUserPermissions`, `USER_ROLE_PERMISSIONS_KEY`    |
-| HTTP       | `createMarsunRequest`（业务项目薄封装注入 token/logout）                              |
-| 部门树     | `buildDepartmentPathMapFromTree`, `flattenDepartments`, `getNormalUserDepartmentTree` |
-| 人员选项   | `normalizePersonDtos`, `toPersonOptions`, `createPersonSelectFilter`                  |
-| 工号校验   | `isValidEmployeeIdFormat`, `employeeIdFormatRule`                                     |
-| 文件下载   | `getFileDownloadUrl`, `downloadFileItem`（注入 `getToken`）                           |
-| 通用       | `formatFileSize`, `resolveMaybeFn`, `resolveVisible`                                  |
+| 分类       | 主要导出                                                                                                        |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| 日期       | `toDateRange`, `toDateTimeRange`, `toApiStartEnd`, `recentDayRange`, `recentYearRange`, `recentDayRangeStrings` |
+| 登录重定向 | `buildLoginPath`, `readRedirectUrlFromSearch`, `REDIRECT_URL_PARAM`                                             |
+| 会话空闲   | `getLastActivityTime`, `touchLastActivity`, `DEFAULT_LAST_ACTIVITY_STORAGE_KEY`                                 |
+| 权限存储   | `loadUserRolePermissions`, `getStoredUserPermissions`, `USER_ROLE_PERMISSIONS_KEY`                              |
+| HTTP       | `createMarsunRequest`（业务项目薄封装注入 token/logout）                                                        |
+| 部门树     | `buildDepartmentPathMapFromTree`, `flattenDepartments`, `getNormalUserDepartmentTree`                           |
+| 人员选项   | `normalizePersonDtos`, `toPersonOptions`, `createPersonSelectFilter`                                            |
+| 工号校验   | `isValidEmployeeIdFormat`, `employeeIdFormatRule`                                                               |
+| 文件下载   | `getFileDownloadUrl`, `downloadFileItem`（注入 `getToken`）                                                     |
+| 通用       | `formatFileSize`, `resolveMaybeFn`, `resolveVisible`                                                            |
 
 **保留在业务项目**：`fetchAuthPermissions`（绑定 API）、`agentHubAccess`（路由/常量）、`points/*`（领域逻辑）、`request.ts` 薄封装实例。
 

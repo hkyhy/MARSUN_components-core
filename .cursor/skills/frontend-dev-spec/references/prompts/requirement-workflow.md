@@ -8,7 +8,8 @@
 - [ ] 识别涉及模块：`src/components/{Domain}/{Module}/` 或 `src/pages/`
 - [ ] 确认是否涉及权限、筛选、部门/人员、批量操作等业务规则
 - [ ] 需求歧义时列出假设，标注待确认项
-- [ ] **WorkRecord**：涉及 API → 从 hooks/`src/api/*.ts` 枚举接口清单（逐行：提供人/对接人/说明/日期）→ 匹配或新建；**新建前 AskQuestion**
+- [ ] **WorkRecord**：先判**事项类型**（接口对接 / 页面改版 / 工程化）再匹配文档；涉及 API → 枚举接口清单；**禁止**把 Husky、布局重构写入「*接口对接」；新建前 AskQuestion
+- [ ] **core utils**：新建 `src/utils/` 前先查 component-mapping npm Utils 表；core 已有则包根 import，禁止复制同名文件
 
 ## 二、方案论证（四方交叉）
 
@@ -53,6 +54,7 @@
 28. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping.md](../common/component-mapping.md)、[../common/marsun-core-version.md](../common/marsun-core-version.md)）
 29. 检查：代码格式化工具链是否已安装（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`lint-staged`、`husky` 等 devDependencies）；根目录是否有 `.prettierrc`、`eslint.config.js`、`.husky/pre-commit`；`package.json` 是否有 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts（见 [../common/code-formatting.md](../common/code-formatting.md)）
 30. 检查：模块 workarea 扁平布局——`ModulePageShell` 不传冗余 `breadcrumb`；主区 `ContentCard flat` 或无边框容器；`*-workarea-body` 无外层 padding；Tabs content `width:100%`；页脚保存等非 block（Drawer 除外）（见 [../common/styles.md](../common/styles.md) §8.10）
+31. 检查：**禁止重复 core utils**——`src/utils/` 不得复制 `@hkyhy/marsun-components-core` 已导出函数；日期/权限/部门/人员/HTTP 等从包根 import（见 [../common/component-mapping.md](../common/component-mapping.md) npm Utils 表）
 
 ## 四、按需阅读规范
 
@@ -89,7 +91,11 @@
 - [ ] 新增/变更组件已同步更新规范文档与提示词（与代码同一任务）
 - [ ] `@hkyhy/marsun-components-core` 版本与 npm 实版一致（`npm view` 核对；无 `file:` lock）
 - [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting.md`）
+- [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
 - [ ] 测试通过
+- [ ] **新任务台账**：`sync_manifest.yaml` 登记时 `status: 进行中` → `da pm sync` CREATE（禁止首次就写 `已完成`）
+- [ ] **commit 闭环**（plane_ready 仓库）：`da task timeline-sync` →（完成）`da task done --confirm` → **WorkRecord 进展追加（按事项类型选文档）** → `sync_manifest` 改 `已完成` → `da pm sync` PATCH（见 [work-record/SKILL.md](../../../work-record/SKILL.md) · `03-commit-plane-timeline.mdc`）
+- [ ] WorkRecord 已写入**正确类型**的大事文档（接口对接 / 页面改版 / 工程化分列）；非 API 进展未混入「*接口对接」
 - [ ] 若本任务有对应 WorkRecord 大事文档，已追加「进展记录」；新增 API 须补接口行；Mock 与正式接口区分状态（Mock 勿标已完成）
 
 ## 五、回复开头

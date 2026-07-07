@@ -142,7 +142,7 @@ src/layouts/{LayoutName}/
 | 业务领域 utils    | `src/utils/{Module}/` 或模块内 `utils/`                 | `agentHubAccess`、`points/*`、`fetchAuthPermissions`               |
 | 模块内 utils      | `src/components/{Domain}/{Module}/utils/`               | `roleValidation`、`filePreview`                                    |
 
-**决策顺序**：① 查 core 包根导出 → ② 能薄封装则不要复制 → ③ 确属单项目业务再写本地 `src/utils/`。
+**决策顺序**：① 查 core 包根导出（component-mapping npm Utils 表）→ ② **有则 import，禁止复制同名 `src/utils/*.ts`** → ③ 能薄封装则不要复制 → ④ 确属单项目业务再写本地 `src/utils/`。
 
 ```
 # 模块级（仅模块内使用）

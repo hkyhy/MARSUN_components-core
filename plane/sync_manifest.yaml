@@ -1,6 +1,6 @@
 meta:
   project_name: "@hkyhy/marsun-components-core"
-  next_task_id: M003-18
+  next_task_id: M003-19
 
 tasks:
   - id: M001-1
@@ -214,3 +214,12 @@ tasks:
     kind: fix
     tags: [frontend, filter, utils]
     note: showDefaultAsSelected、findMatchingQuickKey、recentDayRange/toApiStartEnd 导出与单测；v0.1.20
+
+  - id: M003-18
+    milestone: M003
+    name: frontend-dev-spec 规范文档同步
+    status: 进行中
+    priority: P2
+    kind: docs
+    tags: [spec, frontend]
+    note: 对齐 marsun_arch 权威源：utils 下沉规则、component-mapping、styles、code-formatting
