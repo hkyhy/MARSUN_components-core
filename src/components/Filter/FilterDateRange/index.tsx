@@ -37,8 +37,10 @@ const BUILT_IN_OPTIONS: QuickOption[] = [
 interface FilterDateRangeProps extends BaseFilterProps {
   value?: [string, string] | null;
   onChange?: (value: [string, string] | null) => void;
-  /** 默认区间：与默认相同时视为未筛选 */
+  /** 默认区间：与默认相同时视为未筛选（除非 showDefaultAsSelected） */
   defaultValue?: [string, string];
+  /** 为 true 时，value 等于 defaultValue 仍展示在已选 Tag 中 */
+  showDefaultAsSelected?: boolean;
   showQuickOptions?: boolean;
   quickOptions?: QuickOption[];
 }
@@ -49,12 +51,29 @@ function isSameRange(a?: [string, string] | null, b?: [string, string]): boolean
   return a[0] === b[0] && a[1] === b[1];
 }
 
+function findMatchingQuickKey(
+  range: [string, string] | null | undefined,
+  opts: QuickOption[],
+): string | null {
+  if (!range?.[0] || !range?.[1]) return null;
+  const start = dayjs(range[0]);
+  const end = dayjs(range[1]);
+  for (const opt of opts) {
+    const v = opt.getValue();
+    if (v && v[0].isSame(start, 'day') && v[1].isSame(end, 'day')) {
+      return opt.key;
+    }
+  }
+  return null;
+}
+
 const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   filterKey,
   label,
   value,
   onChange,
   defaultValue,
+  showDefaultAsSelected = false,
   showQuickOptions = true,
   quickOptions,
   active,
@@ -67,25 +86,36 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   const [activeQuickKey, setActiveQuickKey] = useState<string | null>(null);
 
   const registerFn = useFilterRegister();
+  const opts = quickOptions ?? (showQuickOptions ? BUILT_IN_OPTIONS : []);
+
+  const syncActiveQuickKey = (range: [string, string] | null | undefined) => {
+    setActiveQuickKey(findMatchingQuickKey(range, opts));
+  };
 
   const revertToCommitted = () => {
     if (value?.[0] && value?.[1]) {
       setDates([dayjs(value[0]), dayjs(value[1])]);
+      syncActiveQuickKey(value);
     } else {
       setDates(null);
+      setActiveQuickKey(null);
     }
-    setActiveQuickKey(null);
   };
 
   useEffect(() => {
     if (value?.[0] && value?.[1]) {
       setDates([dayjs(value[0]), dayjs(value[1])]);
+      syncActiveQuickKey(value);
     } else {
       setDates(null);
+      setActiveQuickKey(null);
     }
-  }, [value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, opts]);
 
-  const hasNonDefaultValue = !!value?.[0] && !isSameRange(value, defaultValue);
+  const hasNonDefaultValue = showDefaultAsSelected
+    ? !!value?.[0]
+    : !!value?.[0] && !isSameRange(value, defaultValue);
 
   const valueLabel = useMemo(() => {
     if (!hasNonDefaultValue || !value?.[0] || !value?.[1]) return '';
@@ -123,13 +153,9 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      revertToCommitted();
-    }
+    revertToCommitted();
     setOpen(nextOpen);
   };
-
-  const opts = quickOptions ?? (showQuickOptions ? BUILT_IN_OPTIONS : []);
 
   return (
     <FilterPopover
@@ -141,11 +167,18 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
       onReset={handleDiscardDraft}
     >
       {opts.length > 0 && (
-        <div className={classNames('filter-date-range-quick-options', styles['filter-date-range-quick-options'])}>
+        <div
+          className={classNames(
+            'filter-date-range-quick-options',
+            styles['filter-date-range-quick-options'],
+          )}
+        >
           {opts.map((opt) => (
             <span
               key={opt.key}
-              className={classNames('filter-date-range-quick-option', styles['filter-date-range-quick-option'],
+              className={classNames(
+                'filter-date-range-quick-option',
+                styles['filter-date-range-quick-option'],
                 activeQuickKey === opt.key && 'filter-date-range-quick-option-active',
                 activeQuickKey === opt.key && styles['filter-date-range-quick-option-active'],
               )}
@@ -176,3 +209,4 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
 
 export default FilterDateRange;
 export type { FilterDateRangeProps, QuickOption };
+export { findMatchingQuickKey, isSameRange };

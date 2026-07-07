@@ -21,7 +21,14 @@ export {
   type Visibility,
 } from './utils/resolveMaybeFn';
 export { formatFileSize } from './utils/format';
-export { toDateRange, toDateTimeRange } from './utils/date';
+export {
+  toDateRange,
+  toDateTimeRange,
+  toApiStartEnd,
+  recentDayRange,
+  recentYearRange,
+  recentDayRangeStrings,
+} from './utils/date';
 export {
   REDIRECT_URL_PARAM,
   resolveRedirectUrl,

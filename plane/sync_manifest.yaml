@@ -1,5 +1,6 @@
 meta:
   project_name: "@hkyhy/marsun-components-core"
+  next_task_id: M003-18
 
 tasks:
   - id: M001-1
@@ -204,3 +205,12 @@ tasks:
     kind: chore
     tags: [frontend, infra]
     note: .prettierrc、eslint.config.js、lint-staged、prepare husky；对齐 code-formatting.md
+
+  - id: M003-17
+    milestone: M003
+    name: FilterDateRange 默认日期展示与 date utils
+    status: 进行中
+    priority: P1
+    kind: fix
+    tags: [frontend, filter, utils]
+    note: showDefaultAsSelected、findMatchingQuickKey、recentDayRange/toApiStartEnd 导出与单测；v0.1.20
