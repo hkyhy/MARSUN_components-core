@@ -38,7 +38,6 @@
 > 3. **Header 刷新带 icon**：使用 `Action/refreshAction.tsx`，`icon: <RefreshCw spin={loading} size={16} />`。
 > 4. **FilterSelect 单选选中项显示对号**：`FilterSelect` 单选模式下，选中项右侧显示 `CheckOutlined`（对号），而非 `CloseOutlined`（叉号）。取消选中通过"重置"按钮操作，不通过点击对号。
 
-
 ## 〇、列表项可见性：`hidden` 属性模式
 
 > **核心原则**：`ButtonGroup` listArray、`StatCardList` items 等列表项配置，统一使用 `hidden` 属性控制可见性，禁止使用 `switch(role)` 返回不同数组或 `{condition && <List/>}` 条件渲染不同列表。
@@ -672,9 +671,7 @@ const FormModal: React.FC<FormModalProps> = ({
   useEffect(() => {
     if (!open) return;
     if (editingUser) {
-      form.setFieldsValue({
-        /* 初始化编辑值 */
-      });
+      form.setFieldsValue({/* 初始化编辑值 */});
     } else {
       form.resetFields();
       if (defaultDeptId) form.setFieldsValue({ departmentId: defaultDeptId });
@@ -1009,9 +1006,7 @@ const Detail: React.FC = () => {
   }
   if (!data) {
     return (
-      <div className={classNames('file-detail-empty', styles['file-detail-empty'])}>
-        数据不存在
-      </div>
+      <div className={classNames('file-detail-empty', styles['file-detail-empty'])}>数据不存在</div>
     );
   }
 
@@ -1243,9 +1238,7 @@ export function useFileManager() {
         setLoading(false);
       }
     },
-    [
-      /* deps */
-    ],
+    [/* deps */],
   );
 
   useEffect(() => {
@@ -1326,6 +1319,12 @@ const FileManager: React.FC = () => {
   );
 };
 ```
+
+**S3 质量分析 — 扁平 workarea 页面（`ModulePageShell` + hook + Detail）**：
+
+- 页面仅解构 hook、传 `spinning`，**不传**与 title 重复的 `breadcrumb`
+- 主区 `ConfigWorkarea` 使用 `ContentCard flat noPadding`；`quality-config-workarea-body` 无 padding
+- 参考：`repos/Agent_QualityAnalysis/frontend/src/pages/Config/index.tsx`、`pages/Alerts/index.tsx`
 
 **hooks 与 utils 的区别**：
 
@@ -1532,4 +1531,3 @@ export const FeedbackStatusTag: React.FC<{ status: string }> = ({ status }) => {
 | 领导审批　 | `VOLCANO`　　 | `'volcano'`　　 | 待分管领导审批　　　　　　　　　　　 |
 | 辅助/变更  | `CYAN`　　　  | `'cyan'`　　　  | 修改优先级、辅助信息　　　　　　　　 |
 | 重要/关注  | `GOLD`　　　  | `'gold'`　　　  | 重要标记、关注项　　　　　　　　　　 |
-

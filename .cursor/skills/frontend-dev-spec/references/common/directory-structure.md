@@ -132,7 +132,17 @@ src/layouts/{LayoutName}/
 
 ### 工具函数与常量目录
 
-**放置原则**：模块内使用的放模块内，跨模块共享的放全局目录。
+**放置原则**：模块内使用的放模块内，跨模块共享的放全局目录；**跨项目纯工具优先进 `@hkyhy/marsun-components-core`**（见核心原则 #34）。
+
+| 归属              | 路径                                                    | 示例                                                               |
+| ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ |
+| core 跨域 utils   | `marsun_components-core/src/utils/`                     | `date`、`authRedirect`、`permissionStorage`、`createMarsunRequest` |
+| core 组件域 utils | `marsun_components-core/src/components/{Module}/utils/` | `File/utils/download`                                              |
+| 业务薄封装        | `src/utils/`（仅注入 store/token/API）                  | `request.ts`、`Files/download.ts`                                  |
+| 业务领域 utils    | `src/utils/{Module}/` 或模块内 `utils/`                 | `agentHubAccess`、`points/*`、`fetchAuthPermissions`               |
+| 模块内 utils      | `src/components/{Domain}/{Module}/utils/`               | `roleValidation`、`filePreview`                                    |
+
+**决策顺序**：① 查 core 包根导出 → ② 能薄封装则不要复制 → ③ 确属单项目业务再写本地 `src/utils/`。
 
 ```
 # 模块级（仅模块内使用）
@@ -342,4 +352,3 @@ System/
 | `examples/`              | Demo 示例                                        | 可选                                                          |
 | `style.module.scss`      | 模块样式（CSS Modules）                          | 必选（无样式时保留空文件）                                    |
 | `.test.tsx` / `.test.ts` | 测试文件（`__tests__/` 目录，与 examples/ 平级） | 必选                                                          |
-

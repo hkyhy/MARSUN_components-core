@@ -8,15 +8,16 @@
 - [ ] 识别涉及模块：`src/components/{Domain}/{Module}/` 或 `src/pages/`
 - [ ] 确认是否涉及权限、筛选、部门/人员、批量操作等业务规则
 - [ ] 需求歧义时列出假设，标注待确认项
+- [ ] **WorkRecord**：涉及 API → 从 hooks/`src/api/*.ts` 枚举接口清单（逐行：提供人/对接人/说明/日期）→ 匹配或新建；**新建前 AskQuestion**
 
 ## 二、方案论证（四方交叉）
 
-| 维度 | 论证要点 |
-| ---- | -------- |
-| 产品 | 交互路径是否最短？边界是否覆盖？ |
-| 架构 | 目录结构、handlers 抽离、单一数据来源是否合规？组件变更是否同步更新规范文档与提示词？ |
-| 开发 | 纯 UI 优先 `@hkyhy/marsun-components-core`？业务 wrapper 留本地 Common？最小 diff？可测试？ |
-| UI | PageHeaderLayout、ButtonGroup、主题色、信息层级是否一致？滚动区是否用 VirtualScrollbar（不占位）？数据加载是否用 PageShellProvider + ModulePageShell/PageHeaderLayout spinning（禁止局部 loading 文案）？ |
+| 维度 | 论证要点                                                                                                                                                                                                                                                                         |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 产品 | 交互路径是否最短？边界是否覆盖？                                                                                                                                                                                                                                                 |
+| 架构 | 目录结构、handlers 抽离、单一数据来源是否合规？组件变更是否同步更新规范文档与提示词？                                                                                                                                                                                            |
+| 开发 | 纯 UI 优先 `@hkyhy/marsun-components-core`？业务 wrapper 留本地 Common？最小 diff？可测试？                                                                                                                                                                                      |
+| UI   | PageHeaderLayout、ButtonGroup、主题色、信息层级是否一致？滚动区是否用 VirtualScrollbar（不占位）？数据加载是否用 PageShellProvider + ModulePageShell/PageHeaderLayout spinning（禁止局部 loading 文案）？主 workarea 是否扁平（无冗余 breadcrumb、无双层 card border/padding）？ |
 
 ## 三、开发流程
 
@@ -50,23 +51,27 @@
 26. 检查：模块页 loading 是否通过 `PageShellProvider` + `ModulePageShell`/`PageHeaderLayout` `spinning` 或 `usePageShellLoading` 实现，禁止局部 loading 文案与 Spin 叠层（见 [../common/page-loading.md](../common/page-loading.md)）
 27. 检查：**每次新增或更改组件**是否已同步更新规范文档与提示词（`SKILL.md`、`component-mapping.md`、专题 reference、`requirement-workflow.md` 检查项、`examples/meta.json` / Demo）；代码与规范须同一任务内完成，禁止只改代码
 28. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping.md](../common/component-mapping.md)、[../common/marsun-core-version.md](../common/marsun-core-version.md)）
+29. 检查：代码格式化工具链是否已安装（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`lint-staged`、`husky` 等 devDependencies）；根目录是否有 `.prettierrc`、`eslint.config.js`、`.husky/pre-commit`；`package.json` 是否有 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts（见 [../common/code-formatting.md](../common/code-formatting.md)）
+30. 检查：模块 workarea 扁平布局——`ModulePageShell` 不传冗余 `breadcrumb`；主区 `ContentCard flat` 或无边框容器；`*-workarea-body` 无外层 padding；Tabs content `width:100%`；页脚保存等非 block（Drawer 除外）（见 [../common/styles.md](../common/styles.md) §8.10）
 
 ## 四、按需阅读规范
 
-| 场景 | 先读 | 再读 |
-| ---- | ---- | ---- |
-| 接新需求 / 改交互 | [mindset.md](mindset.md) | 按任务选 common/business |
-| 新建业务模块 | [../business/module-patterns.md](../business/module-patterns.md) | [../common/directory-structure.md](../common/directory-structure.md) |
-| 筛选项 | [../common/filter.md](../common/filter.md) | — |
-| 部门 / 人员 | [../common/filter.md](../common/filter.md) + [../business/department-person.md](../business/department-person.md) | — |
-| 权限 / 批量操作 | [../business/permissions-data.md](../business/permissions-data.md) | — |
-| 路由 / API | [../business/routing-api.md](../business/routing-api.md) | — |
-| 主题 / Tag 颜色 | [../common/theme.md](../common/theme.md) + [../common/component-mapping.md](../common/component-mapping.md) | [../common/styles.md](../common/styles.md) |
-| 滚动区 / Layout | [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) | [../common/page-loading.md](../common/page-loading.md) |
-| 组件 Demo | [../common/examples.md](../common/examples.md) | SKILL.md #23、component-mapping |
-| 新增/变更组件 | [SKILL.md](../../SKILL.md) 核心原则 #23 | component-mapping + 专题 reference |
-| 样式 / className | [../common/styles.md](../common/styles.md) | [../common/naming.md](../common/naming.md) |
-| 写测试 | [../common/testing.md](../common/testing.md) | — |
+| 场景                    | 先读                                                                                                              | 再读                                                                 |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 接新需求 / 改交互       | [mindset.md](mindset.md)                                                                                          | 按任务选 common/business                                             |
+| 新建业务模块            | [../business/module-patterns.md](../business/module-patterns.md)                                                  | [../common/directory-structure.md](../common/directory-structure.md) |
+| 筛选项                  | [../common/filter.md](../common/filter.md)                                                                        | —                                                                    |
+| 部门 / 人员             | [../common/filter.md](../common/filter.md) + [../business/department-person.md](../business/department-person.md) | —                                                                    |
+| 权限 / 批量操作         | [../business/permissions-data.md](../business/permissions-data.md)                                                | —                                                                    |
+| 路由 / API              | [../business/routing-api.md](../business/routing-api.md)                                                          | —                                                                    |
+| 主题 / Tag 颜色         | [../common/theme.md](../common/theme.md) + [../common/component-mapping.md](../common/component-mapping.md)       | [../common/styles.md](../common/styles.md)                           |
+| 滚动区 / Layout         | [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md)                                                  | [../common/page-loading.md](../common/page-loading.md)               |
+| 组件 Demo               | [../common/examples.md](../common/examples.md)                                                                    | SKILL.md #23、component-mapping                                      |
+| 新增/变更组件           | [SKILL.md](../../SKILL.md) 核心原则 #23                                                                           | component-mapping + 专题 reference                                   |
+| 样式 / className        | [../common/styles.md](../common/styles.md)                                                                        | [../common/naming.md](../common/naming.md)                           |
+| 写测试                  | [../common/testing.md](../common/testing.md)                                                                      | —                                                                    |
+| 新建仓库 / 格式化工具链 | [../common/code-formatting.md](../common/code-formatting.md)                                                      | —                                                                    |
+| 事项工作记录            | [work-record/SKILL.md](../../../work-record/SKILL.md)                                                             | —                                                                    |
 
 ## 五、完成前检查清单
 
@@ -79,10 +84,13 @@
 - [ ] Tooltip 详情用 TooltipInfo
 - [ ] 主滚动区用 VirtualScrollbar（见 `common/virtual-scrollbar.md`），Layout 接入与全局样式兜底一致
 - [ ] 样式符合 `common/styles.md`：`style.module.scss` 与 `index.tsx` 同目录；禁止 Tailwind / `sc()`；每个 className 含 `{组件}-{功能}` 预定类名 + `styles['...']`
+- [ ] 模块 workarea 扁平：`breadcrumb` 不重复 title；主区无双层 border/padding；Tabs 内容 100% 宽；页脚主按钮非无谓 block（§8.10）
 - [ ] examples/meta.json 已创建（如为新组件）
 - [ ] 新增/变更组件已同步更新规范文档与提示词（与代码同一任务）
 - [ ] `@hkyhy/marsun-components-core` 版本与 npm 实版一致（`npm view` 核对；无 `file:` lock）
+- [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting.md`）
 - [ ] 测试通过
+- [ ] 若本任务有对应 WorkRecord 大事文档，已追加「进展记录」；新增 API 须补接口行；Mock 与正式接口区分状态（Mock 勿标已完成）
 
 ## 五、回复开头
 

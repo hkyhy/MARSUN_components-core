@@ -6,6 +6,7 @@ description: |
   当需要在 Tooltip 中展示结构化详情（如添加人/添加时间）时，必须使用 TooltipInfo（来自 `@hkyhy/marsun-components-core` 或本地 Common 封装）。
   当页面或模块存在可滚动区域时，必须使用 VirtualScrollbar（来自 `@hkyhy/marsun-components-core`），禁止在主滚动区使用 overflow-auto / overflow-y-auto；Layout 级接入方式见 references/common/virtual-scrollbar.md。
   当模块页或列表页存在数据加载态时，必须使用 core 的 PageSpin + PageShellProvider（App Layout 包裹 Provider；页面用 ModulePageShell / PageHeaderLayout 的 spinning 或 usePageShellLoading）；禁止业务内手写「加载中…」叠层。见 references/common/page-loading.md。
+  当新建或初始化前端子仓库、或 package.json 缺少格式化工具链时，须按 references/common/code-formatting.md 安装 Prettier + ESLint + Husky（含 `prepare`、`lint-staged` script、`.husky/pre-commit`），配置对齐 `repos/maoyang_data-asset-system` 与 `repos/marsun_components-core`。
   当使用图标时，必须从 `@hkyhy/marsun-components-core` 导入 Icons（禁止业务项目直接 import lucide-react）；Header 刷新操作使用 `refreshAction` + `RefreshCw` spin。
   当创建组件示例（examples/meta.json）时，多子模块业务域（如 Common、AgentHub）须按 {Domain}/{Module}/examples/ 组织，脚本自动生成域级父 menu 与子 menu。
   每次新增或更改组件（含 Common 封装、Props/行为变更、全局接入方式变更）时，须同步更新对应的规范文档与提示词（SKILL.md、references、component-mapping 等），代码与规范同一任务内完成。
@@ -62,6 +63,9 @@ description: |
 29. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**，且**版本号与 npm 已发布最新版一致**（如 `^0.1.15`）；禁止 `file:` / lockfile `link: true`；本地联调用 `MARSUN_CORE_LOCAL` + Vite alias。详见 [component-mapping.md](references/common/component-mapping.md)
 30. **core 版本与实版一致** `(common)`：`marsun_components-core` feat 开发时 `package.json` version **= npm 已发布最新**；发版仅通过 `chore(release): vX.Y.Z` commit + push 触发 CI publish，**禁止本地 npm publish**；`npm run version:check:apply` 仅写回 npm+1 准备 chore commit。见 [marsun-core-version.md](references/common/marsun-core-version.md)
 31. **模块页全局 Loading** `(common)`：`PageSpin`、`PageShellProvider`、`usePageShellLoading`、`ModulePageShell` 来自 `@hkyhy/marsun-components-core`；App Layout 须包 `PageShellProvider`；页面用 `spinning` 或 `usePageShellLoading`，禁止局部 loading 文案叠层。见 [page-loading.md](references/common/page-loading.md)
+32. **代码格式化与 Lint** `(common)`：所有前端子仓库须安装 Prettier + ESLint + Husky 工具链（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`typescript-eslint`、`lint-staged`、`husky` 等），根目录配置 `.prettierrc` + `eslint.config.js` + `.husky/pre-commit`，`package.json` 提供 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts；参考 `repos/maoyang_data-asset-system` 与 `repos/marsun_components-core`。详见 [code-formatting.md](references/common/code-formatting.md)
+33. **模块主区扁平布局** `(business)`：`ModulePageShell` 已提供 `title`/`description` 时，**禁止**再传与 title 重复的 `breadcrumb`；主内容 workarea **禁止**双层 card（外层 border + 内层 padding）。主区用 `ContentCard flat` 或等价 `flex:1` 容器；Tabs/Table 内容区 `width:100%`；页脚主操作按钮默认 **非 block**（Drawer/窄容器可用 `saveBlock`）。详见 [styles.md](references/common/styles.md)「模块 workarea 扁平化」
+34. **非业务代码进 core** `(common)`：新建工具/纯 UI 前先查 `@hkyhy/marsun-components-core` 包根是否已导出。纯函数、无项目 API/store/业务枚举 → 写 `marsun_components-core`（跨域 `src/utils/{module}/`；单组件域 `src/components/{Module}/utils/`）。含 zustand、业务 API、领域常量 → 留业务项目 `src/utils/{Module}/` 或模块内 `utils/`。业务项目**禁止**复制 core 已有实现；仅允许薄配置层（如 `createMarsunRequest` 实例化、`getFileDownloadUrl` 注入 `getToken`）。core 新增导出须同步 `src/index.ts` + [component-mapping.md](references/common/component-mapping.md)
 
 ---
 
@@ -85,10 +89,11 @@ description: |
 | 主题 Token、颜色          | [common/theme.md](references/common/theme.md)                             |
 | SCSS Modules、样式目录    | [common/styles.md](references/common/styles.md)                           |
 | 虚拟滚动条 / Layout 滚动  | [common/virtual-scrollbar.md](references/common/virtual-scrollbar.md)     |
-| 模块页全局 Loading        | [common/page-loading.md](references/common/page-loading.md)             |
+| 模块页全局 Loading        | [common/page-loading.md](references/common/page-loading.md)               |
 | Filter 筛选组件           | [common/filter.md](references/common/filter.md)                           |
 | 组件 Examples / meta.json | [common/examples.md](references/common/examples.md)                       |
 | 测试                      | [common/testing.md](references/common/testing.md)                         |
+| 代码格式化 / ESLint       | [common/code-formatting.md](references/common/code-formatting.md)         |
 | 命名速查                  | [common/naming.md](references/common/naming.md)                           |
 
 ### business（业务规范）
@@ -102,20 +107,22 @@ description: |
 
 ### 场景速查
 
-| 场景                 | 先读                                       | 再读                       |
-| -------------------- | ------------------------------------------ | -------------------------- |
-| 接新需求 / 改交互    | prompts/mindset → requirement-workflow     | 按任务选 common/business   |
-| 新建业务模块         | business/module-patterns                   | common/directory-structure |
-| 筛选项 / 部门人员    | common/filter + business/department-person | —                          |
-| 权限 / 批量操作      | business/permissions-data                  | —                          |
-| 主题 / Tag 颜色      | common/theme + common/component-mapping    | common/styles                          |
-| 滚动区 / Layout 接入 | common/virtual-scrollbar                   | —                          |
-| 模块页 loading       | common/page-loading                        | common/component-mapping   |
-| 组件 Demo            | common/examples                            | —                          |
-| 新增/变更组件        | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow |
-| 样式 / className / SCSS | common/styles                              | common/naming              |
-| 写测试               | common/testing                             | —                          |
-| 修改规范 / 同步子仓库 | common/skills-sync                         | —                          |
+| 场景                    | 先读                                       | 再读                                 |
+| ----------------------- | ------------------------------------------ | ------------------------------------ |
+| 接新需求 / 改交互       | prompts/mindset → requirement-workflow     | 按任务选 common/business             |
+| 新建业务模块            | business/module-patterns                   | common/directory-structure           |
+| 筛选项 / 部门人员       | common/filter + business/department-person | —                                    |
+| 权限 / 批量操作         | business/permissions-data                  | —                                    |
+| 主题 / Tag 颜色         | common/theme + common/component-mapping    | common/styles                        |
+| 滚动区 / Layout 接入    | common/virtual-scrollbar                   | —                                    |
+| 模块页 loading          | common/page-loading                        | common/component-mapping             |
+| 组件 Demo               | common/examples                            | —                                    |
+| 新增/变更组件           | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow |
+| 样式 / className / SCSS | common/styles                              | common/naming                        |
+| 模块 workarea 扁平布局  | common/styles §8.10                        | SKILL.md #33                         |
+| 写测试                  | common/testing                             | —                                    |
+| 新建仓库 / 缺 lint      | common/code-formatting                     | —                                    |
+| 修改规范 / 同步子仓库   | common/skills-sync                         | —                                    |
 
 ## 同步到 repos 子仓库
 

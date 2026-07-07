@@ -13,15 +13,15 @@ npm install @hkyhy/marsun-components-core antd react react-dom
 
 **接入要点**：
 
-| 项 | 说明 |
-| --- | --- |
-| 安装（**提交态**） | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.17"`（**须与 npm 已发布最新版一致**；核对 `npm view @hkyhy/marsun-components-core version`） |
-| 本地联调（**勿改 package.json**） | 环境变量 + Vite alias，见下「本地链」；`package.json` / lockfile **保持 semver** |
-| 全局 Provider | 根节点包裹 `MarsunCoreProvider`（`auth` / `fetch` 由业务注入） |
-| 样式 | `import '@hkyhy/marsun-components-core/styles'` |
-| 公共 Token | `import '@hkyhy/marsun-components-core/tokens'`（在 global.scss 或 main 最早加载） |
-| 主题 | `generateTheme` / `applyThemeToCssVariables` / `applyCssTokenOverrides` 从 `@hkyhy/marsun-components-core/theme` |
-| Showcase | https://hkyhy.github.io/MARSUN_components-core/ |
+| 项                                | 说明                                                                                                                                                  |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 安装（**提交态**）                | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.17"`（**须与 npm 已发布最新版一致**；核对 `npm view @hkyhy/marsun-components-core version`） |
+| 本地联调（**勿改 package.json**） | 环境变量 + Vite alias，见下「本地链」；`package.json` / lockfile **保持 semver**                                                                      |
+| 全局 Provider                     | 根节点包裹 `MarsunCoreProvider`（`auth` / `fetch` 由业务注入）                                                                                        |
+| 样式                              | `import '@hkyhy/marsun-components-core/styles'`                                                                                                       |
+| 公共 Token                        | `import '@hkyhy/marsun-components-core/tokens'`（在 global.scss 或 main 最早加载）                                                                    |
+| 主题                              | `generateTheme` / `applyThemeToCssVariables` / `applyCssTokenOverrides` 从 `@hkyhy/marsun-components-core/theme`                                      |
+| Showcase                          | https://hkyhy.github.io/MARSUN_components-core/                                                                                                       |
 
 ### 本地链：环境变量（不写 `file:`）
 
@@ -62,10 +62,10 @@ rg 'marsun_components-core|"link": true' package-lock.json  # 须为空（相对
 
 **semver 须已发布且与实版一致**：
 
-| 仓库 | `package.json` 字段 | 规则 |
-| --- | --- | --- |
-| `marsun_components-core` | `"version"` | feat 开发时 **= npm 已发布最新**；仅 `chore(release)` commit 内允许 **npm+1 patch** |
-| 业务项目 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版，与 lockfile 解析版本一致 |
+| 仓库                     | `package.json` 字段               | 规则                                                                                |
+| ------------------------ | --------------------------------- | ----------------------------------------------------------------------------------- |
+| `marsun_components-core` | `"version"`                       | feat 开发时 **= npm 已发布最新**；仅 `chore(release)` commit 内允许 **npm+1 patch** |
+| 业务项目                 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版，与 lockfile 解析版本一致                         |
 
 **core 发版**：`chore(release): vX.Y.Z` push main → CI publish；**禁止**本地 `npm publish`。见 [marsun-core-version.md](./marsun-core-version.md)。
 
@@ -83,7 +83,17 @@ npm view @hkyhy/marsun-components-core version --registry https://registry.npmjs
 
 ```ts
 // 纯 UI — 来自 npm
-import { SemanticTag, TooltipInfo, CommonFilter, VirtualScrollbar, RefreshCw, CircleAlert, PageShellProvider, ModulePageShell, usePageShellLoading } from '@hkyhy/marsun-components-core';
+import {
+  SemanticTag,
+  TooltipInfo,
+  CommonFilter,
+  VirtualScrollbar,
+  RefreshCw,
+  CircleAlert,
+  PageShellProvider,
+  ModulePageShell,
+  usePageShellLoading,
+} from '@hkyhy/marsun-components-core';
 
 // 业务域 — 留在 maoyang 本地
 import { DepartmentSelect } from '@/components/Common/Form/DepartmentSelect';
@@ -92,28 +102,47 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 
 **迁移原则**：包内已有的纯 UI（Filter、Tag、File、Auth 守卫、Layout 等）新代码直接从 npm 引用；含 `departmentPath`、权限常量、业务枚举的 wrapper **不得**迁入 npm，保留在 `src/components/Common/` 或 `src/components/{Domain}/`。
 
+### npm Utils 导出（`@hkyhy/marsun-components-core`）
+
+跨项目纯工具从包根 import，业务项目 **禁止** 复制实现：
+
+| 分类       | 主要导出                                                                              |
+| ---------- | ------------------------------------------------------------------------------------- |
+| 日期       | `toDateRange`, `toDateTimeRange`                                                      |
+| 登录重定向 | `buildLoginPath`, `readRedirectUrlFromSearch`, `REDIRECT_URL_PARAM`                   |
+| 会话空闲   | `getLastActivityTime`, `touchLastActivity`, `DEFAULT_LAST_ACTIVITY_STORAGE_KEY`       |
+| 权限存储   | `loadUserRolePermissions`, `getStoredUserPermissions`, `USER_ROLE_PERMISSIONS_KEY`    |
+| HTTP       | `createMarsunRequest`（业务项目薄封装注入 token/logout）                              |
+| 部门树     | `buildDepartmentPathMapFromTree`, `flattenDepartments`, `getNormalUserDepartmentTree` |
+| 人员选项   | `normalizePersonDtos`, `toPersonOptions`, `createPersonSelectFilter`                  |
+| 工号校验   | `isValidEmployeeIdFormat`, `employeeIdFormatRule`                                     |
+| 文件下载   | `getFileDownloadUrl`, `downloadFileItem`（注入 `getToken`）                           |
+| 通用       | `formatFileSize`, `resolveMaybeFn`, `resolveVisible`                                  |
+
+**保留在业务项目**：`fetchAuthPermissions`（绑定 API）、`agentHubAccess`（路由/常量）、`points/*`（领域逻辑）、`request.ts` 薄封装实例。
+
 **版本对齐**：包 peer 为 antd 6 + React 19；业务项目未升级前可用 `--legacy-peer-deps` 安装，逐步替换 import 后再统一升级 antd/React。
 
 ### npm 导出 ↔ 本地 Common 对照
 
-| npm（`@hkyhy/marsun-components-core`） | 原 `src/components/Common/...` |
-| --- | --- |
-| `CommonDescriptions` | `Descriptions/CommonDescriptions` |
-| `TooltipInfo` | `TooltipInfo` |
-| `PageHeaderLayout` | `Layout/PageHeaderLayout` |
-| `PageSpin` | 模块 body 整页 Spin（flex 高度链） |
-| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册 |
-| `ModulePageShell` | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步 |
-| `VirtualScrollbar` | `VirtualScrollbar` |
-| `Icons`（`RefreshCw`、`CircleAlert` 等） | 统一图标库；业务禁止 `lucide-react` |
-| `Sparkline` | 微型趋势折线（S3 质量分析等） |
-| `LlmFormattedText` / `parseLlmText` | LLM 结构化文本展示 |
-| `SemanticTag` / `SEMANTIC_COLORS` | `Tag/SemanticTag` |
-| `CommonFilter` + `Filter*` | `Filter/*` |
-| `FetchSelect` / `FetchTreeSelect` | `Form/FetchSelect` 等 |
-| `FileItemView` / `FileLink` / `FilePreview` | `File/*` |
-| `MarsunCoreProvider` | 新增，替代分散的 auth/fetch context |
-| `DepartmentSelect` 等 | **无**，保留本地业务 wrapper |
+| npm（`@hkyhy/marsun-components-core`）                       | 原 `src/components/Common/...`                          |
+| ------------------------------------------------------------ | ------------------------------------------------------- |
+| `CommonDescriptions`                                         | `Descriptions/CommonDescriptions`                       |
+| `TooltipInfo`                                                | `TooltipInfo`                                           |
+| `PageHeaderLayout`                                           | `Layout/PageHeaderLayout`                               |
+| `PageSpin`                                                   | 模块 body 整页 Spin（flex 高度链）                      |
+| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册                            |
+| `ModulePageShell`                                            | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步 |
+| `VirtualScrollbar`                                           | `VirtualScrollbar`                                      |
+| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`                     |
+| `Sparkline`                                                  | 微型趋势折线（S3 质量分析等）                           |
+| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示                                      |
+| `SemanticTag` / `SEMANTIC_COLORS`                            | `Tag/SemanticTag`                                       |
+| `CommonFilter` + `Filter*`                                   | `Filter/*`                                              |
+| `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                   |
+| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                |
+| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context                     |
+| `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                            |
 
 ### AgentHub 导出（`@hkyhy/marsun-components-core`）
 
@@ -132,61 +161,62 @@ import {
 } from '@hkyhy/marsun-components-core';
 ```
 
-| 子模块 | 主要导出 |
-| --- | --- |
-| Chat / Detail | `ChatPanel`, `ChatInput`, `MessageItem`, `MessageActions`, `CitationPanel`, `CitationInlineBadge`, `ThinkingSection`, `MermaidBlock`, … |
-| Chat / List | `ChatCard`, `ChatFilterBar`, `SessionSidebar` |
-| Chat / Action | `ChatCreateButton`, `ChatManageActionButtons`, `SessionActionButtons` |
-| Chat / hooks | `useChat`, `useChatSessions`, `useSSECompletion`, `useTypewriter`, `useAutoScrollToBottom` |
-| Chat / utils | `prepareCitationContent`, `parseSessionMessages`, `sanitizeMermaidChart`, … |
-| KnowledgeBase / Detail | `DocumentTable`, `ParseStatusTag` |
-| KnowledgeBase / List | `KnowledgeCard`, `KBFilterBar` |
-| KnowledgeBase / Action | `CreateButton`, `ManageActionButtons` |
-| 守卫 | `AgentHubAccessGuard`, `AgentHubSessionAccessGuard`, `AgentHubIndexRedirect` |
+| 子模块                 | 主要导出                                                                                                                                |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Chat / Detail          | `ChatPanel`, `ChatInput`, `MessageItem`, `MessageActions`, `CitationPanel`, `CitationInlineBadge`, `ThinkingSection`, `MermaidBlock`, … |
+| Chat / List            | `ChatCard`, `ChatFilterBar`, `SessionSidebar`                                                                                           |
+| Chat / Action          | `ChatCreateButton`, `ChatManageActionButtons`, `SessionActionButtons`                                                                   |
+| Chat / hooks           | `useChat`, `useChatSessions`, `useSSECompletion`, `useTypewriter`, `useAutoScrollToBottom`                                              |
+| Chat / utils           | `prepareCitationContent`, `parseSessionMessages`, `sanitizeMermaidChart`, …                                                             |
+| KnowledgeBase / Detail | `DocumentTable`, `ParseStatusTag`                                                                                                       |
+| KnowledgeBase / List   | `KnowledgeCard`, `KBFilterBar`                                                                                                          |
+| KnowledgeBase / Action | `CreateButton`, `ManageActionButtons`                                                                                                   |
+| 守卫                   | `AgentHubAccessGuard`, `AgentHubSessionAccessGuard`, `AgentHubIndexRedirect`                                                            |
 
 ### Common 组件（本地或 npm）
 
-| antd 组件　　　　　　 | Common 封装　　　　　　　　　　　　　　　　　　　  | 使用方式　　　　　　　　　　　　　　　　　　　　　                    |
-| --------------------- | -------------------------------------------------- | --------------------------------------------------------------------- |
-| `Descriptions`　　　  | `CommonDescriptions`　　　　　　　　　　　　　　　 | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                   |
-| `Tooltip`（详情）　   | `TooltipInfo`　　　　　　　　　　　　　　　　　　  | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情 |
-| 页面头部布局　　　　  | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `spinning` + `children` |
-| 模块页壳（AppShell） | `ModulePageShell` + `PageShellProvider`　　　　　  | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [page-loading.md](page-loading.md) |
+| antd 组件　　　　　　 | Common 封装　　　　　　　　　　　　　　　　　　　  | 使用方式　　　　　　　　　　　　　　　　　　　　　                                                                                                  |
+| --------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Descriptions`　　　  | `CommonDescriptions`　　　　　　　　　　　　　　　 | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                 |
+| `Tooltip`（详情）　   | `TooltipInfo`　　　　　　　　　　　　　　　　　　  | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                               |
+| 页面头部布局　　　　  | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                            |
+| 模块页壳（AppShell）  | `ModulePageShell` + `PageShellProvider`　　　　　  | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [page-loading.md](page-loading.md)                                                       |
+| 主内容卡片　　　　　  | `ContentCard`（Shared/Layout）　　　　　　　　　   | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles.md](styles.md) §8.10                                                              |
 | 可滚动区域　　　　　  | `VirtualScrollbar`　　　　　　　　　　　　　　　　 | `wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['...'])`；`ref` → viewport；见 [virtual-scrollbar.md](virtual-scrollbar.md) |
-| 模块/页面样式         | `style.module.scss`                               | 每模块/页面必选（无样式时空文件）；见 [styles.md](styles.md) |
-| `Tag`（状态展示）　　 | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`  | 传入 `status` / `role`　　　　　　　　　　　　　　                    |
-| `Tag`（通用）　　　　 | `SemanticTag`　　　　　　　　　　　　　　　　　　  | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                    |
-| `Select`（部门选择）  | `DepartmentSelect`　　　　　　　　　　　　　　　　 | 自动加载部门列表　　　　　　　　　　　　　　　　　                    |
-| 权限判断　　　　　　  | `hasPermission`　　　　　　　　　　　　　　　　　  | `hasPermission(user, 'user:edit')`　　　　　　　　                    |
-| 筛选栏　　　　　　　  | `CommonFilter` + Filter 子组件　　　　　　　　　　 | 见 [filter.md](filter.md)　　　　　　　　　　　　　　                    |
-| `Input`（筛选）　　　 | `FilterInput`　　　　　　　　　　　　　　　　　　  | `filterKey` + `label` + `value` + `onChange`　　　                    |
-| `Select`（筛选）　　  | `FilterSelect`　　　　　　　　　　　　　　　　　　 | `filterKey` + `options` + `value` + `onChange`　　                    |
-| `TreeSelect`（筛选）  | `FilterTreeSelect`　　　　　　　　　　　　　　　　 | `filterKey` + `value` + `onChange`，自动加载部门树　                  |
-| `RangePicker`（筛选） | `FilterDateRange`　　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                   |
-| 数字范围（筛选）　　  | `FilterNumberRange`　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange` + `unit`　　　　                   |
+| 模块/页面样式         | `style.module.scss`                                | 每模块/页面必选（无样式时空文件）；见 [styles.md](styles.md)                                                                                        |
+| `Tag`（状态展示）　　 | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`  | 传入 `status` / `role`　　　　　　　　　　　　　　                                                                                                  |
+| `Tag`（通用）　　　　 | `SemanticTag`　　　　　　　　　　　　　　　　　　  | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                  |
+| `Select`（部门选择）  | `DepartmentSelect`　　　　　　　　　　　　　　　　 | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                  |
+| 权限判断　　　　　　  | `hasPermission`　　　　　　　　　　　　　　　　　  | `hasPermission(user, 'user:edit')`　　　　　　　　                                                                                                  |
+| 筛选栏　　　　　　　  | `CommonFilter` + Filter 子组件　　　　　　　　　　 | 见 [filter.md](filter.md)　　　　　　　　　　　　　　                                                                                               |
+| `Input`（筛选）　　　 | `FilterInput`　　　　　　　　　　　　　　　　　　  | `filterKey` + `label` + `value` + `onChange`　　　                                                                                                  |
+| `Select`（筛选）　　  | `FilterSelect`　　　　　　　　　　　　　　　　　　 | `filterKey` + `options` + `value` + `onChange`　　                                                                                                  |
+| `TreeSelect`（筛选）  | `FilterTreeSelect`　　　　　　　　　　　　　　　　 | `filterKey` + `value` + `onChange`，自动加载部门树　                                                                                                |
+| `RangePicker`（筛选） | `FilterDateRange`　　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                                                                                                 |
+| 数字范围（筛选）　　  | `FilterNumberRange`　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange` + `unit`　　　　                                                                                                 |
 
 ### Icons（`@hkyhy/marsun-components-core`）
 
-| 场景 | 用法 | 禁止 |
-| --- | --- | --- |
-| 页面/侧栏/列表装饰 icon | `import { RefreshCw, CircleAlert, LayoutGrid } from '@hkyhy/marsun-components-core'` | 业务项目 `import from 'lucide-react'` |
-| 加载中刷新 | `<RefreshCw spin={loading} size={16} />` | 手写 CSS 旋转或 lucide 直引 |
-| Header 刷新 ButtonGroup 项 | `refreshAction({ onClick, loading })` → `{ icon: <RefreshCw spin={loading} /> }` | 无 icon 的纯文字刷新（Header 须带 icon） |
-| 路由/面包屑 icon 类型 | `FC<IconProps>` from core | `LucideIcon` from lucide-react |
+| 场景                       | 用法                                                                                 | 禁止                                     |
+| -------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- |
+| 页面/侧栏/列表装饰 icon    | `import { RefreshCw, CircleAlert, LayoutGrid } from '@hkyhy/marsun-components-core'` | 业务项目 `import from 'lucide-react'`    |
+| 加载中刷新                 | `<RefreshCw spin={loading} size={16} />`                                             | 手写 CSS 旋转或 lucide 直引              |
+| Header 刷新 ButtonGroup 项 | `refreshAction({ onClick, loading })` → `{ icon: <RefreshCw spin={loading} /> }`     | 无 icon 的纯文字刷新（Header 须带 icon） |
+| 路由/面包屑 icon 类型      | `FC<IconProps>` from core                                                            | `LucideIcon` from lucide-react           |
 
 完整列表见 core `ICON_NAMES` / `ICON_REGISTRY`；缺图标时在 `marsun_components-core/src/components/Icons` 补导出后再业务引用。
 
 ### @kne/button-group
 
-| 场景                     | 组件                                     | 替代                               |
-| ------------------------ | ---------------------------------------- | ---------------------------------- |
-| 操作按钮组（Table）      | `ButtonGroup moreType="link"` + 对象数组 | `Dropdown` + `Button`              |
-| 操作按钮组（详情页）     | `ButtonGroup` + 对象数组                 | `Space` + 多个 `Button`            |
-| 页面头部操作             | `ButtonGroup` + 对象数组；刷新用 `refreshAction` + `RefreshCw` icon | `Space` + `Button` + lucide-react |
-| 确认操作（listArray 中） | 对象 `message`/`isDelete` 属性           | `ConfirmLink`/`ConfirmButton` 组件 |
-| 确认操作（独立按钮）     | `ConfirmButton` / `ConfirmLink`          | `Modal.confirm` / `Popconfirm`     |
-| 带加载按钮               | `LoadingButton`                          | `Button` + 手动 `loading`          |
-| 请求按钮                 | `FetchButton`                            | `LoadingButton` + 手动请求         |
+| 场景                     | 组件                                                                | 替代                               |
+| ------------------------ | ------------------------------------------------------------------- | ---------------------------------- |
+| 操作按钮组（Table）      | `ButtonGroup moreType="link"` + 对象数组                            | `Dropdown` + `Button`              |
+| 操作按钮组（详情页）     | `ButtonGroup` + 对象数组                                            | `Space` + 多个 `Button`            |
+| 页面头部操作             | `ButtonGroup` + 对象数组；刷新用 `refreshAction` + `RefreshCw` icon | `Space` + `Button` + lucide-react  |
+| 确认操作（listArray 中） | 对象 `message`/`isDelete` 属性                                      | `ConfirmLink`/`ConfirmButton` 组件 |
+| 确认操作（独立按钮）     | `ConfirmButton` / `ConfirmLink`                                     | `Modal.confirm` / `Popconfirm`     |
+| 带加载按钮               | `LoadingButton`                                                     | `Button` + 手动 `loading`          |
+| 请求按钮                 | `FetchButton`                                                       | `LoadingButton` + 手动请求         |
 
 ### antd 原生 Form
 
