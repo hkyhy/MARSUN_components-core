@@ -1,6 +1,6 @@
 meta:
   project_name: "@hkyhy/marsun-components-core"
-  next_task_id: M003-20
+  next_task_id: M003-21
 
 tasks:
   - id: M001-1
@@ -232,3 +232,12 @@ tasks:
     kind: feature
     tags: [frontend, chat, agent]
     note: ChatWidgetBlock 气泡内嵌；ChatFollowUpSuggestions 可折叠；MessageItem widgets 前置；ChatInput embedded 去双层边框
+
+  - id: M003-20
+    milestone: M003
+    name: ChatAgentFab 引用侧栏与全屏高度
+    status: 进行中
+    priority: P1
+    kind: feature
+    tags: [frontend, chat, agent]
+    note: ChatAgentFab/ChatAgentFabLayout、useCitationPanel、panelFullscreen；Maximize2/Minimize2；示例与规范同步

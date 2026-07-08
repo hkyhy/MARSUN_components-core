@@ -18,7 +18,13 @@
       "title": "对话面板",
       "description": "ChatPanel 消息列表 + 建议问题 + 输入框的完整对话容器",
       "component": "@/components/AgentHub/Chat/examples/ChatPanelBasicDemo",
-      "sourcePath": "@/components/AgentHub/Chat/examples/ChatPanelBasicDemo/index.tsx",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ChatPanelBasicDemo/index.tsx"
+    },
+    {
+      "title": "浮动助手 FAB",
+      "description": "ChatAgentFab + ChatAgentFabLayout：reference 引用侧栏、panelFullscreen 全屏高度；headerActions 切换全屏",
+      "component": "@/components/AgentHub/Chat/examples/ChatAgentFabBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ChatAgentFabBasicDemo/index.tsx",
       "block": true
     },
     {
@@ -163,14 +169,110 @@
           "type": "ReactNode"
         },
         { "prop": "headerExtra", "desc": "头部下方扩展区（如最近对话 chip）", "type": "ReactNode" },
-        { "prop": "beforeInput", "desc": "输入框上方扩展区（如 widgets）", "type": "ReactNode" },
-        { "prop": "showSuggestions", "desc": "是否展示建议问题", "type": "boolean" },
-        { "prop": "suggestions", "desc": "建议问题列表", "type": "string[]" },
+        {
+          "prop": "beforeInput",
+          "desc": "输入框上方扩展区（自定义插槽，推荐问请用 followUpItems）",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "followUpItems",
+          "desc": "API 返回的推荐问/追问列表",
+          "type": "string[]"
+        },
+        {
+          "prop": "starterItems",
+          "desc": "无用户消息且无 followUpItems 时的兜底推荐",
+          "type": "string[]"
+        },
+        {
+          "prop": "onFollowUpSelect",
+          "desc": "点击推荐项回调（完全自定义，优先于 onSendMessage）",
+          "type": "(text: string) => void"
+        },
+        {
+          "prop": "onSendMessage",
+          "desc": "点击推荐项直接发送（默认推荐行为，勿填输入框）",
+          "type": "(text: string) => void"
+        },
+        {
+          "prop": "followUpLoading",
+          "desc": "true 时隐藏推荐区",
+          "type": "boolean"
+        },
+        {
+          "prop": "starterTitle",
+          "desc": "冷启动推荐标题",
+          "type": "string",
+          "defaultVal": "推荐问"
+        },
+        {
+          "prop": "followUpTitle",
+          "desc": "有用户消息后的推荐标题",
+          "type": "string",
+          "defaultVal": "推荐追问"
+        },
         {
           "prop": "onCitationClick",
           "desc": "引用角标点击",
           "type": "MessageItemProps['onCitationClick']"
         }
+      ]
+    },
+    {
+      "componentName": "ChatAgentFabProps",
+      "rows": [
+        { "prop": "open", "desc": "是否展开面板", "type": "boolean" },
+        {
+          "prop": "onOpenChange",
+          "desc": "展开状态变更",
+          "type": "(open: boolean) => void"
+        },
+        { "prop": "children", "desc": "展开时面板内容（通常为 ChatPanel）", "type": "ReactNode" },
+        { "prop": "fabLabel", "desc": "FAB 按钮文案", "type": "ReactNode", "defaultVal": "AI+" },
+        {
+          "prop": "openAriaLabel",
+          "desc": "收起时按钮无障碍文案",
+          "type": "string",
+          "defaultVal": "打开 AI 助手"
+        },
+        {
+          "prop": "closeAriaLabel",
+          "desc": "展开时按钮无障碍文案",
+          "type": "string",
+          "defaultVal": "收起 AI 助手"
+        },
+        { "prop": "panelAriaLabel", "desc": "弹出层 dialog 标签", "type": "string" },
+        {
+          "prop": "panelExpanded",
+          "desc": "引用侧栏等场景下加宽面板",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "panelFullscreen",
+          "desc": "全屏高度（宽度仍由 panelExpanded 控制）",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "closeOnClickOutside",
+          "desc": "点击 FAB 区域外是否关闭",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "offsetRight",
+          "desc": "距右侧偏移",
+          "type": "number | string",
+          "defaultVal": "24"
+        },
+        {
+          "prop": "offsetBottom",
+          "desc": "距底部偏移",
+          "type": "number | string",
+          "defaultVal": "24"
+        },
+        { "prop": "zIndex", "desc": "层级", "type": "number", "defaultVal": "1100" }
       ]
     },
     {
@@ -286,6 +388,97 @@
           "desc": "锚点元素（编辑图标按钮）",
           "type": "React.ReactNode",
           "required": true
+        }
+      ]
+    },
+    {
+      "componentName": "ChatAgentFabProps",
+      "rows": [
+        {
+          "prop": "open",
+          "desc": "面板是否展开",
+          "type": "boolean"
+        },
+        {
+          "prop": "onOpenChange",
+          "desc": "展开/收起回调",
+          "type": "(open: boolean) => void"
+        },
+        {
+          "prop": "panelExpanded",
+          "desc": "引用侧栏打开时加宽面板（配合 ChatAgentFabLayout + CitationPanel）",
+          "type": "boolean"
+        },
+        {
+          "prop": "panelFullscreen",
+          "desc": "全屏高度 calc(100vh - 88px)，仍锚定右下角 FAB",
+          "type": "boolean"
+        },
+        {
+          "prop": "panelAriaLabel",
+          "desc": "弹出面板无障碍标签",
+          "type": "string"
+        },
+        {
+          "prop": "closeOnClickOutside",
+          "desc": "点击面板外是否收起",
+          "type": "boolean"
+        },
+        {
+          "prop": "children",
+          "desc": "面板内容，通常为 ChatAgentFabLayout",
+          "type": "React.ReactNode"
+        }
+      ]
+    },
+    {
+      "componentName": "ChatAgentFabLayoutProps",
+      "rows": [
+        {
+          "prop": "main",
+          "desc": "主对话区（ChatPanel）",
+          "type": "React.ReactNode",
+          "required": true
+        },
+        {
+          "prop": "citationAside",
+          "desc": "引用侧栏（CitationPanel）",
+          "type": "React.ReactNode"
+        }
+      ]
+    },
+    {
+      "componentName": "UseCitationPanelResult",
+      "rows": [
+        {
+          "prop": "citationOpen",
+          "desc": "引用侧栏是否打开",
+          "type": "boolean"
+        },
+        {
+          "prop": "panelCitations",
+          "desc": "当前展示的引用列表",
+          "type": "Citation[]"
+        },
+        {
+          "prop": "highlightedCitationIndex",
+          "desc": "高亮定位的引用下标",
+          "type": "number"
+        },
+        {
+          "prop": "handleCitationClick",
+          "desc": "传给 ChatPanel.onCitationClick",
+          "type": "(items: Citation[], index?: number) => void"
+        },
+        {
+          "prop": "closeCitationPanel",
+          "desc": "关闭侧栏",
+          "type": "() => void"
+        },
+        {
+          "prop": "resetCitationState",
+          "desc": "发送新消息/切换会话时重置",
+          "type": "() => void"
         }
       ]
     },

@@ -1,0 +1,15 @@
+.chat-agent-fab-basic-demo-root {
+  position: relative;
+  min-height: 680px;
+  height: 680px;
+  border: 1px solid var(--font-color-grey-3, #dddddd);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-color-grey, #f8fafc);
+}
+
+.chat-agent-fab-basic-demo-root :global(.chat-agent-fab) {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+}

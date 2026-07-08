@@ -1,12 +1,12 @@
 import type { ChatMessage } from '@/components/AgentHub/types';
 import { VirtualScrollbar } from '@/components/VirtualScrollbar';
 import { Button } from 'antd';
-import React, { useRef, type ReactNode } from 'react';
+import React, { useCallback, useMemo, useRef, type ReactNode } from 'react';
 import classNames from 'classnames';
 import { useAutoScrollToBottom } from '../../hooks';
+import ChatFollowUpSuggestions from '../ChatFollowUpSuggestions';
 import ChatInput from '../ChatInput';
 import type { ChatInputProps } from '../ChatInput';
-import ChatSuggestionRow from '../ChatSuggestionRow';
 import MessageItem from '../MessageItem';
 import type { MessageItemProps } from '../MessageItem';
 import styles from './style.module.scss';
@@ -21,9 +21,19 @@ export interface ChatPanelProps {
   headerExtra?: ReactNode;
   beforeInput?: ReactNode;
 
-  showSuggestions?: boolean;
-  suggestions?: string[];
-  onSuggestionClick?: (text: string) => void;
+  /** API 返回的推荐问/追问列表 */
+  followUpItems?: string[];
+  /** 无用户消息且无 followUpItems 时的兜底推荐 */
+  starterItems?: string[];
+  /** 点击推荐项（完全自定义，优先于 onSendMessage） */
+  onFollowUpSelect?: (text: string) => void;
+  /** 点击推荐项直接发送（推荐问/追问默认行为） */
+  onSendMessage?: (text: string) => void;
+  /** true 时隐藏推荐区（如会话加载、发送中） */
+  followUpLoading?: boolean;
+  followUpDefaultExpanded?: boolean;
+  starterTitle?: string;
+  followUpTitle?: string;
 
   messages: ChatMessage[];
   showEmptyHint?: boolean;
@@ -53,11 +63,16 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   headerActions,
   headerExtra,
   beforeInput,
-  showSuggestions = false,
-  suggestions = [],
-  onSuggestionClick,
+  followUpItems,
+  starterItems,
+  onFollowUpSelect,
+  onSendMessage,
+  followUpLoading = false,
+  followUpDefaultExpanded = true,
+  starterTitle = '推荐问',
+  followUpTitle = '推荐追问',
   messages,
-  showEmptyHint = true,
+  showEmptyHint,
   emptyPlaceholder = '点击上方建议，或直接输入问题',
   onCitationClick,
   onEditMessage,
@@ -80,8 +95,49 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     trigger: messages,
   });
 
-  const showSuggestionRow =
-    showSuggestions && suggestions.length > 0 && typeof onSuggestionClick === 'function';
+  const hasUserMessages = messages.some((message) => message.role === 'user');
+
+  const effectiveFollowUpItems = useMemo(() => {
+    if (followUpItems?.length) return followUpItems;
+    if (!hasUserMessages && starterItems?.length) return starterItems;
+    return [];
+  }, [followUpItems, hasUserMessages, starterItems]);
+
+  const showFollowUp =
+    effectiveFollowUpItems.length > 0 &&
+    !followUpLoading &&
+    (typeof onFollowUpSelect === 'function' || typeof onSendMessage === 'function');
+
+  const followUpDisplayTitle = hasUserMessages ? followUpTitle : starterTitle;
+
+  const effectiveShowEmptyHint = showEmptyHint ?? (!showFollowUp && !followUpLoading);
+
+  const handleFollowUpSelect = useCallback(
+    (text: string) => {
+      if (onFollowUpSelect) {
+        onFollowUpSelect(text);
+        return;
+      }
+      onSendMessage?.(text);
+    },
+    [onFollowUpSelect, onSendMessage],
+  );
+
+  const beforeInputContent =
+    beforeInput || showFollowUp ? (
+      <>
+        {beforeInput}
+        {showFollowUp ? (
+          <ChatFollowUpSuggestions
+            className={styles['chat-panel-follow-up']}
+            items={effectiveFollowUpItems}
+            title={followUpDisplayTitle}
+            defaultExpanded={followUpDefaultExpanded}
+            onSelect={handleFollowUpSelect}
+          />
+        ) : null}
+      </>
+    ) : null;
 
   return (
     <div className={classNames('chat-panel', styles['chat-panel'], className)}>
@@ -109,10 +165,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         </div>
       ) : null}
 
-      {showSuggestionRow ? (
-        <ChatSuggestionRow suggestions={suggestions} onSelect={onSuggestionClick} />
-      ) : null}
-
       <VirtualScrollbar
         className={classNames('chat-panel-messages', styles['chat-panel-messages'])}
         wrapperClassName={styles['chat-panel-messages-wrapper']}
@@ -120,7 +172,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         ref={scrollContainerRef}
       >
         <div ref={messagesContentRef}>
-          {messages.length === 0 && showEmptyHint ? (
+          {messages.length === 0 && effectiveShowEmptyHint ? (
             <p className={styles['chat-panel-empty']}>{emptyPlaceholder}</p>
           ) : (
             messages.map((message) => (
@@ -137,7 +189,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         </div>
       </VirtualScrollbar>
 
-      {beforeInput ? <div className={styles['chat-panel-before-input']}>{beforeInput}</div> : null}
+      {beforeInputContent ? (
+        <div className={styles['chat-panel-before-input']}>{beforeInputContent}</div>
+      ) : null}
 
       {showInput ? (
         <div className={styles['chat-panel-input']}>

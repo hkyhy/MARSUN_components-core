@@ -151,27 +151,112 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 ```ts
 import {
   ChatPanel,
+  ChatAgentFab,
+  ChatAgentFabLayout,
   SessionSidebar,
   CitationPanel,
   MessageActions,
   useChat,
+  useCitationPanel,
   useSSECompletion,
   DocumentTable,
   KnowledgeCard,
 } from '@hkyhy/marsun-components-core';
 ```
 
-| 子模块                 | 主要导出                                                                                                                                |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Chat / Detail          | `ChatPanel`, `ChatInput`, `MessageItem`, `MessageActions`, `CitationPanel`, `CitationInlineBadge`, `ThinkingSection`, `MermaidBlock`, … |
-| Chat / List            | `ChatCard`, `ChatFilterBar`, `SessionSidebar`                                                                                           |
-| Chat / Action          | `ChatCreateButton`, `ChatManageActionButtons`, `SessionActionButtons`                                                                   |
-| Chat / hooks           | `useChat`, `useChatSessions`, `useSSECompletion`, `useTypewriter`, `useAutoScrollToBottom`                                              |
-| Chat / utils           | `prepareCitationContent`, `parseSessionMessages`, `sanitizeMermaidChart`, …                                                             |
-| KnowledgeBase / Detail | `DocumentTable`, `ParseStatusTag`                                                                                                       |
-| KnowledgeBase / List   | `KnowledgeCard`, `KBFilterBar`                                                                                                          |
-| KnowledgeBase / Action | `CreateButton`, `ManageActionButtons`                                                                                                   |
-| 守卫                   | `AgentHubAccessGuard`, `AgentHubSessionAccessGuard`, `AgentHubIndexRedirect`                                                            |
+| 子模块                 | 主要导出                                                                                                                                                                                                 |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chat / Detail          | `ChatPanel`, `ChatAgentFab`, `ChatAgentFabLayout`, `ChatInput`, `ChatFollowUpSuggestions`, `MessageItem`, `MessageActions`, `CitationPanel`, `CitationInlineBadge`, `ThinkingSection`, `MermaidBlock`, … |
+| Chat / List            | `ChatCard`, `ChatFilterBar`, `SessionSidebar`                                                                                                                                                            |
+| Chat / Action          | `ChatCreateButton`, `ChatManageActionButtons`, `SessionActionButtons`                                                                                                                                    |
+| Chat / hooks           | `useChat`, `useChatSessions`, `useSSECompletion`, `useTypewriter`, `useAutoScrollToBottom`, `useCitationPanel`                                                                                           |
+| Chat / utils           | `prepareCitationContent`, `parseSessionMessages`, `extractCitations`, `sanitizeMermaidChart`, …                                                                                                          |
+| KnowledgeBase / Detail | `DocumentTable`, `ParseStatusTag`                                                                                                                                                                        |
+| KnowledgeBase / List   | `KnowledgeCard`, `KBFilterBar`                                                                                                                                                                           |
+| KnowledgeBase / Action | `CreateButton`, `ManageActionButtons`                                                                                                                                                                    |
+| 守卫                   | `AgentHubAccessGuard`, `AgentHubSessionAccessGuard`, `AgentHubIndexRedirect`                                                                                                                             |
+
+**`ChatPanel` 推荐问接入（业务层只传数据，编排由 core 负责）**
+
+| Prop                             | 说明                                                      |
+| -------------------------------- | --------------------------------------------------------- |
+| `followUpItems`                  | API 返回的推荐问/追问（如 `sessionQuestions`）            |
+| `starterItems`                   | 无用户消息且无 `followUpItems` 时的领域兜底               |
+| `onFollowUpSelect`               | 完全自定义点击行为（优先于 `onSendMessage`）              |
+| `onSendMessage`                  | 点击推荐项**直接发送**（业务标准接入，映射 `send(text)`） |
+| `followUpLoading`                | 会话加载/发送中时传 `true`，隐藏推荐区                    |
+| `starterTitle` / `followUpTitle` | 默认 `推荐问` / `推荐追问`                                |
+
+合并规则：`followUpItems` 优先；否则无用户消息时用 `starterItems`；否则不展示。`showEmptyHint` 未传时，有推荐区或 `followUpLoading` 则自动隐藏空态。
+
+**`ChatAgentFab` + reference 引用侧栏（标准接入）**
+
+| 层                   | 用法                                                                                                                                    |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `ChatAgentFab`       | 受控 `open` / `onOpenChange`；`panelExpanded={citationOpen}` 侧栏加宽；`panelFullscreen` 拉高至 `calc(100vh - 88px)`                    |
+| `ChatAgentFabLayout` | `main` 放 `ChatPanel`；`citationAside` 放 `CitationPanel`                                                                               |
+| `useCitationPanel`   | 管理 `citationOpen` / `panelCitations` / `handleCitationClick` / `resetCitationState`                                                   |
+| `ChatPanel`          | `onCitationClick`；`headerActions` 内「新建会话」+「全屏/退出全屏」（`Maximize2`/`Minimize2`），容器类 `chat-panel-header-icon-actions` |
+| 业务                 | API/SSE、`extractCitations(reference)` → `ChatMessage.citations`                                                                        |
+
+```tsx
+const {
+  citationOpen,
+  panelCitations,
+  highlightedCitationIndex,
+  handleCitationClick,
+  closeCitationPanel,
+  resetCitationState,
+} = useCitationPanel();
+const [panelFullscreen, setPanelFullscreen] = useState(false);
+
+<ChatAgentFab
+  open={open}
+  onOpenChange={setOpen}
+  panelExpanded={citationOpen}
+  panelFullscreen={panelFullscreen}
+  closeOnClickOutside={!panelFullscreen}
+  panelAriaLabel="质量 Agent"
+>
+  <ChatAgentFabLayout
+    main={
+      <ChatPanel
+        headerActions={(
+          <div className="chat-panel-header-icon-actions">
+            <Button icon={<Plus />} aria-label="新建会话" onClick={handleNewSession} />
+            <Button
+              icon={panelFullscreen ? <Minimize2 /> : <Maximize2 />}
+              aria-label={panelFullscreen ? '退出全屏' : '全屏'}
+              onClick={() => setPanelFullscreen((v) => !v)}
+            />
+          </div>
+        )}
+        messages={messages}
+        onCitationClick={handleCitationClick}
+        onSendMessage={(text) => { resetCitationState(); send(text); }}
+        ...
+      />
+    }
+    citationAside={
+      citationOpen ? (
+        <CitationPanel
+          citations={panelCitations}
+          highlightedIndex={highlightedCitationIndex}
+          onClose={closeCitationPanel}
+        />
+      ) : null
+    }
+  />
+</ChatAgentFab>
+```
+
+**引用（`reference` → `citations`）**
+
+| 步骤 | 说明                                                                                                   |
+| ---- | ------------------------------------------------------------------------------------------------------ |
+| API  | 助手消息 / SSE `done` 含 `reference.chunks[]`；正文含 `[ID:n]`（0-based）                              |
+| 映射 | `extractCitations(reference)`（`@hkyhy/marsun-components-core`）→ `ChatMessage.citations`              |
+| 展示 | `MessageItem` 渲染角标与来源摘要；`onCitationClick` → `CitationPanel` 侧栏（FAB `panelExpanded` 加宽） |
 
 ### Common 组件（本地或 npm）
 

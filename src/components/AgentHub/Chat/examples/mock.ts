@@ -59,6 +59,30 @@ export const mockChatAssistants: ChatAssistant[] = [
   },
 ];
 
+/** S3 / RAGFlow SSE done 或会话详情中的 reference 结构示例 */
+export const mockSessionReference = {
+  chunks: [
+    {
+      id: 'cite-1',
+      doc_id: 'doc-1',
+      doc_name: '员工休假管理制度.pdf',
+      content:
+        '正式员工每年享有带薪年假，工龄满 1 年不满 10 年的，年休假 5 天；满 10 年不满 20 年的，年休假 10 天；满 20 年的，年休假 15 天。',
+      score: 0.92,
+      page_no: 3,
+    },
+    {
+      id: 'cite-2',
+      doc_id: 'doc-2',
+      doc_name: '考勤管理办法.pdf',
+      content:
+        '员工请假须提前在 OA 系统提交申请，3 天以内由直属主管审批，3 天以上需部门负责人审批。',
+      score: 0.78,
+      page_no: 7,
+    },
+  ],
+};
+
 export const mockCitations: Citation[] = [
   {
     id: 'cite-1',

@@ -1,0 +1,23 @@
+.chat-agent-fab-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.chat-agent-fab-layout-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.chat-agent-fab-layout-citation-aside {
+  flex: 0 0 min(340px, 42vw);
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border-left: 1px solid var(--font-color-grey-4, #e2e8f0);
+}
