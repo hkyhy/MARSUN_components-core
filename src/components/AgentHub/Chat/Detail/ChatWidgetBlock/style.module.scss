@@ -1,0 +1,198 @@
+.chat-widget-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--font-color-grey-4);
+}
+
+.chat-widget-block--compact {
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+.chat-widget-block--leading {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.chat-widget-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chat-widget-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--font-color);
+  line-height: 1.4;
+}
+
+.chat-widget-sparklines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chat-widget-sparkline-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 108px auto;
+  gap: 2px 8px;
+  align-items: center;
+}
+
+.chat-widget-sparkline-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 11px;
+  color: var(--font-color-grey);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-widget-sparkline-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chat-widget-sparkline-chart {
+  width: 108px;
+  height: 24px;
+}
+
+.chat-widget-sparkline-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--font-color);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.chat-widget-sparkline-footer {
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--font-color-grey-1);
+  text-align: right;
+}
+
+.chat-widget-table-scroll-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+.chat-widget-table-scroll {
+  width: 100%;
+}
+
+.chat-widget-table {
+  :global(.ant-table) {
+    font-size: 11px;
+  }
+
+  :global(.ant-table-thead > tr > th),
+  :global(.ant-table-tbody > tr > td) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 0;
+  }
+}
+
+.chat-widget-metric-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 6px;
+}
+
+.chat-widget-metric-card {
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--bg-color-grey);
+  border: 1px solid var(--font-color-grey-4);
+}
+
+.chat-widget-metric-card-label {
+  font-size: 10px;
+  color: var(--font-color-grey);
+}
+
+.chat-widget-metric-card-value {
+  margin-top: 2px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--font-color);
+
+  span {
+    margin-left: 2px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--font-color-grey);
+  }
+}
+
+.chat-widget-list {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 12px;
+  color: var(--font-color);
+
+  a {
+    color: var(--primary-color);
+  }
+}
+
+.chat-widget-list-desc {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--font-color-grey);
+}
+
+.chat-widget-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-widget-bar-group-title {
+  font-size: 11px;
+  color: var(--font-color-grey);
+}
+
+.chat-widget-bar-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.chat-widget-bar-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+
+  span {
+    font-size: 10px;
+    color: var(--font-color-grey-1);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+  }
+}
+
+.chat-widget-bar {
+  width: 100%;
+  max-width: 28px;
+  border-radius: 4px 4px 2px 2px;
+}

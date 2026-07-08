@@ -11,6 +11,8 @@ export interface ChatInputProps {
   onSend: () => void;
   onStop?: () => void;
   placeholder?: string;
+  /** 嵌入 ChatPanel 时去掉外层 border/padding，避免与 chat-panel-input 重复 */
+  embedded?: boolean;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
@@ -20,6 +22,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   onSend,
   onStop,
   placeholder = '输入问题… Enter 发送，Shift+Enter 换行',
+  embedded = false,
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -31,7 +34,13 @@ const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className={classNames('chat-input-root', styles['chat-input-root'])}>
+    <div
+      className={classNames(
+        'chat-input-root',
+        styles['chat-input-root'],
+        embedded && styles['chat-input-root--embedded'],
+      )}
+    >
       <div className={classNames('chat-input-container', styles['chat-input-container'])}>
         <Input.TextArea
           value={value}
@@ -65,8 +74,14 @@ const ChatInput: React.FC<ChatInputProps> = ({
       </div>
 
       <div className={classNames('chat-input-header', styles['chat-input-header'])}>
-        <span className={classNames('chat-input-body', styles['chat-input-body'])}>Enter 发送 · Shift+Enter 换行</span>
-        {value.length > 0 && <span className={classNames('chat-input-body', styles['chat-input-body'])}>{value.length} 字</span>}
+        <span className={classNames('chat-input-body', styles['chat-input-body'])}>
+          Enter 发送 · Shift+Enter 换行
+        </span>
+        {value.length > 0 && (
+          <span className={classNames('chat-input-body', styles['chat-input-body'])}>
+            {value.length} 字
+          </span>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { BookOpen, Bot, User } from '@/components/Icons';
-import type { ChatMessage, Citation } from '@/components/AgentHub/types';
+import type { ChatMessage, ChatWidget, Citation } from '@/components/AgentHub/types';
+import ChatWidgetBlock from '@/components/AgentHub/Chat/Detail/ChatWidgetBlock';
 import { message as antdMessage, Avatar, Typography } from 'antd';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -59,6 +60,10 @@ const MessageItem: React.FC<MessageItemProps> = ({
   );
 
   const citations = useMemo(() => message.citations ?? [], [message.citations]);
+  const messageWidgets = useMemo(
+    () => (Array.isArray(message.widgets) ? (message.widgets as ChatWidget[]) : []),
+    [message.widgets],
+  );
   const citationSourceContent = useMemo(
     () => `${parsedContent.thinking}\n${parsedContent.answer}`,
     [parsedContent.thinking, parsedContent.answer],
@@ -88,6 +93,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
   }, [message.id, message.thumbup]);
 
   const hasAnswerContent = normalizeDisplayText(displayedContent).trim().length > 0;
+  const showWidgets = !isUser && messageWidgets.length > 0;
   const showAnswerCursor = (message.streaming || isTyping) && hasAnswerContent;
   const isContentTyping = isTyping || effectiveThinkingTyping;
   const deferMermaid = !!message.streaming || isContentTyping;
@@ -257,7 +263,8 @@ const MessageItem: React.FC<MessageItemProps> = ({
           ) : message.streaming &&
             !parsedContent.thinking &&
             !parsedContent.isThinking &&
-            !hasAnswerContent ? (
+            !hasAnswerContent &&
+            !showWidgets ? (
             <div
               className={classNames(
                 'message-item-message-loading-dots',
@@ -296,6 +303,17 @@ const MessageItem: React.FC<MessageItemProps> = ({
                   deferMermaid={deferMermaid}
                 />
               )}
+              {showWidgets ? (
+                <ChatWidgetBlock
+                  widgets={messageWidgets}
+                  compact
+                  leading
+                  className={classNames(
+                    (parsedContent.thinking || parsedContent.isThinking) &&
+                      styles['message-item-message-widgets-after-thinking'],
+                  )}
+                />
+              ) : null}
               {hasAnswerContent && (
                 <div
                   className={classNames(
@@ -306,6 +324,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
                       'message-answer-markdown-spaced',
                     (parsedContent.thinking || parsedContent.isThinking) &&
                       styles['message-item-message-answer-markdown-spaced'],
+                    showWidgets && styles['message-item-message-answer-markdown-after-widgets'],
                   )}
                 >
                   <CitationMarkdownContent

@@ -31,6 +31,7 @@
 
 .message-item-message-content-assistant {
   align-items: flex-start;
+  max-width: 88%;
 }
 
 .message-item-message-user-bubble {
@@ -64,7 +65,7 @@
   word-break: break-word;
   min-width: 0;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .message-item-message-loading-dots {
@@ -141,6 +142,16 @@
 
 .message-item-message-answer-markdown-spaced {
   margin-top: 4px;
+}
+
+.message-item-message-answer-markdown-after-widgets {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--font-color-grey-4);
+}
+
+.message-item-message-widgets-after-thinking {
+  margin-top: 8px;
 }
 
 .message-item-message-typing-cursor {

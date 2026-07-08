@@ -24,6 +24,7 @@ const ChatSuggestionRow: React.FC<ChatSuggestionRowProps> = ({
           key={text}
           type="button"
           className={classNames('chat-suggestion-chip', styles['chat-suggestion-chip'])}
+          title={text}
           onClick={() => onSelect(text)}
         >
           {text}

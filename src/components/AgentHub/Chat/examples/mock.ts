@@ -1,4 +1,10 @@
-import type { ChatAssistant, ChatMessage, ChatSession, Citation, Dataset } from '@/components/AgentHub/types';
+import type {
+  ChatAssistant,
+  ChatMessage,
+  ChatSession,
+  Citation,
+  Dataset,
+} from '@/components/AgentHub/types';
 
 export const mockDatasets: Dataset[] = [
   {
@@ -67,8 +73,7 @@ export const mockCitations: Citation[] = [
     id: 'cite-2',
     doc_id: 'doc-2',
     doc_name: '考勤管理办法.pdf',
-    content:
-      '员工请假须提前在 OA 系统提交申请，3 天以内由直属主管审批，3 天以上需部门负责人审批。',
+    content: '员工请假须提前在 OA 系统提交申请，3 天以内由直属主管审批，3 天以上需部门负责人审批。',
     score: 0.78,
     page_no: 7,
   },
@@ -93,6 +98,45 @@ export const mockStreamingMessage: ChatMessage = {
   role: 'assistant',
   content: '',
   streaming: true,
+};
+
+export const mockAssistantWidgetMessage: ChatMessage = {
+  id: 'msg-4',
+  role: 'assistant',
+  content:
+    '一分厂 JCF14.6KD 近 12 个月分析：并条 CV 与牵伸倍数 CV 同向上升（r≈0.84~0.91），短绒率%反向波动（r≈-0.76）。',
+  widgets: [
+    {
+      type: 'line_chart',
+      title: '一分厂 JCF14.6KD · 条干CV%（近 12 月）',
+      series: [
+        {
+          name: '预警指标·条干CV%',
+          x: ['2025-10', '2025-11', '2025-12'],
+          y: [14.57, 14.7, 14.94],
+          color: '#2563eb',
+        },
+        {
+          name: '前纺·牵伸倍数 CV',
+          x: ['2025-10', '2025-11', '2025-12'],
+          y: [2.75, 2.7, 2.64],
+          color: '#16a34a',
+        },
+        {
+          name: '前纺·并条 CV',
+          x: ['2025-10', '2025-11', '2025-12'],
+          y: [12.73, 12.71, 13.1],
+          color: '#ea580c',
+        },
+        {
+          name: '原料·短绒率%',
+          x: ['2025-10', '2025-11', '2025-12'],
+          y: [8.2, 8.5, 8.1],
+          color: '#9333ea',
+        },
+      ],
+    },
+  ],
 };
 
 export const mockChatSessions: ChatSession[] = [

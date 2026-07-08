@@ -8,13 +8,32 @@
 
 .chat-panel-head {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
+  flex-direction: column;
+  gap: 0;
   padding: 14px 16px 10px;
   border-bottom: 1px solid var(--font-color-grey-4);
   flex-shrink: 0;
   background: var(--bg-color-white);
+}
+
+.chat-panel-head-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.chat-panel-head-extra {
+  width: 100%;
+  padding-top: 8px;
+}
+
+.chat-panel-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
 }
 
 .chat-panel-title {
@@ -49,9 +68,19 @@
   color: var(--font-color-grey-1);
 }
 
-.chat-panel-input {
+.chat-panel-before-input {
   flex-shrink: 0;
-  padding: 8px 12px 12px;
   background: var(--bg-color-white);
   border-top: 1px solid var(--font-color-grey-4);
+}
+
+.chat-panel-input {
+  flex-shrink: 0;
+  padding: 10px 12px 12px;
+  background: var(--bg-color-white);
+  border-top: 1px solid var(--font-color-grey-4);
+}
+
+.chat-panel-before-input + .chat-panel-input {
+  border-top: none;
 }

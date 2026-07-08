@@ -23,9 +23,15 @@
     },
     {
       "title": "消息气泡",
-      "description": "MessageItem 用户/助手消息、Markdown 渲染、流式打字与引用摘要",
+      "description": "MessageItem 用户/助手消息、Markdown 渲染、流式打字、引用摘要与 widgets 内嵌展示",
       "component": "@/components/AgentHub/Chat/examples/MessageItemBasicDemo",
       "sourcePath": "@/components/AgentHub/Chat/examples/MessageItemBasicDemo/index.tsx"
+    },
+    {
+      "title": "对话 Widget",
+      "description": "ChatWidgetBlock 渲染 SSE snapshot 的 line_chart / table / metric_cards / 列表等结构化内容",
+      "component": "@/components/AgentHub/Chat/examples/ChatWidgetBlockBasicDemo",
+      "sourcePath": "@/components/AgentHub/Chat/examples/ChatWidgetBlockBasicDemo/index.tsx"
     },
     {
       "title": "消息操作栏",
@@ -142,13 +148,29 @@
       "rows": [
         { "prop": "messages", "desc": "消息列表", "type": "ChatMessage[]", "required": true },
         { "prop": "inputValue", "desc": "输入框内容", "type": "string", "required": true },
-        { "prop": "onInputChange", "desc": "输入变更", "type": "(v: string) => void", "required": true },
+        {
+          "prop": "onInputChange",
+          "desc": "输入变更",
+          "type": "(v: string) => void",
+          "required": true
+        },
         { "prop": "onSend", "desc": "发送", "type": "() => void", "required": true },
         { "prop": "title", "desc": "面板标题", "type": "string" },
         { "prop": "subtitle", "desc": "副标题", "type": "string" },
+        {
+          "prop": "headerActions",
+          "desc": "头部右侧自定义操作区（icon 按钮等），位于「收起」左侧",
+          "type": "ReactNode"
+        },
+        { "prop": "headerExtra", "desc": "头部下方扩展区（如最近对话 chip）", "type": "ReactNode" },
+        { "prop": "beforeInput", "desc": "输入框上方扩展区（如 widgets）", "type": "ReactNode" },
         { "prop": "showSuggestions", "desc": "是否展示建议问题", "type": "boolean" },
         { "prop": "suggestions", "desc": "建议问题列表", "type": "string[]" },
-        { "prop": "onCitationClick", "desc": "引用角标点击", "type": "MessageItemProps['onCitationClick']" }
+        {
+          "prop": "onCitationClick",
+          "desc": "引用角标点击",
+          "type": "MessageItemProps['onCitationClick']"
+        }
       ]
     },
     {
@@ -156,7 +178,11 @@
       "rows": [
         { "prop": "items", "desc": "操作项列表", "type": "MessageActionItem[]", "required": true },
         { "prop": "align", "desc": "对齐方式", "type": "'left' | 'right'", "defaultVal": "right" },
-        { "prop": "editPopover", "desc": "编辑 Popover 配置", "type": "Omit<MessageEditPopoverProps, 'children'>" },
+        {
+          "prop": "editPopover",
+          "desc": "编辑 Popover 配置",
+          "type": "Omit<MessageEditPopoverProps, 'children'>"
+        },
         { "prop": "actionsVisible", "desc": "是否强制显示操作栏", "type": "boolean" }
       ]
     },
@@ -167,7 +193,11 @@
         { "prop": "isThinking", "desc": "是否思考中", "type": "boolean" },
         { "prop": "isTyping", "desc": "是否打字机输出", "type": "boolean" },
         { "prop": "citations", "desc": "引用列表", "type": "Citation[]" },
-        { "prop": "onCitationClick", "desc": "引用角标点击", "type": "(citations: Citation[], index?: number) => void" }
+        {
+          "prop": "onCitationClick",
+          "desc": "引用角标点击",
+          "type": "(citations: Citation[], index?: number) => void"
+        }
       ]
     },
     {
@@ -175,7 +205,7 @@
       "rows": [
         {
           "prop": "message",
-          "desc": "聊天消息对象",
+          "desc": "聊天消息对象（assistant 可含 widgets）",
           "type": "ChatMessage",
           "required": true
         },

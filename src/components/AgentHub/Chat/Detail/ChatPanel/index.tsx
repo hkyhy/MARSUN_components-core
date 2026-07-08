@@ -1,7 +1,7 @@
 import type { ChatMessage } from '@/components/AgentHub/types';
 import { VirtualScrollbar } from '@/components/VirtualScrollbar';
 import { Button } from 'antd';
-import React, { useRef } from 'react';
+import React, { useRef, type ReactNode } from 'react';
 import classNames from 'classnames';
 import { useAutoScrollToBottom } from '../../hooks';
 import ChatInput from '../ChatInput';
@@ -17,6 +17,9 @@ export interface ChatPanelProps {
   showHeader?: boolean;
   showCloseButton?: boolean;
   onClose?: () => void;
+  headerActions?: ReactNode;
+  headerExtra?: ReactNode;
+  beforeInput?: ReactNode;
 
   showSuggestions?: boolean;
   suggestions?: string[];
@@ -47,6 +50,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   showHeader = true,
   showCloseButton = false,
   onClose,
+  headerActions,
+  headerExtra,
+  beforeInput,
   showSuggestions = false,
   suggestions = [],
   onSuggestionClick,
@@ -81,14 +87,24 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     <div className={classNames('chat-panel', styles['chat-panel'], className)}>
       {showHeader ? (
         <div className={classNames('chat-panel-head', styles['chat-panel-head'])}>
-          <div>
-            {title ? <strong className={styles['chat-panel-title']}>{title}</strong> : null}
-            {subtitle ? <span className={styles['chat-panel-subtitle']}>{subtitle}</span> : null}
+          <div className={styles['chat-panel-head-main']}>
+            <div>
+              {title ? <strong className={styles['chat-panel-title']}>{title}</strong> : null}
+              {subtitle ? <span className={styles['chat-panel-subtitle']}>{subtitle}</span> : null}
+            </div>
+            {headerActions || (showCloseButton && onClose) ? (
+              <div className={styles['chat-panel-head-actions']}>
+                {headerActions}
+                {showCloseButton && onClose ? (
+                  <Button type="link" size="small" onClick={onClose}>
+                    收起
+                  </Button>
+                ) : null}
+              </div>
+            ) : null}
           </div>
-          {showCloseButton && onClose ? (
-            <Button type="link" size="small" onClick={onClose}>
-              收起
-            </Button>
+          {headerExtra ? (
+            <div className={styles['chat-panel-head-extra']}>{headerExtra}</div>
           ) : null}
         </div>
       ) : null}
@@ -121,9 +137,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
         </div>
       </VirtualScrollbar>
 
+      {beforeInput ? <div className={styles['chat-panel-before-input']}>{beforeInput}</div> : null}
+
       {showInput ? (
         <div className={styles['chat-panel-input']}>
           <ChatInput
+            embedded
             value={inputValue}
             loading={inputLoading}
             onChange={onInputChange}

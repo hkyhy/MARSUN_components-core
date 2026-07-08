@@ -1,6 +1,6 @@
 meta:
   project_name: "@hkyhy/marsun-components-core"
-  next_task_id: M003-19
+  next_task_id: M003-20
 
 tasks:
   - id: M001-1
@@ -223,3 +223,12 @@ tasks:
     kind: docs
     tags: [spec, frontend]
     note: 对齐 marsun_arch 权威源：utils 下沉规则、component-mapping、styles、code-formatting
+
+  - id: M003-19
+    milestone: M003
+    name: AgentHub Chat widgets 与推荐问组件
+    status: 进行中
+    priority: P1
+    kind: feature
+    tags: [frontend, chat, agent]
+    note: ChatWidgetBlock 气泡内嵌；ChatFollowUpSuggestions 可折叠；MessageItem widgets 前置；ChatInput embedded 去双层边框

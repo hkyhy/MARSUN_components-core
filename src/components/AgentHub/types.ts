@@ -24,7 +24,26 @@ export interface ChatMessage {
   thinking?: string;
   streaming?: boolean;
   thumbup?: boolean | null;
+  widgets?: ChatWidget[];
   [key: string]: unknown;
+}
+
+export interface ChatWidgetSeries {
+  name?: string;
+  x?: string[];
+  y?: number[];
+  color?: string;
+}
+
+export interface ChatWidget {
+  type: string;
+  title?: string;
+  series?: ChatWidgetSeries[];
+  categories?: string[];
+  columns?: { key: string; label: string; width?: number }[];
+  rows?: Record<string, unknown>[];
+  items?: Record<string, unknown>[];
+  meta?: Record<string, unknown>;
 }
 
 export interface ChatSession {
