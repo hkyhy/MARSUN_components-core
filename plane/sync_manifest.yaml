@@ -236,7 +236,7 @@ tasks:
   - id: M003-20
     milestone: M003
     name: ChatAgentFab 引用侧栏与全屏高度
-    status: 进行中
+    status: 已完成
     priority: P1
     kind: feature
     tags: [frontend, chat, agent]
