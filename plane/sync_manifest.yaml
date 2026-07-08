@@ -227,7 +227,7 @@ tasks:
   - id: M003-19
     milestone: M003
     name: AgentHub Chat widgets 与推荐问组件
-    status: 进行中
+    status: 已完成
     priority: P1
     kind: feature
     tags: [frontend, chat, agent]
