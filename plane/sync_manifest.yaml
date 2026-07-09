@@ -241,3 +241,12 @@ tasks:
     kind: feature
     tags: [frontend, chat, agent]
     note: ChatAgentFab/ChatAgentFabLayout、useCitationPanel、panelFullscreen；Maximize2/Minimize2；示例与规范同步
+
+  - id: M003-21
+    milestone: M003
+    name: frontend-dev-spec 与 da-workflow 规范镜像同步
+    status: 进行中
+    priority: P2
+    kind: docs
+    tags: [spec, frontend]
+    note: 对齐 marsun_arch 权威源；da-workflow 镜像；component-mapping/task-naming/requirement-workflow 交付闭环引用

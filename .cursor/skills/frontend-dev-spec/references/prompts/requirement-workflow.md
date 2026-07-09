@@ -94,7 +94,7 @@
 - [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
 - [ ] 测试通过
 - [ ] **新任务台账**：`sync_manifest.yaml` 登记时 `status: 进行中` → `da pm sync` CREATE（禁止首次就写 `已完成`）
-- [ ] **commit 闭环**（plane_ready 仓库）：`da task timeline-sync` →（完成）`da task done --confirm` → **WorkRecord 进展追加（按事项类型选文档）** → `sync_manifest` 改 `已完成` → `da pm sync` PATCH（见 [work-record/SKILL.md](../../../work-record/SKILL.md) · `03-commit-plane-timeline.mdc`）
+- [ ] **commit 闭环**（plane_ready 仓库）：`da task timeline-sync` →（完成）`da task done --confirm` → **WorkRecord 进展追加（按事项类型选文档）** → `sync_manifest` 改 `已完成` → `da pm sync` PATCH（见 [da-workflow/plane-timeline](../../../da-workflow/references/plane-timeline.md) · [work-record/SKILL.md](../../../work-record/SKILL.md)）
 - [ ] WorkRecord 已写入**正确类型**的大事文档（接口对接 / 页面改版 / 工程化分列）；非 API 进展未混入「*接口对接」
 - [ ] 若本任务有对应 WorkRecord 大事文档，已追加「进展记录」；新增 API 须补接口行；Mock 与正式接口区分状态（Mock 勿标已完成）
 
