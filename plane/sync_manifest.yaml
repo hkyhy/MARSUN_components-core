@@ -1,6 +1,6 @@
 meta:
   project_name: "@hkyhy/marsun-components-core"
-  next_task_id: M003-21
+  next_task_id: M003-23
 
 tasks:
   - id: M001-1
@@ -250,3 +250,12 @@ tasks:
     kind: docs
     tags: [spec, frontend]
     note: 对齐 marsun_arch 权威源；da-workflow 镜像；component-mapping/task-naming/requirement-workflow 交付闭环引用
+
+  - id: M003-22
+    milestone: M003
+    name: TooltipInfo 详情卡片最小宽度
+    status: 进行中
+    priority: P2
+    kind: fix
+    tags: [frontend, tooltip]
+    note: styles.container minWidth 220，避免长 ID 在窄 trigger 下竖排
