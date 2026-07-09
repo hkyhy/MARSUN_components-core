@@ -245,7 +245,7 @@ tasks:
   - id: M003-21
     milestone: M003
     name: frontend-dev-spec 与 da-workflow 规范镜像同步
-    status: 进行中
+    status: 已完成
     priority: P2
     kind: docs
     tags: [spec, frontend]
