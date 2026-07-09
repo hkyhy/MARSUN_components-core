@@ -38,8 +38,9 @@ milestones:
     name: File 文件预览
     goal: 支持文件名链接打开预览 Modal，含 Office 客户端渲染
     deliverables: FilePreviewLink、FilePreview 增强、示例与文档
-    status: 进行中
+    status: 已完成
     priority: P0
     plan_date: "2026-06-29"
+    actual_date: "2026-07-09"
     owner: 前端
     tasks: M003-1
