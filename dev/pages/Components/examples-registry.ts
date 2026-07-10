@@ -36,7 +36,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
       {
         title: '浮动助手 FAB',
-        description: 'ChatAgentFab 右下角 AI+ 按钮 + 弹出 ChatPanel，支持点外关闭',
+        description:
+          'ChatAgentFab + ChatAgentFabLayout：reference 引用侧栏、panelFullscreen 全屏高度；headerActions 切换全屏',
         component: React.lazy(
           () => import('@/components/AgentHub/Chat/examples/ChatAgentFabBasicDemo'),
         ),
@@ -192,7 +193,16 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             desc: '无用户消息且无 followUpItems 时的兜底推荐',
             type: 'string[]',
           },
-          { prop: 'onFollowUpSelect', desc: '点击推荐项回调', type: '(text: string) => void' },
+          {
+            prop: 'onFollowUpSelect',
+            desc: '点击推荐项回调（完全自定义，优先于 onSendMessage）',
+            type: '(text: string) => void',
+          },
+          {
+            prop: 'onSendMessage',
+            desc: '点击推荐项直接发送（默认推荐行为，勿填输入框）',
+            type: '(text: string) => void',
+          },
           { prop: 'followUpLoading', desc: 'true 时隐藏推荐区', type: 'boolean' },
           { prop: 'starterTitle', desc: '冷启动推荐标题', type: 'string', defaultVal: '推荐问' },
           {
@@ -228,6 +238,18 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             defaultVal: '收起 AI 助手',
           },
           { prop: 'panelAriaLabel', desc: '弹出层 dialog 标签', type: 'string' },
+          {
+            prop: 'panelExpanded',
+            desc: '引用侧栏等场景下加宽面板',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'panelFullscreen',
+            desc: '全屏高度（宽度仍由 panelExpanded 控制）',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           {
             prop: 'closeOnClickOutside',
             desc: '点击 FAB 区域外是否关闭',
@@ -319,6 +341,52 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             type: 'React.ReactNode',
             required: true,
           },
+        ],
+      },
+      {
+        componentName: 'ChatAgentFabProps',
+        rows: [
+          { prop: 'open', desc: '面板是否展开', type: 'boolean' },
+          { prop: 'onOpenChange', desc: '展开/收起回调', type: '(open: boolean) => void' },
+          {
+            prop: 'panelExpanded',
+            desc: '引用侧栏打开时加宽面板（配合 ChatAgentFabLayout + CitationPanel）',
+            type: 'boolean',
+          },
+          {
+            prop: 'panelFullscreen',
+            desc: '全屏高度 calc(100vh - 88px)，仍锚定右下角 FAB',
+            type: 'boolean',
+          },
+          { prop: 'panelAriaLabel', desc: '弹出面板无障碍标签', type: 'string' },
+          { prop: 'closeOnClickOutside', desc: '点击面板外是否收起', type: 'boolean' },
+          {
+            prop: 'children',
+            desc: '面板内容，通常为 ChatAgentFabLayout',
+            type: 'React.ReactNode',
+          },
+        ],
+      },
+      {
+        componentName: 'ChatAgentFabLayoutProps',
+        rows: [
+          { prop: 'main', desc: '主对话区（ChatPanel）', type: 'React.ReactNode', required: true },
+          { prop: 'citationAside', desc: '引用侧栏（CitationPanel）', type: 'React.ReactNode' },
+        ],
+      },
+      {
+        componentName: 'UseCitationPanelResult',
+        rows: [
+          { prop: 'citationOpen', desc: '引用侧栏是否打开', type: 'boolean' },
+          { prop: 'panelCitations', desc: '当前展示的引用列表', type: 'Citation[]' },
+          { prop: 'highlightedCitationIndex', desc: '高亮定位的引用下标', type: 'number' },
+          {
+            prop: 'handleCitationClick',
+            desc: '传给 ChatPanel.onCitationClick',
+            type: '(items: Citation[], index?: number) => void',
+          },
+          { prop: 'closeCitationPanel', desc: '关闭侧栏', type: '() => void' },
+          { prop: 'resetCitationState', desc: '发送新消息/切换会话时重置', type: '() => void' },
         ],
       },
       {
@@ -605,6 +673,35 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'label', desc: '标签文本', type: 'string', required: true },
           { prop: 'value', desc: '值内容', type: 'React.ReactNode', required: true },
           { prop: 'span', desc: '占列数', type: 'number', defaultVal: '1' },
+        ],
+      },
+    ],
+  },
+  '/components/empty': {
+    title: 'Empty 空态',
+    description: '基于 antd Empty 的空态展示，支持可选图标、预设图标类型与可选描述文案。',
+    examples: [
+      {
+        title: '基础用法',
+        description: 'default / simple 图标、无图标、仅图标等常见空态',
+        component: React.lazy(() => import('@/components/Empty/examples/EmptyDemo')),
+        sourcePath: () => import('@/components/Empty/examples/EmptyDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'MarsunEmptyProps',
+        rows: [
+          { prop: 'showIcon', desc: '是否展示图标', type: 'boolean', defaultVal: 'true' },
+          {
+            prop: 'iconType',
+            desc: '预设图标：default=antd 默认图，simple=PRESENTED_IMAGE_SIMPLE',
+            type: "'default' | 'simple'",
+            defaultVal: "'default'",
+          },
+          { prop: 'icon', desc: '自定义图标节点，优先级高于 iconType', type: 'ReactNode' },
+          { prop: 'description', desc: '描述文案，不传则不渲染 description', type: 'ReactNode' },
         ],
       },
     ],

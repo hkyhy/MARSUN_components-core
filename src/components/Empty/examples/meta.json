@@ -1,0 +1,42 @@
+{
+  "title": "Empty 空态",
+  "description": "基于 antd Empty 的空态展示，支持可选图标、预设图标类型与可选描述文案。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "default / simple 图标、无图标、仅图标等常见空态",
+      "component": "@/components/Empty/examples/EmptyDemo",
+      "sourcePath": "@/components/Empty/examples/EmptyDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "MarsunEmptyProps",
+      "rows": [
+        {
+          "prop": "showIcon",
+          "desc": "是否展示图标",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "iconType",
+          "desc": "预设图标：default=antd 默认图，simple=PRESENTED_IMAGE_SIMPLE",
+          "type": "'default' | 'simple'",
+          "defaultVal": "'default'"
+        },
+        {
+          "prop": "icon",
+          "desc": "自定义图标节点，优先级高于 iconType",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "description",
+          "desc": "描述文案，不传则不渲染 description",
+          "type": "ReactNode"
+        }
+      ]
+    }
+  ]
+}

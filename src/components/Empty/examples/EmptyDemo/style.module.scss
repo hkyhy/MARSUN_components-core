@@ -1,0 +1,23 @@
+.empty-demo-root {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.empty-demo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 160px;
+  padding: 16px;
+  border: 1px solid var(--border-color-light, #eeeeee);
+  border-radius: var(--radius-card, 8px);
+  background: var(--bg-color-white, #ffffff);
+
+  h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--font-color, #222222);
+  }
+}

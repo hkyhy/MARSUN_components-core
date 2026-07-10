@@ -10,6 +10,7 @@ export const showcaseRoutes = (
     </Route>
     <Route path="auth" element={<ExamplePage />} />
     <Route path="descriptions" element={<ExamplePage />} />
+    <Route path="empty" element={<ExamplePage />} />
     <Route path="file" element={<ExamplePage />} />
     <Route path="filter" element={<ExamplePage />} />
     <Route path="form" element={<ExamplePage />} />

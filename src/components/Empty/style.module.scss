@@ -1,0 +1,7 @@
+.marsun-empty {
+  margin: 0;
+
+  :global(.ant-empty-description) {
+    color: var(--font-color-grey-1, #999999);
+  }
+}

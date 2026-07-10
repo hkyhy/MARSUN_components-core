@@ -280,9 +280,7 @@ export function generateTheme(primaryColor: string): ThemeConfig {
       },
 
       // ====== Empty ======
-      Empty: {
-        // descriptionColor: PALETTE.textTertiary,
-      },
+      Empty: {},
 
       // ====== Spin ======
       Spin: {
@@ -313,11 +311,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 /**
  * 批量设置某颜色的透明度系列 CSS 变量
  */
-function setColorVariants(
-  root: HTMLElement,
-  prefix: string,
-  hex: string,
-): void {
+function setColorVariants(root: HTMLElement, prefix: string, hex: string): void {
   const { r, g, b } = hexToRgb(hex);
   root.style.setProperty(`--${prefix}-bg`, `rgba(${r}, ${g}, ${b}, 0.06)`);
   root.style.setProperty(`--${prefix}-bg-hover`, `rgba(${r}, ${g}, ${b}, 0.10)`);

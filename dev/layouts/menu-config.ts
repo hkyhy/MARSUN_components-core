@@ -12,6 +12,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
   },
   { key: '/components/auth', label: 'Auth' },
   { key: '/components/descriptions', label: 'Descriptions' },
+  { key: '/components/empty', label: 'Empty' },
   { key: '/components/file', label: 'File' },
   { key: '/components/filter', label: 'Filter' },
   { key: '/components/form', label: 'Form' },
