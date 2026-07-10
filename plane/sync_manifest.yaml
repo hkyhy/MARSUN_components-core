@@ -254,8 +254,17 @@ tasks:
   - id: M003-22
     milestone: M003
     name: TooltipInfo 详情卡片最小宽度
-    status: 进行中
+    status: 已完成
     priority: P2
     kind: fix
     tags: [frontend, tooltip]
     note: styles.container minWidth 220，避免长 ID 在窄 trigger 下竖排
+
+  - id: M003-23
+    milestone: M003
+    name: Empty 空态组件导出与示例
+    status: 进行中
+    priority: P1
+    kind: feature
+    tags: [frontend, empty]
+    note: MarsunEmpty showIcon/iconType/description；根 index 导出；examples Demo
