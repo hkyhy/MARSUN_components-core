@@ -290,7 +290,7 @@ tasks:
   - id: M003-26
     milestone: M003
     name: FilterDatePicker 单月筛选与 FilterDateRange picker 扩展
-    status: 进行中
+    status: 已完成
     priority: P1
     kind: feature
     tags: [frontend, filter]
