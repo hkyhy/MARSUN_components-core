@@ -263,7 +263,7 @@ tasks:
   - id: M003-23
     milestone: M003
     name: Empty 空态组件导出与示例
-    status: 进行中
+    status: 已完成
     priority: P1
     kind: feature
     tags: [frontend, empty]
