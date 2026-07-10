@@ -268,3 +268,21 @@ tasks:
     kind: feature
     tags: [frontend, empty]
     note: MarsunEmpty showIcon/iconType/description；根 index 导出；examples Demo
+
+  - id: M003-24
+    milestone: M003
+    name: frontend-dev-spec 规范镜像增量同步
+    status: 已完成
+    priority: P2
+    kind: docs
+    tags: [spec, frontend]
+    note: content-layout、component-mapping、task-naming、da-workflow task-relationships、marsun-arch-doc-spec 镜像
+
+  - id: M003-25
+    milestone: M003
+    name: ChatAgentFab 浮层去边框
+    status: 已完成
+    priority: P3
+    kind: style
+    tags: [frontend, chat]
+    note: 移除 panel border，保留 shadow 浮层
