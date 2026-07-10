@@ -6,8 +6,9 @@ meta:
   owner_default: 前端
 
 plane:
-  project_id: "01c34082-612e-49b5-8bdd-cdc3873a55c8"
-  project_url: "https://plane.webinfra.cloud/my/projects/01c34082-612e-49b5-8bdd-cdc3873a55c8/issues/"
+  project_id: 01c34082-612e-49b5-8bdd-cdc3873a55c8
+  project_url: https://plane.webinfra.cloud/my/projects/01c34082-612e-49b5-8bdd-cdc3873a55c8/issues/
+  workspace_slug: my
 
 paths:
   milestones: plane/milestones.yaml
