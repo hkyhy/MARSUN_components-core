@@ -220,3 +220,19 @@ node scripts/colocate-component-files.mjs src
 - 预警页：`pages/Alerts/style.module.scss` `.quality-alerts-workarea`
 
 **反例**：`breadcrumb` 与 title 并存；`ContentCard` 默认 border 套 Tabs 外；workarea-body `padding:16px`；页脚保存按钮无谓 `block` 全宽。
+
+### 8.11 少 border：列表与主从布局
+
+模块 workarea 内**尽量少用块级 border / box-shadow**，避免「卡片套卡片」。
+
+| 项          | 规范                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------- |
+| 主从/双栏   | 用 `grid` + `gap` 分隔，**不用**左右 panel 各套 `border` + `border-radius`                  |
+| 列表项      | 用 **背景块 + gap**（`--bg-color-grey-1`）或 **轻 shadow**；**禁止** `border-bottom` 分割线 |
+| 筛选栏      | 仅 **底部分割线**（flat 风格），无四边 border                                               |
+| 保留 border | Modal、Drawer、Popover、独立浮层卡片                                                        |
+| 背景        | 主区可与 `--bg-color-white` 一致，**不**为分区再叠一层带 border 的 panel                    |
+
+**参考**：`Agent_QualityAnalysis` → `Rca/List/ArchiveList`（块背景 + gap + 选中 `--primary-color-bg`）。
+
+**反例**：列表项 `border-bottom` 横线分割；归档列表/预览左右各一个 `var(--card-border)` 圆角盒；workarea 内三层 nested card。

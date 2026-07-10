@@ -45,7 +45,7 @@
 19. 检查：表单使用 antd 原生 Form（Form.useForm + Form.Item + rules），操作按钮统一使用 `@kne/button-group`（包括页面头部和详情页，不使用 `Space` + `Button`）
 20. 检查：Modal 使用 `Form.useForm()` + `form.validateFields()` + `onOk`/`onCancel`，取消按钮用 `Button onClick={onCancel}`
 21. 检查：新组件是否已创建 `examples/meta.json`（路由和菜单由脚本自动生成，无需手动注册）
-22. 检查：Tooltip 展示结构化详情时是否使用 `TooltipInfo`，禁止直接用 antd `Tooltip` + 手写 `div` 拼接字段
+22. 检查：Tooltip 展示结构化详情时是否使用 `TooltipInfo` + **`Info` trigger**（禁止 `CircleHelp`）；`overlayStyle`/`styles.container` 须 `minWidth: 220`；禁止 `<button>` 嵌套 Tooltip trigger
 23. 检查：主滚动区是否使用 `VirtualScrollbar`（禁止 `overflow-auto` / `overflow-y-auto`）；flex 布局中 wrapper 是否含 `min-height: 0` / `flex: 1`（写在 SCSS module 中）；需编程滚动时 `ref` 是否挂在 `VirtualScrollbar` 上；Layout 改动是否与 [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) 三层接入一致
 24. 检查：样式是否符合 [../common/styles.md](../common/styles.md)——每个组件/页面有 `style.module.scss`（`index.tsx` 同目录）；禁止 Tailwind；每个 `className` 含 `{组件}-{功能}` 预定类名 + `styles['...']`，经 `classNames` 合并；禁止 `sc()` / `styles.camelCase`
 25. 检查：是否有对应 `.test.tsx` / `.test.ts` 且通过（见 [../common/testing.md](../common/testing.md)）
@@ -63,6 +63,7 @@
 | 接新需求 / 改交互       | [mindset.md](mindset.md)                                                                                          | 按任务选 common/business                                             |
 | 新建业务模块            | [../business/module-patterns.md](../business/module-patterns.md)                                                  | [../common/directory-structure.md](../common/directory-structure.md) |
 | 筛选项                  | [../common/filter.md](../common/filter.md)                                                                        | —                                                                    |
+| 列表/表单内容块         | [../common/content-layout.md](../common/content-layout.md)                                                        | [../common/styles.md](../common/styles.md) §8.11                     |
 | 部门 / 人员             | [../common/filter.md](../common/filter.md) + [../business/department-person.md](../business/department-person.md) | —                                                                    |
 | 权限 / 批量操作         | [../business/permissions-data.md](../business/permissions-data.md)                                                | —                                                                    |
 | 路由 / API              | [../business/routing-api.md](../business/routing-api.md)                                                          | —                                                                    |
@@ -77,23 +78,26 @@
 
 ## 五、完成前检查清单
 
+- [ ] **跨仓库提交顺序**：core 先 commit+发版 → 业务 repo 按模块 commit → marsun_arch **先 WorkRecord 再** docs/spec（见 [repos-commit.md](../../../marsun-arch-doc-spec/references/repos-commit.md)）
 - [ ] 目录结构符合 `common/directory-structure.md`
 - [ ] Form/Modal/Action 分离，handlers 抽离
 - [ ] ButtonGroup listArray 对象形式；CRUD 操作无 icon；Header 刷新用 `refreshAction` + `RefreshCw`
 - [ ] 图标均从 `@hkyhy/marsun-components-core` 导入，业务代码无 `lucide-react`
 - [ ] 权限/常量/API 符合 `business/permissions-data.md` 与 `business/routing-api.md`
-- [ ] 筛选 state 接入 API，部门/人员符合 `business/department-person.md`
-- [ ] Tooltip 详情用 TooltipInfo
+- [ ] 筛选 state 接入 API，Filter label 语义化（禁止「关键词」抽象 label）；部门/人员符合 `business/department-person.md`
+- [ ] 带操作的列表/表单块使用 `InteractiveBlock`：info 用 `Info` + `TooltipInfo`（cursor pointer）；actions icon 与文字同色、导出用 `Download`
+- [ ] workarea 少 border：列表项用背景块 + gap，禁止 border-bottom 分割线（§8.11）
+- [ ] Tooltip 详情用 TooltipInfo，长 ID 类字段须 `minWidth: 220` 且 content 可换行
 - [ ] 主滚动区用 VirtualScrollbar（见 `common/virtual-scrollbar.md`），Layout 接入与全局样式兜底一致
 - [ ] 样式符合 `common/styles.md`：`style.module.scss` 与 `index.tsx` 同目录；禁止 Tailwind / `sc()`；每个 className 含 `{组件}-{功能}` 预定类名 + `styles['...']`
-- [ ] 模块 workarea 扁平：`breadcrumb` 不重复 title；主区无双层 border/padding；Tabs 内容 100% 宽；页脚主按钮非无谓 block（§8.10）
+- [ ] 模块 workarea 扁平：`breadcrumb` 不重复 title；主区无双层 border/padding；Tabs 内容 100% 宽；页脚主按钮非无谓 block（§8.10）；列表/主从区少 panel border（§8.11）
 - [ ] examples/meta.json 已创建（如为新组件）
 - [ ] 新增/变更组件已同步更新规范文档与提示词（与代码同一任务）
 - [ ] `@hkyhy/marsun-components-core` 版本与 npm 实版一致（`npm view` 核对；无 `file:` lock）
 - [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting.md`）
 - [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
 - [ ] 测试通过
-- [ ] **新任务台账**：`sync_manifest.yaml` 登记时 `status: 进行中` → `da pm sync` CREATE（禁止首次就写 `已完成`）
+- [ ] **新任务台账**：梳理 `parent_issue` / `related_tasks`（[task-relationships](../../../da-workflow/references/task-relationships.md)）→ `sync_manifest.yaml` 登记 `status: 进行中` → `da pm sync` CREATE（禁止首次就写 `已完成`）
 - [ ] **commit 闭环**（plane_ready 仓库）：`da task timeline-sync` →（完成）`da task done --confirm` → **WorkRecord 进展追加（按事项类型选文档）** → `sync_manifest` 改 `已完成` → `da pm sync` PATCH（见 [da-workflow/plane-timeline](../../../da-workflow/references/plane-timeline.md) · [work-record/SKILL.md](../../../work-record/SKILL.md)）
 - [ ] WorkRecord 已写入**正确类型**的大事文档（接口对接 / 页面改版 / 工程化分列）；非 API 进展未混入「*接口对接」
 - [ ] 若本任务有对应 WorkRecord 大事文档，已追加「进展记录」；新增 API 须补接口行；Mock 与正式接口区分状态（Mock 勿标已完成）

@@ -125,24 +125,25 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 
 ### npm 导出 ↔ 本地 Common 对照
 
-| npm（`@hkyhy/marsun-components-core`）                       | 原 `src/components/Common/...`                          |
-| ------------------------------------------------------------ | ------------------------------------------------------- |
-| `CommonDescriptions`                                         | `Descriptions/CommonDescriptions`                       |
-| `TooltipInfo`                                                | `TooltipInfo`                                           |
-| `PageHeaderLayout`                                           | `Layout/PageHeaderLayout`                               |
-| `PageSpin`                                                   | 模块 body 整页 Spin（flex 高度链）                      |
-| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册                            |
-| `ModulePageShell`                                            | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步 |
-| `VirtualScrollbar`                                           | `VirtualScrollbar`                                      |
-| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`                     |
-| `Sparkline`                                                  | 微型趋势折线（S3 质量分析等）                           |
-| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示                                      |
-| `SemanticTag` / `SEMANTIC_COLORS`                            | `Tag/SemanticTag`                                       |
-| `CommonFilter` + `Filter*`                                   | `Filter/*`                                              |
-| `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                   |
-| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                |
-| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context                     |
-| `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                            |
+| npm（`@hkyhy/marsun-components-core`）                       | 原 `src/components/Common/...`                           |
+| ------------------------------------------------------------ | -------------------------------------------------------- |
+| `CommonDescriptions`                                         | `Descriptions/CommonDescriptions`                        |
+| `TooltipInfo`                                                | `TooltipInfo`                                            |
+| `Empty`                                                      | 空态展示（`showIcon` / `iconType` / `description` 可选） |
+| `PageHeaderLayout`                                           | `Layout/PageHeaderLayout`                                |
+| `PageSpin`                                                   | 模块 body 整页 Spin（flex 高度链）                       |
+| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册                             |
+| `ModulePageShell`                                            | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步  |
+| `VirtualScrollbar`                                           | `VirtualScrollbar`                                       |
+| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`                      |
+| `Sparkline`                                                  | 微型趋势折线（S3 质量分析等）                            |
+| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示                                       |
+| `SemanticTag` / `SEMANTIC_COLORS`                            | `Tag/SemanticTag`                                        |
+| `CommonFilter` + `Filter*`                                   | `Filter/*`                                               |
+| `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                    |
+| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                 |
+| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context                      |
+| `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                             |
 
 ### AgentHub 导出（`@hkyhy/marsun-components-core`）
 
@@ -264,6 +265,7 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | --------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Descriptions`　　　  | `CommonDescriptions`　　　　　　　　　　　　　　　 | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                 |
 | `Tooltip`（详情）　   | `TooltipInfo`　　　　　　　　　　　　　　　　　　  | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                               |
+| `Empty`（空态）　　   | `Empty`　　　　　　　　　　　　　　　　　　　　　  | `showIcon` / `iconType`（default/simple）/ `description` 可选；接口失败 toast + 数据区 Empty                                                        |
 | 页面头部布局　　　　  | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                            |
 | 模块页壳（AppShell）  | `ModulePageShell` + `PageShellProvider`　　　　　  | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [page-loading.md](page-loading.md)                                                       |
 | 主内容卡片　　　　　  | `ContentCard`（Shared/Layout）　　　　　　　　　   | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles.md](styles.md) §8.10                                                              |
@@ -274,7 +276,8 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | `Select`（部门选择）  | `DepartmentSelect`　　　　　　　　　　　　　　　　 | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                  |
 | 权限判断　　　　　　  | `hasPermission`　　　　　　　　　　　　　　　　　  | `hasPermission(user, 'user:edit')`　　　　　　　　                                                                                                  |
 | 筛选栏　　　　　　　  | `CommonFilter` + Filter 子组件　　　　　　　　　　 | 见 [filter.md](filter.md)　　　　　　　　　　　　　　                                                                                               |
-| `Input`（筛选）　　　 | `FilterInput`　　　　　　　　　　　　　　　　　　  | `filterKey` + `label` + `value` + `onChange`　　　                                                                                                  |
+| `Input`（筛选）　　　 | `FilterInput`　　　　　　　　　　　　　　　　　　  | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter.md](filter.md) §5.1.1）                                   |
+| 展示/表单内容块       | `InteractiveBlock`（业务 Shared/Detail）           | title/info/actions/subtitle/tags 层级；见 [content-layout.md](content-layout.md)                                                                    |
 | `Select`（筛选）　　  | `FilterSelect`　　　　　　　　　　　　　　　　　　 | `filterKey` + `options` + `value` + `onChange`　　                                                                                                  |
 | `TreeSelect`（筛选）  | `FilterTreeSelect`　　　　　　　　　　　　　　　　 | `filterKey` + `value` + `onChange`，自动加载部门树　                                                                                                |
 | `RangePicker`（筛选） | `FilterDateRange`　　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                                                                                                 |
@@ -282,12 +285,14 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 
 ### Icons（`@hkyhy/marsun-components-core`）
 
-| 场景                       | 用法                                                                                 | 禁止                                     |
-| -------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- |
-| 页面/侧栏/列表装饰 icon    | `import { RefreshCw, CircleAlert, LayoutGrid } from '@hkyhy/marsun-components-core'` | 业务项目 `import from 'lucide-react'`    |
-| 加载中刷新                 | `<RefreshCw spin={loading} size={16} />`                                             | 手写 CSS 旋转或 lucide 直引              |
-| Header 刷新 ButtonGroup 项 | `refreshAction({ onClick, loading })` → `{ icon: <RefreshCw spin={loading} /> }`     | 无 icon 的纯文字刷新（Header 须带 icon） |
-| 路由/面包屑 icon 类型      | `FC<IconProps>` from core                                                            | `LucideIcon` from lucide-react           |
+| 场景                                    | 用法                                                                                 | 禁止                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| 页面/侧栏/列表装饰 icon                 | `import { RefreshCw, CircleAlert, LayoutGrid } from '@hkyhy/marsun-components-core'` | 业务项目 `import from 'lucide-react'`                                |
+| 加载中刷新                              | `<RefreshCw spin={loading} size={16} />`                                             | 手写 CSS 旋转或 lucide 直引                                          |
+| Header 刷新 ButtonGroup 项              | `refreshAction({ onClick, loading })` → `{ icon: <RefreshCw spin={loading} /> }`     | 无 icon 的纯文字刷新（Header 须带 icon）                             |
+| 结构化详情 hover（TooltipInfo trigger） | `Info`（16px）+ `TooltipInfo`；**cursor: pointer**                                   | `CircleHelp` 作详情 trigger；`cursor: help`；`<button>` 包裹 Tooltip |
+| InteractiveBlock 导出操作               | `Download`（14px），icon 与 link 文字同色                                            | `FileText` 冒充导出；icon 单独语义色                                 |
+| 路由/面包屑 icon 类型                   | `FC<IconProps>` from core                                                            | `LucideIcon` from lucide-react                                       |
 
 完整列表见 core `ICON_NAMES` / `ICON_REGISTRY`；缺图标时在 `marsun_components-core/src/components/Icons` 补导出后再业务引用。
 

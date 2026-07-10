@@ -25,6 +25,7 @@ description: |
 
 - Commit 格式：[references/commit-format.md](references/commit-format.md)
 - Plane 五步闭环：[references/plane-timeline.md](references/plane-timeline.md)
+- 任务关联梳理：[references/task-relationships.md](references/task-relationships.md)
 - `@da pm`：[references/pm-sync.md](references/pm-sync.md)
 - 可选自动建关 Issue：[references/commit-lifecycle.md](references/commit-lifecycle.md)
 - 安全清单：[references/vibe-guard.md](references/vibe-guard.md)
@@ -69,7 +70,7 @@ Task Progress:
 REPO=<git 根>
 TASK=<Task 行 ID>
 
-# 新任务先 CREATE（status 进行中）
+# 新任务：先按 task-relationships.md 梳理 parent_issue / related_tasks，再 CREATE（status 进行中）
 PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"
 
 git commit ...   # Task: $TASK（完成时不带 [WIP]）
@@ -138,6 +139,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [ ] commit message 含 `Task:`；完成时不带 `[WIP]`
 - [ ] plane_ready 仓库已执行 timeline-sync + task done（完成任务时）
 - [ ] WorkRecord 进展已按事项类型追加（有对应文档时）
+- [ ] 新任务已梳理 `parent_issue` / `split_from` / `related_tasks`（见 task-relationships.md）
 - [ ] sync_manifest status 与 commit 语义一致后再 pm sync
 - [ ] 无 `.env` / 密钥进暂存区
 - [ ] Agent 编辑含 `AI-Assisted: true`

@@ -11,7 +11,8 @@
 
 ## 五步顺序（plane_ready 仓库）
 
-1. **新任务**：`plane/sync_manifest.yaml` 登记，`status: 进行中` → `da pm sync` **CREATE**（禁止首次就写 `已完成`）
+0. **梳理关联**（仅新任务）：对照 `sync_manifest` 已完成/进行中项 + `plane/.cache/plane_snapshot.json` + WorkRecord，确定 `parent_issue`（Plane 父 Issue UUID）与 `note` 中的 `split_from` / `related_tasks` → 见 [task-relationships.md](task-relationships.md)
+1. **新任务**：`plane/sync_manifest.yaml` 登记（含关联字段），`status: 进行中` → `da pm sync` **CREATE**（禁止首次就写 `已完成`）
 2. **`git commit`**：`Task: <ID>`；本 commit 完成任务时**不带** `[WIP]`
 3. **`da task timeline-sync <ID>`** — 补「关联 commit」到活动区
 4. **`da task done <ID> --confirm`** — 写「📦 任务交付时间线」完成块（**必须在最终 pm sync 标 Done 之前**）

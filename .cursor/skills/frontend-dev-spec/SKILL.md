@@ -6,6 +6,7 @@ description: |
   当需要在 Tooltip 中展示结构化详情（如添加人/添加时间）时，必须使用 TooltipInfo（来自 `@hkyhy/marsun-components-core` 或本地 Common 封装）。
   当页面或模块存在可滚动区域时，必须使用 VirtualScrollbar（来自 `@hkyhy/marsun-components-core`），禁止在主滚动区使用 overflow-auto / overflow-y-auto；Layout 级接入方式见 references/common/virtual-scrollbar.md。
   当模块页或列表页存在数据加载态时，必须使用 core 的 PageSpin + PageShellProvider（App Layout 包裹 Provider；页面用 ModulePageShell / PageHeaderLayout 的 spinning 或 usePageShellLoading）；禁止业务内手写「加载中…」叠层。见 references/common/page-loading.md。
+  当列表/面板需展示空态（无数据或加载失败后的占位）时，必须使用 `@hkyhy/marsun-components-core` 的 `Empty`（`showIcon` / `iconType` / `description` 可选）；禁止手写灰色 `<p>` 或直接使用 antd `Empty`。
   当新建或初始化前端子仓库、或 package.json 缺少格式化工具链时，须按 references/common/code-formatting.md 安装 Prettier + ESLint + Husky（含 `prepare`、`lint-staged` script、`.husky/pre-commit`），配置对齐 `repos/maoyang_data-asset-system` 与 `repos/marsun_components-core`。
   当使用图标时，必须从 `@hkyhy/marsun-components-core` 导入 Icons（禁止业务项目直接 import lucide-react）；Header 刷新操作使用 `refreshAction` + `RefreshCw` spin。
   当创建组件示例（examples/meta.json）时，多子模块业务域（如 Common、AgentHub）须按 {Domain}/{Module}/examples/ 组织，脚本自动生成域级父 menu 与子 menu。
@@ -34,7 +35,7 @@ description: |
 
 1. **目录结构是大前提** `(common)`：所有组件必须按规范目录结构拆分到 `Action/`、`Detail/`、`Form/`、`Modal/`、`List/` 等子目录，`@kne/*` 库的使用必须在目录结构规范内进行，不能因为使用第三方库而跳过组件拆分
 2. **页面必须以目录形式组织** `(common)`：所有页面组件必须放在 `src/pages/{PageName}/index.tsx` 目录中，禁止直接以 `.tsx` 文件形式放在 `src/pages/` 下（如 `src/pages/Profile.tsx` ❌ → `src/pages/Profile/index.tsx` ✅）
-3. **组件使用优先级** `(common)`：`@hkyhy/marsun-components-core`（npm 纯 UI，见 [component-mapping.md](references/common/component-mapping.md) npm 节）> `src/components/Common`（业务 wrapper / 尚未迁移的本地实现）> `src/components/{Domain}/{Module}` > `@kne/button-group` > `antd`（Tag 统一 `SemanticTag` + `SEMANTIC_COLORS`；Tooltip 详情统一 `TooltipInfo`；主滚动区统一 `VirtualScrollbar`）
+3. **组件使用优先级** `(common)`：`@hkyhy/marsun-components-core`（npm 纯 UI，见 [component-mapping.md](references/common/component-mapping.md) npm 节）> `src/components/Common`（业务 wrapper / 尚未迁移的本地实现）> `src/components/{Domain}/{Module}` > `@kne/button-group` > `antd`（Tag 统一 `SemanticTag` + `SEMANTIC_COLORS`；Tooltip 详情统一 `TooltipInfo`；主滚动区统一 `VirtualScrollbar`；空态统一 `Empty`）
 4. **命名原则** `(common)`：模块内部文件不带模块前缀，直接以功能/内容命名，目录本身已提供模块上下文
 5. **单一职责** `(business)`：一个按钮一个文件、Form 与 Modal 分离、组合按钮不含业务逻辑
 6. **antd 重构** `(common)`：遇到重复使用相同配置的 antd 组件时，提取为 Common 组件
@@ -66,6 +67,10 @@ description: |
 32. **代码格式化与 Lint** `(common)`：所有前端子仓库须安装 Prettier + ESLint + Husky 工具链（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`typescript-eslint`、`lint-staged`、`husky` 等），根目录配置 `.prettierrc` + `eslint.config.js` + `.husky/pre-commit`，`package.json` 提供 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts；参考 `repos/maoyang_data-asset-system` 与 `repos/marsun_components-core`。详见 [code-formatting.md](references/common/code-formatting.md)
 33. **模块主区扁平布局** `(business)`：`ModulePageShell` 已提供 `title`/`description` 时，**禁止**再传与 title 重复的 `breadcrumb`；主内容 workarea **禁止**双层 card（外层 border + 内层 padding）。主区用 `ContentCard flat` 或等价 `flex:1` 容器；Tabs/Table 内容区 `width:100%`；页脚主操作按钮默认 **非 block**（Drawer/窄容器可用 `saveBlock`）。详见 [styles.md](references/common/styles.md)「模块 workarea 扁平化」
 34. **非业务代码进 core** `(common)`：新建或修改 `src/utils/**` 前 **MUST** 查 `@hkyhy/marsun-components-core` 包根导出（见 [component-mapping.md](references/common/component-mapping.md) npm Utils 表）。**已存在于 core 的函数禁止在业务项目再写同名/同义 `src/utils/*.ts` 文件**；直接从包 import（如 `toDateTimeRange`、`recentDayRangeStrings`）。纯函数、无项目 API/store/业务枚举 → 写 core；含 zustand、业务 API、领域常量 → 留业务项目。仅允许薄配置层（`request.ts`、`Files/download.ts` 注入 token）。core 新增导出须同步 `src/index.ts` + component-mapping + 升版发布
+35. **Filter label 语义化** `(common)`：`FilterInput`/`FilterSelect`/`FilterDateRange` 的 `label` 禁止使用「关键词」等抽象词，须用字段业务语义（可与 placeholder 相同）。见 [filter.md](references/common/filter.md) §5.1.1
+36. **InteractiveBlock 内容块** `(common)`：title → **Info** icon + `TooltipInfo`（禁止 `CircleHelp`）→ actions（字号 ≤ title）；**tags 紧贴 subtitle**（inline/below），**禁止**在 description 之后；可点击块勿用 `<button>` 包裹 Tooltip；见 [content-layout.md](references/common/content-layout.md)
+37. **少 border 布局** `(common)`：模块 workarea 少 panel border；**列表项用 theme 背景块 + gap**，禁止 `border-bottom` 线分割。见 [styles.md](references/common/styles.md) §8.11
+38. **InteractiveBlock action 尺寸** `(common)`：link 操作字号不得大于 title（title 14px / actions 12px，icon 14px）；icon 颜色与 link 文字一致；导出用 `Download`；info trigger `cursor: pointer`
 
 ---
 
@@ -91,6 +96,7 @@ description: |
 | 虚拟滚动条 / Layout 滚动  | [common/virtual-scrollbar.md](references/common/virtual-scrollbar.md)     |
 | 模块页全局 Loading        | [common/page-loading.md](references/common/page-loading.md)               |
 | Filter 筛选组件           | [common/filter.md](references/common/filter.md)                           |
+| 展示/表单内容块布局       | [common/content-layout.md](references/common/content-layout.md)           |
 | 组件 Examples / meta.json | [common/examples.md](references/common/examples.md)                       |
 | 测试                      | [common/testing.md](references/common/testing.md)                         |
 | 代码格式化 / ESLint       | [common/code-formatting.md](references/common/code-formatting.md)         |
