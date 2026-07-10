@@ -1,6 +1,11 @@
 import { DatePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
+import {
+  formatPickerValue,
+  parsePickerValue,
+  type DatePickerGranularity,
+} from '@/utils/pickerDate';
 import FilterPopover from '../FilterPopover';
 import type { BaseFilterProps } from '../types';
 import { resolveHidden } from '../types';
@@ -17,8 +22,8 @@ interface QuickOption {
   getValue: () => [Dayjs, Dayjs] | null;
 }
 
-/** 内置快捷选项 */
-const BUILT_IN_OPTIONS: QuickOption[] = [
+/** 内置快捷选项（日粒度） */
+const BUILT_IN_DAY_OPTIONS: QuickOption[] = [
   {
     key: 'lastWeek',
     label: '上周',
@@ -34,15 +39,35 @@ const BUILT_IN_OPTIONS: QuickOption[] = [
   },
 ];
 
+function getBuiltInMonthOptions(): QuickOption[] {
+  const end = dayjs().startOf('month');
+  return [
+    { key: '1m', label: '近1月', getValue: () => [end, end] },
+    {
+      key: '3m',
+      label: '近3月',
+      getValue: () => [end.subtract(2, 'month'), end],
+    },
+    {
+      key: '6m',
+      label: '近6月',
+      getValue: () => [end.subtract(5, 'month'), end],
+    },
+  ];
+}
+
 interface FilterDateRangeProps extends BaseFilterProps {
   value?: [string, string] | null;
   onChange?: (value: [string, string] | null) => void;
+  /** 选择粒度：日 / 月 / 年 */
+  picker?: DatePickerGranularity;
   /** 默认区间：与默认相同时视为未筛选（除非 showDefaultAsSelected） */
   defaultValue?: [string, string];
   /** 为 true 时，value 等于 defaultValue 仍展示在已选 Tag 中 */
   showDefaultAsSelected?: boolean;
   showQuickOptions?: boolean;
   quickOptions?: QuickOption[];
+  disabledDate?: (current: Dayjs) => boolean;
 }
 
 function isSameRange(a?: [string, string] | null, b?: [string, string]): boolean {
@@ -51,16 +76,24 @@ function isSameRange(a?: [string, string] | null, b?: [string, string]): boolean
   return a[0] === b[0] && a[1] === b[1];
 }
 
+function rangeUnit(picker: DatePickerGranularity): 'day' | 'month' | 'year' {
+  if (picker === 'month') return 'month';
+  if (picker === 'year') return 'year';
+  return 'day';
+}
+
 function findMatchingQuickKey(
   range: [string, string] | null | undefined,
   opts: QuickOption[],
+  picker: DatePickerGranularity,
 ): string | null {
   if (!range?.[0] || !range?.[1]) return null;
-  const start = dayjs(range[0]);
-  const end = dayjs(range[1]);
+  const start = parsePickerValue(range[0], picker);
+  const end = parsePickerValue(range[1], picker);
+  const unit = rangeUnit(picker);
   for (const opt of opts) {
     const v = opt.getValue();
-    if (v && v[0].isSame(start, 'day') && v[1].isSame(end, 'day')) {
+    if (v && v[0].isSame(start, unit) && v[1].isSame(end, unit)) {
       return opt.key;
     }
   }
@@ -72,29 +105,40 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   label,
   value,
   onChange,
+  picker = 'date',
   defaultValue,
   showDefaultAsSelected = false,
   showQuickOptions = true,
   quickOptions,
+  disabledDate,
   active,
   hidden,
 }) => {
   const [open, setOpen] = useState(false);
   const [dates, setDates] = useState<[Dayjs | null, Dayjs | null] | null>(
-    value ? [dayjs(value[0]), dayjs(value[1])] : null,
+    value ? [parsePickerValue(value[0], picker), parsePickerValue(value[1], picker)] : null,
   );
   const [activeQuickKey, setActiveQuickKey] = useState<string | null>(null);
 
   const registerFn = useFilterRegister();
-  const opts = quickOptions ?? (showQuickOptions ? BUILT_IN_OPTIONS : []);
+  const opts = useMemo(
+    () =>
+      quickOptions ??
+      (showQuickOptions
+        ? picker === 'month'
+          ? getBuiltInMonthOptions()
+          : BUILT_IN_DAY_OPTIONS
+        : []),
+    [quickOptions, showQuickOptions, picker],
+  );
 
   const syncActiveQuickKey = (range: [string, string] | null | undefined) => {
-    setActiveQuickKey(findMatchingQuickKey(range, opts));
+    setActiveQuickKey(findMatchingQuickKey(range, opts, picker));
   };
 
   const revertToCommitted = () => {
     if (value?.[0] && value?.[1]) {
-      setDates([dayjs(value[0]), dayjs(value[1])]);
+      setDates([parsePickerValue(value[0], picker), parsePickerValue(value[1], picker)]);
       syncActiveQuickKey(value);
     } else {
       setDates(null);
@@ -104,14 +148,14 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
 
   useEffect(() => {
     if (value?.[0] && value?.[1]) {
-      setDates([dayjs(value[0]), dayjs(value[1])]);
+      setDates([parsePickerValue(value[0], picker), parsePickerValue(value[1], picker)]);
       syncActiveQuickKey(value);
     } else {
       setDates(null);
       setActiveQuickKey(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, opts]);
+  }, [value, opts, picker]);
 
   const hasNonDefaultValue = showDefaultAsSelected
     ? !!value?.[0]
@@ -140,7 +184,7 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
 
   const handleConfirm = () => {
     if (dates?.[0] && dates?.[1]) {
-      onChange?.([dates[0].format('YYYY-MM-DD'), dates[1].format('YYYY-MM-DD')]);
+      onChange?.([formatPickerValue(dates[0], picker), formatPickerValue(dates[1], picker)]);
     } else {
       onChange?.(null);
     }
@@ -197,7 +241,9 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
       )}
       <RangePicker
         className={classNames('filter-date-range-picker', styles['filter-date-range-picker'])}
+        picker={picker}
         value={dates}
+        disabledDate={disabledDate}
         onChange={(vals) => {
           setDates(vals as [Dayjs | null, Dayjs | null] | null);
           setActiveQuickKey(null);
@@ -209,4 +255,4 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
 
 export default FilterDateRange;
 export type { FilterDateRangeProps, QuickOption };
-export { findMatchingQuickKey, isSameRange };
+export { findMatchingQuickKey, isSameRange, getBuiltInMonthOptions };

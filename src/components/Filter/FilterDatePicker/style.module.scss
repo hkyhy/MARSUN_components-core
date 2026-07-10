@@ -1,0 +1,27 @@
+.filter-date-picker-quick-options {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-date-picker-quick-option {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: var(--font-size-small);
+
+  &:hover {
+    background-color: var(--primary-color-bg);
+  }
+}
+
+.filter-date-picker-quick-option-active {
+  background-color: var(--primary-color);
+  color: var(--bg-color-white);
+  font-weight: 500;
+}
+
+.filter-date-picker {
+  width: 100%;
+}

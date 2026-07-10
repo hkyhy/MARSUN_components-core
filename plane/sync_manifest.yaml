@@ -1,6 +1,6 @@
 meta:
   project_name: "@hkyhy/marsun-components-core"
-  next_task_id: M003-23
+  next_task_id: M003-27
 
 tasks:
   - id: M001-1
@@ -286,3 +286,12 @@ tasks:
     kind: style
     tags: [frontend, chat]
     note: 移除 panel border，保留 shadow 浮层
+
+  - id: M003-26
+    milestone: M003
+    name: FilterDatePicker 单月筛选与 FilterDateRange picker 扩展
+    status: 进行中
+    priority: P1
+    kind: feature
+    tags: [frontend, filter]
+    note: FilterDatePicker picker date/month/year；FilterDateRange picker prop；pickerDate utils；示例与单测

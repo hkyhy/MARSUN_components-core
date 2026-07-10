@@ -37,6 +37,11 @@ import FilterDateRange from './FilterDateRange';
 export type { FilterDateRangeProps, QuickOption } from './FilterDateRange';
 export { FilterDateRange };
 
+// 单日期（日 / 月 / 年）
+import FilterDatePicker from './FilterDatePicker';
+export type { FilterDatePickerProps, SingleQuickOption } from './FilterDatePicker';
+export { FilterDatePicker };
+
 // 数字范围
 import FilterNumberRange from './FilterNumberRange';
 export type { FilterNumberRangeProps } from './FilterNumberRange';

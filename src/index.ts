@@ -30,6 +30,12 @@ export {
   recentDayRangeStrings,
 } from './utils/date';
 export {
+  formatPickerValue,
+  parsePickerValue,
+  isValidPickerValue,
+  type DatePickerGranularity,
+} from './utils/pickerDate';
+export {
   REDIRECT_URL_PARAM,
   resolveRedirectUrl,
   buildLocationRedirectUrl,

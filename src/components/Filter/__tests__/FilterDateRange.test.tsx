@@ -25,9 +25,9 @@ describe('FilterDateRange', () => {
   });
 
   it('findMatchingQuickKey matches preset range', () => {
-    expect(findMatchingQuickKey(['2026-06-08', '2026-07-07'], quickOptions)).toBe('1m');
-    expect(findMatchingQuickKey(['2026-04-08', '2026-07-07'], quickOptions)).toBe('3m');
-    expect(findMatchingQuickKey(['2026-01-01', '2026-07-07'], quickOptions)).toBeNull();
+    expect(findMatchingQuickKey(['2026-06-08', '2026-07-07'], quickOptions, 'date')).toBe('1m');
+    expect(findMatchingQuickKey(['2026-04-08', '2026-07-07'], quickOptions, 'date')).toBe('3m');
+    expect(findMatchingQuickKey(['2026-01-01', '2026-07-07'], quickOptions, 'date')).toBeNull();
   });
 
   it('showDefaultAsSelected registers tag when value equals defaultValue', () => {

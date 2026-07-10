@@ -785,7 +785,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
     examples: [
       {
         title: '完整筛选栏',
-        description: 'CommonFilter 完整组合：下拉、输入、日期范围、数字范围筛选器',
+        description: 'CommonFilter 完整组合：下拉、输入、单日期（月）、日期范围、数字范围筛选器',
         component: React.lazy(() => import('@/components/Filter/examples/CommonFilterDemo')),
         sourcePath: () => import('@/components/Filter/examples/CommonFilterDemo.tsx?raw'),
         block: true,
@@ -807,6 +807,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: 'FilterDateRange 日期区间选择，支持快捷选项',
         component: React.lazy(() => import('@/components/Filter/examples/FilterDateRangeDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterDateRangeDemo.tsx?raw'),
+      },
+      {
+        title: '单日期筛选器',
+        description: 'FilterDatePicker 单日期选择，支持日 / 月 / 年粒度与快捷选项',
+        component: React.lazy(() => import('@/components/Filter/examples/FilterDatePickerDemo')),
+        sourcePath: () => import('@/components/Filter/examples/FilterDatePickerDemo.tsx?raw'),
       },
       {
         title: '数字范围筛选器',
@@ -879,6 +885,42 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             defaultVal: 'false',
           },
           { prop: 'quickOptions', desc: '自定义快捷选项', type: 'QuickOption[]' },
+        ],
+      },
+      {
+        componentName: 'FilterDatePickerProps',
+        rows: [
+          {
+            prop: 'value',
+            desc: '选中值；date→YYYY-MM-DD，month→YYYY-MM，year→YYYY',
+            type: 'string | null',
+          },
+          { prop: 'onChange', desc: '值变更回调', type: '(value: string | null) => void' },
+          {
+            prop: 'picker',
+            desc: '选择粒度',
+            type: "'date' | 'month' | 'year'",
+            defaultVal: "'date'",
+          },
+          { prop: 'defaultValue', desc: '默认值；与默认相同时视为未筛选', type: 'string' },
+          {
+            prop: 'showDefaultAsSelected',
+            desc: 'value 等于 defaultValue 时仍展示 Tag',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'showQuickOptions',
+            desc: '是否显示内置快捷选项（今天/本月/今年）',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          { prop: 'quickOptions', desc: '自定义快捷选项', type: 'SingleQuickOption[]' },
+          {
+            prop: 'disabledDate',
+            desc: '禁用日期（透传 antd DatePicker）',
+            type: '(current: Dayjs) => boolean',
+          },
         ],
       },
       {

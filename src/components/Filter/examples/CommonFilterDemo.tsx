@@ -1,5 +1,6 @@
 import {
   CommonFilter,
+  FilterDatePicker,
   FilterDateRange,
   FilterInput,
   FilterNumberRange,
@@ -13,6 +14,7 @@ const CommonFilterDemo: React.FC = () => {
   const [status, setStatus] = useState<FilterSelectValue>(undefined);
   const [dept, setDept] = useState<FilterSelectValue>(undefined);
   const [keyword, setKeyword] = useState<string | undefined>(undefined);
+  const [month, setMonth] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<[string, string] | null>(null);
   const [scoreRange, setScoreRange] = useState<[number | undefined, number | undefined] | null>(
     null,
@@ -24,6 +26,7 @@ const CommonFilterDemo: React.FC = () => {
         setStatus(undefined);
         setDept(undefined);
         setKeyword(undefined);
+        setMonth(null);
         setDateRange(null);
         setScoreRange(null);
       }}
@@ -44,6 +47,14 @@ const CommonFilterDemo: React.FC = () => {
         searchable
       />
       <FilterInput label="关键词" filterKey="keyword" value={keyword} onChange={setKeyword} />
+      <FilterDatePicker
+        label="月份"
+        filterKey="month"
+        picker="month"
+        value={month}
+        onChange={setMonth}
+        showQuickOptions
+      />
       <FilterDateRange label="日期" filterKey="date" value={dateRange} onChange={setDateRange} />
       <FilterNumberRange
         label="评分"
