@@ -72,6 +72,8 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（sync_manifest id）
 
 **禁止**：同一仓库（my-plane 除外）混用无层级旧 id 与新层级 id。
 
+**marsun_arch 禁止新增 `M001-*`**：`milestones.yaml` 已无 `M001`（DA 旧轨 Module 已清理）；`data-dev/`、规范文档、backend-dev-spec 等元仓库交付一律 `milestone: P6.11` + `id: P6.11.{N}`。误登 `M001-*` 须迁为 `P6.11.*` 并将 Plane 旧 Issue 标 `(重复·待删)`。
+
 ### 各仓库新任务起始
 
 ```yaml
@@ -91,11 +93,13 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（sync_manifest id）
   name: Filter 组件增强
   status: 进行中
 
-# marsun_arch — 从 P6.11.26 起（接 M001-25 后）
-- id: P6.11.26
+# marsun_arch — 从 P6.11.{N} 起（读 meta.next_task_id；**禁止**新增 M001-*）
+- id: P6.11.11
   milestone: P6.11
-  name: task-naming 钉钉层级对齐
+  name: S3 质量预警 data-service 接口文档
   status: 进行中
+  tags: [data-dev, docs, S3]
+  note: data-dev/S3智能体接口.md 等元仓库接口/规范文档
 
 # maoyang assets — 从 P3.7.{N} 起
 - id: P3.7.1
