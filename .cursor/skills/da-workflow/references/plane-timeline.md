@@ -1,4 +1,4 @@
-# Plane 交付五步闭环
+# Plane 交付六步闭环
 
 > 规则：[03-commit-plane-timeline.mdc](../../../rules/03-commit-plane-timeline.mdc)（always-applied）  
 > Commit 格式：[commit-format.md](commit-format.md) · WorkRecord：[work-record/SKILL.md](../../work-record/SKILL.md)
@@ -9,7 +9,7 @@
 
 `da pm sync` **alone** 只 CREATE/PATCH 任务状态，**不会**写 Plane 活动区「📦 任务交付时间线」评论。必须用 `da task timeline-sync` + `da task done --confirm`。
 
-## 五步顺序（plane_ready 仓库）
+## 六步顺序（plane_ready 仓库）
 
 1. **新任务**：`plane/sync_manifest.yaml` 登记，`status: 进行中` → `da pm sync` **CREATE**（禁止首次就写 `已完成`）
 2. **`git commit`**：`Task: <ID>`；本 commit 完成任务时**不带** `[WIP]`

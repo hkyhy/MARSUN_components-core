@@ -83,7 +83,7 @@ AI-Assisted: true
 - `Task: <id> [WIP]` — 本 commit **未完成**，仍在进行
 - 每个原子 commit 前，在 `plane/sync_manifest.yaml` 确认/新增与**本次功能**对应的 id
 
-**Plane 交付五步闭环（必守）**：`plane/project.yaml` 已配置时，每个任务闭环内按序执行（详见 [03-commit-plane-timeline.mdc](../../../rules/03-commit-plane-timeline.mdc) 与 [da-workflow/plane-timeline](../../da-workflow/references/plane-timeline.md)）：
+**Plane 交付六步闭环（必守）**：`plane/project.yaml` 已配置时，每个任务闭环内按序执行（详见 [03-commit-plane-timeline.mdc](../../../rules/03-commit-plane-timeline.mdc) 与 [da-workflow/plane-timeline](../../da-workflow/references/plane-timeline.md)）：
 
 0. **新任务关联梳理**：对照台账 + Plane 快照 + WorkRecord，写入 `parent_issue` 与 `note` 中 `split_from` / `related_tasks`（见 [da-workflow/task-relationships](../../da-workflow/references/task-relationships.md)）
 1. 新任务：`sync_manifest` 登记，`status: 进行中` → `da pm sync` **CREATE**

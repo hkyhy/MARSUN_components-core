@@ -1,7 +1,7 @@
 ---
 name: da-workflow
 description: |
-  DA 团队开发总控：@da 规范审查提交、@da pm 进度同步 Plane、五步交付闭环、Task 必填与 AI 归因。
+  DA 团队开发总控：@da 规范审查提交、@da pm 进度同步 Plane、六步交付闭环、Task 必填与 AI 归因。
   用户说提交/commit/push/同步 Plane/@da pm/完成开发任务时触发。
   plane_ready 仓库 commit 后须 timeline-sync → task done --confirm → WorkRecord → pm sync PATCH（见 references/plane-timeline.md）。
   与 work-record、weekly-report 互补：本技能管提交与 Plane 交付；work-record 管事项进展；weekly-report 管周期汇总。
@@ -16,7 +16,7 @@ description: |
 
 | 技能                                                                                    | 职责                                      |
 | --------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **本技能**                                                                              | 提交格式、scan、五步 Plane 闭环、`@da pm` |
+| **本技能**                                                                              | 提交格式、scan、六步 Plane 闭环、`@da pm` |
 | [work-record](../work-record/SKILL.md)                                                  | 事项级 WorkRecord 进展（commit 后步骤 5） |
 | [weekly-report](../weekly-report/SKILL.md)                                              | 周期周报汇总                              |
 | [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md) | repos 子仓库原子 commit 与检测脚本        |
@@ -27,7 +27,7 @@ description: |
 - 钉钉层级命名：[references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md)
 - 钉表 Module 写保护：[references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md)
 - Plane 负责人映射：[references/plane-team-assignees.md](references/plane-team-assignees.md)
-- Plane 五步闭环：[references/plane-timeline.md](references/plane-timeline.md)
+- Plane 六步闭环：[references/plane-timeline.md](references/plane-timeline.md)
 - `@da pm`：[references/pm-sync.md](references/pm-sync.md)
 - 可选自动建关 Issue：[references/commit-lifecycle.md](references/commit-lifecycle.md)
 - 安全清单：[references/vibe-guard.md](references/vibe-guard.md)
@@ -120,7 +120,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 
 | 技能                                                                                                      | 联动点                                           |
 | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [work-record](../work-record/SKILL.md)                                                                    | 五步闭环步骤 5：追加事项进展                     |
+| [work-record](../work-record/SKILL.md)                                                                    | 六步闭环步骤 5：追加事项进展                     |
 | [weekly-report](../weekly-report/SKILL.md)                                                                | 写周报时采集 git log + sync_manifest             |
 | [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md)                   | repos 子仓库 commit 前 `repo-commit-context.mjs` |
 | [frontend-dev-spec/task-naming](../frontend-dev-spec/references/common/task-naming.md)                    | Task ID 编码与 sync_manifest 登记                |
@@ -158,7 +158,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md) — 钉表层级与双轨 ID
 - [references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md) — 钉表 Module SSOT 与写保护
 - [references/plane-team-assignees.md](references/plane-team-assignees.md) — 负责人 Plane 邮箱映射
-- [references/plane-timeline.md](references/plane-timeline.md) — 五步交付闭环详文
+- [references/plane-timeline.md](references/plane-timeline.md) — 六步交付闭环详文
 - [references/pm-sync.md](references/pm-sync.md) — `@da pm` Agent 流程
 - [references/commit-lifecycle.md](references/commit-lifecycle.md) — `DA_COMMIT_LIFECYCLE=1` 自动建关
 - [references/vibe-guard.md](references/vibe-guard.md) — scan 与安全清单

@@ -79,6 +79,17 @@
 4. 重复 WI（同名且已有 `marsun-arch:task:*`）：mark `(重复·待删)` → `plane_cleanup --apply`
 5. 空 Module rename `(重复·待删) …` 后 Archive / cleanup
 
+## M 系列与 P6.x 双轨（DA dev-aanalysis）
+
+同一 Plane 项目（如 P6 技术基建 `f7ed0394`）可能并存：
+
+| 轨道      | Module 示例            | 任务 ext                                                      |
+| --------- | ---------------------- | ------------------------------------------------------------- |
+| 钉表 SSOT | `P6.4 v1.4 …` + `DT-*` | 可无 ext 或 `marsun-arch:task:*`                              |
+| DA 旧轨   | `M004 · v1.4 …` 无 ext | `dev-aanalysis:milestone:M004`、`dev-aanalysis:task:DA-1.4-*` |
+
+**清理**：`M001→P6.1` … `M010→P6.9`、`M022→P6.10`，任务 link 到钉表 Module 后 unlink M 模块；**禁止** pm sync 再 CREATE `M00x` Module。
+
 ## 延伸阅读
 
 - [dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md) — 层级与双轨 ID

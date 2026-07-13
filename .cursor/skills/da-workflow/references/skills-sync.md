@@ -31,7 +31,7 @@ node scripts/sync-skills.mjs --skill da-workflow --check
 
 ### B. 与全局 `~/.cursor/skills/da` 的关系
 
-- **marsun_arch 权威源**：本目录（Agent 提示词、五步闭环、commit 格式）
+- **marsun_arch 权威源**：本目录（Agent 提示词、六步闭环、commit 格式）
 - **全局安装**：`da install-config` 安装的 CLI、hooks、`project-pm-sync` 脚本仍在 `~/.cursor/skills/`
 - 改提交/Plane 流程时**优先改本目录**，再 `sync-skills.mjs` 推到 repos
 

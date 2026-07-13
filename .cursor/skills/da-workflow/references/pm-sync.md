@@ -80,7 +80,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --excel
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --excel --plane
 ```
 
-## 与五步闭环的关系
+## 与六步闭环的关系
 
 - **任务级 sync**（`da pm sync`）：在 commit 闭环内 CREATE/PATCH 台账状态
 - **批量进度 sync**（`@da pm` pipeline）：梳理 roadmap → 写 YAML → dry-run → sync
