@@ -25,6 +25,8 @@ description: |
 
 - Commit 格式：[references/commit-format.md](references/commit-format.md)
 - 钉钉层级命名：[references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md)
+- 钉表 Module 写保护：[references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md)
+- Plane 负责人映射：[references/plane-team-assignees.md](references/plane-team-assignees.md)
 - Plane 五步闭环：[references/plane-timeline.md](references/plane-timeline.md)
 - `@da pm`：[references/pm-sync.md](references/pm-sync.md)
 - 可选自动建关 Issue：[references/commit-lifecycle.md](references/commit-lifecycle.md)
@@ -108,7 +110,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 # 非交互：--confirm-token <token>（用户明确同意后）
 ```
 
-硬约束：不得在用户未确认前带 `--confirm-token` sync；不得 Plane DELETE / 删 YAML id。
+硬约束：不得在用户未确认前带 `--confirm-token` sync；不得 Plane DELETE / 删 YAML id；**merged milestone dry-run 须 CREATE module = 0**（见 [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)）。
 
 详文：[references/pm-sync.md](references/pm-sync.md)
 
@@ -123,6 +125,8 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 | [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md)                   | repos 子仓库 commit 前 `repo-commit-context.mjs` |
 | [frontend-dev-spec/task-naming](../frontend-dev-spec/references/common/task-naming.md)                    | Task ID 编码与 sync_manifest 登记                |
 | [dingtalk-hierarchy-naming](references/dingtalk-hierarchy-naming.md)                                      | 钉表层级契约、双轨 ID、仓库 milestone 速查       |
+| [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)                                  | merged 模块写保护、dry-run 0 CREATE module       |
+| [plane-team-assignees](references/plane-team-assignees.md)                                                | owner → Plane assignee 映射                      |
 | [frontend-dev-spec/requirement-workflow](../frontend-dev-spec/references/prompts/requirement-workflow.md) | 需求完成前 commit 闭环检查项                     |
 
 ---
@@ -141,6 +145,8 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [ ] plane_ready 仓库已执行 timeline-sync + task done（完成任务时）
 - [ ] WorkRecord 进展已按事项类型追加（有对应文档时）
 - [ ] sync_manifest status 与 commit 语义一致后再 pm sync
+- [ ] `da pm dry-run` 对 merged milestone **CREATE module = 0**（见 plane-dingtalk-module-rules）
+- [ ] 新任务台账含 `owner`、`start_date`、`target_date`（见 plane-team-assignees）
 - [ ] 无 `.env` / 密钥进暂存区
 - [ ] Agent 编辑含 `AI-Assisted: true`
 
@@ -150,6 +156,8 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 
 - [references/commit-format.md](references/commit-format.md) — Conventional Commits + Task 行
 - [references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md) — 钉表层级与双轨 ID
+- [references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md) — 钉表 Module SSOT 与写保护
+- [references/plane-team-assignees.md](references/plane-team-assignees.md) — 负责人 Plane 邮箱映射
 - [references/plane-timeline.md](references/plane-timeline.md) — 五步交付闭环详文
 - [references/pm-sync.md](references/pm-sync.md) — `@da pm` Agent 流程
 - [references/commit-lifecycle.md](references/commit-lifecycle.md) — `DA_COMMIT_LIFECYCLE=1` 自动建关

@@ -39,7 +39,28 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（sync_manifest id）
 | agent    | assets 内 AgentHub                | **S1**           | **S1.3** 功能开发 V1.0 | `plane/projects.json` agent 路由            |
 | my-plane | `repos/my-plane`                  | —                | —                      | **例外**：维持 `M003-*`，本次不纳入层级编码 |
 
-登记新任务前：查上表选定 `milestone`；`id` 前缀须与 `milestone` 一致（`S3.3.*` 挂 `milestone: S3.3`）。
+登记新任务前：查上表选定 `milestone`；`id` 前缀须与 `milestone` 一致（`S3.3.*` 挂 `milestone: S3.3`）。**先** `da pm dry-run` 拉 Plane 快照，禁止凭空 CREATE 钉表 Module（见 [plane-dingtalk-module-rules](../../../da-workflow/references/plane-dingtalk-module-rules.md)）。
+
+### 任务台账字段（负责人与日期）
+
+| 字段          | 必填 | 说明                                                                                                              |
+| ------------- | ---- | ----------------------------------------------------------------------------------------------------------------- |
+| `owner`       | 推荐 | 中文姓名；sync 按 [plane-team-assignees](../../../da-workflow/references/plane-team-assignees.md) 映射 Plane 邮箱 |
+| `start_date`  | 推荐 | YYYY-MM-DD，Work Item 开始日                                                                                      |
+| `target_date` | 推荐 | YYYY-MM-DD，Work Item 截止日                                                                                      |
+
+```yaml
+- id: P6.11.6
+  milestone: P6.11
+  name: 示例任务
+  status: 进行中
+  owner: 黄金芳
+  start_date: '2026-07-10'
+  target_date: '2026-07-31'
+  priority: P1
+  kind: docs
+  note: 范围
+```
 
 ### 与旧格式并存
 

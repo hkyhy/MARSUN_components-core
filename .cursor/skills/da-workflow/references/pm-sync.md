@@ -33,6 +33,30 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - 不得 Plane DELETE / 删 YAML id
 - 有 conflict 须先改 YAML/Plane 或让用户决策
 - preflight exit 3 → HITL 停下，用户补 API Key / `project_id`
+- **`origin: merged` milestone：dry-run CREATE module 须为 0**（否则停止 sync，见 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)）
+- **禁止** pm sync 私自 CREATE 与钉表同名的 Module（`M001`/`M002` 等历史 id 已废弃）
+
+## dry-run 门槛（merged 仓库）
+
+| 检查项        | 预期            | 失败处理                                     |
+| ------------- | --------------- | -------------------------------------------- |
+| CREATE module | **0**           | 改 milestones 绑定 dingtalk；清理误建 Module |
+| CREATE 任务   | 仅新登记 id     | 先 reconcile 再登记                          |
+| PATCH 模块名  | **0**（merged） | 检查 sync 写保护是否生效                     |
+
+## 负责人与日期
+
+任务 CREATE/PATCH 须写入 Plane assignee 与起止日期。YAML 字段见 [plane-team-assignees](plane-team-assignees.md)：
+
+| 层级      | 字段                                 | sync 行为                                           |
+| --------- | ------------------------------------ | --------------------------------------------------- |
+| milestone | `owner`、`plan_date`                 | merged 时不 PATCH 钉表 Module；仅 PM 自建模块时生效 |
+| task      | `owner`、`start_date`、`target_date` | 写入 Work Item assignee + 日期                      |
+
+```bash
+export PLANE_PUSH_ASSIGNEE=1    # YAML 有 owner 时写入 Plane
+# 或 PLANE_ASSIGNEE_EMAIL=metacoo@wisilk.com  # 无 owner 兜底
+```
 
 ## 数据源优先级
 
@@ -65,10 +89,12 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --excel --
 
 ## 常见问题
 
-| 现象                | 处理                                           |
-| ------------------- | ---------------------------------------------- |
-| preflight exit 3    | 缺 API Key 或 `project_id` → HITL              |
-| 写到错误 Plane 项目 | 更新 `project_id` + `project_url` 后让用户确认 |
-| YAML 校验失败含 `@` | `note` 字段中 `@da` 等须加引号                 |
+| 现象                      | 处理                                                         |
+| ------------------------- | ------------------------------------------------------------ |
+| preflight exit 3          | 缺 API Key 或 `project_id` → HITL                            |
+| 写到错误 Plane 项目       | 更新 `project_id` + `project_url` 后让用户确认               |
+| YAML 校验失败含 `@`       | `note` 字段中 `@da` 等须加引号                               |
+| dry-run CREATE module > 0 | merged milestone 未绑定钉表 → 见 plane-dingtalk-module-rules |
+| Plane 出现重复 P6.1 模块  | pm sync 误 PATCH 钉表 Module 名 → 迁移任务后清理误建 Module  |
 
 完整安全规约：`~/.cursor/skills/platform-doc-plane-sync/PM-SAFETY.md`

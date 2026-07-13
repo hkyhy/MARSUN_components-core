@@ -169,15 +169,19 @@ PLANE_CONFIRM_SYNC=1 PLANE_CI=1 bash ~/.cursor/skills/project-pm-sync/scripts/pm
 
 **负责人与日期**（写入 Plane Work Item）：
 
-| 层级   | YAML 字段                                | sync 行为                                   |
-| ------ | ---------------------------------------- | ------------------------------------------- |
-| 里程碑 | `milestones.yaml` → `owner`、`plan_date` | Module WI 带 `start_date` / `target_date`   |
-| 任务   | 暂无 per-task 日期字段                   | 描述来自 `note`；负责人需 sync 时设环境变量 |
+| 层级   | YAML 字段                                | sync 行为                                                                           |
+| ------ | ---------------------------------------- | ----------------------------------------------------------------------------------- |
+| 里程碑 | `milestones.yaml` → `owner`、`plan_date` | merged 钉表 Module：**不 PATCH** 名称/日期（SSOT 在钉表）；PM 自建模块时写入 Module |
+| 任务   | `owner`、`start_date`、`target_date`     | 写入 Work Item assignee + 起止日期                                                  |
+
+团队映射：[da-workflow/plane-team-assignees](../../da-workflow/references/plane-team-assignees.md) · 可选 `plane/team-assignees.yaml`
 
 ```bash
-export PLANE_ASSIGNEE_EMAIL=you@company.com   # 或 PLANE_ASSIGNEE_ID=<uuid>
-export PLANE_PUSH_ASSIGNEE=1                    # 默认不覆盖 Plane 已有 assignee
+export PLANE_PUSH_ASSIGNEE=1                    # YAML 有 owner 时写入 Plane
+export PLANE_ASSIGNEE_EMAIL=metacoo@wisilk.com   # 无 owner 兜底
 ```
+
+**merged 模块**：dry-run **CREATE module = 0**（见 [plane-dingtalk-module-rules](../../da-workflow/references/plane-dingtalk-module-rules.md)）。
 
 双 Plane（maoyang）：assets 与 agent **分别** dry-run + sync（agent 加 `--project-id 56c1a09f…`）。
 
