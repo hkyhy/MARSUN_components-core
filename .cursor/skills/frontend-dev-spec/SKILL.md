@@ -6,10 +6,10 @@ description: |
   当需要在 Tooltip 中展示结构化详情（如添加人/添加时间）时，必须使用 TooltipInfo（来自 `@hkyhy/marsun-components-core` 或本地 Common 封装）。
   当页面或模块存在可滚动区域时，必须使用 VirtualScrollbar（来自 `@hkyhy/marsun-components-core`），禁止在主滚动区使用 overflow-auto / overflow-y-auto；Layout 级接入方式见 references/common/virtual-scrollbar.md。
   当模块页或列表页存在数据加载态时，必须使用 core 的 PageSpin + PageShellProvider（App Layout 包裹 Provider；页面用 ModulePageShell / PageHeaderLayout 的 spinning 或 usePageShellLoading）；禁止业务内手写「加载中…」叠层。见 references/common/page-loading.md。
-  当列表/面板需展示空态（无数据或加载失败后的占位）时，必须使用 `@hkyhy/marsun-components-core` 的 `Empty`（`showIcon` / `iconType` / `description` 可选）；禁止手写灰色 `<p>` 或直接使用 antd `Empty`。
   当新建或初始化前端子仓库、或 package.json 缺少格式化工具链时，须按 references/common/code-formatting.md 安装 Prettier + ESLint + Husky（含 `prepare`、`lint-staged` script、`.husky/pre-commit`），配置对齐 `repos/maoyang_data-asset-system` 与 `repos/marsun_components-core`。
   当使用图标时，必须从 `@hkyhy/marsun-components-core` 导入 Icons（禁止业务项目直接 import lucide-react）；Header 刷新操作使用 `refreshAction` + `RefreshCw` spin。
   当创建组件示例（examples/meta.json）时，多子模块业务域（如 Common、AgentHub）须按 {Domain}/{Module}/examples/ 组织，脚本自动生成域级父 menu 与子 menu。
+  业务前端子仓库初始化或接入组件展示时，须在 App.tsx 用 import.meta.env.DEV 挂载 antd FloatButton（业务页 ↔ /components）及 ComponentsLayout 路由；参考 repos/maoyang_data-asset-system。
   每次新增或更改组件（含 Common 封装、Props/行为变更、全局接入方式变更）时，须同步更新对应的规范文档与提示词（SKILL.md、references、component-mapping 等），代码与规范同一任务内完成。
   marsun_components-core 新增或变更导出时，须同步包根 index.ts、examples/meta.json（含子组件 Demo 与 apiDoc）及 component-mapping.md。
   此技能提供统一的目录结构、命名规范、组件拆分方式和代码模板，确保所有模块遵循一致的架构风格。
@@ -35,7 +35,7 @@ description: |
 
 1. **目录结构是大前提** `(common)`：所有组件必须按规范目录结构拆分到 `Action/`、`Detail/`、`Form/`、`Modal/`、`List/` 等子目录，`@kne/*` 库的使用必须在目录结构规范内进行，不能因为使用第三方库而跳过组件拆分
 2. **页面必须以目录形式组织** `(common)`：所有页面组件必须放在 `src/pages/{PageName}/index.tsx` 目录中，禁止直接以 `.tsx` 文件形式放在 `src/pages/` 下（如 `src/pages/Profile.tsx` ❌ → `src/pages/Profile/index.tsx` ✅）
-3. **组件使用优先级** `(common)`：`@hkyhy/marsun-components-core`（npm 纯 UI，见 [component-mapping.md](references/common/component-mapping.md) npm 节）> `src/components/Common`（业务 wrapper / 尚未迁移的本地实现）> `src/components/{Domain}/{Module}` > `@kne/button-group` > `antd`（Tag 统一 `SemanticTag` + `SEMANTIC_COLORS`；Tooltip 详情统一 `TooltipInfo`；主滚动区统一 `VirtualScrollbar`；空态统一 `Empty`）
+3. **组件使用优先级** `(common)`：`@hkyhy/marsun-components-core`（npm 纯 UI，见 [component-mapping.md](references/common/component-mapping.md) npm 节）> `src/components/Common`（业务 wrapper / 尚未迁移的本地实现）> `src/components/{Domain}/{Module}` > `@kne/button-group` > `antd`（Tag 统一 `SemanticTag` + `SEMANTIC_COLORS`；Tooltip 详情统一 `TooltipInfo`；主滚动区统一 `VirtualScrollbar`）
 4. **命名原则** `(common)`：模块内部文件不带模块前缀，直接以功能/内容命名，目录本身已提供模块上下文
 5. **单一职责** `(business)`：一个按钮一个文件、Form 与 Modal 分离、组合按钮不含业务逻辑
 6. **antd 重构** `(common)`：遇到重复使用相同配置的 antd 组件时，提取为 Common 组件
@@ -60,7 +60,7 @@ description: |
 25. **样式统一 SCSS Modules** `(common)`：（1）统一 SCSS，模块样式用 `style.module.scss`；（2）每个页面、每个含 JSX 的组件（含子组件、嵌套子组件、Demo）均维护 `style.module.scss`，无样式时保留空文件，目录 `{Name}/index.tsx` + `{Name}/style.module.scss`，禁止 TSX 与 scss 分离；（3）禁止 Tailwind CSS；（4）统一 `classNames(...)` 合并，禁止 `sc()` 等 helper，每个 className 含预定语义类名（kebab-case）；（5）预定 className 格式 `{组件名-kebab}-{功能定位-kebab}`，SCSS 同名，TS 用 `styles['kebab-name']`。公共样式放 `src/styles/`。详见 [common/styles.md](references/common/styles.md)
 26. **npm 全量导出** `(common)`：`marsun_components-core` 每个对外组件、子组件、hook、utils、types 须经模块 `index.ts` → 包根 `src/index.ts` 导出；禁止仅 showcase 内 deep import。新增符号时同步更新 `component-mapping.md` 与 `examples/meta.json`
 27. **公共 Token 三层接入** `(common)`：静态默认值 `import '@hkyhy/marsun-components-core/tokens'` → 运行时 `applyThemeToCssVariables(primaryColor)` → 项目 `tokens.css` 仅扩展领域变量。CSS 变量命名统一 `--primary-color` / `--font-color-grey-*`，禁止项目自建 `--color-primary` 平行体系。详见 [common/theme.md](references/common/theme.md)
-28. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；见 [task-naming.md](references/common/task-naming.md)「Commit 与 Plane 同步」
+28. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；新任务 id 须对齐钉钉层级（`S3.3.*`、`P3.2.*`、`P6.11.*` 等，见 [task-naming.md](references/common/task-naming.md)）；my-plane 维持 `M003-*` 例外
 29. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**，且**版本号与 npm 已发布最新版一致**（如 `^0.1.15`）；禁止 `file:` / lockfile `link: true`；本地联调用 `MARSUN_CORE_LOCAL` + Vite alias。详见 [component-mapping.md](references/common/component-mapping.md)
 30. **core 版本与实版一致** `(common)`：`marsun_components-core` feat 开发时 `package.json` version **= npm 已发布最新**；发版仅通过 `chore(release): vX.Y.Z` commit + push 触发 CI publish，**禁止本地 npm publish**；`npm run version:check:apply` 仅写回 npm+1 准备 chore commit。见 [marsun-core-version.md](references/common/marsun-core-version.md)
 31. **模块页全局 Loading** `(common)`：`PageSpin`、`PageShellProvider`、`usePageShellLoading`、`ModulePageShell` 来自 `@hkyhy/marsun-components-core`；App Layout 须包 `PageShellProvider`；页面用 `spinning` 或 `usePageShellLoading`，禁止局部 loading 文案叠层。见 [page-loading.md](references/common/page-loading.md)
@@ -71,6 +71,7 @@ description: |
 36. **InteractiveBlock 内容块** `(common)`：title → **Info** icon + `TooltipInfo`（禁止 `CircleHelp`）→ actions（字号 ≤ title）；**tags 紧贴 subtitle**（inline/below），**禁止**在 description 之后；可点击块勿用 `<button>` 包裹 Tooltip；见 [content-layout.md](references/common/content-layout.md)
 37. **少 border 布局** `(common)`：模块 workarea 少 panel border；**列表项用 theme 背景块 + gap**，禁止 `border-bottom` 线分割。见 [styles.md](references/common/styles.md) §8.11
 38. **InteractiveBlock action 尺寸** `(common)`：link 操作字号不得大于 title（title 14px / actions 12px，icon 14px）；icon 颜色与 link 文字一致；导出用 `Download`；info trigger `cursor: pointer`
+39. **非 prod 组件展示切换** `(common)`：所有业务前端子仓库（非 marsun_components-core dev app）须在 `App.tsx` 用 `import.meta.env.DEV` 双 guard 接入：（1）antd `FloatButton` 在业务页与 `/components` 间切换（图标 `LayoutGrid` / `House`，均从 `@hkyhy/marsun-components-core`）；（2）`/components` 路由 + `ComponentsLayout` + `componentRoutes`（collect-examples 自动生成）。生产 build 不包含上述代码。参考 `repos/maoyang_data-asset-system/src/App.tsx`；新建仓库 checklist 见 [examples.md](references/common/examples.md) §8.8
 
 ---
 
@@ -123,6 +124,7 @@ description: |
 | 滚动区 / Layout 接入    | common/virtual-scrollbar                   | —                                    |
 | 模块页 loading          | common/page-loading                        | common/component-mapping             |
 | 组件 Demo               | common/examples                            | —                                    |
+| 非 prod 组件展示切换    | common/examples §8.8 + routing-api §13.5   | SKILL.md #39                         |
 | 新增/变更组件           | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow |
 | 样式 / className / SCSS | common/styles                              | common/naming                        |
 | 模块 workarea 扁平布局  | common/styles §8.10                        | SKILL.md #33                         |

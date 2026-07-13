@@ -1,8 +1,12 @@
 # 代码格式化与 Lint
 
-所有 Marsun 前端子仓库（`repos/*` 下 Vite React 根目录）须安装统一的 Prettier + ESLint + Husky 工具链。
+Marsun 团队仓库须安装统一的 Prettier + ESLint + Husky 工具链：前端子仓库（`repos/*`）与 **marsun_arch 元仓库** 根目录均适用，`.prettierrc` 规则对齐。
 
-**参考实现**（二者须保持对齐，升级时同步 bump）：
+## 前端子仓库
+
+所有 `repos/*` 下 Vite React 根目录须安装完整工具链（含 React ESLint 插件）。
+
+**参考实现**（须保持对齐，升级时同步 bump）：
 
 | 仓库                                   | 说明                                           |
 | -------------------------------------- | ---------------------------------------------- |
@@ -101,3 +105,78 @@ npm run format
 ```
 
 `lint` 无 error；`format` 后工作区无意外大规模 diff（说明配置已生效）。可选：暂存一个文件后 `git commit` 验证 pre-commit 触发 `lint-staged`。
+
+---
+
+## marsun_arch 元仓库
+
+`marsun_arch` Git 根目录（`scripts/`、`plane/`、`docs/`、`.cursor/skills/`、`WorkRecord/` 等）同样须安装 Prettier + ESLint + Husky；**不装** `typescript-eslint` / React 相关 ESLint 插件。
+
+| 项            | 说明                                                                                                           |
+| ------------- | -------------------------------------------------------------------------------------------------------------- |
+| 权威实现      | marsun_arch 根目录 `package.json` + `.prettierrc` + `eslint.config.js`                                         |
+| Prettier 范围 | `md` / `json` / `yaml` / `yml` / `mdc` / `mjs`；见 `.prettierignore`（排除 `repos/`、`.da/`、`node_modules/`） |
+| ESLint 范围   | `scripts/**/*.mjs` 与根目录 `*.mjs`（Node `sourceType: module`）                                               |
+| Husky         | 根目录 `.husky/pre-commit`；`npm install` 后执行 `da standards install-hooks` 链接 DA scan / Task 校验         |
+| 保存时格式化  | `.vscode/settings.json`：`editor.formatOnSave` + Prettier 扩展；须先 `npm install`（本地 `prettier`）          |
+
+### 必装 devDependencies（元仓库）
+
+| 包                       | 用途                       |
+| ------------------------ | -------------------------- |
+| `prettier`               | 文档与脚本格式化           |
+| `eslint`                 | `scripts/` 静态检查        |
+| `@eslint/js`             | ESLint 推荐规则            |
+| `eslint-config-prettier` | 关闭与 Prettier 冲突的规则 |
+| `eslint-plugin-prettier` | Prettier 作为 ESLint 规则  |
+| `globals`                | Node 全局变量              |
+| `lint-staged`            | 提交前格式化               |
+| `husky`                  | Git pre-commit 钩子        |
+
+版本对齐 `repos/maoyang_data-asset-system` 同名包，升级时同步 bump。
+
+### package.json（元仓库）
+
+```json
+{
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "lint-staged": "lint-staged",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,mjs,md,json,yaml,yml,mdc}": ["prettier --write"],
+    "scripts/**/*.mjs": ["eslint --fix"]
+  }
+}
+```
+
+`.prettierrc` 与前端子仓库一致；`.prettierignore` 须排除 `repos/`（本地 clone 不进格式化范围）。
+
+### `.vscode/settings.json`（保存时格式化）
+
+`npm run format` / Husky **不会在保存时触发**；须在仓库根配置编辑器：
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.prettierPath": "./node_modules/prettier",
+  "prettier.requireConfig": true
+}
+```
+
+并安装扩展 **Prettier - Code formatter**（`esbenp.prettier-vscode`）。Cursor 打开仓库后若提示安装推荐扩展，点安装即可。
+
+### 验收（元仓库）
+
+```bash
+npm install
+da standards install-hooks
+npm run lint
+npm run format
+```
+
+`lint` 无 error；`format` 后仅预期文件有 diff。提交时 pre-commit 跑 `lint-staged`，DA hooks 负责 `da standards scan` 与 `Task:` 校验。

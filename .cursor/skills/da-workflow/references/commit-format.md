@@ -1,6 +1,6 @@
 # Commit 格式与 Task 行
 
-> 总控：[../SKILL.md](../SKILL.md) · Task ID 编码：[frontend-dev-spec/task-naming](../../frontend-dev-spec/references/common/task-naming.md)
+> 总控：[../SKILL.md](../SKILL.md) · Task ID 编码：[frontend-dev-spec/task-naming](../../frontend-dev-spec/references/common/task-naming.md) · 钉表层级：[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)
 
 ## 格式
 

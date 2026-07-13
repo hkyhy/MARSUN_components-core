@@ -17,18 +17,14 @@ REPO=.   # 或用户指定的项目根
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step collect
 # 阅读 plane/.cache/progress_report.md，更新 plane/milestones.yaml + sync_manifest.yaml（只增/改 id，禁止删除）
 
-# 【新任务】登记前梳理与已有 Task / Plane Issue 的关联（parent_issue、split_from、related_tasks）
-# 见 task-relationships.md；Agent_QualityAnalysis 父 UUID 映射见该文 §Agent_QualityAnalysis
-
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step validate
 
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step plane-dry-run
-# 审阅 plane/sync_preview.md（仅变动项）；对照 plane/.cache/plane_snapshot.json 核对 parent_issue UUID
+# 审阅 plane/sync_preview.md（仅变动项）
 
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step plane-sync
 # 用户明确同意后（非交互）：
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step plane-sync --confirm-token <token>
-# CREATE 后：若 Plane 未自动挂子工作项，按 task-relationships.md 在 UI 补 Sub-work item
 ```
 
 ## 硬约束

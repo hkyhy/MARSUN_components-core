@@ -26,6 +26,34 @@
 | 子仓库 **已有 Plane**                                              | 在**该子仓库**内 commit，使用**该仓库** `plane/project.yaml` + `plane/sync_manifest.yaml`；**按功能/模块拆成多个原子 commit**，每个 commit 的 `type(scope)` 与 `Task:` 对应该次 diff |
 | 子仓库 **无 Plane**                                                | **停止**，运行检测脚本，将 `suggest` / `fallbacks` **提示给用户**，由用户选择 bootstrap 本仓库或走 marsun_arch                                                                       |
 | 仅 **skills 镜像**（`frontend-dev-spec` / `marsun-arch-doc-spec`） | marsun_arch 改源 → `node scripts/sync-skills.mjs`（hook 自动）→ 子仓库 `docs(spec)` **单独** commit，不与业务混 commit                                                               |
+| **跨仓库同一功能**（含 `@hkyhy/marsun-components-core`）           | **先 core 提交并发布版本** → 业务仓库 `chore(deps)` 对齐 semver → **marsun_arch 先 WorkRecord 再 docs/spec commit**                                                                  |
+
+## 跨仓库提交顺序（必守）
+
+涉及多个 git 根目录时，按依赖与文档源顺序执行，**禁止**业务仓库先 commit 却引用未发布的 core 版本。
+
+```
+1. marsun_components-core（若有 src 变更）
+   → bump package.json 版本 → commit → 发布 npm → 其他仓库再改 ^x.y.z
+
+2. 业务子仓库（如 Agent_QualityAnalysis）
+   → 按 scope 拆分原子 commit（shared / 模块 / deps 分列）
+   → 每 commit：timeline-sync → task done → pm sync PATCH
+
+3. marsun_arch（meta-repo）
+   → 先追加 WorkRecord「进展记录」（对应子仓库 commit）
+   → 再 docs(spec) / docs(work-record) / plane 台账 等原子 commit
+   → 最后 node scripts/sync-frontend-dev-spec.mjs（若改了 shared 规范）
+```
+
+| 步骤       | 仓库                           | 说明                                                                    |
+| ---------- | ------------------------------ | ----------------------------------------------------------------------- |
+| core 优先  | `repos/marsun_components-core` | 仅 pick `src/` + 版本号；不与 `.cursor/skills` 镜像混 commit            |
+| 业务模块   | `repos/<业务>`                 | `feat(rca)` / `feat(shared)` 等按目录拆分；`chore(deps)` 单独 commit    |
+| WorkRecord | `marsun_arch`                  | **先于** meta-repo 的 WorkRecord 路径 commit                            |
+| 规范源     | `marsun_arch`                  | `frontend-dev-spec` shared 变更 → sync 脚本 → 各 repo 可选 `docs(spec)` |
+
+**禁止**：ARCH 未写 WorkRecord 就 commit 子仓库进展；core 未发版就让 QA `package.json` 指向不存在版本。
 
 ## 原子提交（Plane 已就绪时必守）
 
@@ -34,7 +62,7 @@
 ```
 feat(files): FilterTreeSelect 改用 fetchUrl 加载部门树
 
-Task: M001-xx
+Task: P3.2.1
 AI-Assisted: true
 ```
 
@@ -71,30 +99,31 @@ AI-Assisted: true
 
 ### Task ID 与 commit 命名
 
-对齐远程 Plane 习惯，详见 `frontend-dev-spec/references/common/task-naming.md`：
+对齐华茂钉钉层级与远程 Plane 习惯，详见 `frontend-dev-spec/references/common/task-naming.md` 与 `da-workflow/references/dingtalk-hierarchy-naming.md`：
 
-| 格式                              | 示例                                    |
-| --------------------------------- | --------------------------------------- |
-| `{模块}-{阶段}-{序号}[-{子任务}]` | `DA-1.10-7e`、`C2U-4`                   |
-| 里程碑简式                        | `M001-15`、`P057`                       |
-| QA 增量（M002 模块内）            | `M002-S3-15`（历史批次 `QA-S3-*` 勿改） |
+| 格式                | 示例                                                 |
+| ------------------- | ---------------------------------------------------- |
+| **新任务（推荐）**  | `S3.3.49`、`P3.2.8`、`P6.11.26`、`P6.2.27`、`S1.3.1` |
+| 历史（禁止 rename） | `M001-*`、`QA-S3-*`、`M002-S3-*`、`S3-*`             |
+| my-plane 例外       | `M003-*`（暂不纳入层级编码）                         |
+| 外部项目参考        | `DA-1.10-7e`、`C2U-4`                                |
 
 Plane 显示：`{id} · {name}`。commit summary 与台账 `name` 语义一致，例如：
 
 ```
 feat(agentHub): Mem0 全链路 ingest（baseline/week/kb/edit/propose）
 
-Task: DA-1.10-7d
+Task: S1.3.1
 AI-Assisted: true
 ```
 
-Agent_QualityAnalysis 增量示例：
+Agent_QualityAnalysis 新任务示例：
 
 ```
 fix(frontend): restore primary button white label text
 
-Task: M002-S3-15
-Refs: M002
+Task: S3.3.49
+Refs: S3.3
 AI-Assisted: true
 ```
 
@@ -121,7 +150,7 @@ node scripts/repo-commit-context.mjs --list
 
 - **默认 sync**：`plane/project.yaml` → **assets**（`da pm sync`）
 - **路径路由**：`AgentHub/`、`agentHub/` 路由 → **agent**；其余 → **assets**
-- **台账**：Agent 任务标 `plane_project: agent`（如 M001-6/7/15）
+- **台账**：Agent 任务标 `plane_project: agent`，milestone **S1.3**（功能开发 V1.0）；id 从 `S1.3.*` 起
 - **检测**：`node scripts/repo-commit-context.mjs --repo maoyang_data-asset-system --infer-from-git`
 - **Agent sync**：`sync_plane.py --repo . --project-id 56c1a09f-18aa-4bcf-8462-dd6077eabde3 --dry-run`
 

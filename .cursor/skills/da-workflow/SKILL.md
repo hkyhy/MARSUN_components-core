@@ -24,8 +24,8 @@ description: |
 权威细则：
 
 - Commit 格式：[references/commit-format.md](references/commit-format.md)
+- 钉钉层级命名：[references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md)
 - Plane 五步闭环：[references/plane-timeline.md](references/plane-timeline.md)
-- 任务关联梳理：[references/task-relationships.md](references/task-relationships.md)
 - `@da pm`：[references/pm-sync.md](references/pm-sync.md)
 - 可选自动建关 Issue：[references/commit-lifecycle.md](references/commit-lifecycle.md)
 - 安全清单：[references/vibe-guard.md](references/vibe-guard.md)
@@ -70,7 +70,7 @@ Task Progress:
 REPO=<git 根>
 TASK=<Task 行 ID>
 
-# 新任务：先按 task-relationships.md 梳理 parent_issue / related_tasks，再 CREATE（status 进行中）
+# 新任务先 CREATE（status 进行中）
 PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"
 
 git commit ...   # Task: $TASK（完成时不带 [WIP]）
@@ -122,6 +122,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 | [weekly-report](../weekly-report/SKILL.md)                                                                | 写周报时采集 git log + sync_manifest             |
 | [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md)                   | repos 子仓库 commit 前 `repo-commit-context.mjs` |
 | [frontend-dev-spec/task-naming](../frontend-dev-spec/references/common/task-naming.md)                    | Task ID 编码与 sync_manifest 登记                |
+| [dingtalk-hierarchy-naming](references/dingtalk-hierarchy-naming.md)                                      | 钉表层级契约、双轨 ID、仓库 milestone 速查       |
 | [frontend-dev-spec/requirement-workflow](../frontend-dev-spec/references/prompts/requirement-workflow.md) | 需求完成前 commit 闭环检查项                     |
 
 ---
@@ -130,7 +131,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 
 - scope：`docs(da-workflow)` 或 `docs(spec)`
 - 仅 add `.cursor/skills/da-workflow/` 路径
-- Task 行按 [references/commit-format.md](references/commit-format.md)；无 Plane 任务时可用 `Task: M001-{N}`
+- Task 行按 [references/commit-format.md](references/commit-format.md)；无 Plane 任务时可用 `Task: P6.11-{N}`
 
 ---
 
@@ -139,7 +140,6 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [ ] commit message 含 `Task:`；完成时不带 `[WIP]`
 - [ ] plane_ready 仓库已执行 timeline-sync + task done（完成任务时）
 - [ ] WorkRecord 进展已按事项类型追加（有对应文档时）
-- [ ] 新任务已梳理 `parent_issue` / `split_from` / `related_tasks`（见 task-relationships.md）
 - [ ] sync_manifest status 与 commit 语义一致后再 pm sync
 - [ ] 无 `.env` / 密钥进暂存区
 - [ ] Agent 编辑含 `AI-Assisted: true`
@@ -149,6 +149,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 ## 延伸阅读
 
 - [references/commit-format.md](references/commit-format.md) — Conventional Commits + Task 行
+- [references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md) — 钉表层级与双轨 ID
 - [references/plane-timeline.md](references/plane-timeline.md) — 五步交付闭环详文
 - [references/pm-sync.md](references/pm-sync.md) — `@da pm` Agent 流程
 - [references/commit-lifecycle.md](references/commit-lifecycle.md) — `DA_COMMIT_LIFECYCLE=1` 自动建关

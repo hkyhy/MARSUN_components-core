@@ -125,25 +125,24 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 
 ### npm 导出 ↔ 本地 Common 对照
 
-| npm（`@hkyhy/marsun-components-core`）                       | 原 `src/components/Common/...`                           |
-| ------------------------------------------------------------ | -------------------------------------------------------- |
-| `CommonDescriptions`                                         | `Descriptions/CommonDescriptions`                        |
-| `TooltipInfo`                                                | `TooltipInfo`                                            |
-| `Empty`                                                      | 空态展示（`showIcon` / `iconType` / `description` 可选） |
-| `PageHeaderLayout`                                           | `Layout/PageHeaderLayout`                                |
-| `PageSpin`                                                   | 模块 body 整页 Spin（flex 高度链）                       |
-| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册                             |
-| `ModulePageShell`                                            | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步  |
-| `VirtualScrollbar`                                           | `VirtualScrollbar`                                       |
-| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`                      |
-| `Sparkline`                                                  | 微型趋势折线（S3 质量分析等）                            |
-| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示                                       |
-| `SemanticTag` / `SEMANTIC_COLORS`                            | `Tag/SemanticTag`                                        |
-| `CommonFilter` + `Filter*`                                   | `Filter/*`                                               |
-| `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                    |
-| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                 |
-| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context                      |
-| `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                             |
+| npm（`@hkyhy/marsun-components-core`）                       | 原 `src/components/Common/...`                          |
+| ------------------------------------------------------------ | ------------------------------------------------------- |
+| `CommonDescriptions`                                         | `Descriptions/CommonDescriptions`                       |
+| `TooltipInfo`                                                | `TooltipInfo`                                           |
+| `PageHeaderLayout`                                           | `Layout/PageHeaderLayout`                               |
+| `PageSpin`                                                   | 模块 body 整页 Spin（flex 高度链）                      |
+| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册                            |
+| `ModulePageShell`                                            | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步 |
+| `VirtualScrollbar`                                           | `VirtualScrollbar`                                      |
+| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`                     |
+| `Sparkline`                                                  | 微型趋势折线（S3 质量分析等）                           |
+| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示                                      |
+| `SemanticTag` / `SEMANTIC_COLORS`                            | `Tag/SemanticTag`                                       |
+| `CommonFilter` + `Filter*`                                   | `Filter/*`                                              |
+| `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                   |
+| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                |
+| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context                     |
+| `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                            |
 
 ### AgentHub 导出（`@hkyhy/marsun-components-core`）
 
@@ -265,7 +264,6 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | --------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Descriptions`　　　  | `CommonDescriptions`　　　　　　　　　　　　　　　 | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                 |
 | `Tooltip`（详情）　   | `TooltipInfo`　　　　　　　　　　　　　　　　　　  | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                               |
-| `Empty`（空态）　　   | `Empty`　　　　　　　　　　　　　　　　　　　　　  | `showIcon` / `iconType`（default/simple）/ `description` 可选；接口失败 toast + 数据区 Empty                                                        |
 | 页面头部布局　　　　  | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                            |
 | 模块页壳（AppShell）  | `ModulePageShell` + `PageShellProvider`　　　　　  | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [page-loading.md](page-loading.md)                                                       |
 | 主内容卡片　　　　　  | `ContentCard`（Shared/Layout）　　　　　　　　　   | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles.md](styles.md) §8.10                                                              |

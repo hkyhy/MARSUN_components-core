@@ -1,74 +1,122 @@
 # Plane Task ID 与 Commit 命名
 
-> 台账字段见 `platform-doc-plane-sync/SCHEMA.md`；提交规范见 marsun_arch `repos-commit.md`。
+> 台账字段见 `platform-doc-plane-sync/SCHEMA.md`；提交规范见 marsun_arch `repos-commit.md`。  
+> 钉钉层级契约与双轨 ID 见 [da-workflow/dingtalk-hierarchy-naming](../../../da-workflow/references/dingtalk-hierarchy-naming.md)。
 
 ## Task ID（`sync_manifest.yaml` → `id`）
 
-Plane Work Item 显示为 **`{id} · {name}`**。`id` 须稳定、全局可检索，对齐团队远程 Plane 命名习惯。
+Plane Work Item 显示为 **`{id} · {name}`**。`id` 须稳定、全局可检索，**与华茂钉钉多维表格层级代号一致**（`P3.2.8`、`S3.3.15` 等）。
 
-### 推荐格式
+### 推荐格式（新任务）
 
 ```
-{模块编码}-{阶段/版本}-{任务序号}[-{子任务序号}]
+{ProjectCode}.{ModuleSeq}.{TaskSeq}[.{SubTaskSeq}]
 ```
 
-| 示例         | 含义                                                                 |
-| ------------ | -------------------------------------------------------------------- |
-| `DA-1.10-7e` | DA 模块 · 1.10 阶段 · 任务 7 · 子任务 e                              |
-| `DA-1.10-7d` | 同上阶段相邻子任务                                                   |
-| `C2U-4`      | C2U 模块 · 任务 4                                                    |
-| `P057`       | 平台/里程碑前缀 P · 序号 057                                         |
-| `M001-15`    | 里程碑 M001 下第 15 项（简式，适合单项目台账）                       |
-| `M002-S3-15` | Agent_QualityAnalysis · 里程碑 M002 · S3 阶段 · 第 15 项（增量任务） |
+| 字段        | 规则                  | 示例                                    |
+| ----------- | --------------------- | --------------------------------------- |
+| `milestone` | 钉表 depth-1 模块编码 | `P3.2`、`S3.3`、`P6.11`、`P6.2`、`S1.3` |
+| `id`        | depth-2+ 完整层级     | `S3.3.15`、`P3.2.8`、`P6.11.3`          |
+| Plane 显示  | `{id} · {name}`       | `S3.3.15 · 预警页筛选对接`              |
+| commit      | `Task: S3.3.15`       | 可选 `Refs: S3.3`                       |
 
-**模块编码**：2–5 位大写字母/数字（`DA`、`C2U`、`MY`、`P`、`QA`）。  
-**阶段/版本**：`1.10`、`2.0`、里程碑号或业务阶段（如 `S3`）。  
-**子任务**：末段单字母/数字（`7a`、`7e`）表示同一父任务拆分。
+**层级契约**（与钉表 / huamao Plane 一致）：
 
-### Agent_QualityAnalysis（`repos/Agent_QualityAnalysis`）
+```
+depth-0  P3 / S3 / P6 / S1     → Plane Project
+depth-1  P3.2 / S3.3 / P6.11   → Plane Module（sync_manifest milestone）
+depth-2+ P3.2.1 / S3.3.15      → Plane Issue（sync_manifest id）
+```
 
-| 时期                           | Task ID 格式                      | 说明                                                           |
-| ------------------------------ | --------------------------------- | -------------------------------------------------------------- |
-| 历史（M002 首批重构，已 Done） | `QA-S3-1` … `QA-S3-14`、`QA-BE-1` | **勿 rename**，Plane external_id 已固定                        |
-| **后续增量（M002 模块内）**    | **`M002-S3-15` 起**               | `milestone: M002`；commit 写 `Task: M002-S3-{N}`、`Refs: M002` |
-| 后端增量                       | `M001-BE-2` 起                    | 挂 `milestone: M001`                                           |
-| 全新阶段                       | `M003-1` 或 `M003-UAT-1`          | 新开里程碑，不再用 `M002-S3-*`                                 |
+### 仓库 ↔ 钉钉编码映射
 
-**登记顺序**：先在 `repos/Agent_QualityAnalysis/plane/sync_manifest.yaml` 新增条目 → **梳理关联**（`parent_issue`、`split_from`、`related_tasks`，见 [da-workflow/task-relationships](../../../da-workflow/references/task-relationships.md)）→ 原子 commit → `@da pm sync`。
+| 短名     | 仓库                              | DingTalk Project | milestone（depth-1）   | 说明                                        |
+| -------- | --------------------------------- | ---------------- | ---------------------- | ------------------------------------------- |
+| assets   | `repos/maoyang_data-asset-system` | **P3**           | **P3.2** 资产管理系统  | 数据资产主业务                              |
+| S3 / QA  | `repos/Agent_QualityAnalysis`     | **S3**           | **S3.3** 功能开发      | 当前开发阶段统一挂此模块                    |
+| arch     | `marsun_arch`                     | **P6**           | **P6.11** 规范         | frontend-dev-spec / da-workflow 等          |
+| core     | `repos/marsun_components-core`    | **P6**           | **P6.2** 组件库        | npm 组件发布                                |
+| agent    | assets 内 AgentHub                | **S1**           | **S1.3** 功能开发 V1.0 | `plane/projects.json` agent 路由            |
+| my-plane | `repos/my-plane`                  | —                | —                      | **例外**：维持 `M003-*`，本次不纳入层级编码 |
 
-**父 Issue 映射**（`parent_issue` = Plane Work Item UUID）：
+登记新任务前：查上表选定 `milestone`；`id` 前缀须与 `milestone` 一致（`S3.3.*` 挂 `milestone: S3.3`）。
 
-| UUID                                   | 父 Issue                    | 适用                                    |
-| -------------------------------------- | --------------------------- | --------------------------------------- |
-| `c4e38085-2588-4515-9513-b433618e3412` | 质量预警智能体产品开发-预警 | 预警页筛选、SegmentTabs、列表、图表     |
-| `383c0dfb-b497-463e-8ec9-673b183d4d5b` | 初步前端功能UI设计          | 布局壳、工程化、智能体 SSE/会话、配置页 |
+### 与旧格式并存
 
-**M002 里程碑**：增量 `M002-S3-*` / `S3-*` 任务仍写 `milestone: M002`。Plane Module 可保持 **已完成**（`block_regression` 会拦截 YAML 回退 `进行中`）；仅新增 task 条目并 sync 即可。
+| 时期                               | 格式                                                  | 处理                    |
+| ---------------------------------- | ----------------------------------------------------- | ----------------------- |
+| 历史（已 Done / external_id 固定） | `M001-*`、`QA-S3-*`、`M002-S3-*`、`S3-*`              | **禁止 rename**         |
+| 新增量                             | `P3.2.*` / `S3.3.*` / `P6.11.*` / `P6.2.*` / `S1.3.*` | 登记 → commit → pm sync |
+| my-plane                           | `M003-*`                                              | 维持现状，规范例外      |
 
-**Plane orphan 清理（手动）**：Plane 上旧的 `M002-1` … `M002-14`、`M001-1` Issue 与台账重复，在 Plane UI **Cancel/Archive**，勿删 API；勿复用这些序号。
+**禁止**：同一仓库（my-plane 除外）混用无层级旧 id 与新层级 id。
+
+### 各仓库新任务起始
 
 ```yaml
-# sync_manifest 新任务模板（含 Plane 业务父项）
-- id: M002-S3-15
-  milestone: M002
-  parent_issue: { Plane 父 Issue uuid，见 task-relationships.md }
+# Agent_QualityAnalysis — 从 S3.3.49 起（对齐 next_task_id: S3-49）
+- id: S3.3.49
+  milestone: S3.3
   name: 修复主按钮 primary 文字色
   status: 进行中
   priority: P1
   kind: fix
   tags: [frontend]
-  note: |
-    related_tasks: [QA-S3-3]
-    简要说明
+  note: 简要说明
+
+# marsun_components-core — 从 P6.2.27 起
+- id: P6.2.27
+  milestone: P6.2
+  name: Filter 组件增强
+  status: 进行中
+
+# marsun_arch — 从 P6.11.26 起（接 M001-25 后）
+- id: P6.11.26
+  milestone: P6.11
+  name: task-naming 钉钉层级对齐
+  status: 进行中
+
+# maoyang assets — 从 P3.2.{N} 起
+- id: P3.2.1
+  milestone: P3.2
+  name: FilterTreeSelect 改用 fetchUrl
+  status: 进行中
+
+# AgentHub（assets agent 项目）— 从 S1.3.{N} 起
+- id: S1.3.1
+  milestone: S1.3
+  name: Agent 列表页对接
+  status: 进行中
 ```
 
 ```text
 fix(frontend): restore primary button white label text
 
-Task: M002-S3-15
-Refs: M002
+Task: S3.3.49
+Refs: S3.3
 AI-Assisted: true
 ```
+
+### Agent_QualityAnalysis 历史说明
+
+| 时期                           | Task ID 格式                              | 说明                                                     |
+| ------------------------------ | ----------------------------------------- | -------------------------------------------------------- |
+| 历史（M002 首批重构，已 Done） | `QA-S3-1` … `QA-S3-14`、`QA-BE-1`、`S3-*` | **勿 rename**，Plane external_id 已固定                  |
+| M002 中期增量                  | `M002-S3-15` … `M002-S3-*`                | 已登记条目保持不动                                       |
+| **新增量**                     | **`S3.3.*` 起**                           | `milestone: S3.3`；commit `Task: S3.3.{N}`、`Refs: S3.3` |
+
+**登记顺序**：先在 `repos/Agent_QualityAnalysis/plane/sync_manifest.yaml` 新增条目 → 原子 commit → `@da pm sync`。
+
+**Plane orphan 清理（手动）**：Plane 上旧的 `M002-1` … `M002-14`、`M001-1` Issue 与台账重复，在 Plane UI **Cancel/Archive**，勿删 API；勿复用这些序号。
+
+### 外部项目编码（参考）
+
+非华茂钉表管辖项目仍可用自有前缀，但须团队约定且不与上表冲突：
+
+| 示例         | 含义                           |
+| ------------ | ------------------------------ |
+| `DA-1.10-7e` | DA 模块 · 阶段 · 任务 · 子任务 |
+| `C2U-4`      | C2U 模块 · 任务 4              |
 
 ### `name`（任务名称）
 
@@ -92,8 +140,8 @@ AI-Assisted: true
 | `type`    | Conventional Commits                  | `feat` / `fix` / `docs` / `chore` / `refactor` |
 | `scope`   | 业务模块域，与路径一致                | `files`、`agentHub`、`spec`、`pm`              |
 | `summary` | 一句话说明「做了什么」                | `consolidate production deploy guide`          |
-| `Task:`   | **必须**对应该次 diff 完成的台账 `id` | `Task: DA-1.10-7e`                             |
-| `[WIP]`   | 未完成时追加                          | `Task: DA-1.10-7e [WIP]`                       |
+| `Task:`   | **必须**对应该次 diff 完成的台账 `id` | `Task: S3.3.49`                                |
+| `[WIP]`   | 未完成时追加                          | `Task: S3.3.49 [WIP]`                          |
 
 **禁止**：Task id 与 diff 无关；一次 commit 混多个模块；summary 只罗列文件名。
 
@@ -112,8 +160,8 @@ plane_ready 仓库完成任务时，还须 `da task timeline-sync` + `da task do
 
 ## 新建任务 checklist
 
-1. 在远程 Plane 或 sibling 项目查同类 id 前缀，保持编码一致。
-2. **梳理关联**：对照 `sync_manifest` + `plane/.cache/plane_snapshot.json` + WorkRecord，定 `parent_issue` / `split_from` / `related_tasks`（见 [da-workflow/task-relationships](../../../da-workflow/references/task-relationships.md)）。
-3. 在 `sync_manifest.yaml` 新增条目：`id` + `milestone` + `name` + `status` + 关联字段。
+1. 查 [仓库映射表](#仓库--钉钉编码映射) 选定 `milestone` 与 `id` 前缀。
+2. 梳理 `parent_issue` / `related_tasks`（见 [task-relationships](../../../da-workflow/references/task-relationships.md)）。
+3. 在 `sync_manifest.yaml` 新增条目：`id` + `milestone` + `name` + `status: 进行中`。
 4. commit 前确认 `Task:` 与本次 diff 对应 id。
-5. `@da pm dry-run` → 审 preview → sync；CREATE 后核对 Plane 子工作项是否挂上父 Issue。
+5. `@da pm dry-run` → 审 preview → sync。

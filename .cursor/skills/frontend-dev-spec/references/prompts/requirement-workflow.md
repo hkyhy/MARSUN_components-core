@@ -45,16 +45,17 @@
 19. 检查：表单使用 antd 原生 Form（Form.useForm + Form.Item + rules），操作按钮统一使用 `@kne/button-group`（包括页面头部和详情页，不使用 `Space` + `Button`）
 20. 检查：Modal 使用 `Form.useForm()` + `form.validateFields()` + `onOk`/`onCancel`，取消按钮用 `Button onClick={onCancel}`
 21. 检查：新组件是否已创建 `examples/meta.json`（路由和菜单由脚本自动生成，无需手动注册）
-22. 检查：Tooltip 展示结构化详情时是否使用 `TooltipInfo` + **`Info` trigger**（禁止 `CircleHelp`）；`overlayStyle`/`styles.container` 须 `minWidth: 220`；禁止 `<button>` 嵌套 Tooltip trigger
-23. 检查：主滚动区是否使用 `VirtualScrollbar`（禁止 `overflow-auto` / `overflow-y-auto`）；flex 布局中 wrapper 是否含 `min-height: 0` / `flex: 1`（写在 SCSS module 中）；需编程滚动时 `ref` 是否挂在 `VirtualScrollbar` 上；Layout 改动是否与 [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) 三层接入一致
-24. 检查：样式是否符合 [../common/styles.md](../common/styles.md)——每个组件/页面有 `style.module.scss`（`index.tsx` 同目录）；禁止 Tailwind；每个 `className` 含 `{组件}-{功能}` 预定类名 + `styles['...']`，经 `classNames` 合并；禁止 `sc()` / `styles.camelCase`
-25. 检查：是否有对应 `.test.tsx` / `.test.ts` 且通过（见 [../common/testing.md](../common/testing.md)）
-26. 检查：模块页 loading 是否通过 `PageShellProvider` + `ModulePageShell`/`PageHeaderLayout` `spinning` 或 `usePageShellLoading` 实现，禁止局部 loading 文案与 Spin 叠层（见 [../common/page-loading.md](../common/page-loading.md)）
-27. 检查：**每次新增或更改组件**是否已同步更新规范文档与提示词（`SKILL.md`、`component-mapping.md`、专题 reference、`requirement-workflow.md` 检查项、`examples/meta.json` / Demo）；代码与规范须同一任务内完成，禁止只改代码
-28. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping.md](../common/component-mapping.md)、[../common/marsun-core-version.md](../common/marsun-core-version.md)）
-29. 检查：代码格式化工具链是否已安装（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`lint-staged`、`husky` 等 devDependencies）；根目录是否有 `.prettierrc`、`eslint.config.js`、`.husky/pre-commit`；`package.json` 是否有 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts（见 [../common/code-formatting.md](../common/code-formatting.md)）
-30. 检查：模块 workarea 扁平布局——`ModulePageShell` 不传冗余 `breadcrumb`；主区 `ContentCard flat` 或无边框容器；`*-workarea-body` 无外层 padding；Tabs content `width:100%`；页脚保存等非 block（Drawer 除外）（见 [../common/styles.md](../common/styles.md) §8.10）
-31. 检查：**禁止重复 core utils**——`src/utils/` 不得复制 `@hkyhy/marsun-components-core` 已导出函数；日期/权限/部门/人员/HTTP 等从包根 import（见 [../common/component-mapping.md](../common/component-mapping.md) npm Utils 表）
+22. 检查：业务子仓库 `App.tsx` 是否在 `import.meta.env.DEV` 下接入 FloatButton + `/components` 路由（见 [../common/examples.md](../common/examples.md) §8.8）
+23. 检查：Tooltip 展示结构化详情时是否使用 `TooltipInfo` + **`Info` trigger**（禁止 `CircleHelp`）；`overlayStyle`/`styles.container` 须 `minWidth: 220`；禁止 `<button>` 嵌套 Tooltip trigger
+24. 检查：主滚动区是否使用 `VirtualScrollbar`（禁止 `overflow-auto` / `overflow-y-auto`）；flex 布局中 wrapper 是否含 `min-height: 0` / `flex: 1`（写在 SCSS module 中）；需编程滚动时 `ref` 是否挂在 `VirtualScrollbar` 上；Layout 改动是否与 [../common/virtual-scrollbar.md](../common/virtual-scrollbar.md) 三层接入一致
+25. 检查：样式是否符合 [../common/styles.md](../common/styles.md)——每个组件/页面有 `style.module.scss`（`index.tsx` 同目录）；禁止 Tailwind；每个 `className` 含 `{组件}-{功能}` 预定类名 + `styles['...']`，经 `classNames` 合并；禁止 `sc()` / `styles.camelCase`
+26. 检查：是否有对应 `.test.tsx` / `.test.ts` 且通过（见 [../common/testing.md](../common/testing.md)）
+27. 检查：模块页 loading 是否通过 `PageShellProvider` + `ModulePageShell`/`PageHeaderLayout` `spinning` 或 `usePageShellLoading` 实现，禁止局部 loading 文案与 Spin 叠层（见 [../common/page-loading.md](../common/page-loading.md)）
+28. 检查：**每次新增或更改组件**是否已同步更新规范文档与提示词（`SKILL.md`、`component-mapping.md`、专题 reference、`requirement-workflow.md` 检查项、`examples/meta.json` / Demo）；代码与规范须同一任务内完成，禁止只改代码
+29. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping.md](../common/component-mapping.md)、[../common/marsun-core-version.md](../common/marsun-core-version.md)）
+30. 检查：代码格式化工具链是否已安装（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`lint-staged`、`husky` 等 devDependencies）；根目录是否有 `.prettierrc`、`eslint.config.js`、`.husky/pre-commit`；`package.json` 是否有 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts（见 [../common/code-formatting.md](../common/code-formatting.md)）
+31. 检查：模块 workarea 扁平布局——`ModulePageShell` 不传冗余 `breadcrumb`；主区 `ContentCard flat` 或无边框容器；`*-workarea-body` 无外层 padding；Tabs content `width:100%`；页脚保存等非 block（Drawer 除外）（见 [../common/styles.md](../common/styles.md) §8.10）
+32. 检查：**禁止重复 core utils**——`src/utils/` 不得复制 `@hkyhy/marsun-components-core` 已导出函数；日期/权限/部门/人员/HTTP 等从包根 import（见 [../common/component-mapping.md](../common/component-mapping.md) npm Utils 表）
 
 ## 四、按需阅读规范
 
@@ -97,7 +98,7 @@
 - [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting.md`）
 - [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
 - [ ] 测试通过
-- [ ] **新任务台账**：梳理 `parent_issue` / `related_tasks`（[task-relationships](../../../da-workflow/references/task-relationships.md)）→ `sync_manifest.yaml` 登记 `status: 进行中` → `da pm sync` CREATE（禁止首次就写 `已完成`）
+- [ ] **新任务台账**：查 [task-naming 仓库映射表](../common/task-naming.md#仓库--钉钉编码映射) 选定 `milestone`（如 `S3.3`、`P3.2`）与层级 `id`（如 `S3.3.49`）；梳理 `parent_issue` / `related_tasks`（[task-relationships](../../../da-workflow/references/task-relationships.md)）→ `sync_manifest.yaml` 登记 `status: 进行中` → `da pm sync` CREATE（禁止首次就写 `已完成`；历史 `QA-S3-*` / `M001-*` 勿 rename）
 - [ ] **commit 闭环**（plane_ready 仓库）：`da task timeline-sync` →（完成）`da task done --confirm` → **WorkRecord 进展追加（按事项类型选文档）** → `sync_manifest` 改 `已完成` → `da pm sync` PATCH（见 [da-workflow/plane-timeline](../../../da-workflow/references/plane-timeline.md) · [work-record/SKILL.md](../../../work-record/SKILL.md)）
 - [ ] WorkRecord 已写入**正确类型**的大事文档（接口对接 / 页面改版 / 工程化分列）；非 API 进展未混入「*接口对接」
 - [ ] 若本任务有对应 WorkRecord 大事文档，已追加「进展记录」；新增 API 须补接口行；Mock 与正式接口区分状态（Mock 勿标已完成）

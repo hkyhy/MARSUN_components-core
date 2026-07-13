@@ -209,32 +209,54 @@ export const MENU_ITEMS = [
 
 ```tsx
 // App.tsx
+import { House, LayoutGrid } from '@hkyhy/marsun-components-core';
+import { FloatButton } from 'antd';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { componentRoutes } from './components/routes';
+import ComponentsLayout from './layouts/ComponentsLayout';
 import { reviewRoutes } from './pages/Review/routes';
 import { filesRoutes } from './pages/Files/routes';
-import { componentRoutes } from './components/routes';
 
 const App: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isComponentsPage = location.pathname.startsWith('/components');
+
   return (
-    <Routes>
-      {/* 组件展示（开发环境） */}
+    <>
+      {/* 开发环境：业务页 ↔ 组件展示切换 */}
       {import.meta.env.DEV && (
-        <Route path="/components" element={<ComponentsLayout />}>
-          <Route index element={<Navigate to="/components/common/auth" replace />} />
-          {componentRoutes}
-        </Route>
+        <FloatButton
+          icon={isComponentsPage ? <House size={18} /> : <LayoutGrid size={18} />}
+          type={isComponentsPage ? 'default' : 'primary'}
+          tooltip={isComponentsPage ? '返回主页' : '组件展示'}
+          onClick={() => navigate(isComponentsPage ? '/' : '/components')}
+          style={{ right: 24, bottom: 80 }}
+        />
       )}
-      {/* 业务页面 */}
-      <Route path="/" element={<MainLayout />}>
-        {filesRoutes}
-        {reviewRoutes}
-      </Route>
-    </Routes>
+      <Routes>
+        {/* 组件展示（开发环境，独立 Layout） */}
+        {import.meta.env.DEV && (
+          <Route path="/components" element={<ComponentsLayout />}>
+            <Route index element={<Navigate to="/components/common/auth" replace />} />
+            {componentRoutes}
+          </Route>
+        )}
+        {/* 业务页面 */}
+        <Route path="/" element={<MainLayout />}>
+          {filesRoutes}
+          {reviewRoutes}
+        </Route>
+      </Routes>
+    </>
   );
 };
 ```
 
 **规范**：
 
+- FloatButton 与 `/components` 路由均须 `import.meta.env.DEV` guard，production build 不包含
+- 返回主页路径按项目默认业务首页（如 `/`、`/dashboard`、`/alerts`）
 - `App.tsx` 不内联任何 Route 定义（除 index redirect 外），所有路由从模块 `routes.tsx` 导入
 - 页面路由从 `src/pages/{Module}/routes.tsx` 导入，组件展示路由从 `src/components/routes.tsx` 导入
 - 新增页面路由时，在对应模块的 `routes.tsx` 中添加

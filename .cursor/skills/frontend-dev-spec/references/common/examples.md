@@ -42,8 +42,8 @@ AgentHub/KnowledgeBase/examples/
 2. **每个 Demo 一个独立目录**：`{DemoName}/index.tsx` + `style.module.scss`；Demo 目录名以 `Demo` 结尾，格式 `{组件/模块名}{场景}Demo`（如 `TagBasicDemo`、`SemanticTagReviewDemo`），**禁止**在通用模板中写死某一子模块的具体 Demo 名
 3. **子组件须有独立 Demo**：对外导出的子组件（如 `FilterTrigger`、`MessageActions`）须有独立 Demo，不可仅在父组件 Demo 中间接出现
 4. **场景化拆分**：不同使用场景（如基础用法 vs 审核状态场景 vs 多标签组合场景）各自独立 Demo
-4. **单组件多 Demo**：如 Tag 组件拆分为 `SemanticTagBasicDemo` + `SemanticTagReviewDemo` + `SemanticTagMultiDemo`
-5. **示例中不嵌入代码展示**：源码展示由 `ExamplePage` 统一处理
+5. **单组件多 Demo**：如 Tag 组件拆分为 `SemanticTagBasicDemo` + `SemanticTagReviewDemo` + `SemanticTagMultiDemo`
+6. **示例中不嵌入代码展示**：源码展示由 `ExamplePage` 统一处理
 
 ### 8.3 注册表规范
 
@@ -161,3 +161,25 @@ src/components/Feedback/examples/meta.json              → /components/feedback
    - `src/layouts/menu-config.ts` 中的域级父 menu 与子 menu 项
 
 **禁止**：手动编辑 `{Domain}/routes.tsx`、`components/routes.tsx`、`menu-config.ts`、`examples-registry.ts`。
+
+### 8.8 非 prod 组件展示切换（FloatButton）
+
+所有**业务前端子仓库**（`repos/*`，不含 `marsun_components-core` 的 dev app）须接入开发态组件展示入口，与 `repos/maoyang_data-asset-system` 对齐：
+
+| 项         | 规范                                                                                                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 环境 guard | `import.meta.env.DEV`（`npm run dev` 为 true，production build 为 false）；禁止额外 `VITE_*` 开关                                                                     |
+| 悬浮按钮   | antd `FloatButton`，`right: 24`、`bottom: 80`；业务页 `LayoutGrid` + tooltip「组件展示」→ `/components`；组件页 `House` + tooltip「返回主页」→ 项目默认业务首页       |
+| 图标       | 从 `@hkyhy/marsun-components-core` 导入 `LayoutGrid`、`House`（禁止业务页直接 lucide）                                                                                |
+| 路由       | `{import.meta.env.DEV && (<Route path="/components" element={<ComponentsLayout />}>…{componentRoutes}</Route>)}`，不走 MainLayout / AppShell                          |
+| 依赖       | `prism-react-renderer`；`scripts/collect-examples.mjs` + `scripts/vite-plugin-examples.mjs`；`vite.config.ts` 注册插件；`package.json` 提供 `collect-examples` script |
+
+**新建/接入 checklist**：
+
+1. 从 `maoyang_data-asset-system` 复制 `scripts/collect-examples.mjs`、`scripts/vite-plugin-examples.mjs`、`src/layouts/ComponentsLayout/`、`src/pages/Components/`
+2. `vite.config.ts` 注册 `viteExamplesPlugin()`
+3. `App.tsx` 增加 FloatButton + DEV `/components` 路由（见 [routing-api.md](../business/routing-api.md) §13.5）
+4. 至少一个 `{Domain}/{Module}/examples/meta.json` + Demo，运行 `npm run collect-examples`
+5. `ComponentsLayout` 的 `defaultOpenKeys` 按 pathname 首段域（如 `qualityanalysis`）自动展开
+
+**参考实现**：`repos/maoyang_data-asset-system/src/App.tsx`、`repos/Agent_QualityAnalysis/frontend/src/App.tsx`
