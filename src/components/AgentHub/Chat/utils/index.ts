@@ -33,3 +33,5 @@ export {
   parseSessionMessages,
   toDisplayMessages,
 } from './sessionMessages';
+export { animateScrollFromTopToBottom, animateScrollTo, getScrollBottom } from './smoothScroll';
+export type { AnimateScrollOptions } from './smoothScroll';

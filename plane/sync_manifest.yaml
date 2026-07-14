@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.28
+  next_task_id: P6.3.29
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -387,3 +387,16 @@ tasks:
   - plane
   - infra
   note: M001/M002/M003→P6.1.25+/P6.2/P6.3；合并 · Module；避让 arch P6.1.1–24；脚本 plane/scripts/core_ledger_align.py
+- id: P6.3.28
+  milestone: P6.3
+  name: AgentHub Chat utils 导出 smoothScroll
+  status: 进行中
+  priority: P2
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-14'
+  target_date: '2026-07-14'
+  tags:
+  - frontend
+  - agent-hub
+  note: 包根导出 animateScrollFromTopToBottom / getScrollBottom / animateScrollTo，供业务仓 Session 滚动复用
