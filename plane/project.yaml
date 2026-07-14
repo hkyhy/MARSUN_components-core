@@ -6,9 +6,9 @@ meta:
   owner_default: 前端
 
 plane:
-  project_id: 01c34082-612e-49b5-8bdd-cdc3873a55c8
-  project_url: https://plane.webinfra.cloud/my/projects/01c34082-612e-49b5-8bdd-cdc3873a55c8/issues/
-  workspace_slug: my
+  project_id: f7ed0394-2ee1-4612-992b-604c541fa364
+  project_url: https://plane.webinfra.cloud/huamao/projects/f7ed0394-2ee1-4612-992b-604c541fa364/issues/
+  workspace_slug: huamao
 
 paths:
   milestones: plane/milestones.yaml

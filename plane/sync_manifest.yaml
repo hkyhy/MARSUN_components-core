@@ -1,297 +1,389 @@
 meta:
-  project_name: "@hkyhy/marsun-components-core"
-  next_task_id: M003-27
-
+  project_name: '@hkyhy/marsun-components-core'
+  next_task_id: P6.3.28
 tasks:
-  - id: M001-1
-    milestone: P6.1
-    name: 仓库初始化与 CI/Pages
-    status: 已完成
-    priority: P0
-    kind: chore
-    tags: [frontend, infra]
-    note: "chore(infra): init components-core with CI, Pages, and npm publish"
-  - id: M001-2
-    milestone: P6.1
-    name: npm 发布流水线配置
-    status: 已完成
-    priority: P0
-    kind: ops
-    tags: [infra]
-    note: GitHub Actions publish.yml + HKYHY_PACKAGE_PUBLISH
-  - id: M001-3
-    milestone: P6.1
-    name: npm 包名改为 @hkyhy scope
-    status: 已完成
-    priority: P0
-    kind: bug
-    tags: [infra]
-    note: "fix(publish): rename npm package to @hkyhy/marsun-components-core, v0.1.2"
-  - id: M001-4
-    milestone: P6.1
-    name: 升级 Node 24 并修复 Pages 部署
-    status: 已完成
-    priority: P1
-    kind: ops
-    tags: [infra]
-    note: "chore(ci): Node 24, split pages build/deploy, README Pages 首次部署说明"
-  - id: M001-5
-    milestone: P6.1
-    name: 升级 GitHub Actions 版本并完善 Pages 404 指引
-    status: 已完成
-    priority: P2
-    kind: chore
-    tags: [infra, docs]
-    note: "chore(ci): checkout@v5, upload-pages-artifact@v4, deploy-pages@v5, README Pages 404 排查"
-  - id: M001-6
-    milestone: P6.1
-    name: chore(release) push 触发 npm publish
-    status: 已完成
-    priority: P1
-    kind: ops
-    tags: [infra, release]
-    note: "release.yml 仅 chore(release) push → 校验 version、打 tag、npm publish；feat push 不 bump"
-  - id: M002-1
-    milestone: P6.2
-    name: 修复 SCSS 与 @kne/button-group dts 错误
-    status: 已完成
-    priority: P0
-    kind: bug
-    tags: [frontend]
-    note: "fix(build): resolve dts errors for scss and @kne/button-group"
-  - id: M002-2
-    milestone: P6.2
-    name: 修复 npm 包导出与构建产物
-    status: 已完成
-    priority: P0
-    kind: bug
-    tags: [frontend]
-    note: "fix(build): Upload/CommonUpload export, TreeFilterNode type, global.css stub, rollupTypes off, v0.1.4"
-  - id: M002-3
-    milestone: P6.2
-    name: global.css 使用真实打包样式
-    status: 已完成
-    priority: P1
-    kind: bug
-    tags: [frontend]
-    note: "fix(build): copy dist/marsun-components-core.css to dist/styles/global.css"
-  - id: M003-1
-    milestone: P6.3
-    name: FilePreviewLink 与 Office 客户端预览
-    status: 已完成
-    priority: P0
-    kind: feat
-    tags: [frontend, file]
-    note: "feat(file): FilePreviewLink、Office 预览、Modal UI 优化，v0.1.7"
-  - id: M003-2
-    milestone: P6.3
-    name: Excel 预览高度与 FilePreviewLink 文件名换行
-    status: 已完成
-    priority: P1
-    kind: fix
-    tags: [frontend, file]
-    note: "fix(file): Office 容器固定 70vh 高度；FilePreviewLink nameWrap 支持超长文件名换行"
-  - id: M003-3
-    milestone: P6.3
-    name: 主题 Token 与 Tooltip/Button 对比度修复
-    status: 已完成
-    priority: P0
-    kind: fix
-    tags: [frontend, theme]
-    note: tokens.css、generateTheme Button.primaryColor、Tooltip z-index 与阴影
-  - id: M003-4
-    milestone: P6.3
-    name: Filter 组件增强与示例
-    status: 已完成
-    priority: P1
-    kind: feat
-    tags: [frontend, filter]
-    note: FilterSelect/DateRange/Trigger 重构、单测与 showcase
-  - id: M003-5
-    milestone: P6.3
-    name: ChatPanel 与子组件导出
-    status: 已完成
-    priority: P1
-    kind: feat
-    tags: [frontend, chat]
-    note: ChatPanel、ChatSuggestionRow、examples 与包根导出
-  - id: M003-6
-    milestone: P6.3
-    name: Icons 全局 CSS 与导出整理
-    status: 已完成
-    priority: P2
-    kind: fix
-    tags: [frontend, icons]
-    note: icons.global.css、index 导出
-  - id: M003-7
-    milestone: P6.3
-    name: version-check 升版防跳号脚本
-    status: 已完成
-    priority: P1
-    kind: chore
-    tags: [infra]
-    note: scripts/version-check.mjs、npm run version:check
-  - id: M003-8
-    milestone: P6.3
-    name: 发布 v0.1.13
-    status: 已完成
-    priority: P0
-    kind: chore
-    tags: [release]
-    note: chore(release) v0.1.13 — theme/filter/chat 累积发布
-  - id: M003-9
-    milestone: P6.3
-    name: npm 发布 workflow 支持 tag push 触发
-    status: 已完成
-    priority: P1
-    kind: chore
-    tags: [infra, release]
-    note: publish.yml on push tags v*；重推 v0.1.13 触发 npm publish
-  - id: M003-10
-    milestone: P6.3
-    name: Filter 示例 typecheck 修复以发布 v0.1.13
-    status: 已完成
-    priority: P0
-    kind: fix
-    tags: [frontend, filter, release]
-    note: FilterSelectValue 导出；CommonFilterDemo/FilterSelectDemo onChange 类型对齐
-  - id: M003-11
-    milestone: P6.3
-    name: package.json version 对齐 npm 0.1.15
-    status: 已完成
-    priority: P1
-    kind: chore
-    tags: [release, infra]
-    note: version 0.1.15 与 npm 一致；version-check 增加 --apply-published / version:sync
-  - id: M003-12
-    milestone: P6.3
-    name: FilterSelect minSelection 与不可移除标签
-    status: 已完成
-    priority: P1
-    kind: feature
-    tags: [frontend, filter]
-    note: minSelection 下限、CommonFilter 标签 X disabled、清空后注册同步
-  - id: M003-13
-    milestone: P6.3
-    name: 发布流程改为 chore(release) push 触发 CI
-    status: 已完成
-    priority: P1
-    kind: chore
-    tags: [infra, release, docs]
-    note: "移除 feat push 自动 patch；publish.yml 仅 workflow_dispatch 补发；同步 version-check 与技能文档"
-  - id: M003-14
-    milestone: P6.3
-    name: PageSpin/PageShell/ModulePageShell 页面加载与壳层
-    status: 已完成
-    priority: P1
-    kind: feature
-    tags: [frontend, layout, release]
-    note: "PageSpin 全页 Spin；PageShellProvider 元信息；ModulePageShell 通用壳；PageHeaderLayout spinning"
-
-  - id: M003-15
-    milestone: P6.3
-    name: 通用 utils 下沉与 createMarsunRequest
-    status: 已完成
-    priority: P0
-    kind: feature
-    tags: [frontend, utils, release]
-    note: date/auth/department/permission/session/personOption、createMarsunRequest、File download；axios peerDep；v0.1.19
-
-  - id: M003-16
-    milestone: P6.3
-    name: Prettier ESLint Husky 格式化工具链
-    status: 已完成
-    priority: P1
-    kind: chore
-    tags: [frontend, infra]
-    note: .prettierrc、eslint.config.js、lint-staged、prepare husky；对齐 code-formatting.md
-
-  - id: M003-17
-    milestone: P6.3
-    name: FilterDateRange 默认日期展示与 date utils
-    status: 已完成
-    priority: P1
-    kind: fix
-    tags: [frontend, filter, utils]
-    note: showDefaultAsSelected、findMatchingQuickKey、recentDayRange/toApiStartEnd 导出与单测；v0.1.20
-
-  - id: M003-18
-    milestone: P6.3
-    name: frontend-dev-spec 规范文档同步
-    status: 已完成
-    priority: P2
-    kind: docs
-    tags: [spec, frontend]
-    note: 对齐 marsun_arch 权威源：utils 下沉规则、component-mapping、styles、code-formatting
-
-  - id: M003-19
-    milestone: P6.3
-    name: AgentHub Chat widgets 与推荐问组件
-    status: 已完成
-    priority: P1
-    kind: feature
-    tags: [frontend, chat, agent]
-    note: ChatWidgetBlock 气泡内嵌；ChatFollowUpSuggestions 可折叠；MessageItem widgets 前置；ChatInput embedded 去双层边框
-
-  - id: M003-20
-    milestone: P6.3
-    name: ChatAgentFab 引用侧栏与全屏高度
-    status: 已完成
-    priority: P1
-    kind: feature
-    tags: [frontend, chat, agent]
-    note: ChatAgentFab/ChatAgentFabLayout、useCitationPanel、panelFullscreen；Maximize2/Minimize2；示例与规范同步
-
-  - id: M003-21
-    milestone: P6.3
-    name: frontend-dev-spec 与 da-workflow 规范镜像同步
-    status: 已完成
-    priority: P2
-    kind: docs
-    tags: [spec, frontend]
-    note: 对齐 marsun_arch 权威源；da-workflow 镜像；component-mapping/task-naming/requirement-workflow 交付闭环引用
-
-  - id: M003-22
-    milestone: P6.3
-    name: TooltipInfo 详情卡片最小宽度
-    status: 已完成
-    priority: P2
-    kind: fix
-    tags: [frontend, tooltip]
-    note: styles.container minWidth 220，避免长 ID 在窄 trigger 下竖排
-
-  - id: M003-23
-    milestone: P6.3
-    name: Empty 空态组件导出与示例
-    status: 已完成
-    priority: P1
-    kind: feature
-    tags: [frontend, empty]
-    note: MarsunEmpty showIcon/iconType/description；根 index 导出；examples Demo
-
-  - id: M003-24
-    milestone: P6.3
-    name: frontend-dev-spec 规范镜像增量同步
-    status: 已完成
-    priority: P2
-    kind: docs
-    tags: [spec, frontend]
-    note: content-layout、component-mapping、task-naming、da-workflow task-relationships、marsun-arch-doc-spec 镜像
-
-  - id: M003-25
-    milestone: P6.3
-    name: ChatAgentFab 浮层去边框
-    status: 已完成
-    priority: P3
-    kind: style
-    tags: [frontend, chat]
-    note: 移除 panel border，保留 shadow 浮层
-
-  - id: M003-26
-    milestone: P6.3
-    name: FilterDatePicker 单月筛选与 FilterDateRange picker 扩展
-    status: 已完成
-    priority: P1
-    kind: feature
-    tags: [frontend, filter]
-    note: FilterDatePicker picker date/month/year；FilterDateRange picker prop；pickerDate utils；示例与单测
+- id: P6.1.26
+  milestone: P6.1
+  name: 仓库初始化与 CI/Pages
+  status: 已完成
+  priority: P0
+  kind: chore
+  tags:
+  - frontend
+  - infra
+  note: 'chore(infra): init components-core with CI, Pages, and npm publish；原 id:
+    M001-1；纠正碰撞: P6.1.1→P6.1.26（arch 已占 P6.1.1）'
+- id: P6.1.27
+  milestone: P6.1
+  name: npm 发布流水线配置
+  status: 已完成
+  priority: P0
+  kind: ops
+  tags:
+  - infra
+  note: 'GitHub Actions publish.yml + HKYHY_PACKAGE_PUBLISH；原 id: M001-2；纠正碰撞: P6.1.2→P6.1.27（arch
+    已占 P6.1.2）'
+- id: P6.1.28
+  milestone: P6.1
+  name: npm 包名改为 @hkyhy scope
+  status: 已完成
+  priority: P0
+  kind: bug
+  tags:
+  - infra
+  note: 'fix(publish): rename npm package to @hkyhy/marsun-components-core, v0.1.2；原
+    id: M001-3；纠正碰撞: P6.1.3→P6.1.28（arch 已占 P6.1.3）'
+- id: P6.1.29
+  milestone: P6.1
+  name: 升级 Node 24 并修复 Pages 部署
+  status: 已完成
+  priority: P1
+  kind: ops
+  tags:
+  - infra
+  note: 'chore(ci): Node 24, split pages build/deploy, README Pages 首次部署说明；原 id: M001-4；纠正碰撞:
+    P6.1.4→P6.1.29（arch 已占 P6.1.4）'
+- id: P6.1.30
+  milestone: P6.1
+  name: 升级 GitHub Actions 版本并完善 Pages 404 指引
+  status: 已完成
+  priority: P2
+  kind: chore
+  tags:
+  - infra
+  - docs
+  note: 'chore(ci): checkout@v5, upload-pages-artifact@v4, deploy-pages@v5, README
+    Pages 404 排查；原 id: M001-5；纠正碰撞: P6.1.5→P6.1.30（arch 已占 P6.1.5）'
+- id: P6.1.25
+  milestone: P6.1
+  name: chore(release) push 触发 npm publish
+  status: 已完成
+  priority: P1
+  kind: ops
+  tags:
+  - infra
+  - release
+  note: 'release.yml 仅 chore(release) push → 校验 version、打 tag、npm publish；feat push
+    不 bump；原 id: M001-6'
+- id: P6.2.1
+  milestone: P6.2
+  name: 修复 SCSS 与 @kne/button-group dts 错误
+  status: 已完成
+  priority: P0
+  kind: bug
+  tags:
+  - frontend
+  note: 'fix(build): resolve dts errors for scss and @kne/button-group；原 id: M002-1'
+- id: P6.2.2
+  milestone: P6.2
+  name: 修复 npm 包导出与构建产物
+  status: 已完成
+  priority: P0
+  kind: bug
+  tags:
+  - frontend
+  note: 'fix(build): Upload/CommonUpload export, TreeFilterNode type, global.css stub,
+    rollupTypes off, v0.1.4；原 id: M002-2'
+- id: P6.2.3
+  milestone: P6.2
+  name: global.css 使用真实打包样式
+  status: 已完成
+  priority: P1
+  kind: bug
+  tags:
+  - frontend
+  note: 'fix(build): copy dist/marsun-components-core.css to dist/styles/global.css；原
+    id: M002-3'
+- id: P6.3.1
+  milestone: P6.3
+  name: FilePreviewLink 与 Office 客户端预览
+  status: 已完成
+  priority: P0
+  kind: feat
+  tags:
+  - frontend
+  - file
+  note: 'feat(file): FilePreviewLink、Office 预览、Modal UI 优化，v0.1.7；原 id: M003-1'
+- id: P6.3.2
+  milestone: P6.3
+  name: Excel 预览高度与 FilePreviewLink 文件名换行
+  status: 已完成
+  priority: P1
+  kind: fix
+  tags:
+  - frontend
+  - file
+  note: 'fix(file): Office 容器固定 70vh 高度；FilePreviewLink nameWrap 支持超长文件名换行；原 id: M003-2'
+- id: P6.3.3
+  milestone: P6.3
+  name: 主题 Token 与 Tooltip/Button 对比度修复
+  status: 已完成
+  priority: P0
+  kind: fix
+  tags:
+  - frontend
+  - theme
+  note: 'tokens.css、generateTheme Button.primaryColor、Tooltip z-index 与阴影；原 id: M003-3'
+- id: P6.3.4
+  milestone: P6.3
+  name: Filter 组件增强与示例
+  status: 已完成
+  priority: P1
+  kind: feat
+  tags:
+  - frontend
+  - filter
+  note: 'FilterSelect/DateRange/Trigger 重构、单测与 showcase；原 id: M003-4'
+- id: P6.3.5
+  milestone: P6.3
+  name: ChatPanel 与子组件导出
+  status: 已完成
+  priority: P1
+  kind: feat
+  tags:
+  - frontend
+  - chat
+  note: 'ChatPanel、ChatSuggestionRow、examples 与包根导出；原 id: M003-5'
+- id: P6.3.6
+  milestone: P6.3
+  name: Icons 全局 CSS 与导出整理
+  status: 已完成
+  priority: P2
+  kind: fix
+  tags:
+  - frontend
+  - icons
+  note: 'icons.global.css、index 导出；原 id: M003-6'
+- id: P6.3.7
+  milestone: P6.3
+  name: version-check 升版防跳号脚本
+  status: 已完成
+  priority: P1
+  kind: chore
+  tags:
+  - infra
+  note: 'scripts/version-check.mjs、npm run version:check；原 id: M003-7'
+- id: P6.3.8
+  milestone: P6.3
+  name: 发布 v0.1.13
+  status: 已完成
+  priority: P0
+  kind: chore
+  tags:
+  - release
+  note: 'chore(release) v0.1.13 — theme/filter/chat 累积发布；原 id: M003-8'
+- id: P6.3.9
+  milestone: P6.3
+  name: npm 发布 workflow 支持 tag push 触发
+  status: 已完成
+  priority: P1
+  kind: chore
+  tags:
+  - infra
+  - release
+  note: 'publish.yml on push tags v*；重推 v0.1.13 触发 npm publish；原 id: M003-9'
+- id: P6.3.10
+  milestone: P6.3
+  name: Filter 示例 typecheck 修复以发布 v0.1.13
+  status: 已完成
+  priority: P0
+  kind: fix
+  tags:
+  - frontend
+  - filter
+  - release
+  note: 'FilterSelectValue 导出；CommonFilterDemo/FilterSelectDemo onChange 类型对齐；原 id:
+    M003-10'
+- id: P6.3.11
+  milestone: P6.3
+  name: package.json version 对齐 npm 0.1.15
+  status: 已完成
+  priority: P1
+  kind: chore
+  tags:
+  - release
+  - infra
+  note: 'version 0.1.15 与 npm 一致；version-check 增加 --apply-published / version:sync；原
+    id: M003-11'
+- id: P6.3.12
+  milestone: P6.3
+  name: FilterSelect minSelection 与不可移除标签
+  status: 已完成
+  priority: P1
+  kind: feature
+  tags:
+  - frontend
+  - filter
+  note: 'minSelection 下限、CommonFilter 标签 X disabled、清空后注册同步；原 id: M003-12'
+- id: P6.3.13
+  milestone: P6.3
+  name: 发布流程改为 chore(release) push 触发 CI
+  status: 已完成
+  priority: P1
+  kind: chore
+  tags:
+  - infra
+  - release
+  - docs
+  note: '移除 feat push 自动 patch；publish.yml 仅 workflow_dispatch 补发；同步 version-check
+    与技能文档；原 id: M003-13'
+- id: P6.3.14
+  milestone: P6.3
+  name: PageSpin/PageShell/ModulePageShell 页面加载与壳层
+  status: 已完成
+  priority: P1
+  kind: feature
+  tags:
+  - frontend
+  - layout
+  - release
+  note: 'PageSpin 全页 Spin；PageShellProvider 元信息；ModulePageShell 通用壳；PageHeaderLayout
+    spinning；原 id: M003-14'
+- id: P6.3.15
+  milestone: P6.3
+  name: 通用 utils 下沉与 createMarsunRequest
+  status: 已完成
+  priority: P0
+  kind: feature
+  tags:
+  - frontend
+  - utils
+  - release
+  note: 'date/auth/department/permission/session/personOption、createMarsunRequest、File
+    download；axios peerDep；v0.1.19；原 id: M003-15'
+- id: P6.3.16
+  milestone: P6.3
+  name: Prettier ESLint Husky 格式化工具链
+  status: 已完成
+  priority: P1
+  kind: chore
+  tags:
+  - frontend
+  - infra
+  note: '.prettierrc、eslint.config.js、lint-staged、prepare husky；对齐 code-formatting.md；原
+    id: M003-16'
+- id: P6.3.17
+  milestone: P6.3
+  name: FilterDateRange 默认日期展示与 date utils
+  status: 已完成
+  priority: P1
+  kind: fix
+  tags:
+  - frontend
+  - filter
+  - utils
+  note: 'showDefaultAsSelected、findMatchingQuickKey、recentDayRange/toApiStartEnd 导出与单测；v0.1.20；原
+    id: M003-17'
+- id: P6.3.18
+  milestone: P6.3
+  name: frontend-dev-spec 规范文档同步
+  status: 已完成
+  priority: P2
+  kind: docs
+  tags:
+  - spec
+  - frontend
+  note: '对齐 marsun_arch 权威源：utils 下沉规则、component-mapping、styles、code-formatting；原
+    id: M003-18'
+- id: P6.3.19
+  milestone: P6.3
+  name: AgentHub Chat widgets 与推荐问组件
+  status: 已完成
+  priority: P1
+  kind: feature
+  tags:
+  - frontend
+  - chat
+  - agent
+  note: 'ChatWidgetBlock 气泡内嵌；ChatFollowUpSuggestions 可折叠；MessageItem widgets 前置；ChatInput
+    embedded 去双层边框；原 id: M003-19'
+- id: P6.3.20
+  milestone: P6.3
+  name: ChatAgentFab 引用侧栏与全屏高度
+  status: 已完成
+  priority: P1
+  kind: feature
+  tags:
+  - frontend
+  - chat
+  - agent
+  note: 'ChatAgentFab/ChatAgentFabLayout、useCitationPanel、panelFullscreen；Maximize2/Minimize2；示例与规范同步；原
+    id: M003-20'
+- id: P6.3.21
+  milestone: P6.3
+  name: frontend-dev-spec 与 da-workflow 规范镜像同步
+  status: 已完成
+  priority: P2
+  kind: docs
+  tags:
+  - spec
+  - frontend
+  note: '对齐 marsun_arch 权威源；da-workflow 镜像；component-mapping/task-naming/requirement-workflow
+    交付闭环引用；原 id: M003-21'
+- id: P6.3.22
+  milestone: P6.3
+  name: TooltipInfo 详情卡片最小宽度
+  status: 已完成
+  priority: P2
+  kind: fix
+  tags:
+  - frontend
+  - tooltip
+  note: 'styles.container minWidth 220，避免长 ID 在窄 trigger 下竖排；原 id: M003-22'
+- id: P6.3.23
+  milestone: P6.3
+  name: Empty 空态组件导出与示例
+  status: 已完成
+  priority: P1
+  kind: feature
+  tags:
+  - frontend
+  - empty
+  note: 'MarsunEmpty showIcon/iconType/description；根 index 导出；examples Demo；原 id:
+    M003-23'
+- id: P6.3.24
+  milestone: P6.3
+  name: frontend-dev-spec 规范镜像增量同步
+  status: 已完成
+  priority: P2
+  kind: docs
+  tags:
+  - spec
+  - frontend
+  note: 'content-layout、component-mapping、task-naming、da-workflow task-relationships、marsun-arch-doc-spec
+    镜像；原 id: M003-24'
+- id: P6.3.25
+  milestone: P6.3
+  name: ChatAgentFab 浮层去边框
+  status: 已完成
+  priority: P3
+  kind: style
+  tags:
+  - frontend
+  - chat
+  note: '移除 panel border，保留 shadow 浮层；原 id: M003-25'
+- id: P6.3.26
+  milestone: P6.3
+  name: FilterDatePicker 单月筛选与 FilterDateRange picker 扩展
+  status: 已完成
+  priority: P1
+  kind: feature
+  tags:
+  - frontend
+  - filter
+  note: 'FilterDatePicker picker date/month/year；FilterDateRange picker prop；pickerDate
+    utils；示例与单测；原 id: M003-26'
+- id: P6.3.27
+  milestone: P6.3
+  name: 台账 M* 迁正为 P6 层级与 Module 去重
+  status: 进行中
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-14'
+  target_date: '2026-07-14'
+  tags:
+  - pm
+  - plane
+  - infra
+  note: M001/M002/M003→P6.1.25+/P6.2/P6.3；合并 · Module；避让 arch P6.1.1–24；脚本 plane/scripts/core_ledger_align.py

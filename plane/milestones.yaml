@@ -1,57 +1,53 @@
 meta:
-  project_name: "@hkyhy/marsun-components-core"
+  project_name: '@hkyhy/marsun-components-core'
   template: plane/pm-export/华茂里程碑模板.xlsx
   output: plane/pm-export/@hkyhy-marsun-components-core——里程碑.xlsx
-  sheet: "🎉 里程碑"
-
+  sheet: 🎉 里程碑
 project:
-  name: "@hkyhy/marsun-components-core"
-  start: "2026-06-26"
-  end: "2026-12-31"
+  name: '@hkyhy/marsun-components-core'
+  start: '2026-06-26'
+  end: '2026-12-31'
   owner_default: 前端
-
 milestones:
-  - id: P6.1
-    roadmap_no: 1
-    name: 前端组件库与规范
-    origin: merged
-    dingtalk:
-      project_record_id: eXvjEwTAFZ
-    goal: 仓库初始化、CI、GitHub Pages 与 npm 发布流水线
-    deliverables: CI workflow、Pages 部署、publish workflow
-    status: 已完成
-    priority: P0
-    plan_date: "2026-06-26"
-    actual_date: "2026-06-26"
-    owner: 黄金芳
-    tasks: M001-1,M001-2,M001-3,M001-4,M001-5,M001-6
-
-  - id: P6.2
-    roadmap_no: 2
-    name: 库构建与类型
-    origin: merged
-    dingtalk:
-      project_record_id: Us5SJrioAo
-    goal: 确保 dist 类型声明与 SCSS 模块正确生成
-    deliverables: 无 dts 构建错误、可发布 npm 包
-    status: 已完成
-    priority: P0
-    plan_date: "2026-06-26"
-    actual_date: "2026-06-26"
-    owner: 黄金芳
-    tasks: M002-1,M002-2,M002-3
-
-  - id: P6.3
-    roadmap_no: 3
-    name: File 文件预览
-    origin: merged
-    dingtalk:
-      project_record_id: 8ac8MH4PCD
-    goal: 支持文件名链接打开预览 Modal，含 Office 客户端渲染
-    deliverables: FilePreviewLink、FilePreview 增强、示例与文档
-    status: 已完成
-    priority: P0
-    plan_date: "2026-06-29"
-    actual_date: "2026-07-09"
-    owner: 黄金芳
-    tasks: M003-1
+- id: P6.1
+  roadmap_no: 1
+  name: 前端组件库与规范
+  origin: merged
+  dingtalk:
+    project_record_id: eXvjEwTAFZ
+  goal: 仓库初始化、CI、GitHub Pages 与 npm 发布流水线
+  deliverables: CI workflow、Pages 部署、publish workflow
+  status: 已完成
+  priority: P0
+  plan_date: '2026-06-26'
+  actual_date: '2026-06-26'
+  owner: 黄金芳
+  tasks: P6.1.26,P6.1.27,P6.1.28,P6.1.29,P6.1.30,P6.1.25
+- id: P6.2
+  roadmap_no: 2
+  name: 库构建与类型
+  origin: merged
+  dingtalk:
+    project_record_id: Us5SJrioAo
+  goal: 确保 dist 类型声明与 SCSS 模块正确生成
+  deliverables: 无 dts 构建错误、可发布 npm 包
+  status: 已完成
+  priority: P0
+  plan_date: '2026-06-26'
+  actual_date: '2026-06-26'
+  owner: 黄金芳
+  tasks: P6.2.1,P6.2.2,P6.2.3
+- id: P6.3
+  roadmap_no: 3
+  name: File 文件预览
+  origin: merged
+  dingtalk:
+    project_record_id: 8ac8MH4PCD
+  goal: 支持文件名链接打开预览 Modal，含 Office 客户端渲染
+  deliverables: FilePreviewLink、FilePreview 增强、示例与文档
+  status: 已完成
+  priority: P0
+  plan_date: '2026-06-29'
+  actual_date: '2026-07-09'
+  owner: 黄金芳
+  tasks: P6.3.1
