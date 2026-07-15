@@ -76,6 +76,9 @@
   "dependencies": {
     "@js-preview/excel": "^1.7.14",
     "@kne/button-group": "^0.1.24",
+    "@kne/form-info": "^0.1.10",
+    "@kne/react-form": "^3.1.9",
+    "@kne/react-form-antd": "^4.1.2",
     "ahooks": "^3.8.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
