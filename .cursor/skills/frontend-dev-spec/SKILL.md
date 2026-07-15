@@ -49,7 +49,7 @@ description: |
 14. **路由按模块拆分** `(business)`：页面路由放 `src/pages/{Module}/routes.tsx`，组件展示路由汇总到 `src/components/routes.tsx`。含多个子模块的业务域（如 `Common`、`AgentHub`）在 `src/components/{Domain}/routes.tsx` 单独维护嵌套子路由，`components/routes.tsx` 统一 import 引用。`App.tsx` 通过 `{xxxRoutes}` 引用各模块路由，不在 App.tsx 中内联路由定义
 15. **批量操作按钮布局** `(business)`：批量操作按钮（如批量提交审核、批量删除等）放在表格上方（`<Space className={classNames('manage-batch-actions', styles['manage-batch-actions'])}>` + `<Button>`），不放在页面头部 `actions`；页面头部 `actions` 仅放页面级操作（如上传文件、新建文件夹）
 16. **批量操作状态校验** `(business)`：批量操作必须校验文件状态，只有符合对应状态的文件才能被操作。状态校验常量（如 `SUBMIT_REVIEW_STATUSES`、`DELETE_STATUSES`）统一维护在 `Action/handlers.ts` 并 `export`，使用 `ReviewStatus` 枚举值。通过 `filterByStatus()` 函数过滤可操作项，UI 上展示可操作数量并提示不可操作项
-17. **第三方库优先** `(business)`：操作按钮组统一使用 `@kne/button-group`（包括页面头部操作和详情页操作），表单统一使用 **antd 原生 Form**（`Form.useForm()` + `Form.Item` + `rules`）
+17. **第三方库优先** `(business)`：操作按钮组统一使用 `@kne/button-group`（包括页面头部操作和详情页操作），表单统一从 **`@hkyhy/marsun-components-core`** 导入——默认 FormInfo 栈（`Form` / `FormInfo` / `FormModal` / `FormSteps` + `rule`）；进阶引擎用 `ReactForm` / `useField` / `useFormApi` / `GroupList` 等。**禁止**业务直连 `@kne/form-info`、`@kne/react-form`。存量未迁移模块可暂留 antd Form；**新模块、新表单必须走 core FormInfo（默认）**
 18. **列表项可见性用 `hidden` 属性** `(business)`：`ButtonGroup` listArray、`StatCardList` items 等列表项配置，统一使用 `hidden` 属性控制可见性，禁止使用 `switch(role)` 返回不同数组或 `{condition && <List/>}` 条件渲染不同列表。将所有可能的项目放在一个扁平数组中，通过 `hidden: !hasAnyRole([...])` 控制每项的可见性
 19. **图标统一从 core 导出** `(common)`：业务项目禁止直接 `import from 'lucide-react'` 或 `@ant-design/icons`；统一从 `@hkyhy/marsun-components-core` 导入 Icons（如 `RefreshCw`、`CircleAlert`），加载态用 `spin` prop。缺图标时先在 `marsun_components-core` 的 `Icons` 模块补导出，再业务引用。详见 [component-mapping.md](references/common/component-mapping.md) Icons 节
 20. **ButtonGroup 操作按钮 icon 规则** `(business)`：常规 CRUD（编辑/删除/导出等）listArray **不加 icon**，只显示文字；**刷新**等需语义识别的 Header/工具栏操作使用 `refreshAction`（`Action/refreshAction.tsx`）或 listArray 的 `icon: <RefreshCw spin={loading} />`。菜单项、Timeline、Tree 等非 ButtonGroup 操作场景可保留 icon
@@ -60,7 +60,7 @@ description: |
 25. **样式统一 SCSS Modules** `(common)`：（1）统一 SCSS，模块样式用 `style.module.scss`；（2）每个页面、每个含 JSX 的组件（含子组件、嵌套子组件、Demo）均维护 `style.module.scss`，无样式时保留空文件，目录 `{Name}/index.tsx` + `{Name}/style.module.scss`，禁止 TSX 与 scss 分离；（3）禁止 Tailwind CSS；（4）统一 `classNames(...)` 合并，禁止 `sc()` 等 helper，每个 className 含预定语义类名（kebab-case）；（5）预定 className 格式 `{组件名-kebab}-{功能定位-kebab}`，SCSS 同名，TS 用 `styles['kebab-name']`。公共样式放 `src/styles/`。详见 [common/styles.md](references/common/styles.md)
 26. **npm 全量导出** `(common)`：`marsun_components-core` 每个对外组件、子组件、hook、utils、types 须经模块 `index.ts` → 包根 `src/index.ts` 导出；禁止仅 showcase 内 deep import。新增符号时同步更新 `component-mapping.md` 与 `examples/meta.json`
 27. **公共 Token 三层接入** `(common)`：静态默认值 `import '@hkyhy/marsun-components-core/tokens'` → 运行时 `applyThemeToCssVariables(primaryColor)` → 项目 `tokens.css` 仅扩展领域变量。CSS 变量命名统一 `--primary-color` / `--font-color-grey-*`，禁止项目自建 `--color-primary` 平行体系。详见 [common/theme.md](references/common/theme.md)
-28. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；新任务 id 须对齐钉钉层级（`S3.3.*`、`P3.2.*`、`P6.11.*` 等，见 [task-naming.md](references/common/task-naming.md)）；my-plane 维持 `M003-*` 例外
+28. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；新任务 id 须对齐钉钉层级（`S3.3.*`、`P3.2.*`、`P6.11.*` 等，见 [da-workflow/task-naming](../da-workflow/references/task-naming.md)）；my-plane 维持 `M003-*` 例外
 29. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**，且**版本号与 npm 已发布最新版一致**（如 `^0.1.15`）；禁止 `file:` / lockfile `link: true`；本地联调用 `MARSUN_CORE_LOCAL` + Vite alias。详见 [component-mapping.md](references/common/component-mapping.md)
 30. **core 版本与实版一致** `(common)`：`marsun_components-core` feat 开发时 `package.json` version **= npm 已发布最新**；发版仅通过 `chore(release): vX.Y.Z` commit + push 触发 CI publish，**禁止本地 npm publish**；`npm run version:check:apply` 仅写回 npm+1 准备 chore commit。见 [marsun-core-version.md](references/common/marsun-core-version.md)
 31. **模块页全局 Loading** `(common)`：`PageSpin`、`PageShellProvider`、`usePageShellLoading`、`ModulePageShell` 来自 `@hkyhy/marsun-components-core`；App Layout 须包 `PageShellProvider`；页面用 `spinning` 或 `usePageShellLoading`，禁止局部 loading 文案叠层。见 [page-loading.md](references/common/page-loading.md)
@@ -68,10 +68,11 @@ description: |
 33. **模块主区扁平布局** `(business)`：`ModulePageShell` 已提供 `title`/`description` 时，**禁止**再传与 title 重复的 `breadcrumb`；主内容 workarea **禁止**双层 card（外层 border + 内层 padding）。主区用 `ContentCard flat` 或等价 `flex:1` 容器；Tabs/Table 内容区 `width:100%`；页脚主操作按钮默认 **非 block**（Drawer/窄容器可用 `saveBlock`）。详见 [styles.md](references/common/styles.md)「模块 workarea 扁平化」
 34. **非业务代码进 core** `(common)`：新建或修改 `src/utils/**` 前 **MUST** 查 `@hkyhy/marsun-components-core` 包根导出（见 [component-mapping.md](references/common/component-mapping.md) npm Utils 表）。**已存在于 core 的函数禁止在业务项目再写同名/同义 `src/utils/*.ts` 文件**；直接从包 import（如 `toDateTimeRange`、`recentDayRangeStrings`）。纯函数、无项目 API/store/业务枚举 → 写 core；含 zustand、业务 API、领域常量 → 留业务项目。仅允许薄配置层（`request.ts`、`Files/download.ts` 注入 token）。core 新增导出须同步 `src/index.ts` + component-mapping + 升版发布
 35. **Filter label 语义化** `(common)`：`FilterInput`/`FilterSelect`/`FilterDateRange` 的 `label` 禁止使用「关键词」等抽象词，须用字段业务语义（可与 placeholder 相同）。见 [filter.md](references/common/filter.md) §5.1.1
-36. **InteractiveBlock 内容块** `(common)`：title → **Info** icon + `TooltipInfo`（禁止 `CircleHelp`）→ actions（字号 ≤ title）；**tags 紧贴 subtitle**（inline/below），**禁止**在 description 之后；可点击块勿用 `<button>` 包裹 Tooltip；见 [content-layout.md](references/common/content-layout.md)
-37. **少 border 布局** `(common)`：模块 workarea 少 panel border；**列表项用 theme 背景块 + gap**，禁止 `border-bottom` 线分割。见 [styles.md](references/common/styles.md) §8.11
-38. **InteractiveBlock action 尺寸** `(common)`：link 操作字号不得大于 title（title 14px / actions 12px，icon 14px）；icon 颜色与 link 文字一致；导出用 `Download`；info trigger `cursor: pointer`
-39. **非 prod 组件展示切换** `(common)`：所有业务前端子仓库（非 marsun_components-core dev app）须在 `App.tsx` 用 `import.meta.env.DEV` 双 guard 接入：（1）antd `FloatButton` 在业务页与 `/components` 间切换（图标 `LayoutGrid` / `House`，均从 `@hkyhy/marsun-components-core`）；（2）`/components` 路由 + `ComponentsLayout` + `componentRoutes`（collect-examples 自动生成）。生产 build 不包含上述代码。参考 `repos/maoyang_data-asset-system/src/App.tsx`；新建仓库 checklist 见 [examples.md](references/common/examples.md) §8.8
+36. **筛选项加载失败与默认值** `(common)`：选项接口失败用 `message.error` 友好文案（如「筛选加载失败」），**禁止**拼接 HTTP 状态码/raw 异常；**禁止**内联错误区替换筛选栏；失败后筛选栏仍渲染，options 为空走 Empty；**默认选中须来自 meta/options**（如首项分厂），**禁止**硬编码工厂 code（如 `1001`）。见 [filter.md](references/common/filter.md) §5.9
+37. **InteractiveBlock 内容块** `(common)`：title → **Info** icon + `TooltipInfo`（禁止 `CircleHelp`）→ actions（字号 ≤ title）；**tags 紧贴 subtitle**（inline/below），**禁止**在 description 之后；可点击块勿用 `<button>` 包裹 Tooltip；见 [content-layout.md](references/common/content-layout.md)
+38. **少 border 布局** `(common)`：模块 workarea 少 panel border；**列表项用 theme 背景块 + gap**，禁止 `border-bottom` 线分割。见 [styles.md](references/common/styles.md) §8.11
+39. **InteractiveBlock action 尺寸** `(common)`：link 操作字号不得大于 title（title 14px / actions 12px，icon 14px）；icon 颜色与 link 文字一致；导出用 `Download`；info trigger `cursor: pointer`
+40. **非 prod 组件展示切换** `(common)`：所有业务前端子仓库（非 marsun_components-core dev app）须在 `App.tsx` 用 `import.meta.env.DEV` 双 guard 接入：（1）antd `FloatButton` 在业务页与 `/components` 间切换（图标 `LayoutGrid` / `House`，均从 `@hkyhy/marsun-components-core`）；（2）`/components` 路由 + `ComponentsLayout` + `componentRoutes`（collect-examples 自动生成）。生产 build 不包含上述代码。参考 `repos/maoyang_data-asset-system/src/App.tsx`；新建仓库 checklist 见 [examples.md](references/common/examples.md) §8.8
 
 ---
 
@@ -118,13 +119,13 @@ description: |
 | ----------------------- | ------------------------------------------ | ------------------------------------ |
 | 接新需求 / 改交互       | prompts/mindset → requirement-workflow     | 按任务选 common/business             |
 | 新建业务模块            | business/module-patterns                   | common/directory-structure           |
-| 筛选项 / 部门人员       | common/filter + business/department-person | —                                    |
+| 筛选项 / 部门人员       | common/filter + business/department-person | filter §5.9（失败 message + 仍渲染） |
 | 权限 / 批量操作         | business/permissions-data                  | —                                    |
 | 主题 / Tag 颜色         | common/theme + common/component-mapping    | common/styles                        |
 | 滚动区 / Layout 接入    | common/virtual-scrollbar                   | —                                    |
 | 模块页 loading          | common/page-loading                        | common/component-mapping             |
 | 组件 Demo               | common/examples                            | —                                    |
-| 非 prod 组件展示切换    | common/examples §8.8 + routing-api §13.5   | SKILL.md #39                         |
+| 非 prod 组件展示切换    | common/examples §8.8 + routing-api §13.5   | SKILL.md #40                         |
 | 新增/变更组件           | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow |
 | 样式 / className / SCSS | common/styles                              | common/naming                        |
 | 模块 workarea 扁平布局  | common/styles §8.10                        | SKILL.md #33                         |

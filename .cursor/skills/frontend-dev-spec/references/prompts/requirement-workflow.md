@@ -26,8 +26,8 @@
 
 1. 创建 `src/components/{Domain}/{Module}/` 目录及子目录（`Action/`、`Detail/`、`Form/`、`Modal/`、`List/` 按需创建）；**每个含 JSX 的子组件目录同步创建 `{Name}/index.tsx` + `style.module.scss`（无样式时保留空文件）**
 2. 按需创建 `hooks/`、`utils/` 和 `constants/` 子目录（hooks 放自定义 Hook，utils 放工具函数，constants 放常量；模块内使用时放模块内，跨模块时放 `src/hooks/{Module}/`、`src/utils/{Module}/` 或 `src/constants/{Module}/`）
-3. 编写 Form 组件（放 `Form/` 目录，使用 antd 原生 Form + Form.Item + Input/Select 等，接收 `form` prop，纯字段渲染不含提交逻辑）
-4. 编写 Modal 组件（放 `Modal/` 目录，使用 `Form.useForm()` 创建表单实例 + 传给 Form 组件 + `form.validateFields()` 提交 + Modal `onOk`/`onCancel`）
+3. 编写 Form 组件（放 `Form/` 目录，从 `@hkyhy/marsun-components-core` 导入 `FormInfo` + `Input`/`Select` 等，`rule` 校验，纯字段渲染不含提交逻辑；禁止直连 `@kne/form-info`）
+4. 编写 Modal 组件（放 `Modal/` 目录，从 core 导入 `FormModal` + `formProps={{ data, onSubmit }}`；多步用 `FormStepsModal`）
 5. 编写 Action handlers（放 `Action/handlers.ts`，抽取业务逻辑供 listArray onClick 和独立 Button 共用）
 6. 编写 Action 按钮组件（放 `Action/` 目录，一个按钮一个文件，支持受控/非受控模式）
 7. 编写 ActionButtons 组合组件（放 `Action/` 目录，使用 `@kne/button-group` 的 `ButtonGroup` + listArray 对象形式）
@@ -42,8 +42,8 @@
 16. 检查：ButtonGroup listArray 使用对象形式，不使用 `() => <Component />`
 17. 检查：antd 重复配置是否已提取为 Common 组件
 18. 检查：组件使用优先级 Common > Module > @kne/button-group > antd
-19. 检查：表单使用 antd 原生 Form（Form.useForm + Form.Item + rules），操作按钮统一使用 `@kne/button-group`（包括页面头部和详情页，不使用 `Space` + `Button`）
-20. 检查：Modal 使用 `Form.useForm()` + `form.validateFields()` + `onOk`/`onCancel`，取消按钮用 `Button onClick={onCancel}`
+19. 检查：表单从 `@hkyhy/marsun-components-core` 导入（`Form`/`FormInfo`/`FormModal` + 字段 `rule`），未直连 `@kne/form-info`；操作按钮统一使用 `@kne/button-group`（包括页面头部和详情页，不使用 `Space` + `Button`）
+20. 检查：Modal 使用 core 的 `FormModal` + `formProps.onSubmit`（或 `FormStepsModal`），取消走 `onCancel`
 21. 检查：新组件是否已创建 `examples/meta.json`（路由和菜单由脚本自动生成，无需手动注册）
 22. 检查：业务子仓库 `App.tsx` 是否在 `import.meta.env.DEV` 下接入 FloatButton + `/components` 路由（见 [../common/examples.md](../common/examples.md) §8.8）
 23. 检查：Tooltip 展示结构化详情时是否使用 `TooltipInfo` + **`Info` trigger**（禁止 `CircleHelp`）；`overlayStyle`/`styles.container` 须 `minWidth: 220`；禁止 `<button>` 嵌套 Tooltip trigger
@@ -86,6 +86,7 @@
 - [ ] 图标均从 `@hkyhy/marsun-components-core` 导入，业务代码无 `lucide-react`
 - [ ] 权限/常量/API 符合 `business/permissions-data.md` 与 `business/routing-api.md`
 - [ ] 筛选 state 接入 API，Filter label 语义化（禁止「关键词」抽象 label）；部门/人员符合 `business/department-person.md`
+- [ ] 筛选项加载失败：`message.error` 友好文案（禁止 HTTP 状态码/raw）；失败后筛选栏仍渲染、options 空走 Empty；默认分厂来自 meta 首项，禁止硬编码 `1001`（见 [filter.md](../common/filter.md) §5.9）
 - [ ] 带操作的列表/表单块使用 `InteractiveBlock`：info 用 `Info` + `TooltipInfo`（cursor pointer）；actions icon 与文字同色、导出用 `Download`
 - [ ] workarea 少 border：列表项用背景块 + gap，禁止 border-bottom 分割线（§8.11）
 - [ ] Tooltip 详情用 TooltipInfo，长 ID 类字段须 `minWidth: 220` 且 content 可换行
@@ -98,7 +99,9 @@
 - [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting.md`）
 - [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
 - [ ] 测试通过
-- [ ] **新任务台账**：查 [task-naming 仓库映射表](../common/task-naming.md#仓库--钉钉编码映射) 选定 `milestone` 与层级 `id`（如 `S3.3.49`、`P3.7.1`、**marsun_arch 用 `P6.11.*`**）；**禁止** marsun_arch / core / QA / assets 新增 `M001-*`（历史 Done 除外）；`data-dev/` 文档 → `milestone: P6.11`；梳理 `parent_issue` / `related_tasks` → `sync_manifest.yaml` 登记 `status: 进行中`、**`owner` + `start_date` + `target_date`** → `da pm dry-run`（**CREATE module = 0**）→ `da pm sync` CREATE（禁止首次就写 `已完成`；历史 `QA-S3-*` / 已固定 external_id 的 `M001-*` 勿 rename）
+- [ ] **新任务台账**：查 [task-naming 仓库映射表](../../../da-workflow/references/task-naming.md#仓库--钉钉编码映射) 选定 `milestone` 与层级 `id`（如 `S3.3.49`、`P3.7.1`、**marsun_arch 用 `P6.11.*`**）；**禁止** marsun_arch / core / QA / assets 新增 `M001-*`（历史 Done 除外）；`data-dev/` 文档 → `milestone: P6.11`；梳理 `parent_issue` / `related_tasks` → `sync_manifest.yaml` 登记 `status: 进行中`、**`owner` + `start_date` + `target_date`** → `da pm dry-run`（**CREATE module = 0**）→ `da pm sync` CREATE（禁止首次就写 `已完成`；历史 `QA-S3-*` / 已固定 external_id 的 `M001-*` 勿 rename）
+- [ ] **Plane Module 只挂既有 keeper（全项目）**：任务 `milestone` 为钉表 depth-1（`P*.*` / `S*.*` 等，见仓库映射表）；**禁止**新建 Module、**禁止** `milestone: M*`（`my-plane` 除外）；见空 `M*` / middot 壳只 Archive（不 CREATE）。交叉：[da-workflow/plane-dingtalk-module-rules](../../../da-workflow/references/plane-dingtalk-module-rules.md)
+- [ ] **Module/Issue 分隔符**：Module（钉表 depth-1）用 **短横线 `-`**（`S3.3-功能开发`）；Issue（任务）用 **中点 `·`**（`S3.3.15 · 预警页筛选对接`）。**禁止** pm sync / 手工再建 `S3.3·功能开发` 等同代号 Module（与钉表并成重复）；见 [plane-dingtalk-module-rules](../../../da-workflow/references/plane-dingtalk-module-rules.md)
 - [ ] **commit 闭环**（plane_ready 仓库）：`da task timeline-sync` →（完成）`da task done --confirm` → **WorkRecord 进展追加（按事项类型选文档）** → `sync_manifest` 改 `已完成` → `da pm sync` PATCH（见 [da-workflow/plane-timeline](../../../da-workflow/references/plane-timeline.md) · [work-record/SKILL.md](../../../work-record/SKILL.md)）
 - [ ] WorkRecord 已写入**正确类型**的大事文档（接口对接 / 页面改版 / 工程化分列）；非 API 进展未混入「*接口对接」
 - [ ] 若本任务有对应 WorkRecord 大事文档，已追加「进展记录」；新增 API 须补接口行；Mock 与正式接口区分状态（Mock 勿标已完成）

@@ -19,8 +19,8 @@
 - 操作按钮的受控/非受控模式
 - 独立确认型按钮使用 `ConfirmButton`/`ConfirmLink`（供页面头部等非 Table 场景）
 - 操作按钮组（使用 `@kne/button-group` 的 `ButtonGroup`，放 `Action/` 目录）
-- **Form 与 Modal 分离模式**（使用 antd 原生 Form，Form/ 放纯字段组件+接收 form prop，Modal/ 放 Form.useForm + validateFields + 提交逻辑）
-- **校验规则**（`Form.Item` 的 `rules` 属性，如 `[{ required: true, message: '...' }]`）
+- **Form 与 Modal 分离模式**（从 `@hkyhy/marsun-components-core` 导入 FormInfo 栈：Form/ 放 `FormInfo`+字段列表；Modal/ 用 `FormModal` + `formProps.onSubmit`，或多步用 `FormStepsModal`）
+- **校验规则**（字段 `rule` 字符串，如 `rule="REQ"`、`rule="REQ TEL"`、`rule="EMAIL"`）
 - 详情页使用 CommonDescriptions
 - **Tooltip 详情展示**：hover 展示结构化详情时统一使用 `TooltipInfo`，传入 `DescriptionItem[]`，禁止直接用 antd `Tooltip` + 手写 `div` 拼接字段
 - **部门与人员选择全量展示**：部门筛选用 `FilterTreeSelect` 加载完整组织树，禁止按角色裁剪；人员选择器展示全量在职用户（`PersonOptionRow` + `matchPersonOptionSearch`），详见 [department-person.md](department-person.md)
@@ -592,138 +592,131 @@ export default ManageActionButtons;
 > - 批量删除按钮常显，未选中时 `disabled: true`，选中后显示数量
 > - 确认型操作（删除等）在 listArray 中用 `message`/`isDelete` 属性
 
-## 二、表单与弹窗分离（使用 antd 原生 Form）
+## 二、表单与弹窗分离（经 `@hkyhy/marsun-components-core` 再导出 form-info）
 
 > **目录结构约束**：表单字段必须放 `Form/` 目录，弹窗容器必须放 `Modal/` 目录。Modal 中不得直接内联字段组件，必须从 `Form/` 目录引用。
+>
+> **业务标准**：新模块、新表单统一从 `@hkyhy/marsun-components-core` 导入 FormInfo 栈（**禁止**直连 `@kne/form-info`）。存量未迁移模块可暂留 antd Form。多步场景用 `FormSteps` / `FormStepsModal`，不用新建 antd `StepForm`。
 
-### 2.1 Form 组件（放 `Form/` 目录，纯字段渲染，接收 form prop）
+### 2.1 Form 组件（放 `Form/` 目录，纯字段渲染：`FormInfo` + 字段列表）
 
 ```tsx
 // Form/Form.tsx
 import React from 'react';
-import { Form, Input, Select } from 'antd';
+import { FormInfo, Input, Select } from '@hkyhy/marsun-components-core';
 
-interface FormProps {
-  form: ReturnType<typeof Form.useForm>[0];
+interface FormFieldsProps {
   showAddFields?: boolean;
 }
 
-const FormFields: React.FC<FormProps> = ({ form, showAddFields }) => {
-  const { options: deptOptions } = useDepartments();
-
+const FormFields: React.FC<FormFieldsProps> = ({ showAddFields }) => {
   return (
-    <Form form={form} layout="vertical">
-      {showAddFields && (
-        <Form.Item name="username" label="工号" rules={[{ required: true, message: '请输入工号' }]}>
-          <Input placeholder="请输入工号" />
-        </Form.Item>
-      )}
-      <Form.Item
-        name="displayName"
-        label="姓名"
-        rules={[{ required: true, message: '请输入姓名' }]}
-      >
-        <Input placeholder="请输入姓名" />
-      </Form.Item>
-      <Form.Item
-        name="departmentId"
-        label="部门"
-        rules={[{ required: true, message: '请选择部门' }]}
-      >
-        <Select placeholder="请选择部门" options={deptOptions} />
-      </Form.Item>
-    </Form>
+    <FormInfo
+      title="基本信息"
+      column={2}
+      list={[
+        ...(showAddFields
+          ? [
+              <Input
+                key="username"
+                name="username"
+                label="工号"
+                rule="REQ"
+                placeholder="请输入工号"
+              />,
+            ]
+          : []),
+        <Input
+          key="displayName"
+          name="displayName"
+          label="姓名"
+          rule="REQ"
+          placeholder="请输入姓名"
+        />,
+        <Select
+          key="departmentId"
+          name="departmentId"
+          label="部门"
+          rule="REQ"
+          placeholder="请选择部门"
+          options={[]} /* useDepartments() → options */
+        />,
+      ]}
+    />
   );
 };
 
 export default FormFields;
 ```
 
-### 2.2 Modal 组件（放 `Modal/` 目录，Form.useForm + validateFields + 提交逻辑）
+### 2.2 Modal 组件（放 `Modal/` 目录，`FormModal` + `formProps.onSubmit`）
 
 ```tsx
 // Modal/FormModal.tsx
-import React, { useEffect } from 'react';
-import { Modal, Form, message } from 'antd';
+import React from 'react';
+import { message } from 'antd';
+import { FormModal } from '@hkyhy/marsun-components-core';
 import FormFields from '@/components/{Domain}/{Module}/Form/Form';
 import type { UserInfo } from '@/types';
 
-interface FormModalProps {
+interface ModuleFormModalProps {
   open: boolean;
   editingUser: UserInfo | null;
   onCancel: () => void;
   onSuccess: () => void;
-  defaultDeptId?: string;
   showAddFields?: boolean;
 }
 
-const FormModal: React.FC<FormModalProps> = ({
+const ModuleFormModal: React.FC<ModuleFormModalProps> = ({
   open,
   editingUser,
   onCancel,
   onSuccess,
-  defaultDeptId,
   showAddFields,
 }) => {
-  const [form] = Form.useForm();
   const isEdit = !!editingUser;
 
-  useEffect(() => {
-    if (!open) return;
-    if (editingUser) {
-      form.setFieldsValue({/* 初始化编辑值 */});
+  const handleSubmit = async (values: Record<string, unknown>) => {
+    if (isEdit) {
+      await api.update(editingUser!.id, values);
+      message.success('更新成功');
     } else {
-      form.resetFields();
-      if (defaultDeptId) form.setFieldsValue({ departmentId: defaultDeptId });
+      await api.create(values);
+      message.success('创建成功');
     }
-  }, [open, editingUser, defaultDeptId, form]);
-
-  const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      if (isEdit) {
-        await api.update(editingUser!.id, values);
-        message.success('更新成功');
-      } else {
-        await api.create(values);
-        message.success('创建成功');
-      }
-      form.resetFields();
-      onSuccess();
-    } catch {
-      /* 校验失败 */
-    }
-  };
-
-  const handleCancel = () => {
-    form.resetFields();
-    onCancel();
+    onSuccess();
   };
 
   return (
-    <Modal
+    <FormModal
       title={isEdit ? '编辑' : '添加'}
       open={open}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      destroyOnClose
-      centered
+      onCancel={onCancel}
+      autoClose
+      okText="确定"
+      cancelText="取消"
+      formProps={{
+        data: editingUser ?? undefined,
+        onSubmit: handleSubmit,
+      }}
+      width={640}
     >
-      <FormFields form={form} showAddFields={showAddFields} />
-    </Modal>
+      <FormFields showAddFields={showAddFields} />
+    </FormModal>
   );
 };
 
-export default FormModal;
+export default ModuleFormModal;
 ```
 
 > **关键模式**：
 >
-> - Form 组件接收 `form` prop（`ReturnType<typeof Form.useForm>[0]`），内部渲染 `<Form form={form}>` + `Form.Item` 字段
-> - Modal 组件通过 `Form.useForm()` 创建表单实例，传给 Form 组件
-> - 校验使用 `form.validateFields()`，提交通过 Modal 的 `onOk` + `confirmLoading`
-> - 校验规则通过 `Form.Item` 的 `rules` 属性配置（如 `[{ required: true, message: '...' }]`）
-> - 取消按钮使用 `Button onClick={onCancel}` 而非 `ResetButton`
+> - Form 组件只渲染 `FormInfo` + `list` 字段（`Input`/`Select` 等从 `@hkyhy/marsun-components-core`），不含提交逻辑
+> - Modal 组件使用 `FormModal`，提交走 `formProps.onSubmit`；初值走 `formProps.data`
+> - 校验用字段 `rule` 字符串（如 `REQ`、`REQ TEL`、`EMAIL`）
+> - 页内非弹窗表单：外层包 `Form` + `SubmitButton` / `ResetButton`
+> - 多步：`FormSteps` / `FormStepsModal`（见 core Form showcase）
+> - 样式由 core 再导出模块侧载，业务无需单独引入 `@kne/form-info` CSS
 
 ## 三、详情展示
 

@@ -41,7 +41,7 @@ src/components/Common/Tag/
 1. **每个组件必须有测试**：新建组件时同步编写测试文件
 2. **纯逻辑优先**：`hasPermission()`、`formatSize()` 等纯函数直接单元测试，不依赖 DOM
 3. **组件测试最小化 mock**：只 mock 外部依赖（`useAuthStore`、`useNavigate` 等），不 mock 组件内部逻辑
-4. **Form 组件测试**：需要用 `Form.useForm()` 创建 form 实例时，通过 Wrapper 组件包裹，禁止在 `it()` 回调中直接调用 Hook
+4. **Form 组件测试**：业务表单以 core 再导出的 FormInfo 为准；若测试存量 antd Form 且需 `Form.useForm()`，通过 Wrapper 组件包裹，禁止在 `it()` 回调中直接调用 Hook
 5. **样式断言**：happy-dom 不自动转换 hex → rgb，行内样式颜色比较时用辅助函数统一格式
 6. **路由组件测试**：需要 `useNavigate`/`useLocation` 的组件用 `MemoryRouter` 包裹
 7. **Store mock**：使用 `vi.mock('@/stores/xxxStore')` + `vi.mocked(useXxxStore).mockReturnValue()`

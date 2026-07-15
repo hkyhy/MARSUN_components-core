@@ -2,7 +2,7 @@
 
 ## 组件大前提
 
-**禁止直接使用原生组件**：不得用 HTML 原生元素（如 `<button>`、`<input>`、`<select>`、`<textarea>` 等）承担 UI 交互；须按组件使用优先级选型：`Common` > `{Domain}/{Module}` > `@kne/*` > `antd`（映射见 [component-mapping.md](../common/component-mapping.md)）。布局容器（`div`/`span`）除外；Form.Item 内使用 antd 字段组件属于规范允许范围。
+**禁止直接使用原生组件**：不得用 HTML 原生元素（如 `<button>`、`<input>`、`<select>`、`<textarea>` 等）承担 UI 交互；须按组件使用优先级选型：`Common` > `{Domain}/{Module}` > `@kne/*` > `antd`（映射见 [component-mapping.md](../common/component-mapping.md)）。布局容器（`div`/`span`）除外；业务表单统一从 `@hkyhy/marsun-components-core` 导入 `FormInfo`/`Input`/`Select`/`TextArea` 等（`rule` 校验），禁止业务直连 `@kne/form-info`，禁止新建 antd `Form` + `Form.Item`（存量未迁移除外）。
 
 ---
 
@@ -29,9 +29,10 @@
 
 ## 决策优先级
 
-| 冲突类型 | 优先依据 |
-| -------- | -------- |
-| 规范 vs 个人习惯 | SKILL.md 核心原则 + references |
-| 规范 vs 临时需求 | 核心原则；若必须破例须说明理由 |
-| 产品体验 vs 实现成本 | 产品主路径优先，MVP 范围内保证体验一致 |
-| UI 美观 vs 现有组件 | 优先复用 Common 组件与主题 Token；滚动区优先 VirtualScrollbar |
+| 冲突类型             | 优先依据                                                                                                                                                                                                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 规范 vs 个人习惯     | SKILL.md 核心原则 + references                                                                                                                                                                                                                                      |
+| 规范 vs 临时需求     | 核心原则；若必须破例须说明理由                                                                                                                                                                                                                                      |
+| 产品体验 vs 实现成本 | 产品主路径优先，MVP 范围内保证体验一致                                                                                                                                                                                                                              |
+| UI 美观 vs 现有组件  | 优先复用 Common 组件与主题 Token；滚动区优先 VirtualScrollbar                                                                                                                                                                                                       |
+| Plane Module 命名    | **各工程线通用**：钉表 SSOT `{id}-{name}`（短横线）；Issue 才用 `{id} · {name}`；禁止 `·` 再建 Module；禁止 `M*` / CREATE 新壳，只挂已有 `P*.*` / `S*.*` keeper（见 [plane-dingtalk-module-rules](../../../da-workflow/references/plane-dingtalk-module-rules.md)） |

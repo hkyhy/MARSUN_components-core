@@ -93,6 +93,11 @@ import {
   PageShellProvider,
   ModulePageShell,
   usePageShellLoading,
+  FormInfo,
+  FormModal,
+  Input,
+  ReactForm,
+  useField,
 } from '@hkyhy/marsun-components-core';
 
 // 业务域 — 留在 maoyang 本地
@@ -156,25 +161,30 @@ import {
   SessionSidebar,
   CitationPanel,
   MessageActions,
-  useChat,
   useCitationPanel,
-  useSSECompletion,
   DocumentTable,
   KnowledgeCard,
+  AgentHubAccessGuard,
 } from '@hkyhy/marsun-components-core';
 ```
 
-| 子模块                 | 主要导出                                                                                                                                                                                                 |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chat / Detail          | `ChatPanel`, `ChatAgentFab`, `ChatAgentFabLayout`, `ChatInput`, `ChatFollowUpSuggestions`, `MessageItem`, `MessageActions`, `CitationPanel`, `CitationInlineBadge`, `ThinkingSection`, `MermaidBlock`, … |
-| Chat / List            | `ChatCard`, `ChatFilterBar`, `SessionSidebar`                                                                                                                                                            |
-| Chat / Action          | `ChatCreateButton`, `ChatManageActionButtons`, `SessionActionButtons`                                                                                                                                    |
-| Chat / hooks           | `useChat`, `useChatSessions`, `useSSECompletion`, `useTypewriter`, `useAutoScrollToBottom`, `useCitationPanel`                                                                                           |
-| Chat / utils           | `prepareCitationContent`, `parseSessionMessages`, `extractCitations`, `sanitizeMermaidChart`, …                                                                                                          |
-| KnowledgeBase / Detail | `DocumentTable`, `ParseStatusTag`                                                                                                                                                                        |
-| KnowledgeBase / List   | `KnowledgeCard`, `KBFilterBar`                                                                                                                                                                           |
-| KnowledgeBase / Action | `CreateButton`, `ManageActionButtons`                                                                                                                                                                    |
-| 守卫                   | `AgentHubAccessGuard`, `AgentHubSessionAccessGuard`, `AgentHubIndexRedirect`                                                                                                                             |
+| 子模块                           | 主要导出                                                                                                                                                                                                                    |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chat / Detail                    | `ChatPanel`, `ChatAgentFab`, `ChatAgentFabLayout`, `ChatInput`, `ChatFollowUpSuggestions`, `MessageItem`, `MessageActions`, `CitationPanel`, `CitationInlineBadge`, `ThinkingSection`, `MermaidBlock`, …                    |
+| Chat / List                      | `ChatCard`, `ChatFilterBar`, `SessionSidebar`                                                                                                                                                                               |
+| Chat / Action                    | `ChatCreateButton`, `ChatManageActionButtons`, `SessionActionButtons`                                                                                                                                                       |
+| Chat / hooks（纯 UI / URL 注入） | `useTypewriter`, `useAutoScrollToBottom`, `useCitationPanel`；另有可选 URL 注入版 `useChat` / `useChatSessions` / `useSSECompletion`（无 BFF 业务语义）                                                                     |
+| Chat / utils                     | `prepareCitationContent`, `parseSessionMessages`, `extractCitations`, `sanitizeMermaidChart`, `animateScrollFromTopToBottom` / `getScrollBottom`（core 源码已导出；npm 未含时业务仓可用 `src/utils/agentHub/smoothScroll`） |
+| KnowledgeBase / Detail           | `DocumentTable`, `ParseStatusTag`                                                                                                                                                                                           |
+| KnowledgeBase / List             | `KnowledgeCard`, `KBFilterBar`                                                                                                                                                                                              |
+| KnowledgeBase / Action           | `CreateButton`, `ManageActionButtons`                                                                                                                                                                                       |
+| 守卫                             | `AgentHubAccessGuard`, `AgentHubSessionAccessGuard`, `AgentHubIndexRedirect`（受控 props：`isAdmin` / `hasAccess` / `redirectTo`）                                                                                          |
+
+**业务仓分层（maoyang 等）**：禁止再维护 `src/components/AgentHub` fork。
+
+- **UI / FormModal / Guard 壳**：从包根 import；`ChatFormModal` / `KBFormModal` 须注入 `onSubmit`（调业务 `agentHubApi`）；路由层用 `authStore` + `agentHubAccess` 计算后传入 Guard props（见 `pages/AgentHub/guards.tsx`）。
+- **业务 hooks**：放 `src/hooks/AgentHub/`（`useChatSessions` 含 RAGFlow 回退 / create·delete·initialize / 竞态；`useSSECompletion` 若对核心信封格式与 core 不一致则必须留业务仓）。
+- **鉴权路径**：`utils/agentHubAccess`、`constants/agentHub` 留业务仓。
 
 **`ChatPanel` 推荐问接入（业务层只传数据，编排由 core 负责）**
 
@@ -306,20 +316,51 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | 带加载按钮               | `LoadingButton`                                                     | `Button` + 手动 `loading`          |
 | 请求按钮                 | `FetchButton`                                                       | `LoadingButton` + 手动请求         |
 
-### antd 原生 Form
+### Form 表单（`@kne/form-info`，经 core 再导出）
 
-| 组件                                       | 说明                                 |
-| ------------------------------------------ | ------------------------------------ |
-| `Form.useForm()`                           | 创建表单实例，返回 `[form]`          |
-| `<Form form={form} layout="vertical">`     | 表单容器                             |
-| `<Form.Item name label rules>`             | 表单字段容器，`rules` 为校验规则数组 |
-| `<Input>` / `<Select>` / `<TreeSelect>` 等 | antd 原生字段组件，放在 Form.Item 内 |
-| `form.validateFields()`                    | 触发校验并返回表单数据               |
-| `form.setFieldsValue()`                    | 设置表单值（编辑时初始化）           |
-| `form.resetFields()`                       | 重置表单                             |
-| `Form.useWatch()`                          | 监听某个字段的值变化                 |
+业务**只**从 `@hkyhy/marsun-components-core` 导入；core 内部依赖并再导出 `@kne/form-info`（含样式侧载）。**禁止**业务直连 `@kne/form-info` / 手写 `import '@kne/form-info/dist/index.css'`。
 
-**校验规则**：`rules={[{ required: true, message: '不能为空' }]}`、`[{ type: 'email', message: '格式不正确' }]}`
+```ts
+// 日常业务（默认）
+import {
+  FormInfo,
+  Form,
+  FormModal,
+  Input,
+  TextArea,
+  SubmitButton,
+} from '@hkyhy/marsun-components-core';
+
+// 引擎进阶（深度自定义字段 / 联动）
+import { ReactForm, useField, useFormApi, GroupList } from '@hkyhy/marsun-components-core';
+```
+
+必填星号等依赖主题别名 `--color-warning`（映射 `--error-color`，见 [theme.md](theme.md)）。
+
+| 组件                                                          | 说明                                                    |
+| ------------------------------------------------------------- | ------------------------------------------------------- |
+| `Form`                                                        | 页内表单容器（form-info）；`data` 初值、`onSubmit` 提交 |
+| `FormInfo`                                                    | 分组布局；`column` / `list` 放置字段                    |
+| `FormModal`                                                   | 弹窗表单；`formProps={{ data, onSubmit }}`              |
+| `FormSteps` / `FormStepsModal`                                | 多步向导（新业务替代 antd `StepForm`）                  |
+| `List` / `TableList` / `MultiField`                           | 动态列表 / 表格行 / 多值字段                            |
+| `Input` / `TextArea` / `Select` / `InputNumber` / `Switch` 等 | 字段组件                                                |
+| `SubmitButton` / `ResetButton` / `CancelButton`               | 表单操作按钮                                            |
+| 字段 `rule`                                                   | 校验字符串，如 `REQ`、`REQ TEL`、`EMAIL`、`ID_CARD`     |
+
+**存量**：未迁移模块可暂留 antd `Form.useForm` + `Form.Item`；**新模块、新表单必须走 core 再导出的 FormInfo 栈**。`FetchSelect` / `FetchTreeSelect` / `PersonOptionRow` 仍为 core 字段辅助。
+
+**引擎层（进阶，经 core 再导出 `@kne/react-form`）**：日常优先 FormInfo；深度自定义时从 core 导入下表 API，**禁止**业务直连 `@kne/react-form`。引擎默认组件名为 **`ReactForm`**（勿与 form-info 的 `Form` 混淆）。
+
+| API                                          | 说明                                      |
+| -------------------------------------------- | ----------------------------------------- |
+| `ReactForm`                                  | 引擎根容器；`data` / `onSubmit` / `rules` |
+| `useField`                                   | 字段绑定（自绘 UI 时用）                  |
+| `useFormApi` / `useFormContext`              | 读写表单、`validateAll` 等                |
+| `useSubmit` / `useReset` / `useGroup`        | 提交、重置、分组上下文                    |
+| `GroupList`                                  | 动态分组增删                              |
+| `RULES` / `preset` / `interceptors`          | 内置规则、预置、拦截器                    |
+| `findField` / `matchFields` / `formUtils` 等 | 工具方法                                  |
 
 ## 六、antd 重构为 Common 的条件
 
