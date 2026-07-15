@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.29
+  next_task_id: P6.3.30
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -400,3 +400,16 @@ tasks:
   - frontend
   - agent-hub
   note: 包根导出 animateScrollFromTopToBottom / getScrollBottom / animateScrollTo，供业务仓 Session 滚动复用
+- id: P6.3.29
+  milestone: P6.3
+  name: FormInfo/ReactForm 经 core 再导出与示例
+  status: 已完成
+  priority: P1
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-15'
+  target_date: '2026-07-15'
+  tags:
+  - frontend
+  - form
+  note: kneFormInfo/kneReactForm；InputNumber/Switch；主题 --color-warning；PageSpin classNames.root；Form 示例与 frontend-dev-spec；Plane Issue d5748dc4-04b7-414d-ad15-a221b3f28be1
