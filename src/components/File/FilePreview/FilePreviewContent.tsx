@@ -133,13 +133,7 @@ const FilePreviewContent: React.FC<FilePreviewContentProps> = ({
   }
 
   if (kind === 'pdf' || kind === 'iframe') {
-    return (
-      <iframe
-        src={previewUrl}
-        title={file.name}
-        className={styles['file-preview-iframe']}
-      />
-    );
+    return <iframe src={previewUrl} title={file.name} className={styles['file-preview-iframe']} />;
   }
 
   if (kind === 'video') {
@@ -164,9 +158,15 @@ const FilePreviewContent: React.FC<FilePreviewContentProps> = ({
 
   if (needsBlobPreview(kind)) {
     return (
-      <div className={classNames(styles['file-preview-office'], styles['file-preview-office-wrap'])}>
-        <Spin spinning={loading} wrapperClassName={styles['file-preview-office-spin']}>
-          {error ? <Empty description={error} /> : <div ref={containerRef} className={styles['file-preview-office-inner']} />}
+      <div
+        className={classNames(styles['file-preview-office'], styles['file-preview-office-wrap'])}
+      >
+        <Spin spinning={loading} classNames={{ root: styles['file-preview-office-spin'] }}>
+          {error ? (
+            <Empty description={error} />
+          ) : (
+            <div ref={containerRef} className={styles['file-preview-office-inner']} />
+          )}
         </Spin>
       </div>
     );

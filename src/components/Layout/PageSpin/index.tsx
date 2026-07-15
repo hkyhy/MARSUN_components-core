@@ -11,7 +11,7 @@ export type PageSpinProps = {
 
 /** 模块页 body 区整页 Spin：参与 flex 高度链，遮罩 Filter + 主工作区 */
 const PageSpin: React.FC<PageSpinProps> = ({ spinning, children, className }) => (
-  <Spin spinning={spinning} wrapperClassName={classNames(styles['page-spin'], className)}>
+  <Spin spinning={spinning} classNames={{ root: classNames(styles['page-spin'], className) }}>
     {children}
   </Spin>
 );

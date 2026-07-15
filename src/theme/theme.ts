@@ -333,6 +333,13 @@ export function applyThemeToCssVariables(primaryColor: string): void {
   root.style.setProperty('--error-color', PALETTE.error);
   root.style.setProperty('--warning-color', PALETTE.warning);
 
+  // @kne/* 兼容别名（form-info 必填星号用 --color-warning，对齐主题红）
+  root.style.setProperty('--color-primary', primaryColor);
+  root.style.setProperty('--color-success', PALETTE.success);
+  root.style.setProperty('--color-info', PALETTE.info);
+  root.style.setProperty('--color-error', PALETTE.error);
+  root.style.setProperty('--color-warning', PALETTE.error);
+
   root.style.setProperty('--layout-header-height', LAYOUT_TOKENS.headerHeight);
   root.style.setProperty('--layout-sider-width', LAYOUT_TOKENS.siderWidth);
 
@@ -390,6 +397,11 @@ export function applyThemeToCssVariables(primaryColor: string): void {
   setColorVariants(root, 'info-color', PALETTE.info);
   setColorVariants(root, 'error-color', PALETTE.error);
   setColorVariants(root, 'warning-color', PALETTE.warning);
+
+  // kne form-info：--primary-color-06 / --primary-color-5
+  const { r, g, b } = hexToRgb(primaryColor);
+  root.style.setProperty('--primary-color-06', `rgba(${r}, ${g}, ${b}, 0.06)`);
+  root.style.setProperty('--primary-color-5', `rgba(${r}, ${g}, ${b}, 0.20)`);
 }
 
 /** 项目级 CSS 变量覆盖（在 applyThemeToCssVariables 之后调用） */

@@ -11,6 +11,18 @@
   --error-color: #d14343;
   --warning-color: #f09700;
 
+  /*
+   * @kne/*（如 form-info）兼容别名：映射现有语义色，不另起色板。
+   * --color-warning：kne 用于必填星号等，语义为红 → 对齐 --error-color（非橙 warning）
+   */
+  --color-primary: var(--primary-color);
+  --color-success: var(--success-color);
+  --color-info: var(--info-color);
+  --color-error: var(--error-color);
+  --color-warning: var(--error-color);
+  --primary-color-06: var(--primary-color-bg);
+  --primary-color-5: var(--primary-color-border);
+
   /* 布局 */
   --layout-header-height: 56px;
   --layout-sider-width: 220px;

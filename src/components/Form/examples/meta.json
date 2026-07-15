@@ -1,22 +1,95 @@
 {
   "title": "Form 表单组件",
-  "description": "泛化选择控件与步骤表单，支持 props 数据或 fetchUrl + transformData。",
+  "description": "业务表单经 @hkyhy/marsun-components-core 再导出：日常用 FormInfo 栈；引擎用 ReactForm / useField / useFormApi / GroupList 等。禁止业务直连 @kne/form-info、@kne/react-form。FetchSelect、FetchTreeSelect、StepForm 为字段辅助或存量能力。",
   "examples": [
     {
-      "title": "FetchTreeSelect",
-      "description": "树形选择：props 传入 treeData，或 fetchUrl + transformData",
+      "title": "基础表单 FormInfo",
+      "description": "业务标准（从 core 导入）：Form + FormInfo 多列布局、rule 校验、SubmitButton / ResetButton",
+      "component": "@/components/Form/examples/FormInfoBaseDemo",
+      "sourcePath": "@/components/Form/examples/FormInfoBaseDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "弹窗 FormModal",
+      "description": "业务标准：FormModal + formProps.onSubmit，编辑场景自动关闭",
+      "component": "@/components/Form/examples/FormInfoModalDemo",
+      "sourcePath": "@/components/Form/examples/FormInfoModalDemo/index.tsx"
+    },
+    {
+      "title": "动态列表 List / MultiField",
+      "description": "业务标准：List 动态增减分组；MultiField 多值字段",
+      "component": "@/components/Form/examples/FormInfoListDemo",
+      "sourcePath": "@/components/Form/examples/FormInfoListDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "表格列表 TableList",
+      "description": "业务标准：TableList 表格行增删",
+      "component": "@/components/Form/examples/FormInfoTableListDemo",
+      "sourcePath": "@/components/Form/examples/FormInfoTableListDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "步骤表单 FormSteps",
+      "description": "业务标准：FormSteps 多步向导（页内）",
+      "component": "@/components/Form/examples/FormInfoStepsDemo",
+      "sourcePath": "@/components/Form/examples/FormInfoStepsDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "步骤弹窗 FormStepsModal",
+      "description": "业务标准：FormStepsModal 多步弹窗（新业务替代 antd StepForm）",
+      "component": "@/components/Form/examples/FormInfoStepsModalDemo",
+      "sourcePath": "@/components/Form/examples/FormInfoStepsModalDemo/index.tsx"
+    },
+    {
+      "title": "ReactForm 基础引擎",
+      "description": "引擎（从 core 导入 ReactForm / useField）：绑定 antd Input，rule 校验与提交/重置",
+      "component": "@/components/Form/examples/ReactFormBaseDemo",
+      "sourcePath": "@/components/Form/examples/ReactFormBaseDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "ReactForm useFormApi",
+      "description": "引擎（从 core 导入）：表单内 useFormApi 读写数据、手动校验",
+      "component": "@/components/Form/examples/ReactFormApiDemo",
+      "sourcePath": "@/components/Form/examples/ReactFormApiDemo/index.tsx"
+    },
+    {
+      "title": "ReactForm GroupList",
+      "description": "引擎（从 core 导入）：GroupList 动态增减分组字段",
+      "component": "@/components/Form/examples/ReactFormGroupListDemo",
+      "sourcePath": "@/components/Form/examples/ReactFormGroupListDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "ReactForm 字段关联",
+      "description": "引擎（从 core 导入）：associations 多字段联动与计算",
+      "component": "@/components/Form/examples/ReactFormAssociationsDemo",
+      "sourcePath": "@/components/Form/examples/ReactFormAssociationsDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "ReactForm 远程校验",
+      "description": "引擎（从 core 导入）：自定义异步 rules（模拟远程唯一性校验）",
+      "component": "@/components/Form/examples/ReactFormRemoteRuleDemo",
+      "sourcePath": "@/components/Form/examples/ReactFormRemoteRuleDemo/index.tsx"
+    },
+    {
+      "title": "FetchTreeSelect（字段辅助）",
+      "description": "存量/字段辅助：树形选择 props treeData，或 fetchUrl + transformData",
       "component": "@/components/Form/examples/FetchTreeSelectDemo",
       "sourcePath": "@/components/Form/examples/FetchTreeSelectDemo/index.tsx"
     },
     {
-      "title": "FetchSelect",
-      "description": "下拉选择：props 传入 options，或 fetchUrl + transformData",
+      "title": "FetchSelect（字段辅助）",
+      "description": "存量/字段辅助：下拉选择 props options，或 fetchUrl + transformData",
       "component": "@/components/Form/examples/FetchSelectDemo",
       "sourcePath": "@/components/Form/examples/FetchSelectDemo/index.tsx"
     },
     {
-      "title": "步骤式表单弹窗",
-      "description": "StepForm 在 StepModal 基础上集成 Form 校验",
+      "title": "StepForm（存量）",
+      "description": "存量：antd StepForm + StepModal；新业务请用 FormSteps / FormStepsModal",
       "component": "@/components/Form/examples/StepFormDemo",
       "sourcePath": "@/components/Form/examples/StepFormDemo/index.tsx",
       "block": true
@@ -24,12 +97,102 @@
   ],
   "apiDoc": [
     {
+      "componentName": "FormInfo",
+      "rows": [
+        { "prop": "title", "desc": "分组标题", "type": "string | ReactNode" },
+        { "prop": "subtitle", "desc": "副标题", "type": "string | ReactNode" },
+        { "prop": "column", "desc": "列数或 Flex 配置", "type": "number | object", "default": "2" },
+        { "prop": "gap", "desc": "字段间距", "type": "number", "default": "24" },
+        {
+          "prop": "list",
+          "desc": "表单项列表（Input/TextArea/Select/InputNumber/Switch 等）",
+          "type": "ReactNode[]"
+        }
+      ]
+    },
+    {
+      "componentName": "FormModal",
+      "rows": [
+        { "prop": "open", "desc": "是否显示", "type": "boolean" },
+        { "prop": "title", "desc": "弹窗标题", "type": "ReactNode" },
+        { "prop": "onCancel", "desc": "关闭回调", "type": "() => void" },
+        {
+          "prop": "formProps",
+          "desc": "表单：data / onSubmit 等",
+          "type": "{ data?, onSubmit?, ... }"
+        },
+        { "prop": "autoClose", "desc": "提交成功后自动关闭", "type": "boolean" },
+        { "prop": "children", "desc": "通常为 FormInfo / List", "type": "ReactNode" }
+      ]
+    },
+    {
+      "componentName": "FormSteps / FormStepsModal",
+      "rows": [
+        { "prop": "items", "desc": "步骤：title + formProps + children", "type": "StepItem[]" },
+        { "prop": "autoStep", "desc": "提交后自动进入下一步", "type": "boolean" },
+        { "prop": "onComplete", "desc": "全部步骤完成回调", "type": "(data) => void" },
+        { "prop": "modalProps", "desc": "仅 FormStepsModal：open/title/onCancel", "type": "object" }
+      ]
+    },
+    {
+      "componentName": "List / TableList / MultiField",
+      "rows": [
+        { "prop": "name", "desc": "列表字段名", "type": "string" },
+        { "prop": "title", "desc": "列表标题", "type": "ReactNode" },
+        { "prop": "list", "desc": "每项字段", "type": "ReactNode[]" },
+        { "prop": "addText", "desc": "添加按钮文案", "type": "string" },
+        { "prop": "field", "desc": "仅 MultiField：单项组件", "type": "ComponentType" }
+      ]
+    },
+    {
+      "componentName": "ReactForm 引擎（core 再导出）",
+      "rows": [
+        {
+          "prop": "ReactForm",
+          "desc": "引擎根容器（非 FormInfo 的 Form）；data / onSubmit / rules",
+          "type": "FC"
+        },
+        {
+          "prop": "useField",
+          "desc": "字段绑定：value / onChange / rule / errMsg",
+          "type": "Hook"
+        },
+        {
+          "prop": "useFormApi / useFormContext",
+          "desc": "表单内 openApi：读写/校验",
+          "type": "Hook"
+        },
+        { "prop": "useSubmit / useReset", "desc": "提交与重置", "type": "Hook" },
+        { "prop": "useGroup", "desc": "当前分组上下文", "type": "Hook" },
+        { "prop": "GroupList", "desc": "动态分组增删", "type": "FC" },
+        {
+          "prop": "RULES / preset / interceptors",
+          "desc": "内置规则、预置、拦截器",
+          "type": "object / fn"
+        },
+        { "prop": "associations", "desc": "字段联动配置（字段 props）", "type": "object" },
+        {
+          "prop": "rules",
+          "desc": "自定义校验（可异步，ReactForm props）",
+          "type": "Record<string, RuleFn>"
+        }
+      ]
+    },
+    {
       "componentName": "FetchTreeSelectProps",
       "rows": [
         { "prop": "treeData", "desc": "props 模式树数据（优先）", "type": "TreeNodeOption[]" },
         { "prop": "fetchUrl", "desc": "fetch 模式 URL", "type": "string" },
-        { "prop": "transformData", "desc": "将 API 响应转为 treeData", "type": "(raw: unknown) => TreeNodeOption[]" },
-        { "prop": "...TreeSelectProps", "desc": "继承 antd TreeSelect", "type": "Omit<TreeSelectProps, 'treeData' | 'loading'>" }
+        {
+          "prop": "transformData",
+          "desc": "将 API 响应转为 treeData",
+          "type": "(raw: unknown) => TreeNodeOption[]"
+        },
+        {
+          "prop": "...TreeSelectProps",
+          "desc": "继承 antd TreeSelect",
+          "type": "Omit<TreeSelectProps, 'treeData' | 'loading'>"
+        }
       ]
     },
     {
@@ -37,7 +200,11 @@
       "rows": [
         { "prop": "options", "desc": "props 模式选项（优先）", "type": "SelectOptionItem[]" },
         { "prop": "fetchUrl", "desc": "fetch 模式 URL", "type": "string" },
-        { "prop": "transformData", "desc": "将 API 响应转为 options", "type": "(raw: unknown) => SelectOptionItem[]" }
+        {
+          "prop": "transformData",
+          "desc": "将 API 响应转为 options",
+          "type": "(raw: unknown) => SelectOptionItem[]"
+        }
       ]
     }
   ]
