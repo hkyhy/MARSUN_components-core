@@ -24,6 +24,7 @@ description: |
 权威细则：
 
 - Commit 格式：[references/commit-format.md](references/commit-format.md)
+- Task ID 与台账登记：[references/task-naming.md](references/task-naming.md)
 - 钉钉层级命名：[references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md)
 - 钉表 Module 写保护：[references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md)
 - Plane 负责人映射：[references/plane-team-assignees.md](references/plane-team-assignees.md)
@@ -110,7 +111,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 # 非交互：--confirm-token <token>（用户明确同意后）
 ```
 
-硬约束：不得在用户未确认前带 `--confirm-token` sync；不得 Plane DELETE / 删 YAML id；**merged milestone dry-run 须 CREATE module = 0**（见 [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)）。
+硬约束：不得在用户未确认前带 `--confirm-token` sync；不得 Plane DELETE / 删 YAML id；**merged milestone dry-run 须 CREATE module = 0**；**各项目**不得登记 `milestone: M*`（`my-plane` 除外），只挂钉表 `P*.*` / `S*.*`；dry-run 出现 CREATE `M*` / middot Module → **硬停止**（见 [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)）。
 
 详文：[references/pm-sync.md](references/pm-sync.md)
 
@@ -123,7 +124,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 | [work-record](../work-record/SKILL.md)                                                                    | 六步闭环步骤 5：追加事项进展                     |
 | [weekly-report](../weekly-report/SKILL.md)                                                                | 写周报时采集 git log + sync_manifest             |
 | [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md)                   | repos 子仓库 commit 前 `repo-commit-context.mjs` |
-| [frontend-dev-spec/task-naming](../frontend-dev-spec/references/common/task-naming.md)                    | Task ID 编码与 sync_manifest 登记                |
+| [task-naming](references/task-naming.md)                                                                  | Task ID 编码与 sync_manifest 登记                |
 | [dingtalk-hierarchy-naming](references/dingtalk-hierarchy-naming.md)                                      | 钉表层级契约、双轨 ID、仓库 milestone 速查       |
 | [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)                                  | merged 模块写保护、dry-run 0 CREATE module       |
 | [plane-team-assignees](references/plane-team-assignees.md)                                                | owner → Plane assignee 映射                      |
@@ -155,6 +156,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 ## 延伸阅读
 
 - [references/commit-format.md](references/commit-format.md) — Conventional Commits + Task 行
+- [references/task-naming.md](references/task-naming.md) — Task ID、台账字段与登记 checklist
 - [references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md) — 钉表层级与双轨 ID
 - [references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md) — 钉表 Module SSOT 与写保护
 - [references/plane-team-assignees.md](references/plane-team-assignees.md) — 负责人 Plane 邮箱映射

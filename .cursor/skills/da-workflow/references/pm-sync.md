@@ -35,14 +35,17 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - preflight exit 3 → HITL 停下，用户补 API Key / `project_id`
 - **`origin: merged` milestone：dry-run CREATE module 须为 0**（否则停止 sync，见 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)）
 - **禁止** pm sync 私自 CREATE 与钉表同名的 Module（`M001`/`M002` 等历史 id 已废弃）
+- **全项目**：台账不得登记 `milestone: M*`（`my-plane` 除外）；只挂钉表 `P*.*` / `S*.*` keeper
+- **脚本硬拦**：`sync_preview` / `validate_manifest` 对 CREATE `M*` 或含 `·` 的 Module **fail**，无 confirm-token
 
 ## dry-run 门槛（merged 仓库）
 
-| 检查项        | 预期            | 失败处理                                     |
-| ------------- | --------------- | -------------------------------------------- |
-| CREATE module | **0**           | 改 milestones 绑定 dingtalk；清理误建 Module |
-| CREATE 任务   | 仅新登记 id     | 先 reconcile 再登记                          |
-| PATCH 模块名  | **0**（merged） | 检查 sync 写保护是否生效                     |
+| 检查项                      | 预期            | 失败处理                                     |
+| --------------------------- | --------------- | -------------------------------------------- |
+| CREATE module               | **0**           | 改 milestones 绑定 dingtalk；清理误建 Module |
+| CREATE `M*` / middot Module | **硬失败**      | 删 YAML `M*` 行；清壳后挂对应钉表 Module     |
+| CREATE 任务                 | 仅新登记 id     | 先 reconcile 再登记                          |
+| PATCH 模块名                | **0**（merged） | 检查 sync 写保护是否生效                     |
 
 ## 负责人与日期
 
