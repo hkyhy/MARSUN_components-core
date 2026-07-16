@@ -46,7 +46,7 @@ node scripts/sync-frontend-dev-spec.mjs --pull-from repos/maoyang_data-asset-sys
 
 1. shared 变更：marsun_arch 与子仓库**分别** `docs(spec)` commit，不与业务混 commit。
 2. **禁止**只在子仓库改 shared 而不 `--pull-from` 回写权威源。
-3. commit 前：`node scripts/repo-commit-context.mjs --repo <name>`；Task id 见 [task-naming.md](task-naming.md)（新任务用钉钉层级 `S3.3.*`、`P3.2.*`、`P6.11.*` 等；历史 id 勿 rename）。
+3. commit 前：`node scripts/repo-commit-context.mjs --repo <name>`；Task id 见 [da-workflow/task-naming](../../../da-workflow/references/task-naming.md)（新任务用钉钉层级 `S3.3.*`、`P3.2.*`、`P6.11.*` 等；历史 id 勿 rename）。
 4. Plane sync：`da pm dry-run` → 审 preview → sync。
 
 ## 自动同步

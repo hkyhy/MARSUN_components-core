@@ -86,7 +86,7 @@
 - [ ] 图标均从 `@hkyhy/marsun-components-core` 导入，业务代码无 `lucide-react`
 - [ ] 权限/常量/API 符合 `business/permissions-data.md` 与 `business/routing-api.md`
 - [ ] 筛选 state 接入 API，Filter label 语义化（禁止「关键词」抽象 label）；部门/人员符合 `business/department-person.md`
-- [ ] 筛选项加载失败：`message.error` 友好文案（禁止 HTTP 状态码/raw）；失败后筛选栏仍渲染、options 空走 Empty；默认分厂来自 meta 首项，禁止硬编码 `1001`（见 [filter.md](../common/filter.md) §5.9）
+- [ ] 筛选项加载态与失败：`metaLoading` 时筛选栏仍占位（禁 `return null`）；失败仅 `message.error` + 空数据 Empty（禁内联错误区 / HTTP raw）；筛选优先挂 `ModulePageShell` `toolbar`；默认分厂来自 meta 首项，禁止硬编码 `1001`（见 [filter.md](../common/filter.md) §5.9、[page-loading.md](../common/page-loading.md)）
 - [ ] 带操作的列表/表单块使用 `InteractiveBlock`：info 用 `Info` + `TooltipInfo`（cursor pointer）；actions icon 与文字同色、导出用 `Download`
 - [ ] workarea 少 border：列表项用背景块 + gap，禁止 border-bottom 分割线（§8.11）
 - [ ] Tooltip 详情用 TooltipInfo，长 ID 类字段须 `minWidth: 220` 且 content 可换行

@@ -68,7 +68,7 @@ description: |
 33. **模块主区扁平布局** `(business)`：`ModulePageShell` 已提供 `title`/`description` 时，**禁止**再传与 title 重复的 `breadcrumb`；主内容 workarea **禁止**双层 card（外层 border + 内层 padding）。主区用 `ContentCard flat` 或等价 `flex:1` 容器；Tabs/Table 内容区 `width:100%`；页脚主操作按钮默认 **非 block**（Drawer/窄容器可用 `saveBlock`）。详见 [styles.md](references/common/styles.md)「模块 workarea 扁平化」
 34. **非业务代码进 core** `(common)`：新建或修改 `src/utils/**` 前 **MUST** 查 `@hkyhy/marsun-components-core` 包根导出（见 [component-mapping.md](references/common/component-mapping.md) npm Utils 表）。**已存在于 core 的函数禁止在业务项目再写同名/同义 `src/utils/*.ts` 文件**；直接从包 import（如 `toDateTimeRange`、`recentDayRangeStrings`）。纯函数、无项目 API/store/业务枚举 → 写 core；含 zustand、业务 API、领域常量 → 留业务项目。仅允许薄配置层（`request.ts`、`Files/download.ts` 注入 token）。core 新增导出须同步 `src/index.ts` + component-mapping + 升版发布
 35. **Filter label 语义化** `(common)`：`FilterInput`/`FilterSelect`/`FilterDateRange` 的 `label` 禁止使用「关键词」等抽象词，须用字段业务语义（可与 placeholder 相同）。见 [filter.md](references/common/filter.md) §5.1.1
-36. **筛选项加载失败与默认值** `(common)`：选项接口失败用 `message.error` 友好文案（如「筛选加载失败」），**禁止**拼接 HTTP 状态码/raw 异常；**禁止**内联错误区替换筛选栏；失败后筛选栏仍渲染，options 为空走 Empty；**默认选中须来自 meta/options**（如首项分厂），**禁止**硬编码工厂 code（如 `1001`）。见 [filter.md](references/common/filter.md) §5.9
+36. **筛选项加载态与失败** `(common)`：**loading 亦须占位渲染**（禁止 `metaLoading → return null` / 整栏隐藏）；失败仅 `message.error` 友好文案（禁止拼接 HTTP/raw），**禁止**内联错误区；失败后仍渲染、options 为空走 Empty；筛选优先挂 `ModulePageShell` `toolbar`（Spin 外）；**默认选中须来自 meta/options**，**禁止**硬编码工厂 code（如 `1001`）。见 [filter.md](references/common/filter.md) §5.9、[page-loading.md](references/common/page-loading.md)
 37. **InteractiveBlock 内容块** `(common)`：title → **Info** icon + `TooltipInfo`（禁止 `CircleHelp`）→ actions（字号 ≤ title）；**tags 紧贴 subtitle**（inline/below），**禁止**在 description 之后；可点击块勿用 `<button>` 包裹 Tooltip；见 [content-layout.md](references/common/content-layout.md)
 38. **少 border 布局** `(common)`：模块 workarea 少 panel border；**列表项用 theme 背景块 + gap**，禁止 `border-bottom` 线分割。见 [styles.md](references/common/styles.md) §8.11
 39. **InteractiveBlock action 尺寸** `(common)`：link 操作字号不得大于 title（title 14px / actions 12px，icon 14px）；icon 颜色与 link 文字一致；导出用 `Download`；info trigger `cursor: pointer`
@@ -115,23 +115,23 @@ description: |
 
 ### 场景速查
 
-| 场景                    | 先读                                       | 再读                                 |
-| ----------------------- | ------------------------------------------ | ------------------------------------ |
-| 接新需求 / 改交互       | prompts/mindset → requirement-workflow     | 按任务选 common/business             |
-| 新建业务模块            | business/module-patterns                   | common/directory-structure           |
-| 筛选项 / 部门人员       | common/filter + business/department-person | filter §5.9（失败 message + 仍渲染） |
-| 权限 / 批量操作         | business/permissions-data                  | —                                    |
-| 主题 / Tag 颜色         | common/theme + common/component-mapping    | common/styles                        |
-| 滚动区 / Layout 接入    | common/virtual-scrollbar                   | —                                    |
-| 模块页 loading          | common/page-loading                        | common/component-mapping             |
-| 组件 Demo               | common/examples                            | —                                    |
-| 非 prod 组件展示切换    | common/examples §8.8 + routing-api §13.5   | SKILL.md #40                         |
-| 新增/变更组件           | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow |
-| 样式 / className / SCSS | common/styles                              | common/naming                        |
-| 模块 workarea 扁平布局  | common/styles §8.10                        | SKILL.md #33                         |
-| 写测试                  | common/testing                             | —                                    |
-| 新建仓库 / 缺 lint      | common/code-formatting                     | —                                    |
-| 修改规范 / 同步子仓库   | common/skills-sync                         | —                                    |
+| 场景                    | 先读                                       | 再读                                                    |
+| ----------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| 接新需求 / 改交互       | prompts/mindset → requirement-workflow     | 按任务选 common/business                                |
+| 新建业务模块            | business/module-patterns                   | common/directory-structure                              |
+| 筛选项 / 部门人员       | common/filter + business/department-person | filter §5.9（loading 占位 + 失败 message + 空 options） |
+| 权限 / 批量操作         | business/permissions-data                  | —                                                       |
+| 主题 / Tag 颜色         | common/theme + common/component-mapping    | common/styles                                           |
+| 滚动区 / Layout 接入    | common/virtual-scrollbar                   | —                                                       |
+| 模块页 loading          | common/page-loading                        | common/component-mapping                                |
+| 组件 Demo               | common/examples                            | —                                                       |
+| 非 prod 组件展示切换    | common/examples §8.8 + routing-api §13.5   | SKILL.md #40                                            |
+| 新增/变更组件           | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow                    |
+| 样式 / className / SCSS | common/styles                              | common/naming                                           |
+| 模块 workarea 扁平布局  | common/styles §8.10                        | SKILL.md #33                                            |
+| 写测试                  | common/testing                             | —                                                       |
+| 新建仓库 / 缺 lint      | common/code-formatting                     | —                                                       |
+| 修改规范 / 同步子仓库   | common/skills-sync                         | —                                                       |
 
 ## 同步到 repos 子仓库
 

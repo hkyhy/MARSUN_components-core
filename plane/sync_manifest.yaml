@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.30
+  next_task_id: P6.3.32
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -413,3 +413,29 @@ tasks:
   - frontend
   - form
   note: kneFormInfo/kneReactForm；InputNumber/Switch；主题 --color-warning；PageSpin classNames.root；Form 示例与 frontend-dev-spec；Plane Issue d5748dc4-04b7-414d-ad15-a221b3f28be1
+- id: P6.3.30
+  milestone: P6.3
+  name: 同步 frontend-dev-spec（含筛选 loading/失败）
+  status: 进行中
+  priority: P1
+  kind: docs
+  owner: 黄金芳
+  start_date: '2026-07-16'
+  target_date: '2026-07-16'
+  tags:
+  - 规范
+  - frontend
+  note: skills 镜像；对齐 arch P6.11.21–22
+- id: P6.3.31
+  milestone: P6.3
+  name: 同步 da-workflow / marsun-arch-doc-spec 镜像
+  status: 进行中
+  priority: P1
+  kind: docs
+  owner: 黄金芳
+  start_date: '2026-07-16'
+  target_date: '2026-07-16'
+  tags:
+  - 规范
+  - plane
+  note: 含新增 task-naming.md；对齐 arch P6.11.23

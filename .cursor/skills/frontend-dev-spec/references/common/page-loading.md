@@ -4,12 +4,12 @@
 
 ## 何时使用
 
-| 场景 | 做法 |
-| ---- | ---- |
+| 场景                        | 做法                                                                             |
+| --------------------------- | -------------------------------------------------------------------------------- |
 | App 级顶栏 + 模块 body 分区 | 根 Layout 包 `PageShellProvider`；页面用 `ModulePageShell` 或 `PageHeaderLayout` |
-| 页面 hook 聚合 loading | `ModulePageShell spinning={pageLoading}` |
-| 深层子组件（列表/报表） | `usePageShellLoading(loading)`，**不传** `spinning` |
-| Modal / 全屏 overlay | 放在 `ModulePageShell` **外**（同页 fragment），避免被 Spin 遮罩 |
+| 页面 hook 聚合 loading      | `ModulePageShell spinning={pageLoading}`                                         |
+| 深层子组件（列表/报表）     | `usePageShellLoading(loading)`，**不传** `spinning`                              |
+| Modal / 全屏 overlay        | 放在 `ModulePageShell` **外**（同页 fragment），避免被 Spin 遮罩                 |
 
 ## 组件与导出
 
@@ -24,13 +24,13 @@ import {
 } from '@hkyhy/marsun-components-core';
 ```
 
-| 符号 | 职责 |
-| ---- | ---- |
-| `PageShellProvider` | App Layout 根节点包裹（与 `MarsunCoreProvider` 同级或在内侧） |
-| `PageSpin` | antd Spin + flex 高度链；一般 **不** 在页面手写，由 Shell/HeaderLayout 内置 |
-| `ModulePageShell` | toolbar/breadcrumb 在 Spin 外；body 内置 PageSpin |
-| `PageHeaderLayout` | 经典页头 + body 内置 PageSpin |
-| `usePageShellLoading` | 深层注册 loading，卸载自动清除 |
+| 符号                  | 职责                                                                        |
+| --------------------- | --------------------------------------------------------------------------- |
+| `PageShellProvider`   | App Layout 根节点包裹（与 `MarsunCoreProvider` 同级或在内侧）               |
+| `PageSpin`            | antd Spin + flex 高度链；一般 **不** 在页面手写，由 Shell/HeaderLayout 内置 |
+| `ModulePageShell`     | toolbar/breadcrumb 在 Spin 外；body 内置 PageSpin                           |
+| `PageHeaderLayout`    | 经典页头 + body 内置 PageSpin                                               |
+| `usePageShellLoading` | 深层注册 loading，卸载自动清除                                              |
 
 ## 接入模式
 
@@ -43,9 +43,11 @@ import {
   <Outlet />
 </PageShellProvider>
 
-// pages/Alerts/index.tsx
-<ModulePageShell spinning={pageLoading} toolbar={...}>
-  <GlobalFilterBar suppressLoadingText ... />
+// pages/Alerts/index.tsx — 筛选挂 toolbar（Spin 外），始终占位
+<ModulePageShell
+  spinning={pageLoading}
+  toolbar={<GlobalFilterBar meta={meta} metaLoading={metaLoading} ... />}
+>
   <WorkArea ... />
 </ModulePageShell>
 <AnalyzeModal ... />  {/* shell 外 */}
@@ -84,12 +86,13 @@ const pageLoading = metaLoading || listLoading || detailLoading;
 - **子组件层**：仅 `usePageShellLoading`
 - **禁止** 同一页面同时传 `spinning` 与 `usePageShellLoading` 表达同一 loading（避免双源）
 
-## 与 GlobalFilterBar 协同
+## 与筛选栏协同
 
-Filter meta 加载时：
+Filter meta 加载 / 失败时（详见 [filter.md](filter.md) §5.9）：
 
-- Shell 已 Spin：`GlobalFilterBar` 传 `suppressLoadingText`，不渲染「加载筛选…」
-- 未接 Shell 的 Sandbox 等：保持默认 `suppressLoadingText={false}`
+- **推荐**：筛选栏挂 `ModulePageShell` 的 **`toolbar`**，位于 `PageSpin` 外，loading 时仍始终可见占位
+- **禁止**：`metaLoading → return null` 整栏隐藏；**`suppressLoadingText` 已废弃**，不得再靠隐藏筛选栏避让 Spin
+- **失败**：仅 `message.error` + options 为空（Empty）；内容区可继续空态 / Spin
 
 ## flex 高度链
 

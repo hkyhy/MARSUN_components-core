@@ -349,3 +349,63 @@ const fetchData = useCallback(async () => {
 ### 5.8 FilterSelect 单选交互规范
 
 单选模式下，选中项右侧显示 `CheckOutlined`（对号），点击选项自动收起 Popover。取消选中通过"重置"按钮操作，不通过点击对号。
+
+### 5.9 筛选项加载态与失败（公用）
+
+筛选栏依赖的 meta / options（如分厂、状态枚举）加载是**公用 UX**，与具体业务页无关。分 **loading** 与 **失败** 两态，口径统一：
+
+| 阶段            | 行为                                                                                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Loading**     | 筛选栏**始终占位渲染**（`CommonFilter` + 各筛选项触发器可见）；options 可为空或仅合成项（如「全部」）。**禁止** `metaLoading → return null` / 整栏消失。 |
+| **失败**        | 仅 antd `message.error` 友好文案；options 置空 → 下拉 Empty /「暂无数据」；**禁止**内联错误区替换整栏。                                                  |
+| **与 PageSpin** | 筛选栏挂 `ModulePageShell` 的 **`toolbar`**（Spin 外），内容区可继续 Spin；勿靠隐藏筛选栏避让 loading。见 [page-loading.md](page-loading.md)。           |
+
+#### Loading
+
+1. **始终占位**：`metaLoading === true` 时仍渲染完整筛选栏；可用默认日期/「全部」等已有默认值。
+2. **禁止** `if (metaLoading) return null`。
+3. **`suppressLoadingText` 已废弃**：不得再靠该 prop（或不渲染整栏）隐藏筛选；历史调用方可保留 prop 但不生效。
+
+#### 失败
+
+1. **用 antd `message.error` 提示**，文案须为用户可读业务句（如「筛选加载失败」「分厂选项加载失败」）。**禁止**拼接 `HTTP 500`、`Network Error`、接口 raw body、stack 等技术细节；状态码与异常只打日志，不进 toast。
+2. **禁止**用内联错误区（如 `<p className="error">筛选加载失败：…</p>`）替换整块筛选栏。
+3. **失败后筛选栏仍须渲染**：`CommonFilter` + 各筛选项保持可见；选项列表为空（`[]`）时由 `FilterSelect` / 下拉自带 Empty，勿因 `!meta` / `!options` 整栏 `return null`。
+4. **默认值来自 meta/options**：分厂等选项的初始值与清空回退须取自接口返回的列表（如 `meta.factories[0]`）；无选项则为空数组。**禁止**业务常量硬编码工厂 code（如 `1001`）作为生产默认选中。
+
+```tsx
+// ❌ 禁止：内联错误区 + 拼 HTTP 状态码
+if (metaError) {
+  return <p className="error">筛选加载失败：{metaError}</p>;
+}
+
+// ❌ 禁止：loading / 失败后因 !meta 整栏消失
+if (!meta || metaLoading) return null;
+
+// ❌ 禁止：硬编码工厂 code 作默认选中
+const [factories, setFactories] = useState(['1001']);
+
+// ✅ hook：友好文案 toast；失败后 meta 可为空、options 为空
+.catch(() => setMetaError('筛选加载失败'));
+useEffect(() => {
+  if (!metaError) return;
+  message.error(metaError);
+}, [metaError]);
+
+// ✅ meta 成功后默认取首项；无列表则 []
+setFactories(
+  meta.factories?.[0]?.code != null ? [String(meta.factories[0].code)] : [],
+);
+
+// ✅ FilterBar：loading / 失败均占位渲染；options 为空 → Empty
+// 禁止：if (metaLoading) return null;
+const options = (meta?.factories ?? []).map((f) => ({
+  label: f.label || f.code,
+  value: String(f.code),
+}));
+return (
+  <CommonFilter label="筛选">
+    <FilterSelect filterKey="factories" label="分厂" options={options} ... />
+  </CommonFilter>
+);
+```
