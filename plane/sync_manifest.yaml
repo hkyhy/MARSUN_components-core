@@ -416,7 +416,7 @@ tasks:
 - id: P6.3.30
   milestone: P6.3
   name: 同步 frontend-dev-spec（含筛选 loading/失败）
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: docs
   owner: 黄金芳
@@ -429,7 +429,7 @@ tasks:
 - id: P6.3.31
   milestone: P6.3
   name: 同步 da-workflow / marsun-arch-doc-spec 镜像
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: docs
   owner: 黄金芳
