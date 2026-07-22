@@ -284,6 +284,7 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | `Tag`（通用）　　　　 | `SemanticTag`　　　　　　　　　　　　　　　　　　  | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                  |
 | `Select`（部门选择）  | `DepartmentSelect`　　　　　　　　　　　　　　　　 | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                  |
 | 权限判断　　　　　　  | `hasPermission`　　　　　　　　　　　　　　　　　  | `hasPermission(user, 'user:edit')`　　　　　　　　                                                                                                  |
+| 侧栏用户卡片　　　　  | `UserProfileCard`　　　　　　　　　　　　　　　　  | `name` + `sub?` + `collapsed?` + `onLogout?` / `menuItems?`；默认无边框，hover 有背景；点击展开退出                                                 |
 | 筛选栏　　　　　　　  | `CommonFilter` + Filter 子组件　　　　　　　　　　 | 见 [filter.md](filter.md)　　　　　　　　　　　　　　                                                                                               |
 | `Input`（筛选）　　　 | `FilterInput`　　　　　　　　　　　　　　　　　　  | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter.md](filter.md) §5.1.1）                                   |
 | 展示/表单内容块       | `InteractiveBlock`（业务 Shared/Detail）           | title/info/actions/subtitle/tags 层级；见 [content-layout.md](content-layout.md)                                                                    |

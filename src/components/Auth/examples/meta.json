@@ -1,6 +1,6 @@
 {
   "title": "Auth 权限控制",
-  "description": "基于角色的权限管理方案，支持页面级和按钮级权限控制。",
+  "description": "基于角色的权限管理方案，支持页面级和按钮级权限控制；含侧栏用户卡片。",
   "examples": [
     {
       "title": "hasPermission 权限判断",
@@ -14,18 +14,44 @@
       "description": "包裹需要权限控制的区域，无权限时隐藏内容或显示 fallback",
       "component": "@/components/Auth/examples/PermissionGuardDemo",
       "sourcePath": "@/components/Auth/examples/PermissionGuardDemo/index.tsx"
+    },
+    {
+      "title": "UserProfileCard 用户卡片",
+      "description": "侧栏底部用户信息；点击展开退出；折叠时仅头像",
+      "component": "@/components/Auth/examples/UserProfileCardDemo",
+      "sourcePath": "@/components/Auth/examples/UserProfileCardDemo/index.tsx"
     }
   ],
   "apiDoc": [
     {
       "componentName": "PermissionGuardProps",
       "rows": [
-        { "prop": "roles", "desc": "允许访问的角色列表，为空则所有已登录用户可访问", "type": "string[]" },
+        {
+          "prop": "roles",
+          "desc": "允许访问的角色列表，为空则所有已登录用户可访问",
+          "type": "string[]"
+        },
         { "prop": "permission", "desc": "允许访问的权限 key", "type": "string" },
         { "prop": "display", "desc": "展示控制", "type": "MaybeFn<boolean>" },
         { "prop": "hidden", "desc": "隐藏控制", "type": "MaybeFn<boolean>" },
         { "prop": "fallback", "desc": "无权限时的回退内容", "type": "React.ReactNode" },
         { "prop": "children", "desc": "受保护的内容", "type": "React.ReactNode", "required": true }
+      ]
+    },
+    {
+      "componentName": "UserProfileCardProps",
+      "rows": [
+        { "prop": "name", "desc": "主文案（姓名 / 展示名）", "type": "string", "required": true },
+        { "prop": "sub", "desc": "副文案（邮箱 / 工号等）", "type": "string" },
+        { "prop": "avatarText", "desc": "头像文字，默认 name 首字", "type": "string" },
+        { "prop": "collapsed", "desc": "侧栏折叠时仅显示头像", "type": "boolean" },
+        { "prop": "menuItems", "desc": "自定义下拉菜单项", "type": "MenuProps['items']" },
+        {
+          "prop": "onLogout",
+          "desc": "默认「退出登录」回调（无 menuItems 时）",
+          "type": "() => void"
+        },
+        { "prop": "className", "desc": "卡片按钮额外 className", "type": "string" }
       ]
     }
   ]

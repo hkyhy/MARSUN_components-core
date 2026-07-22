@@ -1,0 +1,29 @@
+.user-profile-card-demo {
+  width: 100%;
+}
+
+.user-profile-card-demo-sider {
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  height: 280px;
+  border: 1px solid var(--font-color-grey-3, #e5e7eb);
+  border-radius: 12px;
+  background: var(--bg-color-white, #fff);
+
+  &--collapsed {
+    width: 72px;
+  }
+}
+
+.user-profile-card-demo-menu {
+  flex: 1;
+  padding: 16px;
+  color: var(--font-color-grey, #6b7280);
+  font-size: 13px;
+}
+
+.user-profile-card-demo-log {
+  font-size: 12px;
+  color: var(--font-color-grey, #6b7280);
+}
