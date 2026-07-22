@@ -483,7 +483,7 @@ tasks:
 - id: P6.3.35
   milestone: P6.3
   name: 补交 AgentAppShell 以修复 v0.1.27 发布 typecheck
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: fix
   owner: 黄金芳
