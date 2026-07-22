@@ -455,7 +455,7 @@ tasks:
 - id: P6.3.33
   milestone: P6.3
   name: Auth UserProfileCard 纯 UI 组件
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feature
   owner: 黄金芳
