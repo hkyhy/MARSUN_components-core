@@ -469,7 +469,7 @@ tasks:
 - id: P6.3.34
   milestone: P6.3
   name: FilterTreeSelect leafOnly 级联与父级勾选
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feature
   owner: 黄金芳
