@@ -28,6 +28,12 @@ export interface FilterTreeSelectProps extends BaseFilterProps {
   onChange?: (value: string | string[] | undefined) => void;
   showSearch?: boolean;
   multiple?: boolean;
+  /**
+   * 仅叶子写入最终值。
+   * - 单选：点父节点只展开
+   * - 多选：点父节点 / 勾选框 = 全选或取消其下全部叶子；父勾选框支持半选
+   */
+  leafOnly?: boolean;
   /** 自定义节点展示标签（默认 name） */
   getNodeLabel?: (node: TreeFilterNode) => string;
 }
@@ -39,7 +45,11 @@ interface FlatNode {
   parentId: string | null;
 }
 
-function flattenTree(nodes: TreeFilterNode[], depth = 0, parentId: string | null = null): FlatNode[] {
+function flattenTree(
+  nodes: TreeFilterNode[],
+  depth = 0,
+  parentId: string | null = null,
+): FlatNode[] {
   const result: FlatNode[] = [];
   for (const node of nodes) {
     result.push({ id: node.id, name: node.name, depth, parentId });
@@ -78,7 +88,10 @@ function collectExpandableIds(nodes: TreeFilterNode[]): string[] {
   return ids;
 }
 
-function buildLabelMap(nodes: TreeFilterNode[], getLabel: (n: TreeFilterNode) => string): Map<string, string> {
+function buildLabelMap(
+  nodes: TreeFilterNode[],
+  getLabel: (n: TreeFilterNode) => string,
+): Map<string, string> {
   const map = new Map<string, string>();
   const walk = (items: TreeFilterNode[]) => {
     for (const n of items) {
@@ -102,6 +115,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
   onChange,
   showSearch = false,
   multiple = false,
+  leafOnly = false,
   active,
   hidden,
   display,
@@ -171,7 +185,17 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
     } else {
       registerFn.unregister(filterKey);
     }
-  }, [confirmedValueLabel, filterKey, label, display, hidden, registerFn, onChange, multiple, visibilityCtx]);
+  }, [
+    confirmedValueLabel,
+    filterKey,
+    label,
+    display,
+    hidden,
+    registerFn,
+    onChange,
+    multiple,
+    visibilityCtx,
+  ]);
 
   const filteredTree = useMemo(
     () => (showSearch && searchText ? filterByKeyword(sourceTree, searchText) : sourceTree),
@@ -226,21 +250,70 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
     return map;
   }, [filteredTree]);
 
+  const leafDescendantsMap = useMemo(() => {
+    const map = new Map<string, string[]>();
+    const walk = (nodes: TreeFilterNode[]) => {
+      for (const n of nodes) {
+        if (!n.children?.length) continue;
+        const leaves: string[] = [];
+        const collectLeaves = (node: TreeFilterNode) => {
+          if (!node.children?.length) {
+            leaves.push(node.id);
+            return;
+          }
+          node.children.forEach(collectLeaves);
+        };
+        n.children.forEach(collectLeaves);
+        map.set(n.id, leaves);
+        walk(n.children);
+      }
+    };
+    walk(filteredTree);
+    return map;
+  }, [filteredTree]);
+
+  const toggleExpand = useCallback((nodeId: string) => {
+    setExpandedKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(nodeId)) next.delete(nodeId);
+      else next.add(nodeId);
+      return next;
+    });
+  }, []);
+
   const handleSingleSelect = useCallback(
     (nodeId: string) => {
+      if (leafOnly && hasChildrenMap.get(nodeId)) {
+        toggleExpand(nodeId);
+        return;
+      }
       const next = localValue === nodeId ? undefined : nodeId;
       setLocalValue(next);
       onChange?.(next);
       setOpen(false);
     },
-    [localValue, onChange],
+    [localValue, onChange, leafOnly, hasChildrenMap, toggleExpand],
   );
 
   const handleToggleMulti = useCallback(
     (nodeId: string) => {
       const arr = ((localValue as string[]) || []).slice();
       const childIds = childrenMap.get(nodeId);
+      const leafIds = leafDescendantsMap.get(nodeId);
       const parentId = parentMap.get(nodeId);
+
+      // leafOnly：点父节点 = 全选/取消其下全部叶子（值里不写入父 id）
+      if (leafOnly && leafIds?.length) {
+        const allLeavesSelected = leafIds.every((id) => arr.includes(id));
+        if (allLeavesSelected) {
+          const remove = new Set(leafIds);
+          setLocalValue(arr.filter((v) => !remove.has(v)));
+        } else {
+          setLocalValue([...new Set([...arr, ...leafIds])]);
+        }
+        return;
+      }
+
       if (childIds) {
         const isChecked = arr.includes(nodeId);
         if (isChecked) {
@@ -251,10 +324,12 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
         }
       } else if (arr.includes(nodeId)) {
         const next = arr.filter((v) => v !== nodeId);
-        setLocalValue(parentId && next.includes(parentId) ? next.filter((v) => v !== parentId) : next);
+        setLocalValue(
+          parentId && next.includes(parentId) ? next.filter((v) => v !== parentId) : next,
+        );
       } else {
         const next = [...arr, nodeId];
-        if (parentId) {
+        if (parentId && !leafOnly) {
           const siblingIds = childrenMap.get(parentId) || [];
           if (siblingIds.every((id) => next.includes(id))) {
             setLocalValue([...new Set([...next, parentId])]);
@@ -266,17 +341,8 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
         }
       }
     },
-    [localValue, childrenMap, parentMap],
+    [localValue, childrenMap, parentMap, leafOnly, leafDescendantsMap],
   );
-
-  const toggleExpand = useCallback((nodeId: string) => {
-    setExpandedKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(nodeId)) next.delete(nodeId);
-      else next.add(nodeId);
-      return next;
-    });
-  }, []);
 
   const isVisible = useCallback(
     (node: FlatNode) => {
@@ -295,7 +361,18 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
       active={active || (multiple ? (localValue as string[])?.length > 0 : !!value)}
       open={open}
       onOpenChange={setOpen}
-      onConfirm={multiple ? () => { onChange?.(localValue); setOpen(false); } : undefined}
+      onConfirm={
+        multiple
+          ? () => {
+              let next = localValue;
+              if (leafOnly && Array.isArray(next)) {
+                next = next.filter((id) => !hasChildrenMap.get(id));
+              }
+              onChange?.(next);
+              setOpen(false);
+            }
+          : undefined
+      }
       onReset={() => {
         const next = multiple ? [] : undefined;
         setLocalValue(next);
@@ -314,13 +391,23 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
           onChange={(e) => setSearchText(e.target.value)}
         />
       )}
-      <div className={classNames('filter-tree-select-options', styles['filter-tree-select-options'])}>
+      <div
+        className={classNames('filter-tree-select-options', styles['filter-tree-select-options'])}
+      >
         {flatNodes.map((node) => {
           if (!isVisible(node)) return null;
           const isLeaf = !hasChildrenMap.get(node.id);
           const isExpanded = expandedKeys.has(node.id);
           const isSingleSelected = !multiple && localValue === node.id;
-          const isMultiChecked = multiple && ((localValue as string[]) || []).includes(node.id);
+          const selectedArr = multiple ? (localValue as string[]) || [] : [];
+          let isMultiChecked = multiple && selectedArr.includes(node.id);
+          let isIndeterminate = false;
+          if (multiple && leafOnly && !isLeaf) {
+            const leaves = leafDescendantsMap.get(node.id) || [];
+            const selectedLeafCount = leaves.filter((id) => selectedArr.includes(id)).length;
+            isMultiChecked = leaves.length > 0 && selectedLeafCount === leaves.length;
+            isIndeterminate = selectedLeafCount > 0 && selectedLeafCount < leaves.length;
+          }
           return (
             <div
               key={node.id}
@@ -335,34 +422,64 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
               {!isLeaf ? (
                 <span
                   className={styles['filter-tree-select-expand-icon']}
-                  onClick={(e) => { e.stopPropagation(); toggleExpand(node.id); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleExpand(node.id);
+                  }}
                 >
-                  {isExpanded || (showSearch && !!searchText) ? <ChevronDown style={{ fontSize: 10 }} /> : <ChevronRight style={{ fontSize: 10 }} />}
+                  {isExpanded || (showSearch && !!searchText) ? (
+                    <ChevronDown style={{ fontSize: 10 }} />
+                  ) : (
+                    <ChevronRight style={{ fontSize: 10 }} />
+                  )}
                 </span>
               ) : (
                 <span className={styles['filter-tree-select-expand-placeholder']} />
               )}
-              {multiple && <Checkbox checked={isMultiChecked} />}
+              {multiple && (
+                <Checkbox
+                  checked={isMultiChecked}
+                  indeterminate={isIndeterminate}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={() => handleToggleMulti(node.id)}
+                />
+              )}
               <span className={styles['filter-tree-select-node-label']}>{node.name}</span>
-              {!multiple && isSingleSelected && <Check className={styles['filter-tree-select-option-check']} />}
+              {!multiple && isSingleSelected && (
+                <Check className={styles['filter-tree-select-option-check']} />
+              )}
             </div>
           );
         })}
-        {flatNodes.length === 0 && <div className={styles['filter-tree-select-empty']}>暂无数据</div>}
+        {flatNodes.length === 0 && (
+          <div className={styles['filter-tree-select-empty']}>暂无数据</div>
+        )}
       </div>
-      {multiple && (localValue as string[])?.length > 0 && (
-        <div className={styles['filter-tree-select-selected-bar']}>
-          <div className={styles['filter-tree-select-selected-label']}>已选：</div>
-          <Space size={[4, 4]} wrap>
-            {(localValue as string[]).map((v) => (
-              <span key={v} className={styles['filter-tree-select-selected-tag']} onClick={(e) => { e.stopPropagation(); handleToggleMulti(v); }}>
-                {labelMap.get(v) ?? v}
-                <X className={styles['filter-tree-select-selected-remove']} />
-              </span>
-            ))}
-          </Space>
-        </div>
-      )}
+      {multiple &&
+        (leafOnly
+          ? ((localValue as string[]) || []).some((id) => !hasChildrenMap.get(id))
+          : ((localValue as string[]) || []).length > 0) && (
+          <div className={styles['filter-tree-select-selected-bar']}>
+            <div className={styles['filter-tree-select-selected-label']}>已选：</div>
+            <Space size={[4, 4]} wrap>
+              {((localValue as string[]) || [])
+                .filter((v) => !(leafOnly && hasChildrenMap.get(v)))
+                .map((v) => (
+                  <span
+                    key={v}
+                    className={styles['filter-tree-select-selected-tag']}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleMulti(v);
+                    }}
+                  >
+                    {labelMap.get(v) ?? v}
+                    <X className={styles['filter-tree-select-selected-remove']} />
+                  </span>
+                ))}
+            </Space>
+          </div>
+        )}
     </FilterPopover>
   );
 };

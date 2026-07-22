@@ -1,5 +1,12 @@
 .filter-tree-select-demo-root {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 16px;
+}
+
+.filter-tree-select-demo-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--marsun-color-text-secondary, #666);
+  width: 100%;
 }
