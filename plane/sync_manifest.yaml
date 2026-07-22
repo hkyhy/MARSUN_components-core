@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.34
+  next_task_id: P6.3.35
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -466,3 +466,17 @@ tasks:
   - components
   - Auth
   note: '侧栏用户卡片；无边框 hover 背景；examples + component-mapping；发版 v0.1.26'
+- id: P6.3.34
+  milestone: P6.3
+  name: FilterTreeSelect leafOnly 级联与父级勾选
+  status: 进行中
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-22'
+  target_date: '2026-07-22'
+  tags:
+  - frontend
+  - components
+  - Filter
+  note: 'leafOnly：多选父节点勾选/半选与叶子全选；Showcase 级联 Demo；发版 v0.1.27'
