@@ -35,6 +35,12 @@ export const SEARCHABLE_OPTIONS: FilterOption[] = [
   { label: '西瓜', value: 'watermelon' },
 ];
 
+/** 多选示例选项（足量以展示已选区滚动） */
+export const MULTI_SELECT_OPTIONS: FilterOption[] = Array.from({ length: 16 }, (_, i) => ({
+  label: `分厂${i + 1}`,
+  value: `f${i + 1}`,
+}));
+
 /** 构建已选条件列表的工具函数 */
 export function buildSelectedItems(
   filters: Record<string, { label: string; valueLabel: string; onRemove: () => void } | null>,

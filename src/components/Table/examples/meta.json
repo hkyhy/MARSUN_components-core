@@ -1,0 +1,42 @@
+{
+  "title": "Table 表格",
+  "description": "基于 antd Table 的列表包装：默认横向滚动、受控分页 showSizeChanger/showTotal、空态 Empty。透传 antd TableProps。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "受控分页 + 默认滚动与空态",
+      "component": "@/components/Table/examples/TableBasicDemo",
+      "sourcePath": "@/components/Table/examples/TableBasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "TableProps",
+      "rows": [
+        {
+          "prop": "pagination",
+          "desc": "false 关闭；对象时合并默认 showSizeChanger、showTotal「共 n 项」",
+          "type": "false | TablePaginationConfig",
+          "defaultVal": "合并默认"
+        },
+        {
+          "prop": "scroll",
+          "desc": "滚动配置；未传时默认 { x: 'max-content' }",
+          "type": "TableProps['scroll']",
+          "defaultVal": "{ x: 'max-content' }"
+        },
+        {
+          "prop": "locale",
+          "desc": "覆盖空态等；默认 emptyText 为 Empty simple「暂无数据」",
+          "type": "TableProps['locale']"
+        },
+        {
+          "prop": "…rest",
+          "desc": "其余透传 antd TableProps（columns、dataSource、rowKey、loading 等）",
+          "type": "TableProps"
+        }
+      ]
+    }
+  ]
+}

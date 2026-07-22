@@ -40,6 +40,14 @@
   color: var(--font-color-grey-1);
 }
 
+.filter-select-select-all {
+  margin-bottom: 4px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--border-color-grey, rgba(0, 0, 0, 0.06));
+  font-weight: 500;
+}
+
 .filter-select-selected-bar {
   margin-top: 8px;
   border-top-width: 1px;
@@ -51,6 +59,11 @@
   margin-bottom: 4px;
   font-size: 12px;
   color: var(--font-color-grey-1);
+}
+
+.filter-select-selected-tags {
+  max-height: 120px;
+  overflow-y: auto;
 }
 
 .filter-select-selected-tag {

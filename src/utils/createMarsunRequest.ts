@@ -11,6 +11,8 @@ export interface CreateMarsunRequestOptions {
   baseURL?: string;
   timeout?: number;
   successCode?: number;
+  /** Cookie 会话 SSO：跨域携带凭证 */
+  withCredentials?: boolean;
   getToken?: () => string | null;
   onUnauthorized?: () => void;
   isPublicUrl?: (url: string) => boolean;
@@ -40,6 +42,7 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
     baseURL = '/api',
     timeout = 30000,
     successCode = 0,
+    withCredentials = false,
     getToken,
     onUnauthorized,
     isPublicUrl = () => false,
@@ -50,6 +53,7 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
   const request = axios.create({
     baseURL,
     timeout,
+    withCredentials,
     headers: {
       'Content-Type': 'application/json',
     },

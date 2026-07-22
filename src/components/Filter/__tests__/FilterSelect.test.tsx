@@ -47,9 +47,89 @@ describe('FilterSelect', () => {
     );
 
     fireEvent.click(screen.getByText('分厂'));
-    const checkbox = screen.getAllByRole('checkbox')[0];
+    // [0] 为「全选」，选项 checkbox 从 [1] 起
+    const checkbox = screen.getAllByRole('checkbox')[1];
     fireEvent.click(checkbox);
     expect(screen.getByText('已选：')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    expect(onChange).toHaveBeenCalledWith(['opt1']);
+  });
+
+  it('select-all checks all filtered options then confirms', () => {
+    const onChange = vi.fn();
+    render(
+      <FilterSelect
+        filterKey="factories"
+        label="分厂"
+        options={options}
+        multiple
+        value={[]}
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('分厂'));
+    fireEvent.click(screen.getByText('全选'));
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    expect(onChange).toHaveBeenCalledWith(['opt1', 'opt2', 'opt3']);
+  });
+
+  it('deselect-all clears selection when minSelection is unset', () => {
+    const onChange = vi.fn();
+    render(
+      <FilterSelect
+        filterKey="factories"
+        label="分厂"
+        options={options}
+        multiple
+        value={['opt1', 'opt2', 'opt3']}
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('分厂'));
+    fireEvent.click(screen.getByText('全选'));
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    expect(onChange).toHaveBeenCalledWith([]);
+  });
+
+  it('deselect-all keeps minSelection items', () => {
+    const onChange = vi.fn();
+    render(
+      <FilterSelect
+        filterKey="factories"
+        label="分厂"
+        options={options}
+        multiple
+        minSelection={1}
+        value={['opt1', 'opt2', 'opt3']}
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('分厂'));
+    fireEvent.click(screen.getByText('全选'));
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    expect(onChange).toHaveBeenCalledWith(['opt1']);
+  });
+
+  it('select-all only applies to search-filtered options', () => {
+    const onChange = vi.fn();
+    render(
+      <FilterSelect
+        filterKey="factories"
+        label="分厂"
+        options={options}
+        multiple
+        searchable
+        value={[]}
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('分厂'));
+    fireEvent.change(screen.getByPlaceholderText('搜索分厂'), { target: { value: '选项一' } });
+    fireEvent.click(screen.getByText('全选'));
     fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
     expect(onChange).toHaveBeenCalledWith(['opt1']);
   });
@@ -85,8 +165,48 @@ describe('FilterSelect', () => {
       />,
     );
 
-    const trigger = screen.getByText('分厂', { selector: '.filter-trigger-root' }).closest('.filter-trigger-root');
+    const trigger = screen
+      .getByText('分厂', { selector: '.filter-trigger-root' })
+      .closest('.filter-trigger-root');
     expect(trigger?.className).not.toContain('filter-trigger-active');
+  });
+
+  it('showDefaultAsSelected keeps active and label 全部 when value equals defaultValues', () => {
+    render(
+      <FilterSelect
+        filterKey="factories"
+        label="分厂"
+        options={options}
+        multiple
+        defaultValues={['opt1', 'opt2', 'opt3']}
+        value={['opt1', 'opt2', 'opt3']}
+        showDefaultAsSelected
+      />,
+    );
+
+    const trigger = screen
+      .getByText('分厂', { selector: '.filter-trigger-root' })
+      .closest('.filter-trigger-root');
+    expect(trigger?.className).toContain('filter-trigger-active');
+  });
+
+  it('keeps draft checkboxes when value equals defaultValues (default all)', () => {
+    render(
+      <FilterSelect
+        filterKey="factories"
+        label="分厂"
+        options={options}
+        multiple
+        defaultValues={['opt1', 'opt2', 'opt3']}
+        value={['opt1', 'opt2', 'opt3']}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('分厂'));
+    expect(screen.getByText('已选：')).toBeTruthy();
+    expect(screen.getAllByText('选项一').length).toBeGreaterThanOrEqual(1);
+    const selectAll = screen.getAllByRole('checkbox')[0] as HTMLInputElement;
+    expect(selectAll.checked).toBe(true);
   });
 
   it('shows active state when value differs from defaultValues', () => {
@@ -101,7 +221,9 @@ describe('FilterSelect', () => {
       />,
     );
 
-    const trigger = screen.getByText('分厂', { selector: '.filter-trigger-root' }).closest('.filter-trigger-root');
+    const trigger = screen
+      .getByText('分厂', { selector: '.filter-trigger-root' })
+      .closest('.filter-trigger-root');
     expect(trigger?.className).toContain('filter-trigger-active');
   });
 });

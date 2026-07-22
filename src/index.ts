@@ -39,9 +39,11 @@ export {
   REDIRECT_URL_PARAM,
   resolveRedirectUrl,
   buildLocationRedirectUrl,
+  buildAbsoluteLocationRedirectUrl,
   buildLoginPath,
   readRedirectUrlFromSearch,
 } from './utils/authRedirect';
+export type { BuildLoginPathOptions } from './utils/authRedirect';
 export {
   DEFAULT_LAST_ACTIVITY_STORAGE_KEY,
   getLastActivityTime,
@@ -121,6 +123,7 @@ export * from './components/Form';
 export * from './components/Layout';
 export * from './components/Modal';
 export * from './components/Stat';
+export * from './components/Table';
 export * from './components/Tag';
 export * from './components/TooltipInfo';
 export * from './components/Tour';

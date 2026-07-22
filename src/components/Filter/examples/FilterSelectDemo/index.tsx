@@ -1,12 +1,15 @@
 import { FilterSelect, type FilterSelectValue } from '@/components';
 import React, { useState } from 'react';
-import { SEARCHABLE_OPTIONS, SINGLE_SELECT_OPTIONS } from '../mock';
+import { MULTI_SELECT_OPTIONS, SEARCHABLE_OPTIONS, SINGLE_SELECT_OPTIONS } from '../mock';
 import styles from './style.module.scss';
 import classNames from 'classnames';
 
 const FilterSelectDemo: React.FC = () => {
   const [value, setValue] = useState<FilterSelectValue>(undefined);
-  const [multiValue, setMultiValue] = useState<FilterSelectValue>(undefined);
+  const [searchValue, setSearchValue] = useState<FilterSelectValue>(undefined);
+  const [multiValue, setMultiValue] = useState<FilterSelectValue>(
+    MULTI_SELECT_OPTIONS.map((o) => o.value),
+  );
 
   return (
     <div className={classNames('filter-select-demo-root', styles['filter-select-demo-root'])}>
@@ -22,7 +25,18 @@ const FilterSelectDemo: React.FC = () => {
         filterKey="searchable"
         searchable
         options={SEARCHABLE_OPTIONS}
+        value={searchValue}
+        onChange={setSearchValue}
+      />
+      <FilterSelect
+        label="多选分厂"
+        filterKey="multiSelect"
+        multiple
+        minSelection={1}
+        searchable
+        options={MULTI_SELECT_OPTIONS}
         value={multiValue}
+        defaultValues={MULTI_SELECT_OPTIONS.map((o) => o.value)}
         onChange={setMultiValue}
       />
     </div>

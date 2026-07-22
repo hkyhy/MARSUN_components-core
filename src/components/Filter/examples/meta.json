@@ -10,8 +10,8 @@
       "block": true
     },
     {
-      "title": "单选筛选器",
-      "description": "FilterSelect 基础用法与可搜索模式",
+      "title": "单选 / 多选筛选器",
+      "description": "FilterSelect 单选、可搜索；多选含全选与已选区滚动",
       "component": "@/components/Filter/examples/FilterSelectDemo",
       "sourcePath": "@/components/Filter/examples/FilterSelectDemo/index.tsx"
     },
@@ -98,13 +98,23 @@
         },
         {
           "prop": "value",
-          "desc": "选中值",
-          "type": "string | number | undefined"
+          "desc": "选中值（多选为数组）",
+          "type": "string | number | (string | number)[] | undefined"
         },
         {
           "prop": "onChange",
           "desc": "值变更回调",
           "type": "(value) => void"
+        },
+        {
+          "prop": "defaultValue",
+          "desc": "单选默认值（等于默认时不视为已筛选）",
+          "type": "string | number"
+        },
+        {
+          "prop": "defaultValues",
+          "desc": "多选默认集合（等于默认时不视为已筛选）",
+          "type": "(string | number)[]"
         },
         {
           "prop": "placeholder",
@@ -118,8 +128,18 @@
         },
         {
           "prop": "multiple",
-          "desc": "是否多选",
+          "desc": "多选：顶部全选、底部已选标签（限高滚动）、确定/取消",
           "type": "boolean"
+        },
+        {
+          "prop": "minSelection",
+          "desc": "多选至少保留项数；全不选/移除标签时生效",
+          "type": "number"
+        },
+        {
+          "prop": "variant",
+          "desc": "人员选项展示部门与联系方式",
+          "type": "'default' | 'person'"
         }
       ]
     },

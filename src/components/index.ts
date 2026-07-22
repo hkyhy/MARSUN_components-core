@@ -7,6 +7,7 @@ export * from './Form';
 export * from './Layout';
 export * from './Modal';
 export * from './Stat';
+export * from './Table';
 export * from './Tag';
 export * from './TooltipInfo';
 export * from './Tour';

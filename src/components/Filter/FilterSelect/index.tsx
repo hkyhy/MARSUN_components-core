@@ -28,10 +28,7 @@ type FilterSelectValue = string | number | (string | number)[] | undefined;
 
 export type { FilterSelectValue };
 
-function arraysEqual(
-  a?: (string | number)[],
-  b?: (string | number)[],
-): boolean {
+function arraysEqual(a?: (string | number)[], b?: (string | number)[]): boolean {
   if (!a?.length && !b?.length) return true;
   if (!a || !b || a.length !== b.length) return false;
   const sortedA = [...a].map(String).sort();
@@ -43,10 +40,12 @@ interface FilterSelectProps extends BaseFilterProps {
   options: FilterOption[];
   value?: FilterSelectValue;
   onChange?: (value: FilterSelectValue) => void;
-  /** 默认值：与默认值相同时视为未筛选（不展示已选标签与选中态） */
+  /** 默认值：与默认值相同时视为未筛选（除非 showDefaultAsSelected） */
   defaultValue?: string | number;
-  /** 多选默认值：与默认集合相同时视为未筛选 */
+  /** 多选默认值：与默认集合相同时视为未筛选（除非 showDefaultAsSelected） */
   defaultValues?: (string | number)[];
+  /** 为 true 时，value 等于默认仍展示在「您已选择」并保持选中态 */
+  showDefaultAsSelected?: boolean;
   placeholder?: string;
   searchable?: boolean;
   /** 是否多选 */
@@ -57,21 +56,42 @@ interface FilterSelectProps extends BaseFilterProps {
   variant?: 'default' | 'person';
 }
 
+function toMultiArray(value: FilterSelectValue): (string | number)[] {
+  if (Array.isArray(value)) return value;
+  if (value != null && value !== '') return [value];
+  return [];
+}
+
 function toDisplayValue(
   value: FilterSelectValue,
   defaultValue: string | number | undefined,
   defaultValues: (string | number)[] | undefined,
   multiple: boolean,
+  showDefaultAsSelected: boolean,
 ): string | number | (string | number)[] | undefined {
   if (multiple) {
-    const arr = Array.isArray(value) ? value : value != null && value !== '' ? [value] : [];
-    if (defaultValues?.length && arraysEqual(arr, defaultValues)) {
+    const arr = toMultiArray(value);
+    // 等于默认集合时：对外视为「未筛选」（不亮 trigger / 不进「您已选择」）
+    if (!showDefaultAsSelected && defaultValues?.length && arraysEqual(arr, defaultValues)) {
       return [];
     }
     return arr;
   }
-  if (defaultValue !== undefined && value === defaultValue) return undefined;
+  if (!showDefaultAsSelected && defaultValue !== undefined && value === defaultValue) {
+    return undefined;
+  }
   return value;
+}
+
+/** 草稿/面板用真实 value，避免 defaultValues 折叠成 [] 后全选勾选丢失 */
+function toDraftValue(
+  value: FilterSelectValue,
+  defaultValue: string | number | undefined,
+  defaultValues: (string | number)[] | undefined,
+  multiple: boolean,
+): string | number | (string | number)[] | undefined {
+  if (multiple) return toMultiArray(value);
+  return toDisplayValue(value, defaultValue, defaultValues, false, true);
 }
 
 function formatValueLabel(
@@ -79,12 +99,18 @@ function formatValueLabel(
   options: FilterOption[],
   multiple: boolean,
   isPersonVariant: boolean,
+  defaultValues?: (string | number)[],
 ): string {
   if (multiple) {
     const arr = (displayVal as (string | number)[]) || [];
-    return arr.length > 0
-      ? arr.map((v) => options.find((o) => String(o.value) === String(v))?.label ?? String(v)).join('、')
-      : '';
+    if (!arr.length) return '';
+    // 全选默认集合时用「全部」，避免「您已选择」被几十个厂名撑满
+    if (defaultValues?.length && arraysEqual(arr, defaultValues)) {
+      return '全部';
+    }
+    return arr
+      .map((v) => options.find((o) => String(o.value) === String(v))?.label ?? String(v))
+      .join('、');
   }
   if (displayVal == null) return '';
   const opt = options.find((o) => String(o.value) === String(displayVal));
@@ -100,6 +126,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   onChange,
   defaultValue,
   defaultValues,
+  showDefaultAsSelected = false,
   searchable = false,
   multiple = false,
   minSelection,
@@ -111,9 +138,15 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   const isPersonVariant = variant === 'person';
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const displayValue = toDisplayValue(value, defaultValue, defaultValues, multiple);
+  const displayValue = toDisplayValue(
+    value,
+    defaultValue,
+    defaultValues,
+    multiple,
+    showDefaultAsSelected,
+  );
   const [localValue, setLocalValue] = useState<string | number | (string | number)[] | undefined>(
-    displayValue ?? (multiple ? [] : undefined),
+    () => toDraftValue(value, defaultValue, defaultValues, multiple) ?? (multiple ? [] : undefined),
   );
 
   // ── 自动注册到 CommonFilter ──
@@ -127,10 +160,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       : displayValue != null && displayValue !== ''
         ? [displayValue]
         : [];
-    const canRemove =
-      !multiple ||
-      minSelection == null ||
-      selectedArr.length > minSelection;
+    const canRemove = !multiple || minSelection == null || selectedArr.length > minSelection;
     return () => {
       if (!canRemove) return;
       onChangeRef.current?.(undefined);
@@ -138,27 +168,35 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   }, [displayValue, minSelection, multiple]);
 
   const revertToCommitted = () => {
-    const next = displayValue ?? (multiple ? [] : undefined);
-    setLocalValue(next);
+    setLocalValue(
+      toDraftValue(value, defaultValue, defaultValues, multiple) ?? (multiple ? [] : undefined),
+    );
     setSearchText('');
   };
 
-  // 同步外部 value 到内部 localValue
+  // 同步外部 value 到内部 localValue（多选用真实 value，保留 defaultValues 全选勾选）
   useEffect(() => {
-    const nextDisplayValue = toDisplayValue(value, defaultValue, defaultValues, multiple);
-    setLocalValue(nextDisplayValue ?? (multiple ? [] : undefined));
+    const nextDraft = toDraftValue(value, defaultValue, defaultValues, multiple);
+    setLocalValue(nextDraft ?? (multiple ? [] : undefined));
+    const nextDisplay = toDisplayValue(
+      value,
+      defaultValue,
+      defaultValues,
+      multiple,
+      showDefaultAsSelected,
+    );
     if (
-      nextDisplayValue === undefined ||
-      nextDisplayValue === null ||
-      (Array.isArray(nextDisplayValue) && nextDisplayValue.length === 0)
+      nextDisplay === undefined ||
+      nextDisplay === null ||
+      (Array.isArray(nextDisplay) && nextDisplay.length === 0)
     ) {
       setSearchText('');
     }
-  }, [value, defaultValue, defaultValues, multiple]);
+  }, [value, defaultValue, defaultValues, multiple, showDefaultAsSelected]);
 
   const committedValueLabel = useMemo(
-    () => formatValueLabel(displayValue, options, multiple, isPersonVariant),
-    [options, displayValue, multiple, isPersonVariant],
+    () => formatValueLabel(displayValue, options, multiple, isPersonVariant, defaultValues),
+    [options, displayValue, multiple, isPersonVariant, defaultValues],
   );
 
   useEffect(() => {
@@ -174,8 +212,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
         : displayValue != null && displayValue !== ''
           ? [displayValue]
           : [];
-      const removable =
-        !multiple || minSelection == null || selectedArr.length > minSelection;
+      const removable = !multiple || minSelection == null || selectedArr.length > minSelection;
       registerFn.register(filterKey, {
         label,
         valueLabel: committedValueLabel,
@@ -233,10 +270,42 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
 
   const handleToggleMulti = (optVal: string | number) => {
     const arr = (localValue as (string | number)[]) || [];
-    if (arr.includes(optVal) && minSelection != null && arr.length <= minSelection) {
+    const has = arr.some((v) => String(v) === String(optVal));
+    if (has && minSelection != null && arr.length <= minSelection) {
       return;
     }
-    const next = arr.includes(optVal) ? arr.filter((v) => v !== optVal) : [...arr, optVal];
+    const next = has ? arr.filter((v) => String(v) !== String(optVal)) : [...arr, optVal];
+    setLocalValue(next);
+  };
+
+  const localMultiArr = (Array.isArray(localValue) ? localValue : []) as (string | number)[];
+  const filteredSelectedCount = filteredOptions.filter((opt) =>
+    localMultiArr.some((v) => String(v) === String(opt.value)),
+  ).length;
+  const allFilteredSelected =
+    filteredOptions.length > 0 && filteredSelectedCount === filteredOptions.length;
+  const someFilteredSelected = filteredSelectedCount > 0 && !allFilteredSelected;
+
+  const handleToggleAll = (checked: boolean) => {
+    const arr = localMultiArr;
+    const filteredVals = filteredOptions.map((o) => o.value);
+    if (checked) {
+      const seen = new Set(arr.map(String));
+      const next = [...arr];
+      for (const v of filteredVals) {
+        if (!seen.has(String(v))) {
+          next.push(v);
+          seen.add(String(v));
+        }
+      }
+      setLocalValue(next);
+      return;
+    }
+    const removeSet = new Set(filteredVals.map(String));
+    let next = arr.filter((v) => !removeSet.has(String(v)));
+    if (minSelection != null && next.length < minSelection) {
+      next = arr.slice(0, minSelection);
+    }
     setLocalValue(next);
   };
 
@@ -265,21 +334,43 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       )}
 
       <div className={classNames('filter-select-options', styles['filter-select-options'])}>
+        {multiple && filteredOptions.length > 0 && (
+          <div
+            className={classNames(
+              'filter-select-option',
+              styles['filter-select-option'],
+              'filter-select-select-all',
+              styles['filter-select-select-all'],
+            )}
+            onClick={() => handleToggleAll(!allFilteredSelected)}
+          >
+            <Checkbox
+              checked={allFilteredSelected}
+              indeterminate={someFilteredSelected}
+              onChange={(e) => handleToggleAll(e.target.checked)}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <span>全选</span>
+          </div>
+        )}
         {filteredOptions.map((opt) => (
           <div
             key={String(opt.value)}
-            className={classNames('filter-select-option', styles['filter-select-option'],
+            className={classNames(
+              'filter-select-option',
+              styles['filter-select-option'],
               !multiple &&
                 localValue === opt.value &&
-                classNames('filter-select-option-selected', styles['filter-select-option-selected']),
+                classNames(
+                  'filter-select-option-selected',
+                  styles['filter-select-option-selected'],
+                ),
             )}
-            onClick={() =>
-              multiple ? handleToggleMulti(opt.value) : handleClickOption(opt.value)
-            }
+            onClick={() => (multiple ? handleToggleMulti(opt.value) : handleClickOption(opt.value))}
           >
             {multiple && (
               <Checkbox
-                checked={(localValue as (string | number)[])?.includes(opt.value)}
+                checked={localMultiArr.some((v) => String(v) === String(opt.value))}
                 onChange={() => handleToggleMulti(opt.value)}
                 onClick={(e) => e.stopPropagation()}
               />
@@ -290,45 +381,67 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
               <span>{opt.label}</span>
             )}
             {!multiple && !isPersonVariant && localValue === opt.value && (
-              <Check className={classNames('filter-select-option-check', styles['filter-select-option-check'])} />
+              <Check
+                className={classNames(
+                  'filter-select-option-check',
+                  styles['filter-select-option-check'],
+                )}
+              />
             )}
           </div>
         ))}
         {filteredOptions.length === 0 && (
-          <div className={classNames('filter-select-empty', styles['filter-select-empty'])}>暂无数据</div>
+          <div className={classNames('filter-select-empty', styles['filter-select-empty'])}>
+            暂无数据
+          </div>
         )}
       </div>
 
-      {multiple && (localValue as (string | number)[])?.length > 0 && (
-        <div className={classNames('filter-select-selected-bar', styles['filter-select-selected-bar'])}>
-          <div className={classNames('filter-select-selected-label', styles['filter-select-selected-label'])}>已选：</div>
-          <Space size={[4, 4]} wrap>
-            {(localValue as (string | number)[]).map((v) => {
-              const opt = options.find((o) => String(o.value) === String(v));
-              const arr = (localValue as (string | number)[]) || [];
-              const tagRemovable = minSelection == null || arr.length > minSelection;
-              return (
-                <span
-                  key={String(v)}
-                  className={classNames(
-                    'filter-select-selected-tag',
-                    styles['filter-select-selected-tag'],
-                    !tagRemovable && styles['filter-select-selected-tag-disabled'],
-                  )}
-                  onClick={() => tagRemovable && handleToggleMulti(v)}
-                >
-                  {opt?.label ?? String(v)}
-                  <X
+      {multiple && localMultiArr.length > 0 && (
+        <div
+          className={classNames('filter-select-selected-bar', styles['filter-select-selected-bar'])}
+        >
+          <div
+            className={classNames(
+              'filter-select-selected-label',
+              styles['filter-select-selected-label'],
+            )}
+          >
+            已选：
+          </div>
+          <div
+            className={classNames(
+              'filter-select-selected-tags',
+              styles['filter-select-selected-tags'],
+            )}
+          >
+            <Space size={[4, 4]} wrap>
+              {localMultiArr.map((v) => {
+                const opt = options.find((o) => String(o.value) === String(v));
+                const tagRemovable = minSelection == null || localMultiArr.length > minSelection;
+                return (
+                  <span
+                    key={String(v)}
                     className={classNames(
-                      'filter-select-selected-remove',
-                      styles['filter-select-selected-remove'],
-                      !tagRemovable && styles['filter-select-selected-remove-disabled'],
+                      'filter-select-selected-tag',
+                      styles['filter-select-selected-tag'],
+                      !tagRemovable && styles['filter-select-selected-tag-disabled'],
                     )}
-                  />
-                </span>
-              );
-            })}
-          </Space>
+                    onClick={() => tagRemovable && handleToggleMulti(v)}
+                  >
+                    {opt?.label ?? String(v)}
+                    <X
+                      className={classNames(
+                        'filter-select-selected-remove',
+                        styles['filter-select-selected-remove'],
+                        !tagRemovable && styles['filter-select-selected-remove-disabled'],
+                      )}
+                    />
+                  </span>
+                );
+              })}
+            </Space>
+          </div>
         </div>
       )}
     </FilterPopover>
