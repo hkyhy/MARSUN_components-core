@@ -442,7 +442,7 @@ tasks:
 - id: P6.3.32
   milestone: P6.3
   name: Table 组件与 FilterSelect 增强
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feature
   owner: 黄金芳
