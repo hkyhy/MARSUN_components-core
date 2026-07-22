@@ -2,11 +2,9 @@ export { default as PageHeaderLayout } from './PageHeaderLayout';
 export type { PageHeaderLayoutProps } from './PageHeaderLayout';
 export { default as PageSpin } from './PageSpin';
 export type { PageSpinProps } from './PageSpin';
-export {
-  PageShellProvider,
-  usePageShell,
-  usePageShellLoading,
-} from './PageShell';
+export { PageShellProvider, usePageShell, usePageShellLoading } from './PageShell';
 export type { PageShellMeta, PageShellProviderProps } from './PageShell';
 export { default as ModulePageShell } from './ModulePageShell';
 export type { ModulePageShellProps } from './ModulePageShell';
+export { AgentAppShell } from './AgentAppShell';
+export type { AgentAppShellProps } from './AgentAppShell';

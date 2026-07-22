@@ -1,0 +1,22 @@
+.agent-app-shell-demo {
+  height: 480px;
+  border: 1px solid var(--font-color-grey-3, #e5e7eb);
+  border-radius: 12px;
+  overflow: hidden;
+
+  :global(.agent-app-shell) {
+    min-height: 100%;
+    height: 100%;
+    padding: 8px;
+  }
+
+  :global(.agent-app-frame) {
+    height: calc(100% - 0px);
+  }
+}
+
+.agent-app-shell-demo-body {
+  flex: 1;
+  padding: 16px;
+  color: var(--font-color-grey, #6b7280);
+}

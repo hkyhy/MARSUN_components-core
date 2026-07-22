@@ -1,7 +1,14 @@
 {
   "title": "Layout 页面布局",
-  "description": "PageHeaderLayout、ModulePageShell 与 PageSpin；App 根节点须包裹 PageShellProvider 以支持全局 loading。",
+  "description": "AgentAppShell 业务壳；PageHeaderLayout、ModulePageShell 与 PageSpin；App 根节点须包裹 PageShellProvider。",
   "examples": [
+    {
+      "title": "AgentAppShell",
+      "description": "左 sider + 右主区顶栏；菜单/底部槽/children 由业务注入",
+      "component": "@/components/Layout/examples/AgentAppShellDemo",
+      "sourcePath": "@/components/Layout/examples/AgentAppShellDemo/index.tsx",
+      "block": true
+    },
     {
       "title": "PageHeaderLayout",
       "description": "标题 + 操作按钮 + body Spin",
@@ -19,13 +26,46 @@
   ],
   "apiDoc": [
     {
+      "componentName": "AgentAppShellProps",
+      "rows": [
+        { "prop": "brandTitle", "desc": "侧栏品牌标题", "type": "string", "required": true },
+        { "prop": "brandLogo", "desc": "侧栏品牌图标节点", "type": "React.ReactNode" },
+        { "prop": "brandMark", "desc": "无 logo 时的单字徽章", "type": "string" },
+        {
+          "prop": "menuItems",
+          "desc": "antd Menu items",
+          "type": "MenuProps['items']",
+          "required": true
+        },
+        { "prop": "selectedKeys", "desc": "选中菜单 key", "type": "string[]" },
+        { "prop": "onMenuClick", "desc": "菜单点击", "type": "MenuProps['onClick']" },
+        { "prop": "collapsed", "desc": "侧栏折叠", "type": "boolean" },
+        { "prop": "onToggleCollapsed", "desc": "折叠切换", "type": "() => void" },
+        { "prop": "siderWidth", "desc": "展开宽度", "type": "number" },
+        {
+          "prop": "siderFooter",
+          "desc": "侧栏底部（如 UserProfileCard）",
+          "type": "React.ReactNode"
+        },
+        { "prop": "headerTitle", "desc": "顶栏标题", "type": "React.ReactNode" },
+        { "prop": "headerDescription", "desc": "顶栏描述", "type": "React.ReactNode" },
+        { "prop": "headerActions", "desc": "顶栏右侧操作", "type": "React.ReactNode" },
+        { "prop": "headerScrolled", "desc": "滚动后顶栏毛玻璃", "type": "boolean" },
+        { "prop": "children", "desc": "主内容", "type": "React.ReactNode", "required": true }
+      ]
+    },
+    {
       "componentName": "PageHeaderLayoutProps",
       "rows": [
         { "prop": "title", "desc": "页面标题", "type": "string", "required": true },
         { "prop": "onBack", "desc": "返回按钮点击回调", "type": "() => void" },
         { "prop": "actions", "desc": "右侧操作区内容", "type": "React.ReactNode" },
         { "prop": "description", "desc": "页面说明提示", "type": "React.ReactNode" },
-        { "prop": "spinning", "desc": "页面级 loading（与 usePageShellLoading 合并）", "type": "boolean" },
+        {
+          "prop": "spinning",
+          "desc": "页面级 loading（与 usePageShellLoading 合并）",
+          "type": "boolean"
+        },
         { "prop": "children", "desc": "页面主体内容", "type": "React.ReactNode" }
       ]
     },
@@ -33,8 +73,16 @@
       "componentName": "ModulePageShellProps",
       "rows": [
         { "prop": "title", "desc": "同步到 PageShellProvider 的标题", "type": "string" },
-        { "prop": "description", "desc": "同步到 PageShellProvider 的描述", "type": "React.ReactNode" },
-        { "prop": "actions", "desc": "同步到 PageShellProvider 的顶栏操作", "type": "Record<string, unknown>[]" },
+        {
+          "prop": "description",
+          "desc": "同步到 PageShellProvider 的描述",
+          "type": "React.ReactNode"
+        },
+        {
+          "prop": "actions",
+          "desc": "同步到 PageShellProvider 的顶栏操作",
+          "type": "Record<string, unknown>[]"
+        },
         { "prop": "breadcrumb", "desc": "面包屑（不参与 Spin）", "type": "React.ReactNode" },
         { "prop": "toolbar", "desc": "工具栏（不参与 Spin）", "type": "React.ReactNode" },
         { "prop": "spinning", "desc": "页面级 loading", "type": "boolean" },
@@ -53,7 +101,12 @@
     {
       "componentName": "usePageShellLoading",
       "rows": [
-        { "prop": "spinning", "desc": "深层组件注册 loading 态", "type": "boolean", "required": true }
+        {
+          "prop": "spinning",
+          "desc": "深层组件注册 loading 态",
+          "type": "boolean",
+          "required": true
+        }
       ]
     }
   ]
