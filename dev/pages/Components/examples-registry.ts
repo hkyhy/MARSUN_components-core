@@ -597,7 +597,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/auth': {
     title: 'Auth 权限控制',
-    description: '基于角色的权限管理方案，支持页面级和按钮级权限控制。',
+    description: '基于角色的权限管理方案，支持页面级和按钮级权限控制；含侧栏用户卡片。',
     examples: [
       {
         title: 'hasPermission 权限判断',
@@ -611,6 +611,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: '包裹需要权限控制的区域，无权限时隐藏内容或显示 fallback',
         component: React.lazy(() => import('@/components/Auth/examples/PermissionGuardDemo')),
         sourcePath: () => import('@/components/Auth/examples/PermissionGuardDemo/index.tsx?raw'),
+      },
+      {
+        title: 'UserProfileCard 用户卡片',
+        description: '侧栏底部用户信息；点击展开退出；折叠时仅头像',
+        component: React.lazy(() => import('@/components/Auth/examples/UserProfileCardDemo')),
+        sourcePath: () => import('@/components/Auth/examples/UserProfileCardDemo/index.tsx?raw'),
       },
     ],
     apiDoc: [
@@ -627,6 +633,18 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'hidden', desc: '隐藏控制', type: 'MaybeFn<boolean>' },
           { prop: 'fallback', desc: '无权限时的回退内容', type: 'React.ReactNode' },
           { prop: 'children', desc: '受保护的内容', type: 'React.ReactNode', required: true },
+        ],
+      },
+      {
+        componentName: 'UserProfileCardProps',
+        rows: [
+          { prop: 'name', desc: '主文案（姓名 / 展示名）', type: 'string', required: true },
+          { prop: 'sub', desc: '副文案（邮箱 / 工号等）', type: 'string' },
+          { prop: 'avatarText', desc: '头像文字，默认 name 首字', type: 'string' },
+          { prop: 'collapsed', desc: '侧栏折叠时仅显示头像', type: 'boolean' },
+          { prop: 'menuItems', desc: '自定义下拉菜单项', type: "MenuProps['items']" },
+          { prop: 'onLogout', desc: '默认「退出登录」回调（无 menuItems 时）', type: '() => void' },
+          { prop: 'className', desc: '卡片按钮额外 className', type: 'string' },
         ],
       },
     ],
@@ -1488,6 +1506,49 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'className', desc: '容器 className', type: 'string' },
           { prop: 'inline', desc: '内联模式', type: 'boolean' },
           { prop: 'fontSize', desc: '内联模式字体大小', type: 'number' },
+        ],
+      },
+    ],
+  },
+  '/components/table': {
+    title: 'Table 表格',
+    description:
+      '基于 antd Table 的列表包装：默认横向滚动、受控分页 showSizeChanger/showTotal、空态 Empty。透传 antd TableProps。',
+    examples: [
+      {
+        title: '基础用法',
+        description: '受控分页 + 默认滚动与空态',
+        component: React.lazy(() => import('@/components/Table/examples/TableBasicDemo')),
+        sourcePath: () => import('@/components/Table/examples/TableBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'TableProps',
+        rows: [
+          {
+            prop: 'pagination',
+            desc: 'false 关闭；对象时合并默认 showSizeChanger、showTotal「共 n 项」',
+            type: 'false | TablePaginationConfig',
+            defaultVal: '合并默认',
+          },
+          {
+            prop: 'scroll',
+            desc: "滚动配置；未传时默认 { x: 'max-content' }",
+            type: "TableProps['scroll']",
+            defaultVal: "{ x: 'max-content' }",
+          },
+          {
+            prop: 'locale',
+            desc: '覆盖空态等；默认 emptyText 为 Empty simple「暂无数据」',
+            type: "TableProps['locale']",
+          },
+          {
+            prop: '…rest',
+            desc: '其余透传 antd TableProps（columns、dataSource、rowKey、loading 等）',
+            type: 'TableProps',
+          },
         ],
       },
     ],

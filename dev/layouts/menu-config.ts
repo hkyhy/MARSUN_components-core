@@ -22,6 +22,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
   { key: '/components/modal', label: 'Modal' },
   { key: '/components/sparkline', label: 'Sparkline' },
   { key: '/components/stat', label: 'Stat' },
+  { key: '/components/table', label: 'Table' },
   { key: '/components/tag', label: 'Tag' },
   { key: '/components/tooltipinfo', label: 'TooltipInfo' },
   { key: '/components/tour', label: 'Tour' },
