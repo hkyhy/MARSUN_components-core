@@ -839,8 +839,9 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         sourcePath: () => import('@/components/Filter/examples/FilterNumberRangeDemo.tsx?raw'),
       },
       {
-        title: '树形选择筛选器',
-        description: 'FilterTreeSelect 部门树形下拉选择，支持搜索和自动加载',
+        title: '树形 / 级联筛选器',
+        description:
+          'FilterTreeSelect：组织树；分厂→品种级联（leafOnly 仅叶子可选，主对标单选 / 对比多选）',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTreeSelectDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterTreeSelectDemo/index.tsx?raw'),
       },
@@ -977,12 +978,40 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         componentName: 'FilterTreeSelectProps',
         rows: [
-          { prop: 'treeData', desc: '树形数据（优先于自动加载）', type: 'Department[]' },
-          { prop: 'autoLoadDept', desc: '是否自动加载部门树', type: 'boolean', defaultVal: 'true' },
-          { prop: 'value', desc: '选中值', type: 'string | undefined' },
-          { prop: 'onChange', desc: '值变更回调', type: '(value: string | undefined) => void' },
+          { prop: 'treeData', desc: '树形数据 { id, name, children? }', type: 'TreeFilterNode[]' },
+          {
+            prop: 'fetchUrl / transformData',
+            desc: '远程拉树（可选；与 treeData 二选一）',
+            type: 'string / (raw) => TreeFilterNode[]',
+          },
+          {
+            prop: 'value',
+            desc: '选中值（多选为数组，节点 id）',
+            type: 'string | string[] | undefined',
+          },
+          {
+            prop: 'onChange',
+            desc: '值变更回调',
+            type: '(value: string | string[] | undefined) => void',
+          },
           { prop: 'showSearch', desc: '是否显示搜索框', type: 'boolean', defaultVal: 'false' },
-          { prop: 'multiple', desc: '是否多选', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'multiple',
+            desc: '是否多选（确定后提交）',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'leafOnly',
+            desc: '仅叶子写入值；多选时点父节点全选/取消子叶子，父勾选框支持半选',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'getNodeLabel',
+            desc: '自定义节点展示 / 已选 Tag 文案',
+            type: '(node: TreeFilterNode) => string',
+          },
         ],
       },
       {
@@ -1273,8 +1302,15 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   '/components/layout': {
     title: 'Layout 页面布局',
     description:
-      'PageHeaderLayout、ModulePageShell 与 PageSpin；App 根节点须包裹 PageShellProvider 以支持全局 loading。',
+      'AgentAppShell 业务壳；PageHeaderLayout、ModulePageShell 与 PageSpin；App 根节点须包裹 PageShellProvider。',
     examples: [
+      {
+        title: 'AgentAppShell',
+        description: '左 sider + 右主区顶栏；菜单/底部槽/children 由业务注入',
+        component: React.lazy(() => import('@/components/Layout/examples/AgentAppShellDemo')),
+        sourcePath: () => import('@/components/Layout/examples/AgentAppShellDemo/index.tsx?raw'),
+        block: true,
+      },
       {
         title: 'PageHeaderLayout',
         description: '标题 + 操作按钮 + body Spin',
@@ -1291,6 +1327,31 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
     apiDoc: [
+      {
+        componentName: 'AgentAppShellProps',
+        rows: [
+          { prop: 'brandTitle', desc: '侧栏品牌标题', type: 'string', required: true },
+          { prop: 'brandLogo', desc: '侧栏品牌图标节点', type: 'React.ReactNode' },
+          { prop: 'brandMark', desc: '无 logo 时的单字徽章', type: 'string' },
+          {
+            prop: 'menuItems',
+            desc: 'antd Menu items',
+            type: "MenuProps['items']",
+            required: true,
+          },
+          { prop: 'selectedKeys', desc: '选中菜单 key', type: 'string[]' },
+          { prop: 'onMenuClick', desc: '菜单点击', type: "MenuProps['onClick']" },
+          { prop: 'collapsed', desc: '侧栏折叠', type: 'boolean' },
+          { prop: 'onToggleCollapsed', desc: '折叠切换', type: '() => void' },
+          { prop: 'siderWidth', desc: '展开宽度', type: 'number' },
+          { prop: 'siderFooter', desc: '侧栏底部（如 UserProfileCard）', type: 'React.ReactNode' },
+          { prop: 'headerTitle', desc: '顶栏标题', type: 'React.ReactNode' },
+          { prop: 'headerDescription', desc: '顶栏描述', type: 'React.ReactNode' },
+          { prop: 'headerActions', desc: '顶栏右侧操作', type: 'React.ReactNode' },
+          { prop: 'headerScrolled', desc: '滚动后顶栏毛玻璃', type: 'boolean' },
+          { prop: 'children', desc: '主内容', type: 'React.ReactNode', required: true },
+        ],
+      },
       {
         componentName: 'PageHeaderLayoutProps',
         rows: [
