@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.32
+  next_task_id: P6.3.33
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -439,3 +439,16 @@ tasks:
   - 规范
   - plane
   note: 含新增 task-naming.md；对齐 arch P6.11.23
+- id: P6.3.32
+  milestone: P6.3
+  name: Table 组件与 FilterSelect 增强
+  status: 进行中
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-21'
+  target_date: '2026-07-22'
+  tags:
+  - frontend
+  - components
+  note: '新增 Table；FilterSelect 增强；authRedirect/request；规范文档同步'
