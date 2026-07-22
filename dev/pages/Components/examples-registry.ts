@@ -791,8 +791,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         block: true,
       },
       {
-        title: '单选筛选器',
-        description: 'FilterSelect 基础用法与可搜索模式',
+        title: '单选 / 多选筛选器',
+        description: 'FilterSelect 单选、可搜索；多选含全选与已选区滚动',
         component: React.lazy(() => import('@/components/Filter/examples/FilterSelectDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterSelectDemo/index.tsx?raw'),
       },
@@ -858,11 +858,31 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         componentName: 'FilterSelectProps',
         rows: [
           { prop: 'options', desc: '选项列表', type: 'FilterOption[]', required: true },
-          { prop: 'value', desc: '选中值', type: 'string | number | undefined' },
+          {
+            prop: 'value',
+            desc: '选中值（多选为数组）',
+            type: 'string | number | (string | number)[] | undefined',
+          },
           { prop: 'onChange', desc: '值变更回调', type: '(value) => void' },
+          {
+            prop: 'defaultValue',
+            desc: '单选默认值（等于默认时不视为已筛选）',
+            type: 'string | number',
+          },
+          {
+            prop: 'defaultValues',
+            desc: '多选默认集合（等于默认时不视为已筛选）',
+            type: '(string | number)[]',
+          },
           { prop: 'placeholder', desc: '占位符', type: 'string' },
           { prop: 'searchable', desc: '是否可搜索', type: 'boolean' },
-          { prop: 'multiple', desc: '是否多选', type: 'boolean' },
+          {
+            prop: 'multiple',
+            desc: '多选：顶部全选、底部已选标签（限高滚动）、确定/取消',
+            type: 'boolean',
+          },
+          { prop: 'minSelection', desc: '多选至少保留项数；全不选/移除标签时生效', type: 'number' },
+          { prop: 'variant', desc: '人员选项展示部门与联系方式', type: "'default' | 'person'" },
         ],
       },
       {
@@ -1110,7 +1130,11 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'subtitle', desc: '副标题', type: 'string | ReactNode' },
           { prop: 'column', desc: '列数或 Flex 配置', type: 'number | object' },
           { prop: 'gap', desc: '字段间距', type: 'number' },
-          { prop: 'list', desc: '表单项列表（Input/TextArea 等）', type: 'ReactNode[]' },
+          {
+            prop: 'list',
+            desc: '表单项列表（Input/TextArea/Select/InputNumber/Switch 等）',
+            type: 'ReactNode[]',
+          },
         ],
       },
       {
