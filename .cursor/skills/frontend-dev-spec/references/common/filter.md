@@ -4,14 +4,14 @@
 
 筛选组件采用 **CommonFilter 容器 + 子组件自动注册** 的架构：
 
-| 组件                | 说明                                            | 必选/可选 |
-| ------------------- | ----------------------------------------------- | --------- |
-| `CommonFilter`      | 筛选栏容器，管理已选标签展示和清空              | 必选      |
-| `FilterInput`       | 文本输入筛选（label 用语义化字段名，见 §5.1.1） | 可选      |
-| `FilterSelect`      | 下拉选择筛选（支持单选/多选/搜索）              | 可选      |
-| `FilterTreeSelect`  | 树形选择筛选（如部门树，支持单选/多选/搜索）    | 可选      |
-| `FilterDateRange`   | 日期范围筛选                                    | 可选      |
-| `FilterNumberRange` | 数字范围筛选                                    | 可选      |
+| 组件                | 说明                                                        | 必选/可选 |
+| ------------------- | ----------------------------------------------------------- | --------- |
+| `CommonFilter`      | 筛选栏容器，管理已选标签展示和清空                          | 必选      |
+| `FilterInput`       | 文本输入筛选（label 用语义化字段名，见 §5.1.1）             | 可选      |
+| `FilterSelect`      | 下拉选择筛选（支持单选/多选/搜索）                          | 可选      |
+| `FilterTreeSelect`  | 树形选择筛选（如部门树、分厂→品种级联；支持单选/多选/搜索） | 可选      |
+| `FilterDateRange`   | 日期范围筛选                                                | 可选      |
+| `FilterNumberRange` | 数字范围筛选                                                | 可选      |
 
 **导入方式**：
 
@@ -274,24 +274,29 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
 **FilterSelect**：
 
-| 属性　　　　  | 类型　　　　　　  | 说明　　　 | 必填　　　　　　　　 | 　　　　　 | 　　 |
-| ------------- | ----------------- | ---------- | -------------------- | ---------- | ---- |
-| `options`　　 | `FilterOption[]`  | 选项列表　 | 是　　　　　　　　　 | 　　　　　 | 　　 |
-| `value`　　　 | `string \　　　　 | number \　 | undefined`　　　　　 | 当前值　　 | 否　 |
-| `onChange`　  | `(v: string \　　 | number \　 | undefined) => void`  | 值变化回调 | 否　 |
-| `searchable`  | `boolean`　　　　 | 是否可搜索 | 否　　　　　　　　　 | 　　　　　 | 　　 |
-| `multiple`　  | `boolean`　　　　 | 是否多选　 | 否　　　　　　　　　 | 　　　　　 | 　　 |
+| 属性            | 类型                                                    | 说明                                                                        | 必填 |
+| --------------- | ------------------------------------------------------- | --------------------------------------------------------------------------- | ---- |
+| `options`       | `FilterOption[]`                                        | 选项列表                                                                    | 是   |
+| `value`         | `string \| number \| (string \| number)[] \| undefined` | 当前值（多选为数组）                                                        | 否   |
+| `onChange`      | `(v: FilterSelectValue) => void`                        | 值变化回调                                                                  | 否   |
+| `defaultValue`  | `string \| number`                                      | 单选默认值（等于默认时不视为已筛选）                                        | 否   |
+| `defaultValues` | `(string \| number)[]`                                  | 多选默认集合                                                                | 否   |
+| `searchable`    | `boolean`                                               | 是否可搜索                                                                  | 否   |
+| `multiple`      | `boolean`                                               | 多选：顶部「全选」、底部「已选」标签（`max-height: 120px` 滚动）、确定/取消 | 否   |
+| `minSelection`  | `number`                                                | 多选至少保留项数；全不选/移除标签时生效                                     | 否   |
+| `variant`       | `'default' \| 'person'`                                 | 人员选项展示部门与联系方式                                                  | 否   |
 
 **FilterTreeSelect**：
 
-| 属性           | 类型                                           | 说明                         | 必填 |
-| -------------- | ---------------------------------------------- | ---------------------------- | ---- |
-| `value`        | `string \| string[] \| undefined`              | 当前值                       | 否   |
-| `onChange`     | `(v: string \| string[] \| undefined) => void` | 值变化回调                   | 否   |
-| `treeData`     | `Department[]`                                 | 外部树数据（优先于自动加载） | 否   |
-| `autoLoadDept` | `boolean`                                      | 自动加载部门树（默认 true）  | 否   |
-| `showSearch`   | `boolean`                                      | 是否可搜索                   | 否   |
-| `multiple`     | `boolean`                                      | 是否多选                     | 否   |
+| 属性           | 类型                                           | 说明                                                          | 必填 |
+| -------------- | ---------------------------------------------- | ------------------------------------------------------------- | ---- |
+| `value`        | `string \| string[] \| undefined`              | 当前值（节点 `id`）                                           | 否   |
+| `onChange`     | `(v: string \| string[] \| undefined) => void` | 值变化回调                                                    | 否   |
+| `treeData`     | `TreeFilterNode[]`                             | 外部树数据 `{ id, name, children? }`                          | 否   |
+| `showSearch`   | `boolean`                                      | 是否可搜索                                                    | 否   |
+| `multiple`     | `boolean`                                      | 是否多选                                                      | 否   |
+| `leafOnly`     | `boolean`                                      | 仅叶子写入值；多选时点父节点全选/取消子叶子，父勾选框支持半选 | 否   |
+| `getNodeLabel` | `(node) => string`                             | 自定义节点展示 / 已选 Tag 文案                                | 否   |
 
 **FilterDateRange**：
 
@@ -346,9 +351,17 @@ const fetchData = useCallback(async () => {
 }, [page, pageSize, keyword, dateRange]);
 ```
 
-### 5.8 FilterSelect 单选交互规范
+### 5.8 FilterSelect 交互规范
 
-单选模式下，选中项右侧显示 `CheckOutlined`（对号），点击选项自动收起 Popover。取消选中通过"重置"按钮操作，不通过点击对号。
+**单选**：选中项右侧显示 Check（对号），点击选项自动收起 Popover。取消选中通过「重置」/清除，不通过点击对号。
+
+**多选**（`multiple`）：
+
+1. 选项列表顶部固定「全选」checkbox；作用域为当前搜索过滤后的 `filteredOptions`（可半选 `indeterminate`）。
+2. 勾选全选 → 并入过滤结果；取消全选 → 去掉过滤结果；若设 `minSelection`，全不选后不足则保留原数组前 `minSelection` 项。
+3. 面板底部「已选：」标签区限高（`max-height: 120px`）超出滚动；标签文案固定在滚动区外。
+4. 须点「确定」才提交草稿；「取消」或关闭 Popover 丢弃草稿。
+5. **默认全选**：业务侧 `value` 设为全部 code，并传 `defaultValues={全部 code}`——默认不亮 trigger、不进「您已选择」；需展示时加 `showDefaultAsSelected`（标签文案为「全部」）。打开面板仍勾满（草稿用真实 value）。
 
 ### 5.9 筛选项加载态与失败（公用）
 
