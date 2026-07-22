@@ -88,6 +88,7 @@ import {
   TooltipInfo,
   CommonFilter,
   VirtualScrollbar,
+  Table,
   RefreshCw,
   CircleAlert,
   PageShellProvider,
@@ -99,7 +100,6 @@ import {
   ReactForm,
   useField,
 } from '@hkyhy/marsun-components-core';
-
 // 业务域 — 留在 maoyang 本地
 import { DepartmentSelect } from '@/components/Common/Form/DepartmentSelect';
 import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
@@ -130,24 +130,25 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 
 ### npm 导出 ↔ 本地 Common 对照
 
-| npm（`@hkyhy/marsun-components-core`）                       | 原 `src/components/Common/...`                          |
-| ------------------------------------------------------------ | ------------------------------------------------------- |
-| `CommonDescriptions`                                         | `Descriptions/CommonDescriptions`                       |
-| `TooltipInfo`                                                | `TooltipInfo`                                           |
-| `PageHeaderLayout`                                           | `Layout/PageHeaderLayout`                               |
-| `PageSpin`                                                   | 模块 body 整页 Spin（flex 高度链）                      |
-| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册                            |
-| `ModulePageShell`                                            | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步 |
-| `VirtualScrollbar`                                           | `VirtualScrollbar`                                      |
-| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`                     |
-| `Sparkline`                                                  | 微型趋势折线（S3 质量分析等）                           |
-| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示                                      |
-| `SemanticTag` / `SEMANTIC_COLORS`                            | `Tag/SemanticTag`                                       |
-| `CommonFilter` + `Filter*`                                   | `Filter/*`                                              |
-| `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                   |
-| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                |
-| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context                     |
-| `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                            |
+| npm（`@hkyhy/marsun-components-core`）                       | 原 `src/components/Common/...`                                          |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `CommonDescriptions`                                         | `Descriptions/CommonDescriptions`                                       |
+| `TooltipInfo`                                                | `TooltipInfo`                                                           |
+| `PageHeaderLayout`                                           | `Layout/PageHeaderLayout`                                               |
+| `PageSpin`                                                   | 模块 body 整页 Spin（flex 高度链）                                      |
+| `PageShellProvider` / `usePageShell` / `usePageShellLoading` | App Layout 全局 loading 注册                                            |
+| `ModulePageShell`                                            | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步                 |
+| `VirtualScrollbar`                                           | `VirtualScrollbar`                                                      |
+| `Table`                                                      | 列表 Table 包装（antd；默认分页/滚动/Empty）；业务优先用此而非直连 antd |
+| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`                                     |
+| `Sparkline`                                                  | 微型趋势折线（S3 质量分析等）                                           |
+| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示                                                      |
+| `SemanticTag` / `SEMANTIC_COLORS`                            | `Tag/SemanticTag`                                                       |
+| `CommonFilter` + `Filter*`                                   | `Filter/*`                                                              |
+| `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                                   |
+| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                                |
+| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context                                     |
+| `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                                            |
 
 ### AgentHub 导出（`@hkyhy/marsun-components-core`）
 
@@ -309,6 +310,7 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | 场景                     | 组件                                                                | 替代                               |
 | ------------------------ | ------------------------------------------------------------------- | ---------------------------------- |
 | 操作按钮组（Table）      | `ButtonGroup moreType="link"` + 对象数组                            | `Dropdown` + `Button`              |
+| 列表表格                 | `Table`（core；默认分页/滚动/Empty）                                | 直连 antd `Table`（逐步替换）      |
 | 操作按钮组（详情页）     | `ButtonGroup` + 对象数组                                            | `Space` + 多个 `Button`            |
 | 页面头部操作             | `ButtonGroup` + 对象数组；刷新用 `refreshAction` + `RefreshCw` icon | `Space` + `Button` + lucide-react  |
 | 确认操作（listArray 中） | 对象 `message`/`isDelete` 属性                                      | `ConfirmLink`/`ConfirmButton` 组件 |
