@@ -497,7 +497,7 @@ tasks:
 - id: P6.3.36
   milestone: P6.3
   name: FilterNumberRange 交互与样式优化并发版 0.1.29
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feature
   owner: 黄金芳
