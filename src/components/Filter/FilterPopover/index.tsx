@@ -18,8 +18,8 @@ interface FilterPopoverProps {
   open?: boolean;
   /** 打开状态变更回调 */
   onOpenChange?: (open: boolean) => void;
-  /** 确认回调（不传则无确定/取消按钮） */
-  onConfirm?: () => void;
+  /** 确认回调（不传则无确定/取消按钮）；返回 `false` 时不关闭弹层 */
+  onConfirm?: () => void | boolean;
   /** 取消回调 */
   onReset?: () => void;
 }
@@ -44,7 +44,8 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({
   };
 
   const handleConfirm = () => {
-    onConfirm?.();
+    const result = onConfirm?.();
+    if (result === false) return;
     setOpen(false);
   };
 

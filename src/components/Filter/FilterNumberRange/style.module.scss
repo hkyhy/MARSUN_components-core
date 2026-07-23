@@ -1,3 +1,9 @@
+.filter-number-range-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .filter-number-range-inputs {
   display: flex;
   align-items: center;
@@ -11,4 +17,10 @@
 .filter-number-range-unit {
   font-size: var(--font-size-small);
   color: var(--font-color-grey);
+}
+
+.filter-number-range-error {
+  font-size: var(--font-size-small);
+  color: var(--color-error, #ff4d4f);
+  line-height: 1.4;
 }
