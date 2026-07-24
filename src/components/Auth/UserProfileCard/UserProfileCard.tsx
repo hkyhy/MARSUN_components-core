@@ -18,11 +18,17 @@ export type UserProfileCardProps = {
   menuItems?: MenuProps['items'];
   /** 点击默认「退出登录」时回调 */
   onLogout?: () => void;
+  /**
+   * 右侧扩展区（如站内信铃铛）；在 Dropdown 触发器之外，
+   * 点击不会打开用户菜单。不传则不展示扩展区。
+   */
+  extra?: React.ReactNode;
   className?: string;
 };
 
 /**
- * 侧栏底部用户卡片：整卡点击向上展开菜单（默认退出登录）。
+ * 侧栏底部用户卡片：主区域点击向上展开菜单（默认退出登录）；
+ * 可选 `extra` 槽承载独立操作（如站内信），与主区同处视觉壳内。
  * 纯 UI；是否挂载由业务根据登录态决定。
  */
 const UserProfileCard: React.FC<UserProfileCardProps> = ({
@@ -32,6 +38,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
   collapsed = false,
   menuItems,
   onLogout,
+  extra,
   className,
 }) => {
   const initial = (avatarText || name).trim().charAt(0).toUpperCase() || 'U';
@@ -50,13 +57,12 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
     ];
   }, [menuItems, onLogout]);
 
-  const card = (
+  const trigger = (
     <button
       type="button"
       className={classNames(
         styles['user-profile-card'],
         collapsed && styles['user-profile-card--collapsed'],
-        className,
       )}
       aria-label="用户菜单"
     >
@@ -78,6 +84,15 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
     </button>
   );
 
+  const main =
+    items && items.length > 0 ? (
+      <Dropdown menu={{ items }} trigger={['click']} placement="topLeft">
+        {trigger}
+      </Dropdown>
+    ) : (
+      trigger
+    );
+
   return (
     <div
       className={classNames(
@@ -85,13 +100,32 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
         collapsed && styles['user-profile-wrap--collapsed'],
       )}
     >
-      {items && items.length > 0 ? (
-        <Dropdown menu={{ items }} trigger={['click']} placement="topLeft">
-          {card}
-        </Dropdown>
-      ) : (
-        card
-      )}
+      <div
+        className={classNames(
+          styles['user-profile-shell'],
+          collapsed && styles['user-profile-shell--collapsed'],
+          Boolean(extra) && styles['user-profile-shell--with-extra'],
+          className,
+        )}
+      >
+        <div
+          className={classNames(
+            styles['user-profile-row'],
+            collapsed && styles['user-profile-row--collapsed'],
+          )}
+        >
+          <div className={styles['user-profile-main']}>{main}</div>
+          {extra ? (
+            <div
+              className={styles['user-profile-extra']}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+            >
+              {extra}
+            </div>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };

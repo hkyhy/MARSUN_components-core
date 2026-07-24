@@ -1,28 +1,24 @@
 .user-profile-wrap {
   flex-shrink: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 8px 10px 12px;
   margin-top: auto;
 
   &--collapsed {
     padding: 8px 6px 12px;
-    display: flex;
-    justify-content: center;
   }
 }
 
-.user-profile-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* 视觉卡片：圆角 + hover，包住主区与 extra */
+.user-profile-shell {
+  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 10px 12px;
-  border: none;
   border-radius: 14px;
-  background: transparent;
-  box-shadow: none;
-  cursor: pointer;
-  text-align: left;
-  color: inherit;
+  overflow: visible;
   transition: background 0.15s ease;
 
   &:hover {
@@ -32,6 +28,95 @@
   &--collapsed {
     width: auto;
     padding: 6px;
+  }
+}
+
+.user-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  &--collapsed {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: auto;
+  }
+}
+
+.user-profile-main {
+  flex: 1;
+  min-width: 0;
+
+  .user-profile-row--collapsed & {
+    flex: none;
+  }
+
+  /* Dropdown 根节点占满主区，避免卡片宽度塌缩 */
+  > * {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .user-profile-row--collapsed > & > * {
+    width: auto;
+  }
+}
+
+.user-profile-extra {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: content-box;
+  overflow: visible;
+
+  /*
+   * 卡内 shell 已是浅灰；antd text 默认 hover 近白，几乎看不出。
+   * 仅 :hover 填色；显式清掉 :focus，避免 antd/点击后残留蓝底。
+   */
+  :global(.ant-btn.ant-btn-text),
+  :global(.ant-btn-text) {
+    color: var(--font-color-grey-1, #64748b) !important;
+    border-radius: 8px;
+
+    &:focus,
+    &:focus-visible {
+      color: var(--font-color-grey-1, #64748b) !important;
+      background: transparent !important;
+      background-color: transparent !important;
+    }
+
+    &:hover,
+    &:not(:disabled):not(.ant-btn-disabled):hover {
+      color: var(--primary-color, #2563eb) !important;
+      background: rgba(37, 99, 235, 0.18) !important;
+      background-color: rgba(37, 99, 235, 0.18) !important;
+    }
+  }
+}
+
+/* 主区触发器：无独立底色，视觉由 shell 承载 */
+.user-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+
+  &--collapsed {
+    width: auto;
     justify-content: center;
   }
 }
