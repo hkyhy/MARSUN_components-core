@@ -1,4 +1,4 @@
-# 筛选组件（Filter）规范
+# 筛选组件 Filter
 
 ### 5.1 组件体系
 
@@ -8,8 +8,9 @@
 | ------------------- | ----------------------------------------------------------- | --------- |
 | `CommonFilter`      | 筛选栏容器，管理已选标签展示和清空                          | 必选      |
 | `FilterInput`       | 文本输入筛选（label 用语义化字段名，见 §5.1.1）             | 可选      |
-| `FilterSelect`      | 下拉选择筛选（支持单选/多选/搜索）                          | 可选      |
+| `FilterSelect`      | 下拉选择筛选（支持单选/多选/搜索；可选 loadData）           | 可选      |
 | `FilterTreeSelect`  | 树形选择筛选（如部门树、分厂→品种级联；支持单选/多选/搜索） | 可选      |
+| `FilterDatePicker`  | 单日期筛选（日 / 月 / 年）                                  | 可选      |
 | `FilterDateRange`   | 日期范围筛选                                                | 可选      |
 | `FilterNumberRange` | 数字范围筛选                                                | 可选      |
 
@@ -140,6 +141,63 @@ const filterList = [
 ```
 
 > **核心原则**：与 `ButtonGroup` listArray 的 `hidden` 保持一致，统一使用 `hidden` 属性控制可见性，禁止使用 `{condition && <FilterXxx />}` 条件渲染。
+
+### 5.4.1 声明式依赖 `dependsOn` / `loadData` / `panelExtra`
+
+跨字段联动（如「月份驱动主对标选项」「属性筛 → 对比品种」）由 CommonFilter 的 **values 广播** + 子项声明完成；从属条件应**内嵌**在目标筛选项 `panelExtra` 内（与 search 同层），避免顶栏平铺看不出关系：
+
+| Props               | 说明                                                                                                                             |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `dependsOn`         | 依赖的其它 `filterKey`（`string \| string[]`）                                                                                   |
+| `clearOnDepsChange` | 依赖变化时是否清空本项（默认 `true`）                                                                                            |
+| `label`             | 可为 `(ctx: { values }) => string`，如「主对标（参考 2026-07）」                                                                 |
+| `loadData`          | `(ctx: { values, keyword? }) => Promise<选项>`，依赖变化时自动拉取                                                               |
+| `panelExtra`        | 面板内嵌从属 UI（search 下方、列表上方）；**禁止**再嵌 `Filter*`（双重 Popover），用 antd `DatePicker`/`Select`/`InputNumber` 等 |
+| `panelWidth`        | 面板宽度；有 `panelExtra` 时默认 `460`                                                                                           |
+| `filterGroup`       | 可选分组标记（文档语义，不做强布局）                                                                                             |
+
+```tsx
+<CommonFilter label="筛选">
+  <FilterTreeSelect
+    filterKey="primary"
+    label={month ? `主对标分厂×品种（参考 ${month})` : '主对标分厂×品种'}
+    loadData={async () => fetchPrimaryTree(month)}
+    panelExtra={
+      <DatePicker
+        picker="month"
+        size="small"
+        value={month ? dayjs(`${month}-01`) : undefined}
+        onChange={(v) => setMonth(v ? v.format('YYYY-MM') : '')}
+        getPopupContainer={(n) => n.parentElement || document.body}
+      />
+    }
+    value={primary}
+    onChange={setPrimary}
+    leafOnly
+    showSearch
+  />
+  <FilterTreeSelect
+    filterKey="compare"
+    label="对比分厂×品种"
+    loadData={async () => fetchCompareTree({ spinMethod })}
+    panelExtra={
+      <Select
+        size="small"
+        placeholder="纺纱方法"
+        options={methodOpts}
+        value={spinMethod}
+        onChange={setSpinMethod}
+        getPopupContainer={(n) => n.parentElement || document.body}
+      />
+    }
+    multiple
+    leafOnly
+    showSearch
+  />
+</CommonFilter>
+```
+
+> **原则**：从属条件（月份、纺纱属性）放进目标项的 `panelExtra`，**不要**与主对标/对比平铺在顶栏。业务 URL / 参数拼装仍在页面的 `loadData` / 父级 effect 内；core 只负责依赖感知、清空与刷新时机。静态 `treeData` / `options` 仍可受控覆盖 `loadData` 结果。`panelExtra` 内用 antd `DatePicker`/`Select`/`InputNumber`，禁止再嵌 `Filter*`。
 
 ### 5.5 extra 属性
 
@@ -308,11 +366,19 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
 **FilterNumberRange**：
 
-| 属性       | 类型                                                 | 说明              | 必填 |
-| ---------- | ---------------------------------------------------- | ----------------- | ---- |
-| `value`    | `[number \| undefined, number \| undefined] \| null` | 当前值 [min, max] | 否   |
-| `onChange` | `(v: [...] \| null) => void`                         | 值变化回调        | 否   |
-| `unit`     | `string`                                             | 单位文本          | 否   |
+| 属性             | 类型                                                 | 说明                                                 | 必填 |
+| ---------------- | ---------------------------------------------------- | ---------------------------------------------------- | ---- |
+| `value`          | `[number \| undefined, number \| undefined] \| null` | 当前值 [min, max]                                    | 否   |
+| `onChange`       | `(v: [...] \| null) => void`                         | 值变化回调                                           | 否   |
+| `unit`           | `string`                                             | 单位文本                                             | 否   |
+| `min`            | `number`                                             | 绝对值下限（左右输入框共用）                         | 否   |
+| `max`            | `number`                                             | 绝对值上限（左右输入框共用）                         | 否   |
+| `precision`      | `number`                                             | 小数位数（antd `InputNumber`）                       | 否   |
+| `step`           | `number`                                             | 步进；未传且有 `precision` 时按 `10^-precision` 推导 | 否   |
+| `minPlaceholder` | `string`                                             | 左框 placeholder（默认「最低...」）                  | 否   |
+| `maxPlaceholder` | `string`                                             | 右框 placeholder（默认「最高...」）                  | 否   |
+
+> **左右序**：点「确定」时若两侧均有值且左 > 右，`message.warning` 且弹层不关闭（`FilterPopover.onConfirm` 返回 `false`）。
 
 ### 5.7 页面集成要点
 
@@ -367,11 +433,11 @@ const fetchData = useCallback(async () => {
 
 筛选栏依赖的 meta / options（如分厂、状态枚举）加载是**公用 UX**，与具体业务页无关。分 **loading** 与 **失败** 两态，口径统一：
 
-| 阶段            | 行为                                                                                                                                                     |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Loading**     | 筛选栏**始终占位渲染**（`CommonFilter` + 各筛选项触发器可见）；options 可为空或仅合成项（如「全部」）。**禁止** `metaLoading → return null` / 整栏消失。 |
-| **失败**        | 仅 antd `message.error` 友好文案；options 置空 → 下拉 Empty /「暂无数据」；**禁止**内联错误区替换整栏。                                                  |
-| **与 PageSpin** | 筛选栏挂 `ModulePageShell` 的 **`toolbar`**（Spin 外），内容区可继续 Spin；勿靠隐藏筛选栏避让 loading。见 [page-loading.md](page-loading.md)。           |
+| 阶段            | 行为                                                                                                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Loading**     | 筛选栏**始终占位渲染**（`CommonFilter` + 各筛选项触发器可见）；options 可为空或仅合成项（如「全部」）。**禁止** `metaLoading → return null` / 整栏消失。                 |
+| **失败**        | 仅 antd `message.error` 友好文案；options 置空 → 下拉 Empty /「暂无数据」；**禁止**内联错误区替换整栏。                                                                  |
+| **与 PageSpin** | 筛选栏挂 `ModulePageShell` 的 **`toolbar`**（Spin 外），内容区可继续 Spin；勿靠隐藏筛选栏避让 loading。见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)。 |
 
 #### Loading
 

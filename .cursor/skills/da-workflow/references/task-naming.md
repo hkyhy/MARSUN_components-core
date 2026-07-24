@@ -44,7 +44,19 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
 
 登记新任务前：查上表选定 `milestone`；`id` 前缀须与 `milestone` 一致（`S3.3.*` 挂 `milestone: S3.3`）。**先** `da pm dry-run` 拉 Plane 快照：merged 仓库 **CREATE module = 0**；禁止凭空 CREATE 钉表 Module，禁止用 `·` 另建同代号 Module（见 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)）。
 
-**Agent 硬停止（全项目）**：dry-run / preview 出现 `CREATE module`，或任何 `M00x` Module / `milestone: M*`（`my-plane` 除外）→ 停止 sync；任务只挂钉表 `P*.*` / `S*.*` keeper，勿再建壳。
+### 钉表事项 ↔ 业务仓台账（强制）
+
+钉表 depth-2+ 独立 Issue（如 `P3.17.3 · 为S3接入单点登录`）落地到业务仓时：
+
+1. **必须**在业务仓 `sync_manifest` 登记对应任务（如 `S3.3.71`），`name` 体现业务动作，`note` 写 `Refs: P3.17.3`（或钉表代号）
+2. **禁止**只改代码、只挂在旁路任务（升 core / UI 小改）而不登记
+3. commit 按 [commit-format · 功能/模块切分](commit-format.md)：**一钉表事项 / 一功能 → 独立 Task + 独立 commit 组**
+4. 跨项目钉表（P3.17）与业务仓（S3.3）双轨并存时，两边 status 应对齐；交付时间线以**写代码的业务仓 Task** 为主
+5. **钉表大颗粒下的部署 / seed / 联调环境等增量**：在本仓（或钉表同 Module 仓）**新建细粒度 id**，`parent_issue` = 大颗粒 `plane_issue_id`，commit 用细粒度 id；**禁止**改大颗粒 `note` 写「纳入本任务」后用大颗粒 id 提交（见 [task-relationships](task-relationships.md#钉表大颗粒-vs-细粒度硬规则--2026-07-24)）
+
+**Agent 硬停止（全项目）**：dry-run / preview 出现 `CREATE module`，或任何 `M00x` Module / `milestone: M*`（`my-plane` 除外），或 Plane 已有同代号 middot `{id} · {name}` 与钉表 `{id}-{name}` 并存 → **停止 sync**；任务只挂钉表 `P*.*` / `S*.*` keeper，迁任务后 Archive 壳，勿再建壳。
+
+**Agent 硬停止（钉表任务重复 CREATE）**：`origin: dingtalk` 且已有 `plane_issue_id` 的条目若仍出现在 dry-run **CREATE 任务**列表 → **停止 sync**（多为 sync-state / prefix 漂移）。只允许 CREATE **无** `plane_issue_id` 的新细粒度 id；**禁止**为规避误 CREATE 而把子工作并入父 `note`。
 
 ### 任务台账字段（负责人与日期）
 
@@ -91,15 +103,19 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
 ### 各仓库新任务起始
 
 ```yaml
-# Agent_QualityAnalysis — 读 meta.next_task_id（对齐后为 S3.3.51+）
-- id: S3.3.51
+# Agent_QualityAnalysis — 先 plane_pull，取 max(S3.3.N)+1（2026-07-23 起为 S3.3.89+）
+# 禁止盲信 meta.next_task_id；73–88 等为大颗粒预留，见 task-relationships
+- id: S3.3.89
   milestone: S3.3
-  name: 示例任务
+  parent_issue: 8ab0a122-4bcd-4133-9c14-fe0dbf014aec # 预警前端 V0.2
+  name: 示例细粒度任务
   status: 进行中
   priority: P1
   kind: fix
   tags: [frontend]
-  note: 简要说明
+  note: |
+    Refs: S3.3.26
+    简要说明
 
 # marsun_components-core — 读 meta.next_task_id（对齐后为 P6.3.28+）
 - id: P6.3.28
@@ -138,7 +154,14 @@ AI-Assisted: true
 
 ### Agent_QualityAnalysis
 
-台账已按名称对齐 Plane 显示编号为 `S3.1.1` / `S3.3.1`…（脚本 `plane/scripts/s3_ledger_align.py`）。**新增量**一律 `S3.3.*`；commit `Task: S3.3.{N}`、`Refs: S3.3`。
+台账已按名称对齐 Plane 显示编号为 `S3.1.1` / `S3.3.1`…（脚本 `plane/scripts/s3_ledger_align.py`）。**新增量**一律 `S3.3.*`；commit `Task: S3.3.{N}`。
+
+**取号与大颗粒**：
+
+1. `plane_pull` 后扫描 work_items 名称中的 `S3.3.(\d+)`，`id = max+1`
+2. **勿**盲信 `meta.next_task_id`（可落后于钉表大颗粒）
+3. 钉表大颗粒号段（如 `S3.3.73`–`S3.3.88`，以当日 Plane 为准）**预留给** `S3.3.N-质量管理-…V0.2`；细粒度勿占用
+4. 细粒度挂 `parent_issue` 到大颗粒 UUID；`note` 写 `Refs: S3.3.26`（等钉表代号），见 [task-relationships](task-relationships.md)
 
 `·` 误建 Module（如 `S3.3 · 功能开发`）已并入钉表 `S3.3-功能开发`；空 Module 于 Plane UI Archive。
 

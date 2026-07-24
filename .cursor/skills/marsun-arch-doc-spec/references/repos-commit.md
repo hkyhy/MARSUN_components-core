@@ -21,12 +21,12 @@
 
 ## 原则
 
-| 场景                                                               | 做法                                                                                                                                                                                 |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 子仓库 **已有 Plane**                                              | 在**该子仓库**内 commit，使用**该仓库** `plane/project.yaml` + `plane/sync_manifest.yaml`；**按功能/模块拆成多个原子 commit**，每个 commit 的 `type(scope)` 与 `Task:` 对应该次 diff |
-| 子仓库 **无 Plane**                                                | **停止**，运行检测脚本，将 `suggest` / `fallbacks` **提示给用户**，由用户选择 bootstrap 本仓库或走 marsun_arch                                                                       |
-| 仅 **skills 镜像**（`frontend-dev-spec` / `marsun-arch-doc-spec`） | marsun_arch 改源 → `node scripts/sync-skills.mjs`（hook 自动）→ 子仓库 `docs(spec)` **单独** commit，不与业务混 commit                                                               |
-| **跨仓库同一功能**（含 `@hkyhy/marsun-components-core`）           | **先 core 提交并发布版本** → 业务仓库 `chore(deps)` 对齐 semver → **marsun_arch 先 WorkRecord 再 docs/spec commit**                                                                  |
+| 场景                                                               | 做法                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 子仓库 **已有 Plane**                                              | 在**该子仓库**内 commit，使用**该仓库** `plane/project.yaml` + `plane/sync_manifest.yaml`；**按功能/模块拆成多个原子 commit**，每个 commit 的 `type(scope)` 与 `Task:` 对应该次 diff；**须与钉表 depth-2 Issue 对齐**（钉表有独立事项 → 业务仓须有对应台账 id，见 [da-workflow/commit-format](../../da-workflow/references/commit-format.md)） |
+| 子仓库 **无 Plane**                                                | **停止**，运行检测脚本，将 `suggest` / `fallbacks` **提示给用户**，由用户选择 bootstrap 本仓库或走 marsun_arch                                                                                                                                                                                                                                 |
+| 仅 **skills 镜像**（`frontend-dev-spec` / `marsun-arch-doc-spec`） | marsun_arch 改源 → `node scripts/sync-skills.mjs`（hook 自动）→ 子仓库 `docs(spec)` **单独** commit，不与业务混 commit                                                                                                                                                                                                                         |
+| **跨仓库同一功能**（含 `@hkyhy/marsun-components-core`）           | **先 core 提交并发布版本** → 业务仓库 `chore(deps)` 对齐 semver → **marsun_arch 先 WorkRecord 再 docs/spec commit**                                                                                                                                                                                                                            |
 
 ## 跨仓库提交顺序（必守）
 
@@ -85,7 +85,7 @@ AI-Assisted: true
 
 **Plane 交付六步闭环（必守）**：`plane/project.yaml` 已配置时，每个任务闭环内按序执行（详见 [03-commit-plane-timeline.mdc](../../../rules/03-commit-plane-timeline.mdc) 与 [da-workflow/plane-timeline](../../da-workflow/references/plane-timeline.md)）：
 
-0. **新任务关联梳理**：对照台账 + Plane 快照 + WorkRecord，写入 `parent_issue` 与 `note` 中 `split_from` / `related_tasks`（见 [da-workflow/task-relationships](../../da-workflow/references/task-relationships.md)）
+0. **新任务关联梳理**：`plane_pull` 取号（`max(S3.3.N)+1`，勿盲信 `next_task_id`）→ 对照台账 + 快照 + WorkRecord → 写入 `parent_issue`（优先钉表 V0.2 大颗粒 UUID）与 `note` 中 `Refs:` / `split_from` / `related_tasks`（见 [da-workflow/task-relationships](../../da-workflow/references/task-relationships.md)）
 1. 新任务：`sync_manifest` 登记，`status: 进行中` → `da pm sync` **CREATE**
 2. `git commit`（`Task: <id>`，完成时不带 `[WIP]`）
 3. `da task timeline-sync <id>` — 活动区「关联 commit」
@@ -99,7 +99,7 @@ AI-Assisted: true
 
 ### Task ID 与 commit 命名
 
-对齐华茂钉钉层级与远程 Plane 习惯，详见 `frontend-dev-spec/references/common/task-naming.md` 与 `da-workflow/references/dingtalk-hierarchy-naming.md`：
+对齐华茂钉钉层级与远程 Plane 习惯，详见 `da-workflow/references/task-naming.md` 与 `da-workflow/references/dingtalk-hierarchy-naming.md`：
 
 | 格式                | 示例                                                                         |
 | ------------------- | ---------------------------------------------------------------------------- |
@@ -218,7 +218,7 @@ node scripts/sync-skills.mjs --skill marsun-arch-doc-spec --pull-from repos/<nam
 
 **禁止**只在子仓库改 shared 而不 pull 回权威源。业务部分（`references/business/`）可只留在本 repo。
 
-Task / 命名见 `frontend-dev-spec/references/common/task-naming.md`。
+Task / 命名见 `da-workflow/references/task-naming.md`。
 
 ## 完整流程（Plane 已就绪，单功能点一轮）
 
@@ -226,7 +226,7 @@ Task / 命名见 `frontend-dev-spec/references/common/task-naming.md`。
 cd repos/<repo>
 git status && git diff --stat          # 只 pick 本功能相关文件
 # 确认 scope + Task id（sync_manifest.yaml）
-# 若依赖 @hkyhy/marsun-components-core：package.json 须为 npm 已发布 semver；本地联调用 MARSUN_CORE_LOCAL（见 component-mapping.md），禁止 file: / lockfile link
+# 若依赖 @hkyhy/marsun-components-core：package.json 须为 npm 已发布 semver；本地联调用 MARSUN_CORE_LOCAL（见 component-mapping-组件映射.md），禁止 file: / lockfile link
 da standards scan
 git add <paths> && da standards commit
 git push

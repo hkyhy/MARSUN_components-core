@@ -1,4 +1,4 @@
-# 代码格式化与 Lint
+# 代码格式化与 Lint Code Formatting
 
 Marsun 团队仓库须安装统一的 Prettier + ESLint + Husky 工具链：前端子仓库（`repos/*`）与 **marsun_arch 元仓库** 根目录均适用，`.prettierrc` 规则对齐。
 

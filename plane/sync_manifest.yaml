@@ -552,7 +552,7 @@ tasks:
 - id: P6.3.40
   milestone: P6.3
   name: frontend-dev-spec 中文路径规范镜像
-  status: 进行中
+  status: 已完成
   priority: P2
   kind: docs
   owner: 黄金芳

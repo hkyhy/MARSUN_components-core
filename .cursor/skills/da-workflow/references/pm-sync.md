@@ -9,7 +9,7 @@
 - `plane/.env` 或 `~/.cursor/plane.env` 含 `PLANE_API_KEY`
 - `plane/project.yaml` 含 `project_id`（缺则 **HITL 停下** 等用户补）
 
-## Agent 按序执行
+## Agent 按序执行（铁律：先拉 → dry-run → sync → 自检）
 
 ```bash
 REPO=.   # 或用户指定的项目根
@@ -19,13 +19,21 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step validate
 
+# ① 先拉 + reconcile + preview + module_health_check（不写 Plane）
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step plane-dry-run
-# 审阅 plane/sync_preview.md（仅变动项）
+# 审阅 plane/sync_preview.md：merged 须 CREATE module = 0；仅 link DT keeper
 
-bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step plane-sync
-# 用户明确同意后（非交互）：
+# ② 用户明确同意后再写入（pipeline 内会再次 pull → sync → 二次 pull → health check）
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step plane-sync --confirm-token <token>
+# 或交互输入 SYNC
+
+# ③ 也可单独复跑自检（基于当前 snapshot）
+python3 ~/.cursor/skills/platform-doc-plane-sync/scripts/module_health_check.py --repo "$REPO"
 ```
+
+**禁止**：跳过 pull 用陈旧 snapshot 直接 sync；跳过 dry-run；health check 失败仍对用户说「已同步」。
+
+**适用范围（每个 plane_ready 仓）**：assets（P3）/ QA（S3）/ arch·core（P6）/ agent（S1）等凡含 `plane/project.yaml` + `sync_manifest.yaml` 的仓库，**同一套** `plane_pull` → dry-run → sync → `module_health_check`。唯一例外：`my-plane` 维持 `M003-*`，不纳入钉表 Module 硬闸。非仅 S3。
 
 ## 硬约束
 
@@ -35,17 +43,36 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - preflight exit 3 → HITL 停下，用户补 API Key / `project_id`
 - **`origin: merged` milestone：dry-run CREATE module 须为 0**（否则停止 sync，见 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)）
 - **禁止** pm sync 私自 CREATE 与钉表同名的 Module（`M001`/`M002` 等历史 id 已废弃）
-- **全项目**：台账不得登记 `milestone: M*`（`my-plane` 除外）；只挂钉表 `P*.*` / `S*.*` keeper
-- **脚本硬拦**：`sync_preview` / `validate_manifest` 对 CREATE `M*` 或含 `·` 的 Module **fail**，无 confirm-token
+- **全项目**：台账不得登记 `milestone: M*`（`my-plane` 除外）；只挂钉表 `P*.*` / `S*.*` keeper（名称 `{id}-{name}`）
+- **禁止**用 Issue 的中点 `·` 再建 Module（会与钉表并成重复项，如 `P3.7 · …` / `P6.11 · …` / `S1.3 · …` / `S3.3 · …` vs 对应 `{id}-…` keeper）
+- **脚本硬拦**：`sync_preview` 对 merged `CREATE module` / middot Module **fail**；`module_health_check` 对同代号双份 **fail**
+- 见重复 Module → **先**按 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md) 清壳，**再** sync
 
 ## dry-run 门槛（merged 仓库）
 
-| 检查项                      | 预期            | 失败处理                                     |
-| --------------------------- | --------------- | -------------------------------------------- |
-| CREATE module               | **0**           | 改 milestones 绑定 dingtalk；清理误建 Module |
-| CREATE `M*` / middot Module | **硬失败**      | 删 YAML `M*` 行；清壳后挂对应钉表 Module     |
-| CREATE 任务                 | 仅新登记 id     | 先 reconcile 再登记                          |
-| PATCH 模块名                | **0**（merged） | 检查 sync 写保护是否生效                     |
+| 检查项                                  | 预期            | 失败处理                                                                   |
+| --------------------------------------- | --------------- | -------------------------------------------------------------------------- |
+| CREATE module                           | **0**           | 改 milestones 绑定 dingtalk；清理误建 Module                               |
+| CREATE `M*` / middot Module             | **硬失败**      | 删 YAML `M*` 行；清壳后挂对应钉表 Module                                   |
+| 同代号双 Module（`-`+`·`）              | **0 活跃壳**    | merge→`(重复·待删)`→Archive 后再 sync                                      |
+| CREATE 任务                             | 仅新登记 id     | 先 reconcile 再登记                                                        |
+| CREATE 已有 `plane_issue_id` 的钉表任务 | **0（硬停止）** | 勿 sync；查 prefix / sync-state；**禁止**把本应 CREATE 的细粒度并进父 note |
+| PATCH 模块名                            | **0**（merged） | 检查 sync 写保护是否生效                                                   |
+| module_health_check                     | **exit 0**      | 清壳 / 修脚本后再 sync                                                     |
+
+## 回潮复盘（`-` vs `·` · 全工程线）
+
+| 正确（钉表 keeper）                    | 错误（pm sync 壳）                         |
+| -------------------------------------- | ------------------------------------------ |
+| `P3.7-企业文件上传…`                   | `P3.7 · 企业文件上传…`                     |
+| `P6.11-开发规范`                       | `P6.11 · 开发规范`                         |
+| `S1.3-…`                               | `S1.3 · …`                                 |
+| `S3.3-功能开发`                        | `S3.3 · 功能开发`                          |
+| `external_id` = `{legacy}:module:DT-…` | `{repo-prefix}:module:{code}`（middot 壳） |
+
+历史根因：lookup 只认 middot 名 + DT 查找未覆盖 `legacy_external_prefixes` → 误判「无 Module」→ CREATE 壳；Archive 后再 sync 又 CREATE。现已：`resolve_plane_module` + merged 禁止 CREATE + **每个 plane_ready 仓每次 sync 后 health check**。
+
+**禁止**：只 Archive 壳、不修脚本、不同步后自检；禁止以为「只 S3 要管」而跳过他仓自检。
 
 ## 负责人与日期
 
@@ -73,31 +100,32 @@ Plane 同步另需：`plane/project.yaml`、`plane/sync_manifest.yaml`、`plane/
 ## 一键 Pipeline
 
 ```bash
-# 采集 + 校验 + dry-run（默认，不写 Plane）
+# 采集 + 校验 + dry-run（默认，不写 Plane；含 health check）
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo .
 
 # 含 Excel 导出
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --excel
 
-# 全步骤（Plane 一步式 confirm）
+# 全步骤（Plane 一步式 confirm；sync 后二次 pull + health check）
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --excel --plane
 ```
 
 ## 与六步闭环的关系
 
 - **任务级 sync**（`da pm sync`）：在 commit 闭环内 CREATE/PATCH 台账状态
-- **批量进度 sync**（`@da pm` pipeline）：梳理 roadmap → 写 YAML → dry-run → sync
+- **批量进度 sync**（`@da pm` pipeline）：梳理 roadmap → 写 YAML → dry-run → sync → 自检
 
 二者不可互相替代。任务完成须先 `timeline-sync` + `task done`，再 PATCH `status: 已完成`。
 
 ## 常见问题
 
-| 现象                      | 处理                                                         |
-| ------------------------- | ------------------------------------------------------------ |
-| preflight exit 3          | 缺 API Key 或 `project_id` → HITL                            |
-| 写到错误 Plane 项目       | 更新 `project_id` + `project_url` 后让用户确认               |
-| YAML 校验失败含 `@`       | `note` 字段中 `@da` 等须加引号                               |
-| dry-run CREATE module > 0 | merged milestone 未绑定钉表 → 见 plane-dingtalk-module-rules |
-| Plane 出现重复 P6.1 模块  | pm sync 误 PATCH 钉表 Module 名 → 迁移任务后清理误建 Module  |
+| 现象                                          | 处理                                                         |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| preflight exit 3                              | 缺 API Key 或 `project_id` → HITL                            |
+| 写到错误 Plane 项目                           | 更新 `project_id` + `project_url` 后让用户确认               |
+| YAML 校验失败含 `@`                           | `note` 字段中 `@da` 等须加引号                               |
+| dry-run CREATE module > 0                     | merged milestone 未绑定钉表 → 见 plane-dingtalk-module-rules |
+| Plane 出现重复 P3.7 / P6.x / S1.3 / S3.3 模块 | middot 壳回潮 → 清壳 + `module_health_check`；禁止再 CREATE  |
+| health check 失败                             | 同代号 `-`/`·` 双份 → 见清壳 checklist，勿强行 confirm-token |
 
 完整安全规约：`~/.cursor/skills/platform-doc-plane-sync/PM-SAFETY.md`

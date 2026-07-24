@@ -1,4 +1,4 @@
-# 组件映射与 antd 重构
+# 组件映射 Component Mapping
 
 > **文档同步**：每次新增或更改 Common 组件（含 Props、用法、全局接入），须同步更新本文件、`SKILL.md` 及相关 `references/` 提示词；详见 SKILL.md 核心原则 #23。
 
@@ -7,8 +7,8 @@
 纯 UI 组件库（源码仓库 `marsun_components-core`），业务项目（如 `maoyang_data-asset-system`）通过 npm 安装：
 
 ```bash
-npm install @hkyhy/marsun-components-core antd react react-dom
-# maoyang 当前 antd 5 / React 18 时须加：npm install ... --legacy-peer-deps
+# 技术栈硬约束：React 19 + antd 6（与 core peer 一致）
+npm install @hkyhy/marsun-components-core antd@^6 react@^19 react-dom@^19
 ```
 
 **接入要点**：
@@ -67,7 +67,7 @@ rg 'marsun_components-core|"link": true' package-lock.json  # 须为空（相对
 | `marsun_components-core` | `"version"`                       | feat 开发时 **= npm 已发布最新**；仅 `chore(release)` commit 内允许 **npm+1 patch** |
 | 业务项目                 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版，与 lockfile 解析版本一致                         |
 
-**core 发版**：`chore(release): vX.Y.Z` push main → CI publish；**禁止**本地 `npm publish`。见 [marsun-core-version.md](./marsun-core-version.md)。
+**core 发版**：`chore(release): vX.Y.Z` push main → CI publish；**禁止**本地 `npm publish`。细则见下文「Core 版本管理」。
 
 提交前核对：
 
@@ -77,7 +77,7 @@ npm view @hkyhy/marsun-components-core version --registry https://registry.npmjs
 # 业务项目：rg '"@hkyhy/marsun-components-core"' package.json
 ```
 
-**禁止** package.json 版本落后于 npm（如 npm 0.1.15 而文件仍写 0.1.13）、跳号、或 `file:` 链。升版流程见 [marsun-core-version.md](./marsun-core-version.md)。
+**禁止** package.json 版本落后于 npm（如 npm 0.1.15 而文件仍写 0.1.13）、跳号、或 `file:` 链。升版流程见下文「Core 版本管理」。
 
 **导入约定**：npm 包内 Common 已拍平导出，优先从包根 import，业务 wrapper 仍从 `@/components/Common/...`：
 
@@ -126,7 +126,68 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 
 **保留在业务项目**：`fetchAuthPermissions`（绑定 API）、`agentHubAccess`（路由/常量）、`points/*`（领域逻辑）、`request.ts` 薄封装实例。
 
-**版本对齐**：包 peer 为 antd 6 + React 19；业务项目未升级前可用 `--legacy-peer-deps` 安装，逐步替换 import 后再统一升级 antd/React。
+**版本对齐（硬约束）**：业务前端子仓库与 `@hkyhy/marsun-components-core` 统一 **React 19 + antd 6**（`react`/`react-dom` `^19`，`antd` `^6`）。`package.json` 须直接声明上述依赖并与 lockfile 一致；**禁止**以 antd 5 / React 18 + `--legacy-peer-deps` 作为默认安装路径。遗留仓升级时一次对齐主版本，再接入/升版 core。
+
+## Core 版本管理 Marsun Core Version
+
+### 核心原则：package.json 与实版一致
+
+**`package.json` 中的版本号必须反映真实可解析版本**，不得滞后、跳号或与 npm 脱节。
+
+| 场景                        | `marsun_components-core` 的 `version` | 业务项目的依赖                   |
+| --------------------------- | ------------------------------------- | -------------------------------- |
+| feat/fix 开发中             | `= npm 最新`（如 `0.1.17`）           | `^` + npm 最新                   |
+| 准备发版（chore commit 内） | `= npm 最新 + 1 patch`                | 仍保持上一版直至 CI publish 成功 |
+| CI publish 成功后           | `= npm 最新`                          | 升为 `^` + 新版本                |
+
+核对命令：
+
+```bash
+npm view @hkyhy/marsun-components-core version --registry https://registry.npmjs.org
+node -p "require('./package.json').version"   # core 仓库
+```
+
+### 升版前必核对（禁止跳号）
+
+工作区 version **不得**相对「npm 最新版」一次跳多个 patch（如 0.1.12 → 0.1.21），**不得**落后于 npm（如 npm 0.1.17 而本地仍 0.1.15）。
+
+| 来源            | 命令                                             | 含义           |
+| --------------- | ------------------------------------------------ | -------------- |
+| npm **已发布**  | `npm view @hkyhy/marsun-components-core version` | **权威实版**   |
+| 上次 **commit** | `git show HEAD:package.json` → `.version`        | Git 台账       |
+| 工作区          | `node -p "require('./package.json').version"`    | 待提交 version |
+
+在 `repos/marsun_components-core` 根目录：
+
+```bash
+node scripts/version-check.mjs                    # 检查；落后 / 跳号 exit 1
+npm run version:sync                              # 对齐 npm 最新（--apply-published）
+npm run version:check:apply                       # 写回 npm+1，准备 chore(release) commit
+```
+
+### 发布顺序（commit/push 触发，禁止本地 npm publish）
+
+1. **功能开发**：只提交 `feat`/`fix`/`docs` 等，**不修改** `package.json` version（保持 = npm 最新）。
+2. **准备发版**：
+   ```bash
+   node scripts/version-check.mjs          # 确认 = npm 最新
+   npm run version:check:apply             # 写回 npm+1（仅改文件，不 publish）
+   npm run build && npm test
+   git add package.json package-lock.json
+   git commit -m "chore(release): v0.1.x"
+   git push origin main                    # 单独 push，确保为 push 批次最后一条 commit
+   ```
+3. **CI 自动**（`marsun_components-core` 的 `release.yml`）：校验 → build/test → 打 tag → `npm publish`。
+4. **业务项目**：npm 可见新版本后，`package.json` 改为 `^0.1.x`，`npm install`，commit lockfile。
+
+补发失败版本：GitHub Actions → **Publish npm (manual retry)** → 输入已有 tag。
+
+### chore(release) commit
+
+- 仅含 `package.json` / `package-lock.json` version bump（及 `CHANGELOG` 若有）
+- 不与功能 commit 混写在同一 push 批次末尾之外
+- commit message 首行须为：`chore(release): v0.1.x`（与 package.json version 一致）
+- **禁止**本地 `npm publish`
 
 ### npm 导出 ↔ 本地 Common 对照
 
@@ -271,27 +332,28 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 
 ### Common 组件（本地或 npm）
 
-| antd 组件　　　　　　 | Common 封装　　　　　　　　　　　　　　　　　　　  | 使用方式　　　　　　　　　　　　　　　　　　　　　                                                                                                  |
-| --------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Descriptions`　　　  | `CommonDescriptions`　　　　　　　　　　　　　　　 | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                 |
-| `Tooltip`（详情）　   | `TooltipInfo`　　　　　　　　　　　　　　　　　　  | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                               |
-| 页面头部布局　　　　  | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                            |
-| 模块页壳（AppShell）  | `ModulePageShell` + `PageShellProvider`　　　　　  | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [page-loading.md](page-loading.md)                                                       |
-| 主内容卡片　　　　　  | `ContentCard`（Shared/Layout）　　　　　　　　　   | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles.md](styles.md) §8.10                                                              |
-| 可滚动区域　　　　　  | `VirtualScrollbar`　　　　　　　　　　　　　　　　 | `wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['...'])`；`ref` → viewport；见 [virtual-scrollbar.md](virtual-scrollbar.md) |
-| 模块/页面样式         | `style.module.scss`                                | 每模块/页面必选（无样式时空文件）；见 [styles.md](styles.md)                                                                                        |
-| `Tag`（状态展示）　　 | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`  | 传入 `status` / `role`　　　　　　　　　　　　　　                                                                                                  |
-| `Tag`（通用）　　　　 | `SemanticTag`　　　　　　　　　　　　　　　　　　  | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                  |
-| `Select`（部门选择）  | `DepartmentSelect`　　　　　　　　　　　　　　　　 | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                  |
-| 权限判断　　　　　　  | `hasPermission`　　　　　　　　　　　　　　　　　  | `hasPermission(user, 'user:edit')`　　　　　　　　                                                                                                  |
-| 侧栏用户卡片　　　　  | `UserProfileCard`　　　　　　　　　　　　　　　　  | `name` + `sub?` + `collapsed?` + `onLogout?` / `menuItems?`；默认无边框，hover 有背景；点击展开退出                                                 |
-| 筛选栏　　　　　　　  | `CommonFilter` + Filter 子组件　　　　　　　　　　 | 见 [filter.md](filter.md)　　　　　　　　　　　　　　                                                                                               |
-| `Input`（筛选）　　　 | `FilterInput`　　　　　　　　　　　　　　　　　　  | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter.md](filter.md) §5.1.1）                                   |
-| 展示/表单内容块       | `InteractiveBlock`（业务 Shared/Detail）           | title/info/actions/subtitle/tags 层级；见 [content-layout.md](content-layout.md)                                                                    |
-| `Select`（筛选）　　  | `FilterSelect`　　　　　　　　　　　　　　　　　　 | `filterKey` + `options` + `value` + `onChange`　　                                                                                                  |
-| `TreeSelect`（筛选）  | `FilterTreeSelect`　　　　　　　　　　　　　　　　 | `filterKey` + `value` + `onChange`，自动加载部门树　                                                                                                |
-| `RangePicker`（筛选） | `FilterDateRange`　　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                                                                                                 |
-| 数字范围（筛选）　　  | `FilterNumberRange`　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange` + `unit`　　　　                                                                                                 |
+| antd 组件　　　　　　 | Common 封装　　　　　　　　　　　　　　　　　　　  | 使用方式　　　　　　　　　　　　　　　　　　　　　                                                                                                                  |
+| --------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Descriptions`　　　  | `CommonDescriptions`　　　　　　　　　　　　　　　 | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                                 |
+| `Tooltip`（详情）　   | `TooltipInfo`　　　　　　　　　　　　　　　　　　  | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                                               |
+| 页面头部布局　　　　  | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                                            |
+| 模块页壳（AppShell）  | `ModulePageShell` + `PageShellProvider`　　　　　  | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                             |
+| Agent 业务壳　　　　  | `AgentAppShell`　　　　　　　　　　　　　　　　　  | 左 sider（品牌/菜单/footer 槽）+ 右顶栏；`menuItems` + `siderFooter`（如 `UserProfileCard`）+ `children`；纯 UI                                                     |
+| 主内容卡片　　　　　  | `ContentCard`（Shared/Layout）　　　　　　　　　   | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles-样式规范.md](styles-样式规范.md) §8.10                                                            |
+| 可滚动区域　　　　　  | `VirtualScrollbar`　　　　　　　　　　　　　　　　 | `wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['...'])`；`ref` → viewport；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md) |
+| 模块/页面样式         | `style.module.scss`                                | 每模块/页面必选（无样式时空文件）；见 [styles-样式规范.md](styles-样式规范.md)                                                                                      |
+| `Tag`（状态展示）　　 | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`  | 传入 `status` / `role`　　　　　　　　　　　　　　                                                                                                                  |
+| `Tag`（通用）　　　　 | `SemanticTag`　　　　　　　　　　　　　　　　　　  | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                                  |
+| `Select`（部门选择）  | `DepartmentSelect`　　　　　　　　　　　　　　　　 | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                                  |
+| 权限判断　　　　　　  | `hasPermission`　　　　　　　　　　　　　　　　　  | `hasPermission(user, 'user:edit')`　　　　　　　　                                                                                                                  |
+| 侧栏用户卡片　　　　  | `UserProfileCard`　　　　　　　　　　　　　　　　  | `name` + `sub?` + `collapsed?` + `onLogout?` / `menuItems?` + `extra?`（右侧独立操作如站内信，与主区同卡内、Dropdown 外；**不传则无扩展区**）；主区点击展开退出     |
+| 筛选栏　　　　　　　  | `CommonFilter` + Filter 子组件　　　　　　　　　　 | 见 [filter-筛选组件.md](filter-筛选组件.md)　　　　　　　　　　　　　　                                                                                             |
+| `Input`（筛选）　　　 | `FilterInput`　　　　　　　　　　　　　　　　　　  | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter-筛选组件.md](filter-筛选组件.md) §5.1.1）                                 |
+| 展示/表单内容块       | `InteractiveBlock`（业务 Shared/Detail）           | title/info/actions/subtitle/tags 层级；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                              |
+| `Select`（筛选）　　  | `FilterSelect`　　　　　　　　　　　　　　　　　　 | `filterKey` + `options` + `value` + `onChange`　　                                                                                                                  |
+| `TreeSelect`（筛选）  | `FilterTreeSelect`　　　　　　　　　　　　　　　　 | `filterKey` + `value` + `onChange`，自动加载部门树　                                                                                                                |
+| `RangePicker`（筛选） | `FilterDateRange`　　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                                                                                                                 |
+| 数字范围（筛选）　　  | `FilterNumberRange`　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange` + `unit` + 可选 `min`/`max`/`precision`/`step`；确定时左≤右                                                                      |
 
 ### Icons（`@hkyhy/marsun-components-core`）
 
@@ -338,7 +400,7 @@ import {
 import { ReactForm, useField, useFormApi, GroupList } from '@hkyhy/marsun-components-core';
 ```
 
-必填星号等依赖主题别名 `--color-warning`（映射 `--error-color`，见 [theme.md](theme.md)）。
+必填星号等依赖主题别名 `--color-warning`（映射 `--error-color`，见 [theme-主题Token.md](theme-主题Token.md)）。
 
 | 组件                                                          | 说明                                                    |
 | ------------------------------------------------------------- | ------------------------------------------------------- |
@@ -372,4 +434,4 @@ import { ReactForm, useField, useFormApi, GroupList } from '@hkyhy/marsun-compon
 3. 需要封装业务逻辑
 4. Tag 展示逻辑一致
 
-重构模板参考 [../business/module-patterns.md](../business/module-patterns.md) 中「antd 组件重构模板」章节。
+重构模板参考 [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md) 中「antd 组件重构模板」章节。

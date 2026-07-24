@@ -5,13 +5,14 @@
 
 ## 团队成员
 
-| 姓名   | GitHub 邮箱         | Plane 邮箱         |
-| ------ | ------------------- | ------------------ |
-| 郑鹏辉 | walkthunder@163.com | aaron@wisilk.com   |
-| 黄金芳 | 2283785225@qq.com   | metacoo@wisilk.com |
-| 张南   | monster@wisilk.com  | monster@wisilk.com |
-| 刘军   | lj@wisilk.com       | lj@wisilk.com      |
-| 王波   | 1186583076@qq.com   | wangbo@wisilk.com  |
+| 姓名   | GitHub 邮箱          | Plane 邮箱           |
+| ------ | -------------------- | -------------------- |
+| 郑鹏辉 | walkthunder@163.com  | aaron@wisilk.com     |
+| 黄金芳 | 2283785225@qq.com    | metacoo@wisilk.com   |
+| 张南   | monster@wisilk.com   | monster@wisilk.com   |
+| 刘军   | lj@wisilk.com        | lj@wisilk.com        |
+| 王波   | 1186583076@qq.com    | wangbo@wisilk.com    |
+| 卢金永 | lujinyong@wisilk.com | lujinyong@wisilk.com |
 
 ## YAML 用法
 

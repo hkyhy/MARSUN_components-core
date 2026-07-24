@@ -55,6 +55,11 @@ da project init          # 规范 + plane/ 台账
 ```
 Task Progress:
 - [ ] git diff --stat — 原子性，无无关文件
+- [ ] **按功能/模块切分** — 对照钉表 depth-2 Issue；一事项一台账任务一组 commit（见 references/commit-format.md）
+- [ ] **plane_pull 取号** — 扫描 snapshot 名称 `S3.3.(\d+)`，`id = max+1`；勿盲信 `meta.next_task_id`；挂 `parent_issue` 到钉表大颗粒（见 references/task-relationships.md）
+- [ ] 钉表已有独立事项 → 业务仓已登记对应 id，note 含 Refs: <钉表代号>
+- [ ] **钉表大颗粒下的增量** → 新建细粒度 id + `parent_issue`；**禁止**写进父 note「纳入本任务」后用父 id 作 `Task:`（见 task-relationships 硬规则）
+- [ ] dry-run 若 CREATE 已有 `plane_issue_id` 的钉表任务 → **硬停止**，勿改并父 note 规避
 - [ ] da standards scan — .env 硬拦；密钥/反模式
 - [ ] 审查 diff：范围、密钥、反模式（见 vibe-guard）
 - [ ] 编写 message：含 Task: / [WIP]；Agent 编辑 → AI-Assisted: true
@@ -102,16 +107,36 @@ PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"
 
 团队统一入口：**`@da pm`**（勿对用户宣传 `@project-pm-sync`）。
 
+### 钉表 SSOT（开场必检 · 全项目 · 非仅 S3）
+
+华茂钉钉多维表是 Module 真相源。**Module 名必须跟钉表 `{id}-{name}`（短横线）**；Issue 才用 `{id} · {name}`（中点）。适用于 **每个** plane_ready 仓（P3 / P6 / S1 / S3 等；`my-plane` 除外）。
+
+| 正确（钉表 keeper）        | 错误（会制造重复 Module）      |
+| -------------------------- | ------------------------------ |
+| `P3.7-企业文件上传…`       | `P3.7 · …` / `M*`              |
+| `P6.11-开发规范`           | `P6.11 · 开发规范` / `M*`      |
+| `S1.3-…` / `S3.3-功能开发` | `S1.3 · …` / `S3.3 · 功能开发` |
+
+**PM Sync 铁律（当前操作的任意仓库 · 每次必做）**：
+
+1. **先拉** — `plane-pull` / pipeline 内 `plane_pull`（禁止凭旧 snapshot 写入）
+2. **dry-run** — `CREATE module = 0`；merged 只 **link** DT keeper
+3. **确认后 sync** — 用户明确同意后再 `--confirm-token` / `PLANE_CONFIRM_SYNC`
+4. **同步后自检** — 对该 **当前 repo** 跑 `module_health_check.py`（同代号不得 `-`/`·` 双份）；失败 → **禁止**宣称「已同步」
+
+**Agent 硬停止**：dry-run 出现 `CREATE module`、台账写 `milestone: M*`（`my-plane` 除外）、或 Plane Modules 同代号已有 `-` 与 `·` 两行 → **禁止 sync**；先清壳（迁任务到 DT keeper → `(重复·待删)` → Archive）。细则：[plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)。
+
 ```bash
 REPO=.
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step collect
 # 更新 plane/milestones.yaml + sync_manifest.yaml（只增/改 id，禁止删除）
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step plane-dry-run
+# 审阅 sync_preview.md；CREATE module 必须为 0；末尾自动 module_health_check
 bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --step plane-sync
-# 非交互：--confirm-token <token>（用户明确同意后）
+# 非交互：--confirm-token <token>（用户明确同意后）；sync 后二次 pull + health check
 ```
 
-硬约束：不得在用户未确认前带 `--confirm-token` sync；不得 Plane DELETE / 删 YAML id；**merged milestone dry-run 须 CREATE module = 0**；**各项目**不得登记 `milestone: M*`（`my-plane` 除外），只挂钉表 `P*.*` / `S*.*`；dry-run 出现 CREATE `M*` / middot Module → **硬停止**（见 [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)）。
+硬约束：不得在用户未确认前带 `--confirm-token` sync；不得 Plane DELETE / 删 YAML id；**merged milestone dry-run 须 CREATE module = 0**；**各项目**不得登记 `milestone: M*`（`my-plane` 除外），只挂钉表 `P*.*` / `S*.*`；dry-run 出现 CREATE `M*` / middot Module → **硬停止**；sync 后 health check 失败 → **硬停止**（见 [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)）。
 
 详文：[references/pm-sync.md](references/pm-sync.md)
 
@@ -119,16 +144,16 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 
 ## 五、与其他技能联动
 
-| 技能                                                                                                      | 联动点                                           |
-| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [work-record](../work-record/SKILL.md)                                                                    | 六步闭环步骤 5：追加事项进展                     |
-| [weekly-report](../weekly-report/SKILL.md)                                                                | 写周报时采集 git log + sync_manifest             |
-| [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md)                   | repos 子仓库 commit 前 `repo-commit-context.mjs` |
-| [task-naming](references/task-naming.md)                                                                  | Task ID 编码与 sync_manifest 登记                |
-| [dingtalk-hierarchy-naming](references/dingtalk-hierarchy-naming.md)                                      | 钉表层级契约、双轨 ID、仓库 milestone 速查       |
-| [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)                                  | merged 模块写保护、dry-run 0 CREATE module       |
-| [plane-team-assignees](references/plane-team-assignees.md)                                                | owner → Plane assignee 映射                      |
-| [frontend-dev-spec/requirement-workflow](../frontend-dev-spec/references/prompts/requirement-workflow.md) | 需求完成前 commit 闭环检查项                     |
+| 技能                                                                                                                 | 联动点                                           |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [work-record](../work-record/SKILL.md)                                                                               | 六步闭环步骤 5：追加事项进展                     |
+| [weekly-report](../weekly-report/SKILL.md)                                                                           | 写周报时采集 git log + sync_manifest             |
+| [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md)                              | repos 子仓库 commit 前 `repo-commit-context.mjs` |
+| [task-naming](references/task-naming.md)                                                                             | Task ID 编码与 sync_manifest 登记                |
+| [dingtalk-hierarchy-naming](references/dingtalk-hierarchy-naming.md)                                                 | 钉表层级契约、双轨 ID、仓库 milestone 速查       |
+| [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)                                             | merged 模块写保护、dry-run 0 CREATE module       |
+| [plane-team-assignees](references/plane-team-assignees.md)                                                           | owner → Plane assignee 映射                      |
+| [frontend-dev-spec/requirement-workflow](../frontend-dev-spec/references/prompts/requirement-workflow-需求工作流.md) | 需求完成前 commit 闭环检查项                     |
 
 ---
 
@@ -146,8 +171,11 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [ ] plane_ready 仓库已执行 timeline-sync + task done（完成任务时）
 - [ ] WorkRecord 进展已按事项类型追加（有对应文档时）
 - [ ] sync_manifest status 与 commit 语义一致后再 pm sync
-- [ ] `da pm dry-run` 对 merged milestone **CREATE module = 0**（见 plane-dingtalk-module-rules）
+- [ ] 对**当前操作的任意仓库**（非仅 QA/S3）：`da pm dry-run` 对 merged milestone **CREATE module = 0**
+- [ ] 该仓 sync **之后** `module_health_check` 通过（无同代号 `-`/`·` 双份）
+- [ ] 该仓 Plane Modules **无** 同代号 `-`/`·` 双份；误建壳已 `(重复·待删)` Archive
 - [ ] 新任务台账含 `owner`、`start_date`、`target_date`（见 plane-team-assignees）
+- [ ] Module 名跟钉表 `{id}-{name}`（P3/P6/S1/S3 同规）；Issue 才用 `{id} · {name}`
 - [ ] 无 `.env` / 密钥进暂存区
 - [ ] Agent 编辑含 `AI-Assisted: true`
 

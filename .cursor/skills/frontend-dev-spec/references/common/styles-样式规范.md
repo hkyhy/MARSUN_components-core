@@ -1,4 +1,4 @@
-# 样式规范（SCSS Modules）
+# 样式规范 Styles
 
 ### 8.1 核心原则
 
@@ -10,7 +10,7 @@
 
 **补充约束**：
 
-- **颜色使用 CSS 变量**：禁止硬编码颜色值，统一 `var(--primary-color*)` / `var(--font-color-grey*)`（见 [theme.md](theme.md)）
+- **颜色使用 CSS 变量**：禁止硬编码颜色值，统一 `var(--primary-color*)` / `var(--font-color-grey*)`（见 [theme-主题Token.md](theme-主题Token.md)）
 - **样式内容不可擅自改动**：存量 `style.module.scss` 迁移时仅做 Tailwind → SCSS 等价替换，禁止私自增减属性
 
 ### 8.2 文件归属与目录结构

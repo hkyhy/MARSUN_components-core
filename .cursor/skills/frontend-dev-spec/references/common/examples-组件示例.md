@@ -1,6 +1,6 @@
-# 组件示例（Examples）规范
+# 组件示例 Examples
 
-> **文档同步**：每次新增或更改组件时，除维护 `examples/meta.json` 与 Demo 外，须同步更新 `component-mapping.md`、`SKILL.md` 及相关 `references/` 提示词（见 SKILL.md 核心原则 #23）。
+> **文档同步**：每次新增或更改组件时，除维护 `examples/meta.json` 与 Demo 外，须同步更新 `component-mapping-组件映射.md`、`SKILL.md` 及相关 `references/` 提示词（见 SKILL.md 核心原则 #23）。
 
 ### 8.1 目录结构
 
@@ -176,9 +176,10 @@ src/components/Feedback/examples/meta.json              → /components/feedback
 
 **新建/接入 checklist**：
 
+0. `package.json` 声明 `react`/`react-dom` `^19`、`antd` `^6`（与 core peer 一致；见 SKILL.md 技术栈）
 1. 从 `maoyang_data-asset-system` 复制 `scripts/collect-examples.mjs`、`scripts/vite-plugin-examples.mjs`、`src/layouts/ComponentsLayout/`、`src/pages/Components/`
 2. `vite.config.ts` 注册 `viteExamplesPlugin()`
-3. `App.tsx` 增加 FloatButton + DEV `/components` 路由（见 [routing-api.md](../business/routing-api.md) §13.5）
+3. `App.tsx` 增加 FloatButton + DEV `/components` 路由（见 [routing-api-路由与API.md](../business/routing-api-路由与API.md) §13.5）
 4. 至少一个 `{Domain}/{Module}/examples/meta.json` + Demo，运行 `npm run collect-examples`
 5. `ComponentsLayout` 的 `defaultOpenKeys` 按 pathname 首段域（如 `qualityanalysis`）自动展开
 

@@ -1,4 +1,4 @@
-# frontend-dev-spec 镜像同步（双向）
+# 规范同步 Skills Sync
 
 ## 分层
 
