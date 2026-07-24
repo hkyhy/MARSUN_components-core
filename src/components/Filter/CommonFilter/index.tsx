@@ -61,9 +61,13 @@ const CommonFilter: React.FC<CommonFilterProps> = ({
   label = '筛选',
   selectedTagMaxLength = DEFAULT_SELECTED_TAG_MAX_LENGTH,
 }) => {
-  const { selectedItems, register, unregister, clearAll } = useFilterState();
+  const { selectedItems, register, unregister, clearAll, values, setFieldValue, clearFieldValue } =
+    useFilterState();
 
-  const filterCtx = useMemo(() => ({ register, unregister }), [register, unregister]);
+  const filterCtx = useMemo(
+    () => ({ register, unregister, values, setFieldValue, clearFieldValue }),
+    [register, unregister, values, setFieldValue, clearFieldValue],
+  );
 
   // 合并外部 onClearAll 和内部的 clearAll
   const handleClearAll = React.useCallback(() => {
@@ -75,7 +79,9 @@ const CommonFilter: React.FC<CommonFilterProps> = ({
     <div className={classNames('common-filter-root', styles['common-filter-root'])}>
       {/* 筛选行 */}
       <div className={classNames('common-filter-container', styles['common-filter-container'])}>
-        <span className={classNames('common-filter-label', styles['common-filter-label'])}>{label}</span>
+        <span className={classNames('common-filter-label', styles['common-filter-label'])}>
+          {label}
+        </span>
         <FilterProvider ctx={filterCtx}>
           <div className={classNames('common-filter-content', styles['common-filter-content'])}>
             <div className={classNames('common-filter-items', styles['common-filter-items'])}>
@@ -83,7 +89,9 @@ const CommonFilter: React.FC<CommonFilterProps> = ({
               {children}
             </div>
             {extra && (
-              <div className={classNames('common-filter-extra', styles['common-filter-extra'])}>{extra}</div>
+              <div className={classNames('common-filter-extra', styles['common-filter-extra'])}>
+                {extra}
+              </div>
             )}
           </div>
         </FilterProvider>
@@ -92,11 +100,28 @@ const CommonFilter: React.FC<CommonFilterProps> = ({
       {/* 已选择行 */}
       {selectedItems.length > 0 && (
         <div className={classNames('common-filter-selected', styles['common-filter-selected'])}>
-          <div className={classNames('common-filter-selected-main', styles['common-filter-selected-main'])}>
-            <span className={classNames('common-filter-selected-title', styles['common-filter-selected-title'])}>
+          <div
+            className={classNames(
+              'common-filter-selected-main',
+              styles['common-filter-selected-main'],
+            )}
+          >
+            <span
+              className={classNames(
+                'common-filter-selected-title',
+                styles['common-filter-selected-title'],
+              )}
+            >
               您已选择
             </span>
-            <Space size={[8, 8]} wrap className={classNames('common-filter-selected-tags', styles['common-filter-selected-tags'])}>
+            <Space
+              size={[8, 8]}
+              wrap
+              className={classNames(
+                'common-filter-selected-tags',
+                styles['common-filter-selected-tags'],
+              )}
+            >
               {selectedItems.map((s) => {
                 const { display, truncated } = truncateText(s.valueLabel, selectedTagMaxLength);
                 const valueNode = truncated ? (
@@ -111,7 +136,10 @@ const CommonFilter: React.FC<CommonFilterProps> = ({
                   <SemanticTag key={s.key} color="primary">
                     <span className={classNames('common-filter-tag', styles['common-filter-tag'])}>
                       <span
-                        className={classNames('common-filter-tag-label', styles['common-filter-tag-label'])}
+                        className={classNames(
+                          'common-filter-tag-label',
+                          styles['common-filter-tag-label'],
+                        )}
                         style={{ color: 'var(--font-color)' }}
                       >
                         {s.label}：

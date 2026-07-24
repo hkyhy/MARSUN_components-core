@@ -3,9 +3,9 @@ import { Checkbox, Input, Space } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PersonOptionRow from '../../Form/PersonOptionRow';
 import FilterPopover from '../FilterPopover';
-import type { BaseFilterProps, FilterOption, PersonOption } from '../types';
+import type { BaseFilterProps, FilterLoadDataContext, FilterOption, PersonOption } from '../types';
 import { resolveFilterVisible } from '../types';
-import { useFilterRegister } from '../useFilterState';
+import { useFilterFieldBridge, useFilterRegister } from '../useFilterState';
 import styles from './style.module.scss';
 import classNames from 'classnames';
 
@@ -37,7 +37,12 @@ function arraysEqual(a?: (string | number)[], b?: (string | number)[]): boolean 
 }
 
 interface FilterSelectProps extends BaseFilterProps {
-  options: FilterOption[];
+  /** 静态选项；与 loadData 二选一（同时存在时以 options 为准） */
+  options?: FilterOption[];
+  /** 按依赖值动态拉取选项 */
+  loadData?: (ctx: FilterLoadDataContext) => Promise<FilterOption[]>;
+  /** loadData 是否启用；默认 true */
+  enabled?: boolean;
   value?: FilterSelectValue;
   onChange?: (value: FilterSelectValue) => void;
   /** 默认值：与默认值相同时视为未筛选（除非 showDefaultAsSelected） */
@@ -54,6 +59,13 @@ interface FilterSelectProps extends BaseFilterProps {
   minSelection?: number;
   /** 人员选项：展示部门与联系方式 */
   variant?: 'default' | 'person';
+  /**
+   * 面板内嵌从属条件（与 search 同层：search 下方、选项列表上方）。
+   * 禁止再嵌 Filter*（双重 Popover）。
+   */
+  panelExtra?: React.ReactNode;
+  /** 面板宽度；有 panelExtra 时默认 460 */
+  panelWidth?: number;
 }
 
 function toMultiArray(value: FilterSelectValue): (string | number)[] {
@@ -121,7 +133,9 @@ function formatValueLabel(
 const FilterSelect: React.FC<FilterSelectProps> = ({
   filterKey,
   label,
-  options = [],
+  options: optionsProp,
+  loadData,
+  enabled = true,
   value,
   onChange,
   defaultValue,
@@ -134,10 +148,52 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   active,
   hidden,
   display,
+  dependsOn,
+  clearOnDepsChange = true,
+  panelExtra,
+  panelWidth,
 }) => {
   const isPersonVariant = variant === 'person';
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
+
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const resolvedPanelWidth = panelWidth ?? (panelExtra ? 460 : undefined);
+
+  const { resolvedLabel, values, depsKey } = useFilterFieldBridge({
+    filterKey,
+    value,
+    label,
+    dependsOn,
+    clearOnDepsChange,
+    onDepsClear: () => onChangeRef.current?.(undefined),
+  });
+
+  const [loadedOptions, setLoadedOptions] = useState<FilterOption[]>([]);
+  const loadDataRef = useRef(loadData);
+  loadDataRef.current = loadData;
+
+  useEffect(() => {
+    if (!loadDataRef.current || optionsProp != null || !enabled) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const next = await loadDataRef.current!({ values });
+        if (!cancelled) setLoadedOptions(next ?? []);
+      } catch {
+        if (!cancelled) setLoadedOptions([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [depsKey, enabled, optionsProp, loadData]);
+
+  const options = optionsProp ?? loadedOptions;
+
   const displayValue = toDisplayValue(
     value,
     defaultValue,
@@ -151,9 +207,6 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
 
   // ── 自动注册到 CommonFilter ──
   const registerFn = useFilterRegister();
-  const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
-
   const handleRemove = useMemo(() => {
     const selectedArr = Array.isArray(displayValue)
       ? displayValue
@@ -201,7 +254,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
 
   useEffect(() => {
     if (!registerFn) return;
-    const ctx = { filterKey, label, value };
+    const ctx = { filterKey, label: resolvedLabel, value };
     if (!resolveFilterVisible({ display, hidden }, ctx)) {
       registerFn.unregister(filterKey);
       return;
@@ -214,7 +267,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
           : [];
       const removable = !multiple || minSelection == null || selectedArr.length > minSelection;
       registerFn.register(filterKey, {
-        label,
+        label: resolvedLabel,
         valueLabel: committedValueLabel,
         onRemove: handleRemove,
         removable,
@@ -223,9 +276,9 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       registerFn.unregister(filterKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [committedValueLabel, filterKey, label, hidden, display, handleRemove]);
+  }, [committedValueLabel, filterKey, resolvedLabel, hidden, display, handleRemove]);
 
-  const visibilityCtx = { filterKey, label, value };
+  const visibilityCtx = { filterKey, label: resolvedLabel, value };
   if (!resolveFilterVisible({ display, hidden }, visibilityCtx)) return null;
 
   const filteredOptions = searchText
@@ -315,16 +368,17 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
 
   return (
     <FilterPopover
-      label={label}
+      label={resolvedLabel}
       active={active || isActive}
       open={open}
       onOpenChange={handleOpenChange}
+      width={resolvedPanelWidth}
       onConfirm={multiple ? handleConfirm : undefined}
       onReset={multiple ? handleDiscardDraft : undefined}
     >
       {searchable && (
         <Search
-          placeholder={`搜索${label}`}
+          placeholder={`搜索${resolvedLabel}`}
           allowClear
           size="middle"
           className={classNames('filter-select-search', styles['filter-select-search'])}
@@ -332,6 +386,13 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
           onChange={(e) => setSearchText(e.target.value)}
         />
       )}
+      {panelExtra ? (
+        <div
+          className={classNames('filter-select-panel-extra', styles['filter-select-panel-extra'])}
+        >
+          {panelExtra}
+        </div>
+      ) : null}
 
       <div className={classNames('filter-select-options', styles['filter-select-options'])}>
         {multiple && filteredOptions.length > 0 && (

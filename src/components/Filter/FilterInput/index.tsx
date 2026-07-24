@@ -1,7 +1,7 @@
 import { Input } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import FilterPopover from '../FilterPopover';
-import { useFilterRegister } from '../useFilterState';
+import { useFilterFieldBridge, useFilterRegister } from '../useFilterState';
 import type { BaseFilterProps } from '../types';
 import { resolveHidden } from '../types';
 
@@ -19,13 +19,25 @@ const FilterInput: React.FC<FilterInputProps> = ({
   placeholder,
   active,
   hidden,
+  dependsOn,
+  clearOnDepsChange = true,
 }) => {
   const [inputValue, setInputValue] = useState(value ?? '');
 
-  // ── 自动注册到 CommonFilter ──
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const { resolvedLabel } = useFilterFieldBridge({
+    filterKey,
+    value,
+    label,
+    dependsOn,
+    clearOnDepsChange,
+    onDepsClear: () => onChangeRef.current?.(undefined),
+  });
+
   const registerFn = useFilterRegister();
 
-  // 同步外部 value 到内部 inputValue
   useEffect(() => {
     setInputValue(value ?? '');
   }, [value]);
@@ -37,14 +49,17 @@ const FilterInput: React.FC<FilterInputProps> = ({
       return;
     }
     if (value) {
-      registerFn.register(filterKey, { label, valueLabel: value, onRemove: () => onChange?.(undefined) });
+      registerFn.register(filterKey, {
+        label: resolvedLabel,
+        valueLabel: value,
+        onRemove: () => onChange?.(undefined),
+      });
     } else {
       registerFn.unregister(filterKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, filterKey, label, hidden]);
+  }, [value, filterKey, resolvedLabel, hidden]);
 
-  // hidden 处理 - 必须在所有 hooks 之后
   if (resolveHidden(hidden)) return null;
 
   const handleConfirm = () => {
@@ -58,13 +73,13 @@ const FilterInput: React.FC<FilterInputProps> = ({
 
   return (
     <FilterPopover
-      label={label}
+      label={resolvedLabel}
       active={active || !!value}
       onConfirm={handleConfirm}
       onReset={handleReset}
     >
       <Input
-        placeholder={placeholder ?? `请输入${label}`}
+        placeholder={placeholder ?? `请输入${resolvedLabel}`}
         allowClear
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}

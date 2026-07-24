@@ -846,6 +846,13 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         sourcePath: () => import('@/components/Filter/examples/FilterTreeSelectDemo/index.tsx?raw'),
       },
       {
+        title: '声明式依赖 / 动态拉取',
+        description: 'dependsOn + loadData + panelExtra：月份驱动主对标；对比面板内嵌纺纱方法',
+        component: React.lazy(() => import('@/components/Filter/examples/FilterDependsDemo')),
+        sourcePath: () => import('@/components/Filter/examples/FilterDependsDemo.tsx?raw'),
+        block: true,
+      },
+      {
         title: '筛选触发器',
         description: 'FilterTrigger 未选中 / 已选中 / 可展开三种状态',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTriggerDemo')),
@@ -869,14 +876,41 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         componentName: 'BaseFilterProps (公共属性)',
         rows: [
           { prop: 'filterKey', desc: '筛选项唯一标识', type: 'string', required: true },
-          { prop: 'label', desc: '显示标签', type: 'string', required: true },
+          {
+            prop: 'label',
+            desc: '显示标签；可为函数，根据其它筛选项 values 动态生成',
+            type: 'string | ((ctx: { values }) => string)',
+            required: true,
+          },
           { prop: 'active', desc: '是否有值（控制选中态样式）', type: 'boolean' },
+          {
+            prop: 'dependsOn',
+            desc: '依赖的其它 filterKey；变化时默认清空本项并触发 loadData',
+            type: 'string | string[]',
+          },
+          {
+            prop: 'clearOnDepsChange',
+            desc: '依赖变化时是否清空本项',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
+          { prop: 'filterGroup', desc: '可选分组标记（文档/示例语义）', type: 'string' },
         ],
       },
       {
         componentName: 'FilterSelectProps',
         rows: [
-          { prop: 'options', desc: '选项列表', type: 'FilterOption[]', required: true },
+          {
+            prop: 'options',
+            desc: '静态选项列表；与 loadData 二选一（同时存在以 options 为准）',
+            type: 'FilterOption[]',
+          },
+          {
+            prop: 'loadData',
+            desc: '按依赖值动态拉取选项',
+            type: '(ctx: { values, keyword? }) => Promise<FilterOption[]>',
+          },
+          { prop: 'enabled', desc: '是否启用 loadData', type: 'boolean', defaultVal: 'true' },
           {
             prop: 'value',
             desc: '选中值（多选为数组）',
@@ -981,9 +1015,20 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'treeData', desc: '树形数据 { id, name, children? }', type: 'TreeFilterNode[]' },
           {
             prop: 'fetchUrl / transformData',
-            desc: '远程拉树（可选；与 treeData 二选一）',
+            desc: '远程拉树（可选；与 treeData / loadData 择一）',
             type: 'string / (raw) => TreeFilterNode[]',
           },
+          {
+            prop: 'loadData',
+            desc: '按 dependsOn 动态拉取树；有 treeData 时仍以 treeData 为准',
+            type: '(ctx: { values, keyword? }) => Promise<TreeFilterNode[]>',
+          },
+          {
+            prop: 'panelExtra',
+            desc: '面板内嵌从属条件（search 下方）；禁止再嵌 Filter*',
+            type: 'React.ReactNode',
+          },
+          { prop: 'panelWidth', desc: '面板宽度；有 panelExtra 时默认 460', type: 'number' },
           {
             prop: 'value',
             desc: '选中值（多选为数组，节点 id）',

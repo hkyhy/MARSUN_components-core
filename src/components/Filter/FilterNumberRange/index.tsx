@@ -1,7 +1,7 @@
 import { InputNumber, message } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import FilterPopover from '../FilterPopover';
-import { useFilterRegister } from '../useFilterState';
+import { useFilterFieldBridge, useFilterRegister } from '../useFilterState';
 import type { BaseFilterProps } from '../types';
 import { resolveHidden } from '../types';
 import styles from './style.module.scss';
@@ -48,12 +48,26 @@ const FilterNumberRange: React.FC<FilterNumberRangeProps> = ({
   step,
   active,
   hidden,
+  dependsOn,
+  clearOnDepsChange = true,
 }) => {
   const [minVal, setMinVal] = useState<number | undefined>(value?.[0]);
   const [maxVal, setMaxVal] = useState<number | undefined>(value?.[1]);
   const [rangeError, setRangeError] = useState('');
 
   const resolvedStep = resolveStep(step, precision);
+
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const { resolvedLabel } = useFilterFieldBridge({
+    filterKey,
+    value,
+    label,
+    dependsOn,
+    clearOnDepsChange,
+    onDepsClear: () => onChangeRef.current?.(null),
+  });
 
   // ── 自动注册到 CommonFilter ──
   const registerFn = useFilterRegister();
@@ -79,12 +93,16 @@ const FilterNumberRange: React.FC<FilterNumberRangeProps> = ({
       return;
     }
     if (valueLabel) {
-      registerFn.register(filterKey, { label, valueLabel, onRemove: () => onChange?.(null) });
+      registerFn.register(filterKey, {
+        label: resolvedLabel,
+        valueLabel,
+        onRemove: () => onChange?.(null),
+      });
     } else {
       registerFn.unregister(filterKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valueLabel, filterKey, label, hidden]);
+  }, [valueLabel, filterKey, resolvedLabel, hidden]);
 
   // hidden 处理 - 必须在所有 hooks 之后
   if (resolveHidden(hidden)) return null;
@@ -113,7 +131,7 @@ const FilterNumberRange: React.FC<FilterNumberRangeProps> = ({
 
   return (
     <FilterPopover
-      label={label}
+      label={resolvedLabel}
       active={active || !!value?.[0] || !!value?.[1]}
       onConfirm={handleConfirm}
       onReset={handleReset}

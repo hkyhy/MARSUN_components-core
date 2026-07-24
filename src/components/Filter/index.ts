@@ -1,7 +1,21 @@
 // 类型
 export type { CommonFilterProps } from './CommonFilter';
-export type { BaseFilterProps, FilterOption, PersonOption, SelectedItem } from './types';
-export { resolveHidden } from './types';
+export type {
+  BaseFilterProps,
+  FilterOption,
+  FilterLabel,
+  FilterLabelContext,
+  FilterLoadDataContext,
+  PersonOption,
+  SelectedItem,
+} from './types';
+export {
+  resolveHidden,
+  resolveFilterLabel,
+  resolveFilterVisible,
+  normalizeDependsOn,
+  buildDepsKey,
+} from './types';
 export { CommonFilter };
 
 // 容器
@@ -53,4 +67,11 @@ export type { FilterTreeSelectProps, TreeFilterNode } from './FilterTreeSelect';
 export { FilterTreeSelect };
 
 // 筛选状态 Hook
-export { useFilterState, useFilterRegister, FilterProvider } from './useFilterState';
+export {
+  useFilterState,
+  useFilterRegister,
+  useFilterDeps,
+  useFilterFieldBridge,
+  FilterProvider,
+} from './useFilterState';
+export type { FilterContextValue } from './useFilterState';

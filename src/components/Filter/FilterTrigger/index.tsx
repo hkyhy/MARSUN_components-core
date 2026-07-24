@@ -25,7 +25,9 @@ const FilterTrigger: React.FC<FilterTriggerProps> = ({
   children,
 }) => (
   <span
-    className={classNames('filter-trigger-root', styles['filter-trigger-root'],
+    className={classNames(
+      'filter-trigger-root',
+      styles['filter-trigger-root'],
       active
         ? ['filter-trigger-active', styles['filter-trigger-active']]
         : ['filter-trigger-inactive', styles['filter-trigger-inactive']],
@@ -33,17 +35,25 @@ const FilterTrigger: React.FC<FilterTriggerProps> = ({
     )}
     onClick={onClick}
   >
-    {children ?? label}
+    {children ?? (typeof label === 'function' ? null : label)}
     {open !== undefined ? (
       open ? (
-        <ChevronUp className={classNames('filter-trigger-chevron', styles['filter-trigger-chevron'])} />
+        <ChevronUp
+          className={classNames('filter-trigger-chevron', styles['filter-trigger-chevron'])}
+        />
       ) : (
-        <ChevronDown className={classNames('filter-trigger-chevron', styles['filter-trigger-chevron'])} />
+        <ChevronDown
+          className={classNames('filter-trigger-chevron', styles['filter-trigger-chevron'])}
+        />
       )
     ) : !active ? (
-      <ChevronDown className={classNames('filter-trigger-chevron', styles['filter-trigger-chevron'])} />
+      <ChevronDown
+        className={classNames('filter-trigger-chevron', styles['filter-trigger-chevron'])}
+      />
     ) : (
-      <ChevronUp className={classNames('filter-trigger-chevron', styles['filter-trigger-chevron'])} />
+      <ChevronUp
+        className={classNames('filter-trigger-chevron', styles['filter-trigger-chevron'])}
+      />
     )}
   </span>
 );

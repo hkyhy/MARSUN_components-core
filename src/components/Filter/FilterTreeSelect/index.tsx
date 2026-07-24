@@ -3,11 +3,11 @@ import { useMarsunFetch } from '@/provider';
 import { useFetchData } from '@/hooks/useFetchData';
 import { Checkbox, Input, Space } from 'antd';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import FilterPopover from '../FilterPopover';
-import type { BaseFilterProps } from '../types';
+import type { BaseFilterProps, FilterLoadDataContext } from '../types';
 import { resolveFilterVisible } from '../types';
-import { useFilterRegister } from '../useFilterState';
+import { useFilterFieldBridge, useFilterRegister } from '../useFilterState';
 import styles from './style.module.scss';
 
 const { Search } = Input;
@@ -23,6 +23,10 @@ export interface FilterTreeSelectProps extends BaseFilterProps {
   fetchUrl?: string;
   fetchOptions?: RequestInit;
   transformData?: (raw: unknown) => TreeFilterNode[];
+  /**
+   * 按依赖值动态拉取树数据（优先于 fetchUrl；若同时传 treeData 则仍以 treeData 为准）。
+   */
+  loadData?: (ctx: FilterLoadDataContext) => Promise<TreeFilterNode[]>;
   enabled?: boolean;
   value?: string | string[] | undefined;
   onChange?: (value: string | string[] | undefined) => void;
@@ -36,6 +40,13 @@ export interface FilterTreeSelectProps extends BaseFilterProps {
   leafOnly?: boolean;
   /** 自定义节点展示标签（默认 name） */
   getNodeLabel?: (node: TreeFilterNode) => string;
+  /**
+   * 面板内嵌从属条件（与 search 同层：search 下方、树列表上方）。
+   * 用于「属性筛服务本树」等场景；禁止再嵌 Filter*（双重 Popover）。
+   */
+  panelExtra?: React.ReactNode;
+  /** 面板宽度；有 panelExtra 时默认 460 */
+  panelWidth?: number;
 }
 
 interface FlatNode {
@@ -110,6 +121,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
   fetchUrl,
   fetchOptions,
   transformData,
+  loadData,
   enabled = true,
   value,
   onChange,
@@ -119,21 +131,62 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
   active,
   hidden,
   display,
+  dependsOn,
+  clearOnDepsChange = true,
   getNodeLabel = (n) => n.name,
+  panelExtra,
+  panelWidth,
 }) => {
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const resolvedPanelWidth = panelWidth ?? (panelExtra ? 460 : undefined);
+
+  const { resolvedLabel, values, depsKey } = useFilterFieldBridge({
+    filterKey,
+    value,
+    label,
+    dependsOn,
+    clearOnDepsChange,
+    onDepsClear: () => onChangeRef.current?.(multiple ? [] : undefined),
+  });
+
   const fetchCtx = useMarsunFetch();
+  const useStaticOrUrl = propsTreeData != null || (!loadData && !!fetchUrl);
   const { data: fetchedTree } = useFetchData<TreeFilterNode[]>({
     data: propsTreeData,
-    fetchUrl,
+    fetchUrl: useStaticOrUrl && !loadData ? fetchUrl : undefined,
     fetchOptions,
     transformData,
-    enabled,
+    enabled: enabled && useStaticOrUrl && !loadData,
     baseUrl: fetchCtx.baseUrl,
     defaultHeaders: fetchCtx.headers,
     timeoutMs: fetchCtx.timeoutMs,
   });
 
-  const sourceTree = fetchedTree ?? [];
+  const [loadedTree, setLoadedTree] = useState<TreeFilterNode[]>([]);
+  const loadDataRef = useRef(loadData);
+  loadDataRef.current = loadData;
+
+  useEffect(() => {
+    if (!loadDataRef.current || propsTreeData != null || !enabled) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const next = await loadDataRef.current!({ values });
+        if (!cancelled) setLoadedTree(next ?? []);
+      } catch {
+        if (!cancelled) setLoadedTree([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // values 已由 depsKey 覆盖；避免无 dependsOn 时随 values 全表抖动
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [depsKey, enabled, propsTreeData, loadData]);
+
+  const sourceTree = propsTreeData ?? (loadData ? loadedTree : (fetchedTree ?? []));
 
   const [open, setOpen] = useState(false);
   const [localValue, setLocalValue] = useState<string | string[] | undefined>(
@@ -143,7 +196,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
   const [searchText, setSearchText] = useState('');
 
   const registerFn = useFilterRegister();
-  const visibilityCtx = { filterKey, label, value };
+  const visibilityCtx = { filterKey, label: resolvedLabel, value };
 
   useEffect(() => {
     setLocalValue(value ?? (multiple ? [] : undefined));
@@ -178,7 +231,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
     }
     if (confirmedValueLabel) {
       registerFn.register(filterKey, {
-        label,
+        label: resolvedLabel,
         valueLabel: confirmedValueLabel,
         onRemove: () => onChange?.(multiple ? [] : undefined),
       });
@@ -188,7 +241,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
   }, [
     confirmedValueLabel,
     filterKey,
-    label,
+    resolvedLabel,
     display,
     hidden,
     registerFn,
@@ -357,10 +410,11 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
 
   return (
     <FilterPopover
-      label={label}
+      label={resolvedLabel}
       active={active || (multiple ? (localValue as string[])?.length > 0 : !!value)}
       open={open}
       onOpenChange={setOpen}
+      width={resolvedPanelWidth}
       onConfirm={
         multiple
           ? () => {
@@ -383,7 +437,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
     >
       {showSearch && (
         <Search
-          placeholder={`搜索${label}`}
+          placeholder={`搜索${resolvedLabel}`}
           allowClear
           size="middle"
           className={classNames('filter-tree-select-search', styles['filter-tree-select-search'])}
@@ -391,6 +445,16 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
           onChange={(e) => setSearchText(e.target.value)}
         />
       )}
+      {panelExtra ? (
+        <div
+          className={classNames(
+            'filter-tree-select-panel-extra',
+            styles['filter-tree-select-panel-extra'],
+          )}
+        >
+          {panelExtra}
+        </div>
+      ) : null}
       <div
         className={classNames('filter-tree-select-options', styles['filter-tree-select-options'])}
       >

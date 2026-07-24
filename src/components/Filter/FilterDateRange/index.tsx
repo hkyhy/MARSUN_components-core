@@ -1,6 +1,6 @@
 import { DatePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   formatPickerValue,
   parsePickerValue,
@@ -9,7 +9,7 @@ import {
 import FilterPopover from '../FilterPopover';
 import type { BaseFilterProps } from '../types';
 import { resolveHidden } from '../types';
-import { useFilterRegister } from '../useFilterState';
+import { useFilterFieldBridge, useFilterRegister } from '../useFilterState';
 import styles from './style.module.scss';
 import classNames from 'classnames';
 
@@ -113,12 +113,26 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   disabledDate,
   active,
   hidden,
+  dependsOn,
+  clearOnDepsChange = true,
 }) => {
   const [open, setOpen] = useState(false);
   const [dates, setDates] = useState<[Dayjs | null, Dayjs | null] | null>(
     value ? [parsePickerValue(value[0], picker), parsePickerValue(value[1], picker)] : null,
   );
   const [activeQuickKey, setActiveQuickKey] = useState<string | null>(null);
+
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const { resolvedLabel } = useFilterFieldBridge({
+    filterKey,
+    value,
+    label,
+    dependsOn,
+    clearOnDepsChange,
+    onDepsClear: () => onChangeRef.current?.(null),
+  });
 
   const registerFn = useFilterRegister();
   const opts = useMemo(
@@ -173,12 +187,16 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
       return;
     }
     if (valueLabel) {
-      registerFn.register(filterKey, { label, valueLabel, onRemove: () => onChange?.(null) });
+      registerFn.register(filterKey, {
+        label: resolvedLabel,
+        valueLabel,
+        onRemove: () => onChange?.(null),
+      });
     } else {
       registerFn.unregister(filterKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valueLabel, filterKey, label, hidden]);
+  }, [valueLabel, filterKey, resolvedLabel, hidden]);
 
   if (resolveHidden(hidden)) return null;
 
@@ -203,7 +221,7 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
 
   return (
     <FilterPopover
-      label={label}
+      label={resolvedLabel}
       active={active || hasNonDefaultValue}
       open={open}
       onOpenChange={handleOpenChange}
