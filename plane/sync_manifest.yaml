@@ -539,7 +539,7 @@ tasks:
 - id: P6.3.39
   milestone: P6.3
   name: 发版 marsun-components-core v0.1.30
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: chore
   owner: 黄金芳
