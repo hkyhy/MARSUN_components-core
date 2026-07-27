@@ -810,7 +810,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
       {
         title: '单选 / 多选筛选器',
-        description: 'FilterSelect 单选、可搜索；多选含全选与已选区滚动',
+        description: 'FilterSelect 单选、可搜索、多选；loading Item+面板 Spin；空态 Empty',
         component: React.lazy(() => import('@/components/Filter/examples/FilterSelectDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterSelectDemo/index.tsx?raw'),
       },
@@ -839,11 +839,19 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         sourcePath: () => import('@/components/Filter/examples/FilterNumberRangeDemo.tsx?raw'),
       },
       {
-        title: '树形 / 级联筛选器',
+        title: '树形筛选器',
         description:
-          'FilterTreeSelect：组织树；分厂→品种级联（leafOnly 仅叶子可选，主对标单选 / 对比多选）',
+          'FilterTreeSelect：组织树任意深勾选；分厂→品种 leafOnly；loading Item+面板 Spin；空态 Empty',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTreeSelectDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterTreeSelectDemo/index.tsx?raw'),
+      },
+      {
+        title: '级联路径筛选器',
+        description:
+          'FilterCascader：分厂→品种两列路径；leafOnly 只写叶子；onChangePath；对比 dependsOn 主对标',
+        component: React.lazy(() => import('@/components/Filter/examples/FilterCascaderDemo')),
+        sourcePath: () => import('@/components/Filter/examples/FilterCascaderDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '声明式依赖 / 动态拉取',
@@ -854,7 +862,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
       {
         title: '筛选触发器',
-        description: 'FilterTrigger 未选中 / 已选中 / 可展开三种状态',
+        description: 'FilterTrigger 未选中 / 已选中 / 可展开 / loading 四种状态',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTriggerDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterTriggerDemo/index.tsx?raw'),
       },
@@ -910,6 +918,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             desc: '按依赖值动态拉取选项',
             type: '(ctx: { values, keyword? }) => Promise<FilterOption[]>',
           },
+          {
+            prop: 'panelExtra',
+            desc: '面板内嵌从属条件（search 下方）；禁止再嵌 Filter*',
+            type: 'React.ReactNode',
+          },
+          { prop: 'panelWidth', desc: '面板宽度；有 panelExtra 时默认 460', type: 'number' },
           { prop: 'enabled', desc: '是否启用 loadData', type: 'boolean', defaultVal: 'true' },
           {
             prop: 'value',
@@ -936,6 +950,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           },
           { prop: 'minSelection', desc: '多选至少保留项数；全不选/移除标签时生效', type: 'number' },
           { prop: 'variant', desc: '人员选项展示部门与联系方式', type: "'default' | 'person'" },
+          {
+            prop: 'loading',
+            desc: '选项加载中：Filter Item 右侧 Loader2 spin；面板列表 Spin（不渲染空态）；与内部 loadData loading 取或',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
         ],
       },
       {
@@ -1057,6 +1077,60 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             desc: '自定义节点展示 / 已选 Tag 文案',
             type: '(node: TreeFilterNode) => string',
           },
+          {
+            prop: 'loading',
+            desc: '选项加载中：Filter Item 右侧 Loader2 spin；面板列表 Spin（不渲染空态）；与内部 fetchUrl/loadData loading 取或',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+        ],
+      },
+      {
+        componentName: 'FilterCascaderProps',
+        rows: [
+          {
+            prop: 'treeData',
+            desc: '树形数据（与 FilterTreeSelect 同构）；亦可用 options / loadData',
+            type: 'TreeFilterNode[]',
+          },
+          {
+            prop: 'options',
+            desc: '已转换 Cascader options；与 treeData 同时存在以 options 为准',
+            type: 'DefaultOptionType[]',
+          },
+          {
+            prop: 'loadData',
+            desc: '按 dependsOn 动态拉取树',
+            type: '(ctx: { values, keyword? }) => Promise<TreeFilterNode[]>',
+          },
+          {
+            prop: 'value',
+            desc: '叶子 id（leafOnly 默认 true）；多选为叶子 id 数组',
+            type: 'string | string[] | undefined',
+          },
+          {
+            prop: 'onChange',
+            desc: '叶子值变更',
+            type: '(value: string | string[] | undefined) => void',
+          },
+          {
+            prop: 'onChangePath',
+            desc: '完整路径；单选 string[]，多选 string[][]；可用 path[0] 取一级 Code',
+            type: '(paths: string[] | string[][] | undefined) => void',
+          },
+          {
+            prop: 'leafOnly',
+            desc: '仅叶子写入值；changeOnSelect=false',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
+          { prop: 'multiple', desc: '多选 = 多条路径', type: 'boolean', defaultVal: 'false' },
+          { prop: 'showSearch', desc: '面板内搜索', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'panelExtra / panelWidth / loading',
+            desc: '同 FilterTreeSelect',
+            type: 'ReactNode / number / boolean',
+          },
         ],
       },
       {
@@ -1083,6 +1157,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'label', desc: '显示标签', type: 'string', required: true },
           { prop: 'active', desc: '是否有值（控制选中态样式）', type: 'boolean' },
           { prop: 'open', desc: 'Popover 展开态（控制箭头方向）', type: 'boolean' },
+          {
+            prop: 'loading',
+            desc: '选项加载中：右侧 Loader2 spin 替换 chevron',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'onClick', desc: '点击回调', type: '(e: React.MouseEvent) => void' },
           { prop: 'children', desc: '自定义触发内容', type: 'React.ReactNode' },
         ],
@@ -1102,6 +1182,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         rows: [
           { prop: 'label', desc: '筛选项标签', type: 'string', required: true },
           { prop: 'active', desc: '是否有值', type: 'boolean' },
+          {
+            prop: 'loading',
+            desc: '选项加载中：透传至 FilterTrigger',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'children', desc: '面板内容', type: 'React.ReactNode', required: true },
           { prop: 'open', desc: '受控展开状态', type: 'boolean' },
           { prop: 'onOpenChange', desc: '展开状态变更', type: '(open: boolean) => void' },
@@ -1619,13 +1705,28 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   '/components/table': {
     title: 'Table 表格',
     description:
-      '基于 antd Table 的列表包装：默认横向滚动、受控分页 showSizeChanger/showTotal、空态 Empty。透传 antd TableProps。',
+      '基于 antd Table 的列表包装：默认横向滚动、受控分页 showSizeChanger/showTotal、空态 Empty。示例覆盖单表头、多表头；传入 tableName 可启用「编辑表格」列显隐/排序（fetch/save 由业务注入）。',
     examples: [
       {
-        title: '基础用法',
-        description: '受控分页 + 默认滚动与空态',
+        title: '单表头',
+        description: '单行表头 + 受控分页 + 默认滚动与空态',
         component: React.lazy(() => import('@/components/Table/examples/TableBasicDemo')),
         sourcePath: () => import('@/components/Table/examples/TableBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '多表头',
+        description: 'columns 带 children（指标 → 成品/半制品/原料），无列配置',
+        component: React.lazy(() => import('@/components/Table/examples/TableMultiHeaderDemo')),
+        sourcePath: () => import('@/components/Table/examples/TableMultiHeaderDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '列配置（编辑表格）',
+        description:
+          '基于多表头 + tableName；最右独立齿轮列（跨表头总高度），fetch/save 本例为内存',
+        component: React.lazy(() => import('@/components/Table/examples/TableColumnConfigDemo')),
+        sourcePath: () => import('@/components/Table/examples/TableColumnConfigDemo/index.tsx?raw'),
         block: true,
       },
     ],
@@ -1649,6 +1750,32 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             prop: 'locale',
             desc: '覆盖空态等；默认 emptyText 为 Empty simple「暂无数据」',
             type: "TableProps['locale']",
+          },
+          {
+            prop: 'tableName',
+            desc: '稳定偏好 key；业务列表必填。与 columnConfigEnabled 配合启用列配置',
+            type: 'string',
+          },
+          {
+            prop: 'columnConfigEnabled',
+            desc: '是否启用「编辑表格」；默认 !!tableName。为 true 时最右追加独立齿轮列（跨多级表头）',
+            type: 'boolean',
+            defaultVal: '!!tableName',
+          },
+          {
+            prop: 'fetchColumnConfig',
+            desc: '挂载时拉取列配置；返回 null 用默认 columns',
+            type: '(tableName: string) => Promise<TableColumnConfigItem[] | null | undefined>',
+          },
+          {
+            prop: 'saveColumnConfig',
+            desc: '点确定后持久化列配置（id / hidden / children）',
+            type: '(tableName: string, items: TableColumnConfigItem[]) => Promise<void>',
+          },
+          {
+            prop: 'onColumnConfigChange',
+            desc: '确定后回调当前配置',
+            type: '(items: TableColumnConfigItem[]) => void',
           },
           {
             prop: '…rest',

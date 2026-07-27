@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+// @ts-expect-error plain ESM collect plugin
+import viteExamplesPlugin from './dev/scripts/vite-plugin-examples.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname);
@@ -35,7 +37,7 @@ function mockDocPlugin(): Plugin {
 export default defineConfig({
   base: showcaseBase,
   root: resolve(ROOT, 'dev'),
-  plugins: [react(), mockDocPlugin()],
+  plugins: [react(), mockDocPlugin(), viteExamplesPlugin()],
   resolve: {
     alias: { '@': SRC },
   },

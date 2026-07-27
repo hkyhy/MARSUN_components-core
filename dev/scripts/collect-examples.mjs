@@ -12,6 +12,9 @@ const REGISTRY_PATH = resolve(DEV, 'pages', 'Components', 'examples-registry.ts'
 const MENU_CONFIG_PATH = resolve(DEV, 'layouts', 'menu-config.ts');
 const ROUTES_PATH = resolve(DEV, 'routes.tsx');
 
+/** Vite 插件 HMR invalidate 用 */
+export const GENERATED_PATHS = [REGISTRY_PATH, MENU_CONFIG_PATH, ROUTES_PATH];
+
 export function collectExamples() {
   const metaFiles = findFiles(COMPONENTS_DIR, 'meta.json');
   if (metaFiles.length === 0) {
