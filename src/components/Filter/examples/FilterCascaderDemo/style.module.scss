@@ -1,0 +1,12 @@
+.filter-cascader-demo-root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filter-cascader-demo-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--marsun-color-text-secondary, #666);
+  width: 100%;
+}

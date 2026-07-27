@@ -74,6 +74,28 @@ const FilterTreeSelectDemo: React.FC = () => {
         />
       </CommonFilter>
 
+      <p className={styles['filter-tree-select-demo-hint']}>
+        loading：Item 右侧 Loader2 spin；面板内 Spin。空态：Empty iconType=simple。
+      </p>
+      <CommonFilter label="筛选">
+        <FilterTreeSelect
+          label="主对标（loading）"
+          filterKey="primary-loading"
+          treeData={[]}
+          loading
+          showSearch
+          leafOnly
+        />
+        <FilterTreeSelect
+          label="对比（空态）"
+          filterKey="compare-empty"
+          treeData={[]}
+          showSearch
+          multiple
+          leafOnly
+        />
+      </CommonFilter>
+
       <p className={styles['filter-tree-select-demo-hint']}>组织树（普通树选，可选任意节点）</p>
       <FilterTreeSelect
         label="组织"

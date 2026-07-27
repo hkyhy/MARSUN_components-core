@@ -39,6 +39,8 @@ const FilterSelectDemo: React.FC = () => {
         defaultValues={MULTI_SELECT_OPTIONS.map((o) => o.value)}
         onChange={setMultiValue}
       />
+      <FilterSelect label="加载中" filterKey="loadingSelect" options={[]} loading />
+      <FilterSelect label="空态" filterKey="emptySelect" options={[]} />
     </div>
   );
 };

@@ -64,6 +64,14 @@
   color: var(--font-color-grey-1);
 }
 
+.filter-tree-select-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
 .filter-tree-select-selected-bar {
   margin-top: 8px;
   border-top-width: 1px;

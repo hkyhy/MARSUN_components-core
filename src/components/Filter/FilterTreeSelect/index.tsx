@@ -1,7 +1,8 @@
 import { Check, ChevronDown, ChevronRight, X } from '@/components/Icons';
+import { Empty } from '@/components/Empty';
 import { useMarsunFetch } from '@/provider';
 import { useFetchData } from '@/hooks/useFetchData';
-import { Checkbox, Input, Space } from 'antd';
+import { Checkbox, Input, Space, Spin } from 'antd';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import FilterPopover from '../FilterPopover';
@@ -47,6 +48,12 @@ export interface FilterTreeSelectProps extends BaseFilterProps {
   panelExtra?: React.ReactNode;
   /** 面板宽度；有 panelExtra 时默认 460 */
   panelWidth?: number;
+  /**
+   * 选项加载中：Filter Item（Trigger）显示 Loader2 spin；
+   * 面板列表区显示 Spin，不渲染空态。
+   * 与内部 fetchUrl / loadData loading 取或。
+   */
+  loading?: boolean;
 }
 
 interface FlatNode {
@@ -136,6 +143,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
   getNodeLabel = (n) => n.name,
   panelExtra,
   panelWidth,
+  loading: loadingProp = false,
 }) => {
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -153,7 +161,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
 
   const fetchCtx = useMarsunFetch();
   const useStaticOrUrl = propsTreeData != null || (!loadData && !!fetchUrl);
-  const { data: fetchedTree } = useFetchData<TreeFilterNode[]>({
+  const { data: fetchedTree, loading: fetchLoading } = useFetchData<TreeFilterNode[]>({
     data: propsTreeData,
     fetchUrl: useStaticOrUrl && !loadData ? fetchUrl : undefined,
     fetchOptions,
@@ -165,18 +173,22 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
   });
 
   const [loadedTree, setLoadedTree] = useState<TreeFilterNode[]>([]);
+  const [loadDataLoading, setLoadDataLoading] = useState(false);
   const loadDataRef = useRef(loadData);
   loadDataRef.current = loadData;
 
   useEffect(() => {
     if (!loadDataRef.current || propsTreeData != null || !enabled) return;
     let cancelled = false;
+    setLoadDataLoading(true);
     (async () => {
       try {
         const next = await loadDataRef.current!({ values });
         if (!cancelled) setLoadedTree(next ?? []);
       } catch {
         if (!cancelled) setLoadedTree([]);
+      } finally {
+        if (!cancelled) setLoadDataLoading(false);
       }
     })();
     return () => {
@@ -187,6 +199,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
   }, [depsKey, enabled, propsTreeData, loadData]);
 
   const sourceTree = propsTreeData ?? (loadData ? loadedTree : (fetchedTree ?? []));
+  const optionsLoading = loadingProp || fetchLoading || loadDataLoading;
 
   const [open, setOpen] = useState(false);
   const [localValue, setLocalValue] = useState<string | string[] | undefined>(
@@ -412,6 +425,7 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
     <FilterPopover
       label={resolvedLabel}
       active={active || (multiple ? (localValue as string[])?.length > 0 : !!value)}
+      loading={optionsLoading}
       open={open}
       onOpenChange={setOpen}
       width={resolvedPanelWidth}
@@ -458,65 +472,81 @@ const FilterTreeSelect: React.FC<FilterTreeSelectProps> = ({
       <div
         className={classNames('filter-tree-select-options', styles['filter-tree-select-options'])}
       >
-        {flatNodes.map((node) => {
-          if (!isVisible(node)) return null;
-          const isLeaf = !hasChildrenMap.get(node.id);
-          const isExpanded = expandedKeys.has(node.id);
-          const isSingleSelected = !multiple && localValue === node.id;
-          const selectedArr = multiple ? (localValue as string[]) || [] : [];
-          let isMultiChecked = multiple && selectedArr.includes(node.id);
-          let isIndeterminate = false;
-          if (multiple && leafOnly && !isLeaf) {
-            const leaves = leafDescendantsMap.get(node.id) || [];
-            const selectedLeafCount = leaves.filter((id) => selectedArr.includes(id)).length;
-            isMultiChecked = leaves.length > 0 && selectedLeafCount === leaves.length;
-            isIndeterminate = selectedLeafCount > 0 && selectedLeafCount < leaves.length;
-          }
-          return (
-            <div
-              key={node.id}
-              className={classNames(
-                'filter-tree-select-option',
-                styles['filter-tree-select-option'],
-                isSingleSelected && styles['filter-tree-select-option-selected'],
-              )}
-              style={{ paddingLeft: 8 + node.depth * 20 }}
-              onClick={() => (multiple ? handleToggleMulti(node.id) : handleSingleSelect(node.id))}
-            >
-              {!isLeaf ? (
-                <span
-                  className={styles['filter-tree-select-expand-icon']}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleExpand(node.id);
-                  }}
-                >
-                  {isExpanded || (showSearch && !!searchText) ? (
-                    <ChevronDown style={{ fontSize: 10 }} />
-                  ) : (
-                    <ChevronRight style={{ fontSize: 10 }} />
-                  )}
-                </span>
-              ) : (
-                <span className={styles['filter-tree-select-expand-placeholder']} />
-              )}
-              {multiple && (
-                <Checkbox
-                  checked={isMultiChecked}
-                  indeterminate={isIndeterminate}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={() => handleToggleMulti(node.id)}
-                />
-              )}
-              <span className={styles['filter-tree-select-node-label']}>{node.name}</span>
-              {!multiple && isSingleSelected && (
-                <Check className={styles['filter-tree-select-option-check']} />
-              )}
-            </div>
-          );
-        })}
-        {flatNodes.length === 0 && (
-          <div className={styles['filter-tree-select-empty']}>暂无数据</div>
+        {optionsLoading ? (
+          <div
+            className={classNames(
+              'filter-tree-select-loading',
+              styles['filter-tree-select-loading'],
+            )}
+          >
+            <Spin size="small" />
+          </div>
+        ) : flatNodes.length === 0 ? (
+          <div
+            className={classNames('filter-tree-select-empty', styles['filter-tree-select-empty'])}
+          >
+            <Empty iconType="simple" description="暂无数据" />
+          </div>
+        ) : (
+          flatNodes.map((node) => {
+            if (!isVisible(node)) return null;
+            const isLeaf = !hasChildrenMap.get(node.id);
+            const isExpanded = expandedKeys.has(node.id);
+            const isSingleSelected = !multiple && localValue === node.id;
+            const selectedArr = multiple ? (localValue as string[]) || [] : [];
+            let isMultiChecked = multiple && selectedArr.includes(node.id);
+            let isIndeterminate = false;
+            if (multiple && leafOnly && !isLeaf) {
+              const leaves = leafDescendantsMap.get(node.id) || [];
+              const selectedLeafCount = leaves.filter((id) => selectedArr.includes(id)).length;
+              isMultiChecked = leaves.length > 0 && selectedLeafCount === leaves.length;
+              isIndeterminate = selectedLeafCount > 0 && selectedLeafCount < leaves.length;
+            }
+            return (
+              <div
+                key={node.id}
+                className={classNames(
+                  'filter-tree-select-option',
+                  styles['filter-tree-select-option'],
+                  isSingleSelected && styles['filter-tree-select-option-selected'],
+                )}
+                style={{ paddingLeft: 8 + node.depth * 20 }}
+                onClick={() =>
+                  multiple ? handleToggleMulti(node.id) : handleSingleSelect(node.id)
+                }
+              >
+                {!isLeaf ? (
+                  <span
+                    className={styles['filter-tree-select-expand-icon']}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleExpand(node.id);
+                    }}
+                  >
+                    {isExpanded || (showSearch && !!searchText) ? (
+                      <ChevronDown style={{ fontSize: 10 }} />
+                    ) : (
+                      <ChevronRight style={{ fontSize: 10 }} />
+                    )}
+                  </span>
+                ) : (
+                  <span className={styles['filter-tree-select-expand-placeholder']} />
+                )}
+                {multiple && (
+                  <Checkbox
+                    checked={isMultiChecked}
+                    indeterminate={isIndeterminate}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={() => handleToggleMulti(node.id)}
+                  />
+                )}
+                <span className={styles['filter-tree-select-node-label']}>{node.name}</span>
+                {!multiple && isSingleSelected && (
+                  <Check className={styles['filter-tree-select-option-check']} />
+                )}
+              </div>
+            );
+          })
         )}
       </div>
       {multiple &&

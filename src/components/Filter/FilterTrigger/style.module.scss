@@ -6,7 +6,9 @@
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 12px;
-  transition: color 0.2s ease, background-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .filter-trigger-active {
@@ -26,4 +28,9 @@
 
 .filter-trigger-chevron {
   font-size: 10px;
+}
+
+.filter-trigger-loader {
+  flex-shrink: 0;
+  color: var(--primary-color);
 }

@@ -8,6 +8,8 @@ interface FilterPopoverProps {
   label: string;
   /** 是否有值（控制选中态样式） */
   active?: boolean;
+  /** 选项加载中：透传至 FilterTrigger */
+  loading?: boolean;
   /** 面板宽度 */
   width?: number;
   /** 确定按钮文字 */
@@ -27,6 +29,7 @@ interface FilterPopoverProps {
 const FilterPopover: React.FC<FilterPopoverProps> = ({
   label,
   active,
+  loading = false,
   width,
   confirmText = '确定',
   children,
@@ -76,7 +79,7 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({
       }
     >
       <span style={{ display: 'inline-flex' }}>
-        <FilterTrigger label={label} active={active} open={open} />
+        <FilterTrigger label={label} active={active} open={open} loading={loading} />
       </span>
     </Popover>
   );

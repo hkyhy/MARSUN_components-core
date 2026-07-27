@@ -44,6 +44,14 @@
   color: var(--font-color-grey-1);
 }
 
+.filter-select-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
 .filter-select-select-all {
   margin-bottom: 4px;
   border-bottom-width: 1px;

@@ -1,5 +1,6 @@
 import { Check, X } from '@/components/Icons';
-import { Checkbox, Input, Space } from 'antd';
+import { Empty } from '@/components/Empty';
+import { Checkbox, Input, Space, Spin } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PersonOptionRow from '../../Form/PersonOptionRow';
 import FilterPopover from '../FilterPopover';
@@ -66,6 +67,12 @@ interface FilterSelectProps extends BaseFilterProps {
   panelExtra?: React.ReactNode;
   /** 面板宽度；有 panelExtra 时默认 460 */
   panelWidth?: number;
+  /**
+   * 选项加载中：Filter Item（Trigger）显示 Loader2 spin；
+   * 面板列表区显示 Spin，不渲染空态。
+   * 与内部 loadData loading 取或。
+   */
+  loading?: boolean;
 }
 
 function toMultiArray(value: FilterSelectValue): (string | number)[] {
@@ -152,6 +159,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   clearOnDepsChange = true,
   panelExtra,
   panelWidth,
+  loading: loadingProp = false,
 }) => {
   const isPersonVariant = variant === 'person';
   const [open, setOpen] = useState(false);
@@ -172,18 +180,22 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   });
 
   const [loadedOptions, setLoadedOptions] = useState<FilterOption[]>([]);
+  const [loadDataLoading, setLoadDataLoading] = useState(false);
   const loadDataRef = useRef(loadData);
   loadDataRef.current = loadData;
 
   useEffect(() => {
     if (!loadDataRef.current || optionsProp != null || !enabled) return;
     let cancelled = false;
+    setLoadDataLoading(true);
     (async () => {
       try {
         const next = await loadDataRef.current!({ values });
         if (!cancelled) setLoadedOptions(next ?? []);
       } catch {
         if (!cancelled) setLoadedOptions([]);
+      } finally {
+        if (!cancelled) setLoadDataLoading(false);
       }
     })();
     return () => {
@@ -193,6 +205,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   }, [depsKey, enabled, optionsProp, loadData]);
 
   const options = optionsProp ?? loadedOptions;
+  const optionsLoading = loadingProp || loadDataLoading;
 
   const displayValue = toDisplayValue(
     value,
@@ -370,6 +383,7 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
     <FilterPopover
       label={resolvedLabel}
       active={active || isActive}
+      loading={optionsLoading}
       open={open}
       onOpenChange={handleOpenChange}
       width={resolvedPanelWidth}
@@ -395,66 +409,75 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
       ) : null}
 
       <div className={classNames('filter-select-options', styles['filter-select-options'])}>
-        {multiple && filteredOptions.length > 0 && (
-          <div
-            className={classNames(
-              'filter-select-option',
-              styles['filter-select-option'],
-              'filter-select-select-all',
-              styles['filter-select-select-all'],
-            )}
-            onClick={() => handleToggleAll(!allFilteredSelected)}
-          >
-            <Checkbox
-              checked={allFilteredSelected}
-              indeterminate={someFilteredSelected}
-              onChange={(e) => handleToggleAll(e.target.checked)}
-              onClick={(e) => e.stopPropagation()}
-            />
-            <span>全选</span>
+        {optionsLoading ? (
+          <div className={classNames('filter-select-loading', styles['filter-select-loading'])}>
+            <Spin size="small" />
           </div>
-        )}
-        {filteredOptions.map((opt) => (
-          <div
-            key={String(opt.value)}
-            className={classNames(
-              'filter-select-option',
-              styles['filter-select-option'],
-              !multiple &&
-                localValue === opt.value &&
-                classNames(
-                  'filter-select-option-selected',
-                  styles['filter-select-option-selected'],
-                ),
-            )}
-            onClick={() => (multiple ? handleToggleMulti(opt.value) : handleClickOption(opt.value))}
-          >
-            {multiple && (
-              <Checkbox
-                checked={localMultiArr.some((v) => String(v) === String(opt.value))}
-                onChange={() => handleToggleMulti(opt.value)}
-                onClick={(e) => e.stopPropagation()}
-              />
-            )}
-            {isPersonVariant ? (
-              <PersonOptionRow option={opt as PersonOption} />
-            ) : (
-              <span>{opt.label}</span>
-            )}
-            {!multiple && !isPersonVariant && localValue === opt.value && (
-              <Check
-                className={classNames(
-                  'filter-select-option-check',
-                  styles['filter-select-option-check'],
-                )}
-              />
-            )}
-          </div>
-        ))}
-        {filteredOptions.length === 0 && (
+        ) : filteredOptions.length === 0 ? (
           <div className={classNames('filter-select-empty', styles['filter-select-empty'])}>
-            暂无数据
+            <Empty iconType="simple" description="暂无数据" />
           </div>
+        ) : (
+          <>
+            {multiple && filteredOptions.length > 0 && (
+              <div
+                className={classNames(
+                  'filter-select-option',
+                  styles['filter-select-option'],
+                  'filter-select-select-all',
+                  styles['filter-select-select-all'],
+                )}
+                onClick={() => handleToggleAll(!allFilteredSelected)}
+              >
+                <Checkbox
+                  checked={allFilteredSelected}
+                  indeterminate={someFilteredSelected}
+                  onChange={(e) => handleToggleAll(e.target.checked)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <span>全选</span>
+              </div>
+            )}
+            {filteredOptions.map((opt) => (
+              <div
+                key={String(opt.value)}
+                className={classNames(
+                  'filter-select-option',
+                  styles['filter-select-option'],
+                  !multiple &&
+                    localValue === opt.value &&
+                    classNames(
+                      'filter-select-option-selected',
+                      styles['filter-select-option-selected'],
+                    ),
+                )}
+                onClick={() =>
+                  multiple ? handleToggleMulti(opt.value) : handleClickOption(opt.value)
+                }
+              >
+                {multiple && (
+                  <Checkbox
+                    checked={localMultiArr.some((v) => String(v) === String(opt.value))}
+                    onChange={() => handleToggleMulti(opt.value)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                )}
+                {isPersonVariant ? (
+                  <PersonOptionRow option={opt as PersonOption} />
+                ) : (
+                  <span>{opt.label}</span>
+                )}
+                {!multiple && !isPersonVariant && localValue === opt.value && (
+                  <Check
+                    className={classNames(
+                      'filter-select-option-check',
+                      styles['filter-select-option-check'],
+                    )}
+                  />
+                )}
+              </div>
+            ))}
+          </>
         )}
       </div>
 

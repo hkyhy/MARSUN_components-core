@@ -66,6 +66,11 @@ import FilterTreeSelect from './FilterTreeSelect';
 export type { FilterTreeSelectProps, TreeFilterNode } from './FilterTreeSelect';
 export { FilterTreeSelect };
 
+// 级联路径选择（分厂→品种等；与 TreeSelect 分工：路径 Cascader vs 任意深树勾选）
+import FilterCascader, { treeToCascaderOptions } from './FilterCascader';
+export type { FilterCascaderProps, CascaderPath } from './FilterCascader';
+export { FilterCascader, treeToCascaderOptions };
+
 // 筛选状态 Hook
 export {
   useFilterState,
