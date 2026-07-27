@@ -593,7 +593,7 @@ tasks:
 - id: P6.3.43
   milestone: P6.3
   name: frontend-dev-spec 同步 FilterCascader/ColumnConfig
-  status: 进行中
+  status: 已完成
   priority: P2
   kind: docs
   owner: 黄金芳

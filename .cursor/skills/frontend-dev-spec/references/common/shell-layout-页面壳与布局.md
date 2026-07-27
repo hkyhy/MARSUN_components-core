@@ -94,11 +94,12 @@ const pageLoading = metaLoading || listLoading || detailLoading;
 
 ### 与筛选栏协同
 
-Filter meta 加载 / 失败时（详见 [filter-筛选组件.md](filter-筛选组件.md) §5.9）：
+Filter meta / options 加载与失败时（详见 [filter-筛选组件.md](filter-筛选组件.md) §5.9）：
 
 - **推荐**：筛选栏挂 `ModulePageShell` 的 **`toolbar`**，位于 `PageSpin` 外，loading 时仍始终可见占位
+- **选项 loading**：传 Filter* `loading` → Filter Item（`Loader2 spin`）+ 面板内 Spin；**禁止**把 `primaryOptionsLoading` / `searchLoading` 等 options 请求 OR 进内容区 `pageLoading` / `spinning`
 - **禁止**：`metaLoading → return null` 整栏隐藏；**`suppressLoadingText` 已废弃**，不得再靠隐藏筛选栏避让 Spin
-- **失败**：仅 `message.error` + options 为空（Empty）；内容区可继续空态 / Spin
+- **失败 / 空态**：仅 `message.error`；落定后 options 为空用 core `Empty iconType="simple"`；内容区可继续空态 / Spin（矩阵等业务数据加载）
 
 ### flex 高度链
 

@@ -4,15 +4,16 @@
 
 筛选组件采用 **CommonFilter 容器 + 子组件自动注册** 的架构：
 
-| 组件                | 说明                                                        | 必选/可选 |
-| ------------------- | ----------------------------------------------------------- | --------- |
-| `CommonFilter`      | 筛选栏容器，管理已选标签展示和清空                          | 必选      |
-| `FilterInput`       | 文本输入筛选（label 用语义化字段名，见 §5.1.1）             | 可选      |
-| `FilterSelect`      | 下拉选择筛选（支持单选/多选/搜索；可选 loadData）           | 可选      |
-| `FilterTreeSelect`  | 树形选择筛选（如部门树、分厂→品种级联；支持单选/多选/搜索） | 可选      |
-| `FilterDatePicker`  | 单日期筛选（日 / 月 / 年）                                  | 可选      |
-| `FilterDateRange`   | 日期范围筛选                                                | 可选      |
-| `FilterNumberRange` | 数字范围筛选                                                | 可选      |
+| 组件                | 说明                                                             | 必选/可选 |
+| ------------------- | ---------------------------------------------------------------- | --------- |
+| `CommonFilter`      | 筛选栏容器，管理已选标签展示和清空                               | 必选      |
+| `FilterInput`       | 文本输入筛选（label 用语义化字段名，见 §5.1.1）                  | 可选      |
+| `FilterSelect`      | 下拉选择筛选（支持单选/多选/搜索；可选 loadData）                | 可选      |
+| `FilterTreeSelect`  | 树形选择筛选（部门树等任意深勾选；亦支持 leafOnly 级联）         | 可选      |
+| `FilterCascader`    | 级联路径筛选（分厂→品种两列；leafOnly 只写叶子；`onChangePath`） | 可选      |
+| `FilterDatePicker`  | 单日期筛选（日 / 月 / 年）                                       | 可选      |
+| `FilterDateRange`   | 日期范围筛选                                                     | 可选      |
+| `FilterNumberRange` | 数字范围筛选                                                     | 可选      |
 
 **导入方式**：
 
@@ -24,9 +25,12 @@ import {
   FilterDateRange,
   FilterNumberRange,
   FilterTreeSelect,
+  FilterCascader,
 } from '@/components/Common';
 import type { FilterOption } from '@/components/Common';
 ```
+
+**FilterTreeSelect vs FilterCascader**：任意深树勾选 / 半选父节点用 `FilterTreeSelect`；固定路径列（如分厂→品种）点选用 `FilterCascader`（antd Cascader.Panel）。二者 `treeData` 同构（`TreeFilterNode`），`leafOnly` 时对外 `value` 均为叶子 id。
 
 ### 5.1.1 Filter label 语义化
 
@@ -42,7 +46,7 @@ import type { FilterOption } from '@/components/Common';
 
 ### 5.2 自动注册机制
 
-子组件（FilterInput/FilterSelect/FilterDateRange/FilterNumberRange/FilterTreeSelect）通过 `useFilterRegister()` 自动注册到父级 `CommonFilter`，无需手动维护 `selectedItems`：
+子组件（FilterInput/FilterSelect/FilterDateRange/FilterNumberRange/FilterTreeSelect/FilterCascader）通过 `useFilterRegister()` 自动注册到父级 `CommonFilter`，无需手动维护 `selectedItems`：
 
 1. 子组件设置 `filterKey` + `label` + `value`/`onChange`
 2. 子组件内部根据 `value` 计算 `valueLabel`，自动调用 `register()`
@@ -356,6 +360,20 @@ const FilterBar: React.FC<FilterBarProps> = ({
 | `leafOnly`     | `boolean`                                      | 仅叶子写入值；多选时点父节点全选/取消子叶子，父勾选框支持半选 | 否   |
 | `getNodeLabel` | `(node) => string`                             | 自定义节点展示 / 已选 Tag 文案                                | 否   |
 
+**FilterCascader**（路径级联；与 TreeSelect 分工见 §5.1）：
+
+| 属性           | 类型                                                   | 说明                                                      | 必填 |
+| -------------- | ------------------------------------------------------ | --------------------------------------------------------- | ---- |
+| `value`        | `string \| string[] \| undefined`                      | 叶子 id（`leafOnly` 默认 true）                           | 否   |
+| `onChange`     | `(v: string \| string[] \| undefined) => void`         | 叶子值变化                                                | 否   |
+| `onChangePath` | `(paths: string[] \| string[][] \| undefined) => void` | 完整路径；业务可用 `path[0]` 取一级 Code（如分厂）        | 否   |
+| `treeData`     | `TreeFilterNode[]`                                     | 同 TreeSelect；亦可用 `options` / `loadData`              | 否   |
+| `leafOnly`     | `boolean`                                              | 默认 true；`changeOnSelect=false`，父级不可单独作为已选值 | 否   |
+| `multiple`     | `boolean`                                              | 多选 = 多条路径；对外仍为叶子 id 列表                     | 否   |
+| `showSearch`   | `boolean`                                              | 面板内搜索                                                | 否   |
+| `panelExtra`   | `ReactNode`                                            | 面板内嵌从属条件（禁再嵌 Filter*）                        | 否   |
+| `loading`      | `boolean`                                              | Item spin + 面板 Spin                                     | 否   |
+
 **FilterDateRange**：
 
 | 属性               | 类型                                    | 说明                      | 必填 |
@@ -431,25 +449,28 @@ const fetchData = useCallback(async () => {
 
 ### 5.9 筛选项加载态与失败（公用）
 
-筛选栏依赖的 meta / options（如分厂、状态枚举）加载是**公用 UX**，与具体业务页无关。分 **loading** 与 **失败** 两态，口径统一：
+筛选栏依赖的 meta / options（如分厂、状态枚举）加载是**公用 UX**，与具体业务页无关。分 **Filter Item loading**、**面板列表 loading**、**落定空态**、**失败** 四态，口径统一：
 
-| 阶段            | 行为                                                                                                                                                                     |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Loading**     | 筛选栏**始终占位渲染**（`CommonFilter` + 各筛选项触发器可见）；options 可为空或仅合成项（如「全部」）。**禁止** `metaLoading → return null` / 整栏消失。                 |
-| **失败**        | 仅 antd `message.error` 友好文案；options 置空 → 下拉 Empty /「暂无数据」；**禁止**内联错误区替换整栏。                                                                  |
-| **与 PageSpin** | 筛选栏挂 `ModulePageShell` 的 **`toolbar`**（Spin 外），内容区可继续 Spin；勿靠隐藏筛选栏避让 loading。见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)。 |
+| 阶段                    | 行为                                                                                                                                                                                                                         |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Filter Item loading** | 传 `loading` 给 `FilterSelect` / `FilterTreeSelect` / `FilterCascader`（或内部 `loadData`/`fetchUrl` pending）：**Trigger 右侧用 `Loader2 spin` 替换 chevron**（仍可点击打开面板）；筛选栏始终占位，禁止整栏 `return null`。 |
+| **面板列表 loading**    | 打开面板且 options 仍在加载：列表区显示 antd `Spin`，**禁止**此时渲染「暂无数据」/ Empty。                                                                                                                                   |
+| **落定空态**            | `!loading` 且 options/树为空：`<Empty iconType="simple" description="暂无数据" />`（禁止纯文字「暂无数据」）。                                                                                                               |
+| **失败**                | 仅 antd `message.error` 友好文案；options 置空 → 落定 Empty；**禁止**内联错误区替换整栏。                                                                                                                                    |
+| **与 PageSpin**         | 筛选栏挂 `ModulePageShell` 的 **`toolbar`**（Spin 外）；**选项 loading 禁止 OR 进内容区 `pageLoading`/`spinning`**（应由 Filter Item + 面板表达）。见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)。         |
 
 #### Loading
 
-1. **始终占位**：`metaLoading === true` 时仍渲染完整筛选栏；可用默认日期/「全部」等已有默认值。
+1. **始终占位**：`metaLoading === true` / 选项 loading 时仍渲染完整筛选栏；可用默认日期/「全部」等已有默认值。
 2. **禁止** `if (metaLoading) return null`。
 3. **`suppressLoadingText` 已废弃**：不得再靠该 prop（或不渲染整栏）隐藏筛选；历史调用方可保留 prop 但不生效。
+4. **业务接线**：选项请求 loading 传给对应 Filter* 的 `loading`（如 `primaryOptionsLoading` → 主对标 `FilterTreeSelect`）；**不要**把 `primaryOptionsLoading` / `searchLoading` 等并入 `pageLoading`。
 
 #### 失败
 
 1. **用 antd `message.error` 提示**，文案须为用户可读业务句（如「筛选加载失败」「分厂选项加载失败」）。**禁止**拼接 `HTTP 500`、`Network Error`、接口 raw body、stack 等技术细节；状态码与异常只打日志，不进 toast。
 2. **禁止**用内联错误区（如 `<p className="error">筛选加载失败：…</p>`）替换整块筛选栏。
-3. **失败后筛选栏仍须渲染**：`CommonFilter` + 各筛选项保持可见；选项列表为空（`[]`）时由 `FilterSelect` / 下拉自带 Empty，勿因 `!meta` / `!options` 整栏 `return null`。
+3. **失败后筛选栏仍须渲染**：`CommonFilter` + 各筛选项保持可见；选项列表为空（`[]`）且 `!loading` 时由 Filter* 自带 **Empty**，勿因 `!meta` / `!options` 整栏 `return null`。
 4. **默认值来自 meta/options**：分厂等选项的初始值与清空回退须取自接口返回的列表（如 `meta.factories[0]`）；无选项则为空数组。**禁止**业务常量硬编码工厂 code（如 `1001`）作为生产默认选中。
 
 ```tsx
@@ -464,6 +485,9 @@ if (!meta || metaLoading) return null;
 // ❌ 禁止：硬编码工厂 code 作默认选中
 const [factories, setFactories] = useState(['1001']);
 
+// ❌ 禁止：选项 loading 并入内容区 PageSpin
+const pageLoading = metaLoading || primaryOptionsLoading || searchLoading;
+
 // ✅ hook：友好文案 toast；失败后 meta 可为空、options 为空
 .catch(() => setMetaError('筛选加载失败'));
 useEffect(() => {
@@ -476,15 +500,17 @@ setFactories(
   meta.factories?.[0]?.code != null ? [String(meta.factories[0].code)] : [],
 );
 
-// ✅ FilterBar：loading / 失败均占位渲染；options 为空 → Empty
-// 禁止：if (metaLoading) return null;
-const options = (meta?.factories ?? []).map((f) => ({
-  label: f.label || f.code,
-  value: String(f.code),
-}));
+// ✅ 选项 loading 交给 Filter Item；pageLoading 仅内容区
+const pageLoading = metaLoading || matrixLoading;
 return (
   <CommonFilter label="筛选">
-    <FilterSelect filterKey="factories" label="分厂" options={options} ... />
+    <FilterSelect
+      filterKey="factories"
+      label="分厂"
+      options={options}
+      loading={optionsLoading}
+      ...
+    />
   </CommonFilter>
 );
 ```

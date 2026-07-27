@@ -1,6 +1,6 @@
 # 组件示例 Examples
 
-> **文档同步**：每次新增或更改组件时，除维护 `examples/meta.json` 与 Demo 外，须同步更新 `component-mapping-组件映射.md`、`SKILL.md` 及相关 `references/` 提示词（见 SKILL.md 核心原则 #23）。
+> **文档同步**：每次新增或更改组件时，除维护 `examples/meta.json` 与 Demo 外，须同步更新 `component-mapping-组件映射.md`、`SKILL.md` 及相关 `references/` 提示词（见 SKILL.md 核心原则 #24）。**Props/行为/新能力变更必须补齐对应场景 Demo**（能力点与 Demo 一一对应，见 §8.2）。
 
 ### 8.1 目录结构
 
@@ -42,8 +42,10 @@ AgentHub/KnowledgeBase/examples/
 2. **每个 Demo 一个独立目录**：`{DemoName}/index.tsx` + `style.module.scss`；Demo 目录名以 `Demo` 结尾，格式 `{组件/模块名}{场景}Demo`（如 `TagBasicDemo`、`SemanticTagReviewDemo`），**禁止**在通用模板中写死某一子模块的具体 Demo 名
 3. **子组件须有独立 Demo**：对外导出的子组件（如 `FilterTrigger`、`MessageActions`）须有独立 Demo，不可仅在父组件 Demo 中间接出现
 4. **场景化拆分**：不同使用场景（如基础用法 vs 审核状态场景 vs 多标签组合场景）各自独立 Demo
-5. **单组件多 Demo**：如 Tag 组件拆分为 `SemanticTagBasicDemo` + `SemanticTagReviewDemo` + `SemanticTagMultiDemo`
-6. **示例中不嵌入代码展示**：源码展示由 `ExamplePage` 统一处理
+5. **单组件多 Demo**：如 Tag 组件拆分为 `SemanticTagBasicDemo` + `SemanticTagReviewDemo` + `SemanticTagMultiDemo`；Table 拆分为 `TableBasicDemo`（单表头）+ `TableMultiHeaderDemo`（多表头）+ `TableColumnConfigDemo`（列配置：最右独立齿轮列）
+6. **能力变更必须同步 Demo（硬约束）**：`marsun_components-core` 与业务组件展示中，每次 Props/行为/新能力变更，必须在**该组件** `examples/` 增加或更新对应场景 Demo，并登记 `meta.json`（含 apiDoc）。能力点与 Demo 一一对应；**禁止**只改实现不补示例；**禁止**用一个 BasicDemo 覆盖全部新能力
+7. **业务 Table**：列表须用 core `Table` + 稳定 `tableName`；`columnConfigEnabled` 控制是否自定义列（默认开）；开启时齿轮为最右独立列（跨多级表头），不塞进叶子 title
+8. **示例中不嵌入代码展示**：源码展示由 `ExamplePage` 统一处理
 
 ### 8.3 注册表规范
 
