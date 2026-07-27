@@ -1,12 +1,26 @@
 {
   "title": "Table 表格",
-  "description": "基于 antd Table 的列表包装：默认横向滚动、受控分页 showSizeChanger/showTotal、空态 Empty。透传 antd TableProps。",
+  "description": "基于 antd Table 的列表包装：默认横向滚动、受控分页 showSizeChanger/showTotal、空态 Empty。示例覆盖单表头、多表头；传入 tableName 可启用「编辑表格」列显隐/排序（fetch/save 由业务注入）。",
   "examples": [
     {
-      "title": "基础用法",
-      "description": "受控分页 + 默认滚动与空态",
+      "title": "单表头",
+      "description": "单行表头 + 受控分页 + 默认滚动与空态",
       "component": "@/components/Table/examples/TableBasicDemo",
       "sourcePath": "@/components/Table/examples/TableBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "多表头",
+      "description": "columns 带 children（指标 → 成品/半制品/原料），无列配置",
+      "component": "@/components/Table/examples/TableMultiHeaderDemo",
+      "sourcePath": "@/components/Table/examples/TableMultiHeaderDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "列配置（编辑表格）",
+      "description": "基于多表头 + tableName；最右独立齿轮列（跨表头总高度），fetch/save 本例为内存",
+      "component": "@/components/Table/examples/TableColumnConfigDemo",
+      "sourcePath": "@/components/Table/examples/TableColumnConfigDemo/index.tsx",
       "block": true
     }
   ],
@@ -30,6 +44,32 @@
           "prop": "locale",
           "desc": "覆盖空态等；默认 emptyText 为 Empty simple「暂无数据」",
           "type": "TableProps['locale']"
+        },
+        {
+          "prop": "tableName",
+          "desc": "稳定偏好 key；业务列表必填。与 columnConfigEnabled 配合启用列配置",
+          "type": "string"
+        },
+        {
+          "prop": "columnConfigEnabled",
+          "desc": "是否启用「编辑表格」；默认 !!tableName。为 true 时最右追加独立齿轮列（跨多级表头）",
+          "type": "boolean",
+          "defaultVal": "!!tableName"
+        },
+        {
+          "prop": "fetchColumnConfig",
+          "desc": "挂载时拉取列配置；返回 null 用默认 columns",
+          "type": "(tableName: string) => Promise<TableColumnConfigItem[] | null | undefined>"
+        },
+        {
+          "prop": "saveColumnConfig",
+          "desc": "点确定后持久化列配置（id / hidden / children）",
+          "type": "(tableName: string, items: TableColumnConfigItem[]) => Promise<void>"
+        },
+        {
+          "prop": "onColumnConfigChange",
+          "desc": "确定后回调当前配置",
+          "type": "(items: TableColumnConfigItem[]) => void"
         },
         {
           "prop": "…rest",

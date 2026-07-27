@@ -579,7 +579,7 @@ tasks:
 - id: P6.3.42
   milestone: P6.3
   name: Table 列配置 ColumnConfig 与多级表头
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feature
   owner: 黄金芳

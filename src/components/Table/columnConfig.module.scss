@@ -1,0 +1,144 @@
+.overlay {
+  :global(.ant-popover-inner) {
+    padding: 0;
+  }
+}
+
+.panel {
+  width: 280px;
+  max-height: min(70vh, 480px);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-color-white, #fff);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px 8px;
+  border-bottom: 1px solid var(--border-color, #f0f0f0);
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--font-color, #1f2937);
+}
+
+.resetBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--font-color-grey, #64748b);
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: var(--font-color, #1f2937);
+  }
+}
+
+.collapse {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0 4px 8px;
+
+  :global(.ant-collapse-header) {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    padding: 8px 8px !important;
+  }
+
+  :global(.ant-collapse-content-box) {
+    padding: 0 8px 8px !important;
+  }
+}
+
+.search {
+  margin-bottom: 8px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.listItem {
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.grip {
+  color: var(--font-color-grey-1, #94a3b8);
+  font-size: 12px;
+  line-height: 1;
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.label {
+  font-size: 13px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 12px 12px;
+  border-top: 1px solid var(--border-color, #f0f0f0);
+  flex-shrink: 0;
+}
+
+.gearBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 4px;
+  background: var(--bg-color-grey, #f8fafc);
+  color: var(--font-color-grey, #64748b);
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--color-primary, #2563eb);
+    border-color: var(--color-primary, #2563eb);
+    background: #fff;
+  }
+}
+
+.configCol {
+  padding: 0 !important;
+}
+
+.configColHeader {
+  padding: 0 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
