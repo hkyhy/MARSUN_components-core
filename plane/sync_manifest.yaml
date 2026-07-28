@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.46
+  next_task_id: P6.3.47
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -630,4 +630,17 @@ tasks:
   - components
   - Filter
   note: '多选勾选为草稿，确定才 onChange；取消/关面板回滚；对齐 FilterSelect；Demo+spec'
+- id: P6.3.46
+  milestone: P6.3
+  name: 发版 marsun-components-core v0.1.32
+  status: 已完成
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-28'
+  target_date: '2026-07-28'
+  tags:
+  - infra
+  - release
+  note: 'chore(release) v0.1.32；含 FilterCascader 多选确定提交；Related: P6.3.45'
 
