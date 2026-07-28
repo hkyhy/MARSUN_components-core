@@ -362,17 +362,17 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
 **FilterCascader**（路径级联；与 TreeSelect 分工见 §5.1）：
 
-| 属性           | 类型                                                   | 说明                                                      | 必填 |
-| -------------- | ------------------------------------------------------ | --------------------------------------------------------- | ---- |
-| `value`        | `string \| string[] \| undefined`                      | 叶子 id（`leafOnly` 默认 true）                           | 否   |
-| `onChange`     | `(v: string \| string[] \| undefined) => void`         | 叶子值变化                                                | 否   |
-| `onChangePath` | `(paths: string[] \| string[][] \| undefined) => void` | 完整路径；业务可用 `path[0]` 取一级 Code（如分厂）        | 否   |
-| `treeData`     | `TreeFilterNode[]`                                     | 同 TreeSelect；亦可用 `options` / `loadData`              | 否   |
-| `leafOnly`     | `boolean`                                              | 默认 true；`changeOnSelect=false`，父级不可单独作为已选值 | 否   |
-| `multiple`     | `boolean`                                              | 多选 = 多条路径；对外仍为叶子 id 列表                     | 否   |
-| `showSearch`   | `boolean`                                              | 面板内搜索                                                | 否   |
-| `panelExtra`   | `ReactNode`                                            | 面板内嵌从属条件（禁再嵌 Filter*）                        | 否   |
-| `loading`      | `boolean`                                              | Item spin + 面板 Spin                                     | 否   |
+| 属性           | 类型                                                   | 说明                                                                                               | 必填 |
+| -------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------- | ---- |
+| `value`        | `string \| string[] \| undefined`                      | 叶子 id（`leafOnly` 默认 true）                                                                    | 否   |
+| `onChange`     | `(v: string \| string[] \| undefined) => void`         | 叶子值变化                                                                                         | 否   |
+| `onChangePath` | `(paths: string[] \| string[][] \| undefined) => void` | 完整路径；业务可用 `path[0]` 取一级 Code（如分厂）                                                 | 否   |
+| `treeData`     | `TreeFilterNode[]`                                     | 同 TreeSelect；亦可用 `options` / `loadData`                                                       | 否   |
+| `leafOnly`     | `boolean`                                              | 默认 true；`changeOnSelect=false`，父级不可单独作为已选值                                          | 否   |
+| `multiple`     | `boolean`                                              | 多选 = 多条路径；勾选为草稿，点「确定」才 `onChange`，「取消」/点外面关闭回滚（对齐 FilterSelect） | 否   |
+| `showSearch`   | `boolean`                                              | 面板内搜索                                                                                         | 否   |
+| `panelExtra`   | `ReactNode`                                            | 面板内嵌从属条件（禁再嵌 Filter*）                                                                 | 否   |
+| `loading`      | `boolean`                                              | Item spin + 面板 Spin                                                                              | 否   |
 
 **FilterDateRange**：
 

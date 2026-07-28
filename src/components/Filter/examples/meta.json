@@ -47,7 +47,7 @@
     },
     {
       "title": "级联路径筛选器",
-      "description": "FilterCascader：分厂→品种两列路径；leafOnly 只写叶子；onChangePath；对比 dependsOn 主对标",
+      "description": "FilterCascader：分厂→品种两列路径；leafOnly 只写叶子；多选须点确定才提交；onChangePath；对比 dependsOn 主对标",
       "component": "@/components/Filter/examples/FilterCascaderDemo",
       "sourcePath": "@/components/Filter/examples/FilterCascaderDemo/index.tsx",
       "block": true
@@ -428,7 +428,7 @@
         },
         {
           "prop": "multiple",
-          "desc": "多选 = 多条路径",
+          "desc": "多选 = 多条路径；勾选为草稿，确定才 onChange，取消/关面板回滚",
           "type": "boolean",
           "defaultVal": "false"
         },

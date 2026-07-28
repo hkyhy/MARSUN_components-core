@@ -358,6 +358,14 @@ const FilterCascader: React.FC<FilterCascaderProps> = ({
     [localValue, leafPathMap, multiple],
   );
 
+  const leafIdsToPaths = useCallback(
+    (leafIds: string[]): CascaderPath[] =>
+      leafIds
+        .map((id) => leafPathMap.get(String(id)))
+        .filter((p): p is CascaderPath => !!p?.length),
+    [leafPathMap],
+  );
+
   const emitChange = useCallback(
     (nextLeaf: string | string[] | undefined, paths: CascaderPath | CascaderPath[] | undefined) => {
       setLocalValue(nextLeaf);
@@ -366,6 +374,11 @@ const FilterCascader: React.FC<FilterCascaderProps> = ({
     },
     [onChange, onChangePath],
   );
+
+  const revertToCommitted = useCallback(() => {
+    setLocalValue(value ?? (multiple ? [] : undefined));
+    setSearchText('');
+  }, [value, multiple]);
 
   const handleCascaderChange = useCallback(
     (next: (string | number | null)[] | (string | number | null)[][] | null) => {
@@ -378,27 +391,38 @@ const FilterCascader: React.FC<FilterCascaderProps> = ({
         leafPathMap,
       );
       if (multiple) {
+        // 多选：勾选只改草稿，确定才 onChange（对齐 FilterSelect / FilterTreeSelect）
         const leafArr = Array.isArray(leaf) ? leaf : leaf ? [leaf] : [];
-        const paths = leafArr
-          .map((id) => leafPathMap.get(String(id)))
-          .filter((p): p is CascaderPath => !!p?.length);
-        emitChange(leafArr, paths);
-      } else {
-        const id = typeof leaf === 'string' ? leaf : undefined;
-        const path = id ? leafPathMap.get(id) : undefined;
-        emitChange(id, path);
+        setLocalValue(leafArr);
+        return;
       }
+      const id = typeof leaf === 'string' ? leaf : undefined;
+      const path = id ? leafPathMap.get(id) : undefined;
+      emitChange(id, path);
+      setOpen(false);
     },
     [multiple, leafOnly, cascaderOptions, leafPathMap, emitChange],
   );
 
   const handleConfirm = () => {
-    // 即时 onChange；确认仅关面板
+    if (!multiple) return;
+    const leafArr = Array.isArray(localValue) ? localValue : [];
+    const paths = leafIdsToPaths(leafArr);
+    onChange?.(leafArr);
+    onChangePath?.(paths);
+    setOpen(false);
   };
 
-  const handleReset = () => {
-    emitChange(multiple ? [] : undefined, undefined);
-    setSearchText('');
+  const handleDiscardDraft = () => {
+    revertToCommitted();
+    setOpen(false);
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && multiple) {
+      revertToCommitted();
+    }
+    setOpen(nextOpen);
   };
 
   const isActive =
@@ -415,9 +439,9 @@ const FilterCascader: React.FC<FilterCascaderProps> = ({
       loading={optionsLoading}
       width={resolvedPanelWidth}
       open={open}
-      onOpenChange={setOpen}
-      onConfirm={handleConfirm}
-      onReset={handleReset}
+      onOpenChange={handleOpenChange}
+      onConfirm={multiple ? handleConfirm : undefined}
+      onReset={multiple ? handleDiscardDraft : undefined}
     >
       <div className={classNames('filter-cascader-root', styles['filter-cascader-root'])}>
         {panelExtra ? (

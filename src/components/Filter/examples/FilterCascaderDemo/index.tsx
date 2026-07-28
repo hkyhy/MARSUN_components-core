@@ -40,7 +40,8 @@ const FilterCascaderDemo: React.FC = () => {
     <div className={classNames('filter-cascader-demo-root', styles['filter-cascader-demo-root'])}>
       <p className={styles['filter-cascader-demo-hint']}>
         FilterCascader：分厂→品种两列路径；leafOnly 时 Trigger/已选区只显示品种叶子；onChangePath
-        可取 path[0] 作为分厂 Code。对比 dependsOn 主对标。
+        可取 path[0] 作为分厂 Code。对比 dependsOn 主对标。多选勾选为草稿，须点「确定」才写入外部
+        state；「取消」或点外面关闭则回滚。
       </p>
       <CommonFilter label="筛选">
         <FilterCascader
