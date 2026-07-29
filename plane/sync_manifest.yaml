@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.54
+  next_task_id: P6.3.55
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -737,4 +737,17 @@ tasks:
   - frontend
   - components
   note: 'SEMANTIC_COLORS.ERROR→DANGER；解锁 0.1.33 CI publish'
+- id: P6.3.54
+  milestone: P6.3
+  name: 重发 marsun-components-core v0.1.33
+  status: 已完成
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-29'
+  target_date: '2026-07-29'
+  tags:
+  - infra
+  - release
+  note: 'typecheck 修复后重推 chore(release) v0.1.33；Related: P6.3.52/P6.3.53'
 
