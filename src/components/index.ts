@@ -4,6 +4,7 @@ export * from './Empty';
 export * from './File';
 export * from './Filter';
 export * from './Form';
+export * from './InteractiveBlock';
 export * from './Layout';
 export * from './Modal';
 export * from './Stat';

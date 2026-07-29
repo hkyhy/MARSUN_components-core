@@ -1,0 +1,35 @@
+{
+  "title": "InteractiveBlock 内容块",
+  "description": "带操作性的展示块：title → Info + TooltipInfo → actions；tags 紧贴 subtitle。",
+  "examples": [
+    {
+      "title": "基础 / tags / actions",
+      "description": "选中态、info 详情、tagsPlacement、hidden action",
+      "component": "@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo",
+      "sourcePath": "@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "InteractiveBlockProps",
+      "rows": [
+        { "prop": "title", "desc": "标题", "type": "ReactNode", "required": true },
+        { "prop": "info", "desc": "Info 触发 TooltipInfo 详情", "type": "DescriptionItem[]" },
+        { "prop": "subtitle", "desc": "副标题", "type": "ReactNode" },
+        { "prop": "description", "desc": "描述（最多两行）", "type": "ReactNode" },
+        { "prop": "tags", "desc": "语义标签", "type": "InteractiveBlockTag[]" },
+        {
+          "prop": "tagsPlacement",
+          "desc": "tags 相对 subtitle：inline | below",
+          "type": "'inline' | 'below'",
+          "default": "inline"
+        },
+        { "prop": "actions", "desc": "右侧 link 操作", "type": "InteractiveBlockAction[]" },
+        { "prop": "selected", "desc": "选中态（标题主色）", "type": "boolean" },
+        { "prop": "onClick", "desc": "整块可点击", "type": "() => void" },
+        { "prop": "className", "desc": "附加类名", "type": "string" }
+      ]
+    }
+  ]
+}

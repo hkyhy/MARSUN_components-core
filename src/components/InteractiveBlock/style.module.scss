@@ -1,0 +1,131 @@
+.marsun-interactive-block {
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: default;
+  outline: none;
+
+  &--clickable {
+    cursor: pointer;
+  }
+
+  &--selected .marsun-interactive-block-title {
+    color: var(--primary-color, #2563eb);
+  }
+}
+
+:global(.marsun-interactive-block-info-tooltip) {
+  :global(.ant-descriptions) {
+    width: 100%;
+    min-width: 0;
+
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+  }
+
+  :global(.ant-descriptions-item-label) {
+    white-space: nowrap;
+  }
+
+  :global(.ant-descriptions-item-content) {
+    white-space: normal;
+    word-break: break-all;
+  }
+}
+
+.marsun-interactive-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.marsun-interactive-block-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.marsun-interactive-block-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--font-color, #1e293b);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.marsun-interactive-block-info-trigger {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--font-color-grey-1, #94a3b8);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--primary-color, #2563eb);
+  }
+}
+
+.marsun-interactive-block-actions {
+  flex-shrink: 0;
+  line-height: 1;
+
+  :global(.ant-btn) {
+    height: auto;
+    min-height: unset;
+    padding: 0 4px;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+  :global(.ant-btn-icon) {
+    font-size: 14px;
+    line-height: 1;
+    color: currentColor;
+  }
+}
+
+.marsun-interactive-block-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-top: 4px;
+
+  &--below {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.marsun-interactive-block-subtitle {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.25;
+  color: var(--font-color-grey-1, #94a3b8);
+}
+
+.marsun-interactive-block-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.marsun-interactive-block-description {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--font-color-grey, #475569);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

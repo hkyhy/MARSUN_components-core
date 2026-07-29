@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.49
+  next_task_id: P6.3.50
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -672,4 +672,17 @@ tasks:
   - components
   - Layout
   note: 'ContentCard + Demo；Related: S3.3.24 上收'
+- id: P6.3.49
+  milestone: P6.3
+  name: InteractiveBlock 抽入 core
+  status: 已完成
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-29'
+  target_date: '2026-07-29'
+  tags:
+  - frontend
+  - components
+  note: 'InteractiveBlock + Icons Bell/ListTodo；Related: S3.3.46'
 

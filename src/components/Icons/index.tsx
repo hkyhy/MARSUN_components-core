@@ -4,6 +4,7 @@ import {
   ArrowLeft as ArrowLeftIcon,
   ArrowLeftRight as ArrowLeftRightIcon,
   BarChart3 as BarChart3Icon,
+  Bell as BellIcon,
   BookOpen as BookOpenIcon,
   Bot as BotIcon,
   Check as CheckIcon,
@@ -42,6 +43,7 @@ import {
   Info as InfoIcon,
   LayoutDashboard as LayoutDashboardIcon,
   LayoutGrid as LayoutGridIcon,
+  ListTodo as ListTodoIcon,
   Loader2 as Loader2Icon,
   Lock as LockIcon,
   LogOut as LogOutIcon,
@@ -116,6 +118,7 @@ const createIcon = (Icon: LucideIcon, options?: { filled?: boolean }) => {
 export const ArrowLeft = createIcon(ArrowLeftIcon);
 export const ArrowLeftRight = createIcon(ArrowLeftRightIcon);
 export const BarChart3 = createIcon(BarChart3Icon);
+export const Bell = createIcon(BellIcon);
 export const BookOpen = createIcon(BookOpenIcon);
 export const Bot = createIcon(BotIcon);
 export const Check = createIcon(CheckIcon);
@@ -154,6 +157,7 @@ export const Inbox = createIcon(InboxIcon);
 export const Info = createIcon(InfoIcon);
 export const LayoutDashboard = createIcon(LayoutDashboardIcon);
 export const LayoutGrid = createIcon(LayoutGridIcon);
+export const ListTodo = createIcon(ListTodoIcon);
 export const Loader2 = createIcon(Loader2Icon);
 export const Lock = createIcon(LockIcon);
 export const LogOut = createIcon(LogOutIcon);
@@ -194,6 +198,7 @@ export const ICON_NAMES = [
   'ArrowLeft',
   'ArrowLeftRight',
   'BarChart3',
+  'Bell',
   'BookOpen',
   'Bot',
   'Check',
@@ -232,6 +237,7 @@ export const ICON_NAMES = [
   'Info',
   'LayoutDashboard',
   'LayoutGrid',
+  'ListTodo',
   'Loader2',
   'Lock',
   'LogOut',
@@ -273,6 +279,7 @@ export const ICON_REGISTRY: Record<IconName, React.FC<IconProps>> = {
   ArrowLeft,
   ArrowLeftRight,
   BarChart3,
+  Bell,
   BookOpen,
   Bot,
   Check,
@@ -311,6 +318,7 @@ export const ICON_REGISTRY: Record<IconName, React.FC<IconProps>> = {
   Info,
   LayoutDashboard,
   LayoutGrid,
+  ListTodo,
   Loader2,
   Lock,
   LogOut,

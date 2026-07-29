@@ -120,6 +120,7 @@ export * from './components/Empty';
 export * from './components/File';
 export * from './components/Filter';
 export * from './components/Form';
+export * from './components/InteractiveBlock';
 export * from './components/Layout';
 export * from './components/Modal';
 export * from './components/Stat';
