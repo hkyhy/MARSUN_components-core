@@ -18,7 +18,7 @@ const InteractiveBlockBasicDemo: React.FC = () => (
       title="tags 在 subtitle 下方"
       subtitle="副标题"
       tagsPlacement="below"
-      tags={[{ label: 'L3', color: SEMANTIC_COLORS.ERROR }]}
+      tags={[{ label: 'L3', color: SEMANTIC_COLORS.DANGER }]}
       description="描述不超过两行展示。"
       actions={[
         { key: 'a', label: '采纳', onClick: () => undefined },

@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.53
+  next_task_id: P6.3.54
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -724,4 +724,17 @@ tasks:
   - infra
   - release
   note: 'chore(release) v0.1.33；含 FormDataSync/ContentCard/InteractiveBlock；Related: P6.3.47-51'
+- id: P6.3.53
+  milestone: P6.3
+  name: 修复 InteractiveBlock Demo TagColor typecheck
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-07-29'
+  target_date: '2026-07-29'
+  tags:
+  - frontend
+  - components
+  note: 'SEMANTIC_COLORS.ERROR→DANGER；解锁 0.1.33 CI publish'
 
