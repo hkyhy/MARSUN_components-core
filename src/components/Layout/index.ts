@@ -8,3 +8,5 @@ export { default as ModulePageShell } from './ModulePageShell';
 export type { ModulePageShellProps } from './ModulePageShell';
 export { AgentAppShell } from './AgentAppShell';
 export type { AgentAppShellProps } from './AgentAppShell';
+export { default as ContentCard } from './ContentCard';
+export type { ContentCardProps } from './ContentCard';

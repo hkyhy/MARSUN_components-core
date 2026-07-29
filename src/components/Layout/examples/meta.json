@@ -22,6 +22,13 @@
       "component": "@/components/Layout/examples/ModulePageShellDemo",
       "sourcePath": "@/components/Layout/examples/ModulePageShellDemo/index.tsx",
       "block": true
+    },
+    {
+      "title": "ContentCard",
+      "description": "主内容卡片；模块 workarea 用 flat / noPadding",
+      "component": "@/components/Layout/examples/ContentCardBasicDemo",
+      "sourcePath": "@/components/Layout/examples/ContentCardBasicDemo/index.tsx",
+      "block": true
     }
   ],
   "apiDoc": [
@@ -96,6 +103,19 @@
         { "prop": "spinning", "desc": "是否显示遮罩", "type": "boolean", "required": true },
         { "prop": "children", "desc": "被遮罩的内容", "type": "React.ReactNode", "required": true },
         { "prop": "className", "desc": "Spin wrapper 附加类名", "type": "string" }
+      ]
+    },
+    {
+      "componentName": "ContentCardProps",
+      "rows": [
+        { "prop": "children", "desc": "卡片内容", "type": "React.ReactNode", "required": true },
+        { "prop": "className", "desc": "附加类名", "type": "string" },
+        { "prop": "noPadding", "desc": "去掉内边距", "type": "boolean" },
+        {
+          "prop": "flat",
+          "desc": "无 border/shadow/radius，用于模块 workarea",
+          "type": "boolean"
+        }
       ]
     },
     {

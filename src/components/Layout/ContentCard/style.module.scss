@@ -1,0 +1,18 @@
+.marsun-content-card {
+  background: var(--bg-color-white, #ffffff);
+  border: var(--card-border, 1px solid var(--font-color-grey-3, #dddddd));
+  border-radius: var(--radius-card, 8px);
+  box-shadow: var(--shadow-card, none);
+  padding: 16px;
+}
+
+.marsun-content-card--no-padding {
+  padding: 0;
+  overflow: hidden;
+}
+
+.marsun-content-card--flat {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
