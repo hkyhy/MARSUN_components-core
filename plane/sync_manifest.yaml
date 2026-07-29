@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.52
+  next_task_id: P6.3.53
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -711,4 +711,17 @@ tasks:
   - frontend
   - examples
   note: 'menu/registry/routes 注册 FormDataSync/ContentCard/InteractiveBlock Demo'
+- id: P6.3.52
+  milestone: P6.3
+  name: 发版 marsun-components-core v0.1.33
+  status: 已完成
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-29'
+  target_date: '2026-07-29'
+  tags:
+  - infra
+  - release
+  note: 'chore(release) v0.1.33；含 FormDataSync/ContentCard/InteractiveBlock；Related: P6.3.47-51'
 
