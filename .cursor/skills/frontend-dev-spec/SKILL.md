@@ -14,6 +14,7 @@ description: |
   marsun_components-core 新增或变更导出、Props/行为/新能力时，须同步包根 index.ts、component-mapping-组件映射.md，并在该组件 examples/ 增加或更新对应场景 Demo（能力点与 Demo 一一对应，如 Table 的单表头、多表头、列配置），登记 meta.json 与 apiDoc；禁止只改实现不补示例。
   业务列表禁止直连 antd Table：必须用 @hkyhy/marsun-components-core 的 Table；必须传稳定 tableName；是否可自定义列用 columnConfigEnabled（默认 true）；开启时注入 fetchColumnConfig/saveColumnConfig（QA 用 userPrefs → user_key_get/set，契约见 backend-dev/platform-dev/用户偏好）。豁免：Form TableList、纯 HTML table、components showcase ApiDoc 表。
   前端新接或改造任一 REST 路径（含「已有平台接口」）时，同任务必须更新 marsun_arch backend-dev 对应契约三件套（接口.md + OpenAPI + 测试用例）；禁止只写 src/api client。
+  本任务若解决了可复用、非显而易见的联调/组件/规范问题，须同任务写入对应 skill reference / mapping / 契约（禁止只留在对话；见核心原则 #42）。
   此技能提供统一的目录结构、命名规范、组件拆分方式和代码模板，确保所有模块遵循一致的架构风格。
 ---
 
@@ -86,10 +87,13 @@ description: |
 39. **InteractiveBlock action 尺寸** `(common)`：link 操作字号不得大于 title（title 14px / actions 12px，icon 14px）；icon 颜色与 link 文字一致；导出用 `Download`；info trigger `cursor: pointer`
 40. **非 prod 组件展示切换** `(common)`：所有业务前端子仓库（非 marsun_components-core dev app）须在 `App.tsx` 用 `import.meta.env.DEV` 双 guard 接入：（1）antd `FloatButton` 在业务页与 `/components` 间切换（图标 `LayoutGrid` / `House`，均从 `@hkyhy/marsun-components-core`）；（2）`/components` 路由 + `ComponentsLayout` + `componentRoutes`（collect-examples 自动生成）。生产 build 不包含上述代码。参考 `repos/maoyang_data-asset-system/src/App.tsx`；新建仓库 checklist 见 [examples-组件示例.md](references/common/examples-组件示例.md) §8.8
 41. **REST 契约同任务落 backend-dev** `(common)`：新接或改造任一 REST（含「已有平台接口」如 `user_key_get`/`user_key_set`）时，**同任务**更新 marsun_arch `backend-dev/{data-dev|agent-dev|platform-dev|mock}/` 三件套（`接口.md` + OpenAPI + 测试用例）；禁止只写 `src/api/*.ts`。落点见 [backend-dev-spec / openapi-apifox §3.2](../backend-dev-spec/references/openapi-apifox-契约标注.md)；用户偏好示例：[platform-dev/用户偏好](../../../backend-dev/platform-dev/用户偏好/接口.md)
+42. **可复用问题同任务沉淀** `(common)`：Cursor 联调/开发中若解决了**可复用、非显而易见**的问题（组件用法、布局、环境、信封/分页、落点冲突等），须**同任务**写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping；禁止只留在对话。仅本事项不可复用者写 WorkRecord 进展即可。**禁止**另建「踩坑大全」第二真相源，**禁止**把工程踩坑写入 `TextilePublicKnowledge/`。落点见 [marsun-arch-doc-spec / placement-guide](../marsun-arch-doc-spec/references/placement-guide.md)
 
 ---
 
 ## 二、按需阅读地图
+
+新人 / 总览入口（技术栈图、工具链、Day-0）：[docs/前端工程总览.md](../../../docs/前端工程总览.md)。
 
 触发本 skill 后：**先读本文件核心原则**；接需求时读 [prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md) → [prompts/requirement-workflow-需求工作流.md](references/prompts/requirement-workflow-需求工作流.md)；编写对应模块时再读单个 reference，**勿一次全读**。
 
@@ -137,6 +141,7 @@ description: |
 | 组件 Demo                        | common/examples                            | —                                                                            |
 | 非 prod 组件展示切换             | common/examples §8.8 + routing-api §13.5   | SKILL.md #40                                                                 |
 | 新增/变更组件                    | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow                                         |
+| 可复用踩坑沉淀                   | SKILL.md #42 + requirement-workflow 检查项 | placement-guide（marsun-arch-doc-spec）                                      |
 | 样式 / className / SCSS          | common/styles                              | common/directory-structure（命名速查）                                       |
 | 模块 workarea 扁平布局           | common/styles §8.10                        | SKILL.md #33                                                                 |
 | 写测试                           | common/testing                             | —                                                                            |

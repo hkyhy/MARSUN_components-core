@@ -250,7 +250,7 @@ Chat 等已接入模块，改动时保持 `VirtualScrollbar` + `ref`/`onScroll` 
 
 ### 适用场景
 
-列表项、表单分组头、卡片摘要等**带操作性**的展示块（非纯静态文本）。业务项目参考：`Agent_QualityAnalysis` → `Shared/Detail/InteractiveBlock`。
+列表项、表单分组头、卡片摘要等**带操作性**的展示块（非纯静态文本）。从 `@hkyhy/marsun-components-core` 导入 `InteractiveBlock`。
 
 ### 信息层级（自上而下）
 
@@ -299,8 +299,7 @@ Chat 等已接入模块，改动时保持 `VirtualScrollbar` + `ref`/`onScroll` 
 ### 代码模板
 
 ```tsx
-import InteractiveBlock from '@/components/QualityAnalysis/Shared/Detail/InteractiveBlock';
-import { Download, SEMANTIC_COLORS } from '@hkyhy/marsun-components-core';
+import { Download, InteractiveBlock, SEMANTIC_COLORS } from '@hkyhy/marsun-components-core';
 
 <InteractiveBlock
   title={`${item.metric} · ${item.factory}`}
@@ -335,9 +334,9 @@ import { Download, SEMANTIC_COLORS } from '@hkyhy/marsun-components-core';
 
 Table 列内 CRUD 仍遵循 [module-patterns-模块模式.md](../business/module-patterns-模块模式.md)「listArray 无 icon」。**InteractiveBlock 行内 link 操作**允许 icon / icon+文字，字号须 ≤ title。
 
-### 后续上收 core
+### Core 导出
 
-纯 UI 稳定后可迁入 `marsun_components-core`；迁入前业务 wrapper 路径：`Shared/Detail/InteractiveBlock`。
+`InteractiveBlock`、`ContentCard`、`FormDataSync` 已从 `@hkyhy/marsun-components-core` 导出；业务禁止再维护同名本地副本。
 
 ---
 

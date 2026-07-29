@@ -332,30 +332,30 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 
 ### Common 组件（本地或 npm）
 
-| antd 组件　　　　　　  | Common 封装　　　　　　　　　　　　　　　　　　　  | 使用方式　　　　　　　　　　　　　　　　　　　　　                                                                                                                      |
-| ---------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Descriptions`　　　   | `CommonDescriptions`　　　　　　　　　　　　　　　 | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                                     |
-| `Tooltip`（详情）　    | `TooltipInfo`　　　　　　　　　　　　　　　　　　  | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                                                   |
-| 页面头部布局　　　　   | `PageHeaderLayout`　　　　　　　　　　　　　　　　 | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                                                |
-| 模块页壳（AppShell）   | `ModulePageShell` + `PageShellProvider`　　　　　  | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                 |
-| Agent 业务壳　　　　   | `AgentAppShell`　　　　　　　　　　　　　　　　　  | 左 sider（品牌/菜单/footer 槽）+ 右顶栏；`menuItems` + `siderFooter`（如 `UserProfileCard`）+ `children`；纯 UI                                                         |
-| 主内容卡片　　　　　   | `ContentCard`（Shared/Layout）　　　　　　　　　   | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles-样式规范.md](styles-样式规范.md) §8.10                                                                |
-| 可滚动区域　　　　　   | `VirtualScrollbar`　　　　　　　　　　　　　　　　 | `wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['...'])`；`ref` → viewport；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)     |
-| 模块/页面样式          | `style.module.scss`                                | 每模块/页面必选（无样式时空文件）；见 [styles-样式规范.md](styles-样式规范.md)                                                                                          |
-| `Tag`（状态展示）　　  | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`  | 传入 `status` / `role`　　　　　　　　　　　　　　                                                                                                                      |
-| `Tag`（通用）　　　　  | `SemanticTag`　　　　　　　　　　　　　　　　　　  | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                                      |
-| `Select`（部门选择）   | `DepartmentSelect`　　　　　　　　　　　　　　　　 | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                                      |
-| 权限判断　　　　　　   | `hasPermission`　　　　　　　　　　　　　　　　　  | `hasPermission(user, 'user:edit')`　　　　　　　　                                                                                                                      |
-| 侧栏用户卡片　　　　   | `UserProfileCard`　　　　　　　　　　　　　　　　  | `name` + `sub?` + `collapsed?` + `onLogout?` / `menuItems?` + `extra?`（右侧独立操作如站内信，与主区同卡内、Dropdown 外；**不传则无扩展区**）；主区点击展开退出         |
-| 筛选栏　　　　　　　   | `CommonFilter` + Filter 子组件　　　　　　　　　　 | 见 [filter-筛选组件.md](filter-筛选组件.md)；§5.9：`loading`→Item spin + 面板 Spin；空态 `Empty`　                                                                      |
-| `Input`（筛选）　　　  | `FilterInput`　　　　　　　　　　　　　　　　　　  | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter-筛选组件.md](filter-筛选组件.md) §5.1.1）                                     |
-| 展示/表单内容块        | `InteractiveBlock`（业务 Shared/Detail）           | title/info/actions/subtitle/tags 层级；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                  |
-| `Select`（筛选）　　   | `FilterSelect`　　　　　　　　　　　　　　　　　　 | `filterKey` + `options`/`loadData` + `value` + `onChange` + 可选 `loading`　　                                                                                          |
-| `TreeSelect`（筛选）   | `FilterTreeSelect`　　　　　　　　　　　　　　　　 | `filterKey` + `treeData`/`loadData` + `value` + `onChange` + 可选 `loading`（Item spin + 面板 Spin + Empty）　                                                          |
-| `Cascader`（筛选路径） | `FilterCascader`　　　　　　　　　　　　　　　　　 | `filterKey` + `treeData`/`options`/`loadData` + `leafOnly` + 可选 `onChangePath` / `loading`；多选须点确定才提交；分厂→品种等路径列用 Cascader，任意深树仍用 TreeSelect |
-| `FilterTrigger`　　　  | `FilterTrigger`　　　　　　　　　　　　　　　　　  | Filter Item；`loading` 时右侧 `Loader2 spin` 替换 chevron                                                                                                               |
-| `RangePicker`（筛选）  | `FilterDateRange`　　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                                                                                                                     |
-| 数字范围（筛选）　　   | `FilterNumberRange`　　　　　　　　　　　　　　　  | `filterKey` + `value` + `onChange` + `unit` + 可选 `min`/`max`/`precision`/`step`；确定时左≤右                                                                          |
+| antd 组件　　　　　　  | Common 封装　　　　　　　　　　　　　　　　　　　     | 使用方式　　　　　　　　　　　　　　　　　　　　　                                                                                                                      |
+| ---------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Descriptions`　　　   | `CommonDescriptions`　　　　　　　　　　　　　　　    | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                                     |
+| `Tooltip`（详情）　    | `TooltipInfo`　　　　　　　　　　　　　　　　　　     | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                                                   |
+| 页面头部布局　　　　   | `PageHeaderLayout`　　　　　　　　　　　　　　　　    | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                                                |
+| 模块页壳（AppShell）   | `ModulePageShell` + `PageShellProvider`　　　　　     | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                 |
+| Agent 业务壳　　　　   | `AgentAppShell`　　　　　　　　　　　　　　　　　     | 左 sider（品牌/菜单/footer 槽）+ 右顶栏；`menuItems` + `siderFooter`（如 `UserProfileCard`）+ `children`；纯 UI                                                         |
+| 主内容卡片　　　　　   | `ContentCard`（`@hkyhy/marsun-components-core`）      | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles-样式规范.md](styles-样式规范.md) §8.10                                                                |
+| 可滚动区域　　　　　   | `VirtualScrollbar`　　　　　　　　　　　　　　　　    | `wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['...'])`；`ref` → viewport；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)     |
+| 模块/页面样式          | `style.module.scss`                                   | 每模块/页面必选（无样式时空文件）；见 [styles-样式规范.md](styles-样式规范.md)                                                                                          |
+| `Tag`（状态展示）　　  | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`     | 传入 `status` / `role`　　　　　　　　　　　　　　                                                                                                                      |
+| `Tag`（通用）　　　　  | `SemanticTag`　　　　　　　　　　　　　　　　　　     | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                                      |
+| `Select`（部门选择）   | `DepartmentSelect`　　　　　　　　　　　　　　　　    | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                                      |
+| 权限判断　　　　　　   | `hasPermission`　　　　　　　　　　　　　　　　　     | `hasPermission(user, 'user:edit')`　　　　　　　　                                                                                                                      |
+| 侧栏用户卡片　　　　   | `UserProfileCard`　　　　　　　　　　　　　　　　     | `name` + `sub?` + `collapsed?` + `onLogout?` / `menuItems?` + `extra?`（右侧独立操作如站内信，与主区同卡内、Dropdown 外；**不传则无扩展区**）；主区点击展开退出         |
+| 筛选栏　　　　　　　   | `CommonFilter` + Filter 子组件　　　　　　　　　　    | 见 [filter-筛选组件.md](filter-筛选组件.md)；§5.9：`loading`→Item spin + 面板 Spin；空态 `Empty`　                                                                      |
+| `Input`（筛选）　　　  | `FilterInput`　　　　　　　　　　　　　　　　　　     | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter-筛选组件.md](filter-筛选组件.md) §5.1.1）                                     |
+| 展示/表单内容块        | `InteractiveBlock`（`@hkyhy/marsun-components-core`） | title/info/actions/subtitle/tags 层级；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                  |
+| `Select`（筛选）　　   | `FilterSelect`　　　　　　　　　　　　　　　　　　    | `filterKey` + `options`/`loadData` + `value` + `onChange` + 可选 `loading`　　                                                                                          |
+| `TreeSelect`（筛选）   | `FilterTreeSelect`　　　　　　　　　　　　　　　　    | `filterKey` + `treeData`/`loadData` + `value` + `onChange` + 可选 `loading`（Item spin + 面板 Spin + Empty）　                                                          |
+| `Cascader`（筛选路径） | `FilterCascader`　　　　　　　　　　　　　　　　　    | `filterKey` + `treeData`/`options`/`loadData` + `leafOnly` + 可选 `onChangePath` / `loading`；多选须点确定才提交；分厂→品种等路径列用 Cascader，任意深树仍用 TreeSelect |
+| `FilterTrigger`　　　  | `FilterTrigger`　　　　　　　　　　　　　　　　　     | Filter Item；`loading` 时右侧 `Loader2 spin` 替换 chevron                                                                                                               |
+| `RangePicker`（筛选）  | `FilterDateRange`　　　　　　　　　　　　　　　　     | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                                                                                                                     |
+| 数字范围（筛选）　　   | `FilterNumberRange`　　　　　　　　　　　　　　　     | `filterKey` + `value` + `onChange` + `unit` + 可选 `min`/`max`/`precision`/`step`；确定时左≤右                                                                          |
 
 ### Icons（`@hkyhy/marsun-components-core`）
 
@@ -404,16 +404,17 @@ import { ReactForm, useField, useFormApi, GroupList } from '@hkyhy/marsun-compon
 
 必填星号等依赖主题别名 `--color-warning`（映射 `--error-color`，见 [theme-主题Token.md](theme-主题Token.md)）。
 
-| 组件                                                          | 说明                                                    |
-| ------------------------------------------------------------- | ------------------------------------------------------- |
-| `Form`                                                        | 页内表单容器（form-info）；`data` 初值、`onSubmit` 提交 |
-| `FormInfo`                                                    | 分组布局；`column` / `list` 放置字段                    |
-| `FormModal`                                                   | 弹窗表单；`formProps={{ data, onSubmit }}`              |
-| `FormSteps` / `FormStepsModal`                                | 多步向导（新业务替代 antd `StepForm`）                  |
-| `List` / `TableList` / `MultiField`                           | 动态列表 / 表格行 / 多值字段                            |
-| `Input` / `TextArea` / `Select` / `InputNumber` / `Switch` 等 | 字段组件                                                |
-| `SubmitButton` / `ResetButton` / `CancelButton`               | 表单操作按钮                                            |
-| 字段 `rule`                                                   | 校验字符串，如 `REQ`、`REQ TEL`、`EMAIL`、`ID_CARD`     |
+| 组件                                                                         | 说明                                                    |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `Form`                                                                       | 页内表单容器（form-info）；`data` 初值、`onSubmit` 提交 |
+| `FormInfo`                                                                   | 分组布局；`column` / `list` 放置字段                    |
+| `FormModal`                                                                  | 弹窗表单；`formProps={{ data, onSubmit }}`              |
+| `FormDataSync`                                                               | Form 子节点；字段变更回写父级（配置页即时 patch）       |
+| `FormSteps` / `FormStepsModal`                                               | 多步向导（新业务替代 antd `StepForm`）                  |
+| `List` / `TableList` / `MultiField`                                          | 动态列表 / 表格行 / 多值字段                            |
+| `Input` / `TextArea` / `Select` / `InputNumber` / `Switch` / `RadioGroup` 等 | 字段组件                                                |
+| `SubmitButton` / `ResetButton` / `CancelButton`                              | 表单操作按钮                                            |
+| 字段 `rule`                                                                  | 校验字符串，如 `REQ`、`REQ TEL`、`EMAIL`、`ID_CARD`     |
 
 **存量**：未迁移模块可暂留 antd `Form.useForm` + `Form.Item`；**新模块、新表单必须走 core 再导出的 FormInfo 栈**。`FetchSelect` / `FetchTreeSelect` / `PersonOptionRow` 仍为 core 字段辅助。
 

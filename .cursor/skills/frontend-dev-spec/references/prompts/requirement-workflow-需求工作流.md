@@ -59,6 +59,7 @@
 33. 检查：代码格式化工具链是否已安装（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`lint-staged`、`husky` 等 devDependencies）；根目录是否有 `.prettierrc`、`eslint.config.js`、`.husky/pre-commit`；`package.json` 是否有 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts（见 [../common/code-formatting-代码格式化.md](../common/code-formatting-代码格式化.md)）
 34. 检查：模块 workarea 扁平布局——`ModulePageShell` 不传冗余 `breadcrumb`；主区 `ContentCard flat` 或无边框容器；`*-workarea-body` 无外层 padding；Tabs content `width:100%`；页脚保存等非 block（Drawer 除外）（见 [../common/styles-样式规范.md](../common/styles-样式规范.md) §8.10）
 35. 检查：**禁止重复 core utils**——`src/utils/` 不得复制 `@hkyhy/marsun-components-core` 已导出函数；日期/权限/部门/人员/HTTP 等从包根 import（见 [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md) npm Utils 表）
+36. 检查：**可复用问题沉淀**——本任务若解决了可复用、非显而易见的问题，是否已写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping（禁止只留在 Cursor 对话）；仅本事项不可复用者写 WorkRecord 即可（见 SKILL.md 核心原则 #42）
 
 ## 四、按需阅读规范
 
@@ -105,6 +106,7 @@
 - [ ] `@hkyhy/marsun-components-core` 版本与 npm 实版一致（`npm view` 核对；无 `file:` lock）
 - [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting-代码格式化.md`）
 - [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
+- [ ] **可复用问题已同任务沉淀**到 skill reference / mapping / 契约（禁止只留在对话；见 SKILL #42）
 - [ ] 测试通过
 - [ ] **新任务台账**：
   1. `plane_pull`（或 `pm_pipeline --step plane-pull`）
