@@ -6,6 +6,8 @@ export { default as FetchSelect } from './FetchSelect';
 export type { FetchSelectProps, SelectOptionItem } from './FetchSelect';
 export { default as PersonOptionRow } from './PersonOptionRow';
 export type { PersonOptionRowProps } from './PersonOptionRow';
+export { default as FormDataSync } from './FormDataSync';
+export type { FormDataSyncProps } from './FormDataSync';
 
 /** @kne/form-info — 业务从包根导入，勿直连 @kne/form-info */
 export {
@@ -22,6 +24,7 @@ export {
   Select,
   InputNumber,
   Switch,
+  RadioGroup,
   SubmitButton,
   ResetButton,
   CancelButton,

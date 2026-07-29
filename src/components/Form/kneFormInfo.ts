@@ -25,6 +25,7 @@ import {
   CancelButton as KneCancelButton,
   Input as KneInput,
   InputNumber as KneInputNumber,
+  RadioGroup as KneRadioGroup,
   ResetButton as KneResetButton,
   Select as KneSelect,
   SubmitButton as KneSubmitButton,
@@ -89,6 +90,7 @@ export const TextArea = KneTextArea as ComponentType<FieldProps>;
 export const Select = KneSelect as ComponentType<FieldProps>;
 export const InputNumber = KneInputNumber as ComponentType<FieldProps>;
 export const Switch = KneSwitch as ComponentType<FieldProps>;
+export const RadioGroup = KneRadioGroup as ComponentType<FieldProps>;
 export const SubmitButton = KneSubmitButton as ComponentType<ButtonProps>;
 export const ResetButton = KneResetButton as ComponentType<ButtonProps>;
 export const CancelButton = KneCancelButton as ComponentType<ButtonProps>;

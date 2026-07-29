@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.47
+  next_task_id: P6.3.48
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -643,4 +643,19 @@ tasks:
   - infra
   - release
   note: 'chore(release) v0.1.32；含 FilterCascader 多选确定提交；Related: P6.3.45'
+
+- id: P6.3.47
+  milestone: P6.3
+  name: FormDataSync 抽入 core
+  status: 已完成
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-29'
+  target_date: '2026-07-29'
+  tags:
+  - frontend
+  - components
+  - Form
+  note: 'FormDataSync + RadioGroup 再导出 + Demo；Related: S3 FormDataSync 上收'
 

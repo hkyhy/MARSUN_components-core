@@ -16,6 +16,13 @@
       "sourcePath": "@/components/Form/examples/FormInfoModalDemo/index.tsx"
     },
     {
+      "title": "FormDataSync 即时回写",
+      "description": "配置页等：Form 子节点 FormDataSync，字段变更同步父级 onChange",
+      "component": "@/components/Form/examples/FormDataSyncDemo",
+      "sourcePath": "@/components/Form/examples/FormDataSyncDemo/index.tsx",
+      "block": true
+    },
+    {
       "title": "动态列表 List / MultiField",
       "description": "业务标准：List 动态增减分组；MultiField 多值字段",
       "component": "@/components/Form/examples/FormInfoListDemo",
@@ -123,6 +130,17 @@
         },
         { "prop": "autoClose", "desc": "提交成功后自动关闭", "type": "boolean" },
         { "prop": "children", "desc": "通常为 FormInfo / List", "type": "ReactNode" }
+      ]
+    },
+    {
+      "componentName": "FormDataSync",
+      "rows": [
+        {
+          "prop": "onChange",
+          "desc": "字段值变更时回写完整 formData（须作 Form 子节点）",
+          "type": "(data: Record<string, unknown>) => void",
+          "required": true
+        }
       ]
     },
     {
