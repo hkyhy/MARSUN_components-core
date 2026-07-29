@@ -17,6 +17,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
   { key: '/components/filter', label: 'Filter' },
   { key: '/components/form', label: 'Form' },
   { key: '/components/icons', label: 'Icons' },
+  { key: '/components/interactiveblock', label: 'InteractiveBlock' },
   { key: '/components/layout', label: 'Layout' },
   { key: '/components/llmformattedtext', label: 'LlmFormattedText' },
   { key: '/components/modal', label: 'Modal' },

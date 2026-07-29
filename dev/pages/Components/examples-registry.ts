@@ -848,7 +848,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: '级联路径筛选器',
         description:
-          'FilterCascader：分厂→品种两列路径；leafOnly 只写叶子；onChangePath；对比 dependsOn 主对标',
+          'FilterCascader：分厂→品种两列路径；leafOnly 只写叶子；多选须点确定才提交；onChangePath；对比 dependsOn 主对标',
         component: React.lazy(() => import('@/components/Filter/examples/FilterCascaderDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterCascaderDemo/index.tsx?raw'),
         block: true,
@@ -1124,7 +1124,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             type: 'boolean',
             defaultVal: 'true',
           },
-          { prop: 'multiple', desc: '多选 = 多条路径', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'multiple',
+            desc: '多选 = 多条路径；勾选为草稿，确定才 onChange，取消/关面板回滚',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'showSearch', desc: '面板内搜索', type: 'boolean', defaultVal: 'false' },
           {
             prop: 'panelExtra / panelWidth / loading',
@@ -1216,6 +1221,13 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: '业务标准：FormModal + formProps.onSubmit，编辑场景自动关闭',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoModalDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoModalDemo/index.tsx?raw'),
+      },
+      {
+        title: 'FormDataSync 即时回写',
+        description: '配置页等：Form 子节点 FormDataSync，字段变更同步父级 onChange',
+        component: React.lazy(() => import('@/components/Form/examples/FormDataSyncDemo')),
+        sourcePath: () => import('@/components/Form/examples/FormDataSyncDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '动态列表 List / MultiField',
@@ -1331,6 +1343,17 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         ],
       },
       {
+        componentName: 'FormDataSync',
+        rows: [
+          {
+            prop: 'onChange',
+            desc: '字段值变更时回写完整 formData（须作 Form 子节点）',
+            type: '(data: Record<string, unknown>) => void',
+            required: true,
+          },
+        ],
+      },
+      {
         componentName: 'FormSteps / FormStepsModal',
         rows: [
           { prop: 'items', desc: '步骤：title + formProps + children', type: 'StepItem[]' },
@@ -1430,6 +1453,43 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/interactiveblock': {
+    title: 'InteractiveBlock 内容块',
+    description: '带操作性的展示块：title → Info + TooltipInfo → actions；tags 紧贴 subtitle。',
+    examples: [
+      {
+        title: '基础 / tags / actions',
+        description: '选中态、info 详情、tagsPlacement、hidden action',
+        component: React.lazy(
+          () => import('@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'InteractiveBlockProps',
+        rows: [
+          { prop: 'title', desc: '标题', type: 'ReactNode', required: true },
+          { prop: 'info', desc: 'Info 触发 TooltipInfo 详情', type: 'DescriptionItem[]' },
+          { prop: 'subtitle', desc: '副标题', type: 'ReactNode' },
+          { prop: 'description', desc: '描述（最多两行）', type: 'ReactNode' },
+          { prop: 'tags', desc: '语义标签', type: 'InteractiveBlockTag[]' },
+          {
+            prop: 'tagsPlacement',
+            desc: 'tags 相对 subtitle：inline | below',
+            type: "'inline' | 'below'",
+          },
+          { prop: 'actions', desc: '右侧 link 操作', type: 'InteractiveBlockAction[]' },
+          { prop: 'selected', desc: '选中态（标题主色）', type: 'boolean' },
+          { prop: 'onClick', desc: '整块可点击', type: '() => void' },
+          { prop: 'className', desc: '附加类名', type: 'string' },
+        ],
+      },
+    ],
+  },
   '/components/layout': {
     title: 'Layout 页面布局',
     description:
@@ -1454,6 +1514,13 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: 'toolbar + body 内置 PageSpin',
         component: React.lazy(() => import('@/components/Layout/examples/ModulePageShellDemo')),
         sourcePath: () => import('@/components/Layout/examples/ModulePageShellDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'ContentCard',
+        description: '主内容卡片；模块 workarea 用 flat / noPadding',
+        component: React.lazy(() => import('@/components/Layout/examples/ContentCardBasicDemo')),
+        sourcePath: () => import('@/components/Layout/examples/ContentCardBasicDemo/index.tsx?raw'),
         block: true,
       },
     ],
@@ -1521,6 +1588,15 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'spinning', desc: '是否显示遮罩', type: 'boolean', required: true },
           { prop: 'children', desc: '被遮罩的内容', type: 'React.ReactNode', required: true },
           { prop: 'className', desc: 'Spin wrapper 附加类名', type: 'string' },
+        ],
+      },
+      {
+        componentName: 'ContentCardProps',
+        rows: [
+          { prop: 'children', desc: '卡片内容', type: 'React.ReactNode', required: true },
+          { prop: 'className', desc: '附加类名', type: 'string' },
+          { prop: 'noPadding', desc: '去掉内边距', type: 'boolean' },
+          { prop: 'flat', desc: '无 border/shadow/radius，用于模块 workarea', type: 'boolean' },
         ],
       },
       {

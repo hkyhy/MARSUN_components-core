@@ -15,6 +15,7 @@ export const showcaseRoutes = (
     <Route path="filter" element={<ExamplePage />} />
     <Route path="form" element={<ExamplePage />} />
     <Route path="icons" element={<ExamplePage />} />
+    <Route path="interactiveblock" element={<ExamplePage />} />
     <Route path="layout" element={<ExamplePage />} />
     <Route path="llmformattedtext" element={<ExamplePage />} />
     <Route path="modal" element={<ExamplePage />} />
