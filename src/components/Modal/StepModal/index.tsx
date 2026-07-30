@@ -2,6 +2,7 @@ import { ChevronLeft } from '@/components/Icons';
 import { Button, Modal, Steps } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import type { StepModalProps } from '../StepModalTypes';
+import { resolveModalWidth } from '../utils/resolveModalSize';
 import styles from './style.module.scss';
 import classNames from 'classnames';
 
@@ -91,12 +92,15 @@ const StepModal: React.FC<StepModalProps> = ({
     );
   };
 
+  const effectiveWidth = resolveModalWidth({ width });
+
   return (
     <Modal
       title={modalTitle}
       open={open}
       onCancel={onCancel}
-      width={width}
+      width={effectiveWidth}
+      centered
       footer={renderFooter()}
       maskClosable={maskClosable}
       className={className}

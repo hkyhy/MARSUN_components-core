@@ -1,16 +1,72 @@
 {
   "title": "Modal 弹窗组件",
-  "description": "步骤式弹窗等通用弹窗封装，将多步骤流程封装在同一个 Modal 中，自动管理步骤导航、标题切换和底部按钮。",
+  "description": "通用居中 Modal（S/M/L、标题 Action）与步骤式 StepModal。",
   "examples": [
     {
+      "title": "通用 Modal",
+      "description": "必填标题、标题右侧 ButtonGroup actions、S/M/L 宽度（只可缩小）、固定 body 高与单层滚动",
+      "component": "@/components/Modal/examples/ModalBasicDemo",
+      "sourcePath": "@/components/Modal/examples/ModalBasicDemo/index.tsx",
+      "block": true
+    },
+    {
       "title": "步骤式弹窗",
-      "description": "StepModal 将多步骤流程封装在 Modal 中，自动管理步骤导航、标题切换和底部按钮",
+      "description": "StepModal 将多步骤流程封装在 Modal 中，自动管理步骤导航、标题切换和底部按钮（强制居中）",
       "component": "@/components/Modal/examples/StepModalDemo",
       "sourcePath": "@/components/Modal/examples/StepModalDemo/index.tsx",
       "block": true
     }
   ],
   "apiDoc": [
+    {
+      "componentName": "MarsunModalProps",
+      "rows": [
+        {
+          "prop": "title",
+          "desc": "弹窗标题（必填）",
+          "type": "ReactNode",
+          "required": true
+        },
+        {
+          "prop": "actions",
+          "desc": "标题右侧 ButtonGroup listArray",
+          "type": "Record<string, unknown>[]"
+        },
+        {
+          "prop": "size",
+          "desc": "宽度锚点 S/M/L（480/720/960），有效宽 = min(锚点, 100vw-64)",
+          "type": "'S' | 'M' | 'L'"
+        },
+        {
+          "prop": "width",
+          "desc": "显式默认宽，优先于 size 作为锚点",
+          "type": "number"
+        },
+        {
+          "prop": "scrollable",
+          "desc": "body 内单层 VirtualScrollbar",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "footer",
+          "desc": "底部区域",
+          "type": "ReactNode | null"
+        },
+        {
+          "prop": "open",
+          "desc": "是否打开",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "prop": "onCancel",
+          "desc": "关闭回调",
+          "type": "() => void",
+          "required": true
+        }
+      ]
+    },
     {
       "componentName": "StepModalProps",
       "rows": [
@@ -50,7 +106,7 @@
         },
         {
           "prop": "width",
-          "desc": "弹窗宽度",
+          "desc": "弹窗宽度锚点（经 resolveModalWidth cap）",
           "type": "number",
           "defaultVal": "600"
         },

@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.55
+  next_task_id: P6.3.61
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -750,4 +750,97 @@ tasks:
   - infra
   - release
   note: 'typecheck 修复后重推 chore(release) v0.1.33；Related: P6.3.52/P6.3.53'
+- id: P6.3.55
+  milestone: P6.3
+  name: 基础 Modal 与 size 工具
+  status: 已完成
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-30'
+  target_date: '2026-07-30'
+  tags:
+  - frontend
+  - components
+  - Modal
+  note: |
+    Refs: P6.3
+    Modal + ModalTypes + resolveModalSize + ModalBasicDemo；StepModal 对齐 size
+- id: P6.3.56
+  milestone: P6.3
+  name: InteractiveBlock inset 变体
+  status: 进行中
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-30'
+  target_date: '2026-07-30'
+  tags:
+  - frontend
+  - components
+  - InteractiveBlock
+  note: |
+    Refs: P6.3
+    inset surface + InteractiveBlockInsetDemo；Related: P6.3.49
+- id: P6.3.57
+  milestone: P6.3
+  name: AgentHub ReportTemplate / ReportMetaStrip
+  status: 进行中
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-30'
+  target_date: '2026-07-30'
+  tags:
+  - frontend
+  - components
+  - AgentHub
+  note: |
+    Refs: P6.3
+    ReportTemplate + ReportMetaStrip + Demo；根 index 导出
+- id: P6.3.58
+  milestone: P6.3
+  name: examples 注册 Modal/Report/Inset Demo
+  status: 进行中
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-30'
+  target_date: '2026-07-30'
+  tags:
+  - frontend
+  - examples
+  note: |
+    Refs: P6.3
+    menu-config / routes / examples-registry；Related: P6.3.55-57
+- id: P6.3.59
+  milestone: P6.3
+  name: frontend-dev-spec 同步 Modal/Report/Inset
+  status: 进行中
+  priority: P0
+  kind: docs
+  owner: 黄金芳
+  start_date: '2026-07-30'
+  target_date: '2026-07-30'
+  tags:
+  - docs
+  - spec
+  note: |
+    Refs: P6.3
+    .cursor/skills/frontend-dev-spec 镜像；Related: P6.3.55-57
+- id: P6.3.60
+  milestone: P6.3
+  name: 发版 marsun-components-core v0.1.34
+  status: 进行中
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-30'
+  target_date: '2026-07-30'
+  tags:
+  - infra
+  - release
+  note: |
+    Refs: P6.3
+    chore(release) v0.1.34；含 Modal/Inset/Report；Related: P6.3.55-59
 

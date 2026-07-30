@@ -1,0 +1,109 @@
+.marsun-modal {
+  :global(.ant-modal-content) {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  :global(.ant-modal-header) {
+    margin-bottom: 0;
+    padding-inline-end: 40px;
+  }
+
+  :global(.ant-modal-title) {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  :global(.ant-modal-close) {
+    inset-inline-end: 12px;
+    top: 14px;
+  }
+
+  :global(.ant-modal-body) {
+    min-width: 0;
+    overflow-x: hidden !important;
+  }
+}
+
+.marsun-modal-title-wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.marsun-modal-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+.marsun-modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.marsun-modal-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.marsun-modal-info-trigger {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--font-color-grey-1, #94a3b8);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--primary-color, #2563eb);
+  }
+}
+
+.marsun-modal-title-actions {
+  flex-shrink: 0;
+  max-width: 50%;
+}
+
+.marsun-modal-description {
+  margin-top: 6px;
+  padding-right: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: var(--font-color-grey, #475569);
+  word-break: break-word;
+}
+
+.marsun-modal-scroll-wrapper {
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.marsun-modal-scroll {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.marsun-modal-body-inner {
+  height: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
