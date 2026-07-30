@@ -22,6 +22,8 @@ export type InteractiveBlockAction = {
 
 export type InteractiveBlockTagsPlacement = 'inline' | 'below';
 
+export type InteractiveBlockSurface = 'plain' | 'inset';
+
 export type InteractiveBlockProps = {
   title: ReactNode;
   info?: DescriptionItem[];
@@ -30,6 +32,8 @@ export type InteractiveBlockProps = {
   tags?: InteractiveBlockTag[];
   tagsPlacement?: InteractiveBlockTagsPlacement;
   actions?: InteractiveBlockAction[];
+  /** 列表表面：inset 对齐归档检索灰底项 */
+  surface?: InteractiveBlockSurface;
   selected?: boolean;
   onClick?: () => void;
   className?: string;
@@ -46,6 +50,7 @@ const InteractiveBlock: React.FC<InteractiveBlockProps> = ({
   tags,
   tagsPlacement = 'inline',
   actions,
+  surface = 'plain',
   selected,
   onClick,
   className,
@@ -176,6 +181,7 @@ const InteractiveBlock: React.FC<InteractiveBlockProps> = ({
           'marsun-interactive-block',
           styles['marsun-interactive-block'],
           styles['marsun-interactive-block--clickable'],
+          surface === 'inset' && styles['marsun-interactive-block--inset'],
           selected && styles['marsun-interactive-block--selected'],
           className,
         )}
@@ -197,6 +203,7 @@ const InteractiveBlock: React.FC<InteractiveBlockProps> = ({
       className={classNames(
         'marsun-interactive-block',
         styles['marsun-interactive-block'],
+        surface === 'inset' && styles['marsun-interactive-block--inset'],
         selected && styles['marsun-interactive-block--selected'],
         className,
       )}

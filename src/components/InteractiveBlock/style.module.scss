@@ -6,9 +6,30 @@
   background: transparent;
   cursor: default;
   outline: none;
+  box-sizing: border-box;
+  min-width: 0;
 
   &--clickable {
     cursor: pointer;
+  }
+
+  &--inset {
+    padding: 10px 12px;
+    border-radius: var(--radius-card, 8px);
+    background: var(--bg-color-grey-1, #f8fafc);
+    transition:
+      background 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:hover {
+      background: var(--bg-color-grey-2, #f1f5f9);
+    }
+  }
+
+  &--inset#{&}--selected,
+  &--inset#{&}--selected:hover {
+    background: var(--primary-color-bg, #eff6ff);
+    box-shadow: var(--shadow-card, 0 1px 2px rgb(15 23 42 / 6%));
   }
 
   &--selected .marsun-interactive-block-title {

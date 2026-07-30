@@ -1,12 +1,19 @@
 {
   "title": "InteractiveBlock 内容块",
-  "description": "带操作性的展示块：title → Info + TooltipInfo → actions；tags 紧贴 subtitle。",
+  "description": "带操作性的展示块：title → Info + TooltipInfo → actions；tags 紧贴 subtitle；inset 列表表面。",
   "examples": [
     {
       "title": "基础 / tags / actions",
       "description": "选中态、info 详情、tagsPlacement、hidden action",
       "component": "@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo",
       "sourcePath": "@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "inset 列表表面",
+      "description": "surface=inset 灰底/hover/选中，对齐归档检索列表项",
+      "component": "@/components/InteractiveBlock/examples/InteractiveBlockInsetDemo",
+      "sourcePath": "@/components/InteractiveBlock/examples/InteractiveBlockInsetDemo/index.tsx",
       "block": true
     }
   ],
@@ -26,7 +33,13 @@
           "default": "inline"
         },
         { "prop": "actions", "desc": "右侧 link 操作", "type": "InteractiveBlockAction[]" },
-        { "prop": "selected", "desc": "选中态（标题主色）", "type": "boolean" },
+        {
+          "prop": "surface",
+          "desc": "列表表面 plain | inset",
+          "type": "'plain' | 'inset'",
+          "default": "plain"
+        },
+        { "prop": "selected", "desc": "选中态", "type": "boolean" },
         { "prop": "onClick", "desc": "整块可点击", "type": "() => void" },
         { "prop": "className", "desc": "附加类名", "type": "string" }
       ]
