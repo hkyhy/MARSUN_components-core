@@ -142,3 +142,4 @@ export { default as AgentHubSessionAccessGuard } from './components/AgentHub/Cha
 export type * from './components/AgentHub/types';
 export * from './components/AgentHub/Chat';
 export * from './components/AgentHub/KnowledgeBase';
+export * from './components/AgentHub/Report';

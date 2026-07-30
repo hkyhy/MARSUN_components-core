@@ -1,0 +1,37 @@
+{
+  "title": "Report 报告模板",
+  "description": "AgentHub 报告布局模板：Meta 四列均分、叙事区槽位、列表 inset。",
+  "examples": [
+    {
+      "title": "报告模板",
+      "description": "ReportTemplate + ReportMetaStrip + InteractiveBlock inset",
+      "component": "@/components/AgentHub/Report/examples/ReportTemplateDemo",
+      "sourcePath": "@/components/AgentHub/Report/examples/ReportTemplateDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "ReportTemplateProps",
+      "rows": [
+        { "prop": "badge", "desc": "标题区徽章", "type": "ReactNode" },
+        { "prop": "title", "desc": "报告标题", "type": "ReactNode" },
+        { "prop": "subtitle", "desc": "副标题", "type": "ReactNode" },
+        { "prop": "metaItems", "desc": "指标条（默认四列）", "type": "ReportMetaItem[]" },
+        { "prop": "metaColumns", "desc": "Meta 列数", "type": "number", "defaultVal": "4" },
+        { "prop": "toolbar", "desc": "可选工具条", "type": "ReactNode" },
+        { "prop": "children", "desc": "叙事区", "type": "ReactNode" },
+        { "prop": "footer", "desc": "可选页脚（人审也可放外壳 Modal footer）", "type": "ReactNode" }
+      ]
+    },
+    {
+      "componentName": "ReportMetaItem",
+      "rows": [
+        { "prop": "key", "desc": "唯一 key", "type": "string", "required": true },
+        { "prop": "label", "desc": "标签", "type": "ReactNode", "required": true },
+        { "prop": "value", "desc": "值", "type": "ReactNode", "required": true },
+        { "prop": "tone", "desc": "语义色", "type": "'default' | 'danger' | 'warning'" }
+      ]
+    }
+  ]
+}
