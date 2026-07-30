@@ -29,8 +29,8 @@ const ModalBasicDemo: React.FC = () => {
         size={size}
         title={`示例报告弹窗（${size}）`}
         info={[
-          { label: '报告 ID', children: 'RCA-DEMO-001' },
-          { label: '生成时间', children: '2026-07-30 09:00' },
+          { label: '报告 ID', value: 'RCA-DEMO-001' },
+          { label: '生成时间', value: '2026-07-30 09:00' },
         ]}
         description="标题旁 Info 展示结构化详情；下方 description 为次要说明。"
         actions={[

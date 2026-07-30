@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.61
+  next_task_id: P6.3.63
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -843,4 +843,34 @@ tasks:
   note: |
     Refs: P6.3
     chore(release) v0.1.34；含 Modal/Inset/Report；Related: P6.3.55-59
+- id: P6.3.61
+  milestone: P6.3
+  name: 修复 ModalBasicDemo DescriptionItem typecheck
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-07-30'
+  target_date: '2026-07-30'
+  tags:
+  - frontend
+  - components
+  note: |
+    Refs: P6.3
+    info 项 children→value；解锁 0.1.34 CI publish；Related: P6.3.55/P6.3.60
+- id: P6.3.62
+  milestone: P6.3
+  name: 重发 marsun-components-core v0.1.34
+  status: 进行中
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-30'
+  target_date: '2026-07-30'
+  tags:
+  - infra
+  - release
+  note: |
+    Refs: P6.3
+    typecheck 修复后重推 chore(release) v0.1.34；Related: P6.3.60/P6.3.61
 
