@@ -8,6 +8,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
     children: [
       { key: '/components/agenthub/chat', label: 'Chat' },
       { key: '/components/agenthub/knowledgebase', label: 'KnowledgeBase' },
+      { key: '/components/agenthub/report', label: 'Report' },
     ],
   },
   { key: '/components/auth', label: 'Auth' },

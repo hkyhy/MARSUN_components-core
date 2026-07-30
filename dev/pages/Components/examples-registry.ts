@@ -595,6 +595,46 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/agenthub/report': {
+    title: 'Report 报告模板',
+    description: 'AgentHub 报告布局模板：Meta 四列均分、叙事区槽位、列表 inset。',
+    examples: [
+      {
+        title: '报告模板',
+        description: 'ReportTemplate + ReportMetaStrip + InteractiveBlock inset',
+        component: React.lazy(
+          () => import('@/components/AgentHub/Report/examples/ReportTemplateDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Report/examples/ReportTemplateDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'ReportTemplateProps',
+        rows: [
+          { prop: 'badge', desc: '标题区徽章', type: 'ReactNode' },
+          { prop: 'title', desc: '报告标题', type: 'ReactNode' },
+          { prop: 'subtitle', desc: '副标题', type: 'ReactNode' },
+          { prop: 'metaItems', desc: '指标条（默认四列）', type: 'ReportMetaItem[]' },
+          { prop: 'metaColumns', desc: 'Meta 列数', type: 'number', defaultVal: '4' },
+          { prop: 'toolbar', desc: '可选工具条', type: 'ReactNode' },
+          { prop: 'children', desc: '叙事区', type: 'ReactNode' },
+          { prop: 'footer', desc: '可选页脚（人审也可放外壳 Modal footer）', type: 'ReactNode' },
+        ],
+      },
+      {
+        componentName: 'ReportMetaItem',
+        rows: [
+          { prop: 'key', desc: '唯一 key', type: 'string', required: true },
+          { prop: 'label', desc: '标签', type: 'ReactNode', required: true },
+          { prop: 'value', desc: '值', type: 'ReactNode', required: true },
+          { prop: 'tone', desc: '语义色', type: "'default' | 'danger' | 'warning'" },
+        ],
+      },
+    ],
+  },
   '/components/auth': {
     title: 'Auth 权限控制',
     description: '基于角色的权限管理方案，支持页面级和按钮级权限控制；含侧栏用户卡片。',
@@ -1455,7 +1495,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/interactiveblock': {
     title: 'InteractiveBlock 内容块',
-    description: '带操作性的展示块：title → Info + TooltipInfo → actions；tags 紧贴 subtitle。',
+    description:
+      '带操作性的展示块：title → Info + TooltipInfo → actions；tags 紧贴 subtitle；inset 列表表面。',
     examples: [
       {
         title: '基础 / tags / actions',
@@ -1465,6 +1506,16 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         ),
         sourcePath: () =>
           import('@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'inset 列表表面',
+        description: 'surface=inset 灰底/hover/选中，对齐归档检索列表项',
+        component: React.lazy(
+          () => import('@/components/InteractiveBlock/examples/InteractiveBlockInsetDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InteractiveBlock/examples/InteractiveBlockInsetDemo/index.tsx?raw'),
         block: true,
       },
     ],
@@ -1483,7 +1534,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             type: "'inline' | 'below'",
           },
           { prop: 'actions', desc: '右侧 link 操作', type: 'InteractiveBlockAction[]' },
-          { prop: 'selected', desc: '选中态（标题主色）', type: 'boolean' },
+          { prop: 'surface', desc: '列表表面 plain | inset', type: "'plain' | 'inset'" },
+          { prop: 'selected', desc: '选中态', type: 'boolean' },
           { prop: 'onClick', desc: '整块可点击', type: '() => void' },
           { prop: 'className', desc: '附加类名', type: 'string' },
         ],
@@ -1651,18 +1703,52 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/modal': {
     title: 'Modal 弹窗组件',
-    description:
-      '步骤式弹窗等通用弹窗封装，将多步骤流程封装在同一个 Modal 中，自动管理步骤导航、标题切换和底部按钮。',
+    description: '通用居中 Modal（S/M/L、标题 Action）与步骤式 StepModal。',
     examples: [
       {
+        title: '通用 Modal',
+        description:
+          '必填标题、标题右侧 ButtonGroup actions、S/M/L 宽度（只可缩小）、固定 body 高与单层滚动',
+        component: React.lazy(() => import('@/components/Modal/examples/ModalBasicDemo')),
+        sourcePath: () => import('@/components/Modal/examples/ModalBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
         title: '步骤式弹窗',
-        description: 'StepModal 将多步骤流程封装在 Modal 中，自动管理步骤导航、标题切换和底部按钮',
+        description:
+          'StepModal 将多步骤流程封装在 Modal 中，自动管理步骤导航、标题切换和底部按钮（强制居中）',
         component: React.lazy(() => import('@/components/Modal/examples/StepModalDemo')),
         sourcePath: () => import('@/components/Modal/examples/StepModalDemo/index.tsx?raw'),
         block: true,
       },
     ],
     apiDoc: [
+      {
+        componentName: 'MarsunModalProps',
+        rows: [
+          { prop: 'title', desc: '弹窗标题（必填）', type: 'ReactNode', required: true },
+          {
+            prop: 'actions',
+            desc: '标题右侧 ButtonGroup listArray',
+            type: 'Record<string, unknown>[]',
+          },
+          {
+            prop: 'size',
+            desc: '宽度锚点 S/M/L（480/720/960），有效宽 = min(锚点, 100vw-64)',
+            type: "'S' | 'M' | 'L'",
+          },
+          { prop: 'width', desc: '显式默认宽，优先于 size 作为锚点', type: 'number' },
+          {
+            prop: 'scrollable',
+            desc: 'body 内单层 VirtualScrollbar',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          { prop: 'footer', desc: '底部区域', type: 'ReactNode | null' },
+          { prop: 'open', desc: '是否打开', type: 'boolean', required: true },
+          { prop: 'onCancel', desc: '关闭回调', type: '() => void', required: true },
+        ],
+      },
       {
         componentName: 'StepModalProps',
         rows: [
@@ -1672,7 +1758,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'open', desc: '弹窗是否打开', type: 'boolean', required: true },
           { prop: 'onCancel', desc: '取消/关闭回调', type: '() => void', required: true },
           { prop: 'onStepChange', desc: '切换步骤回调', type: '(key: string) => void' },
-          { prop: 'width', desc: '弹窗宽度', type: 'number', defaultVal: '600' },
+          {
+            prop: 'width',
+            desc: '弹窗宽度锚点（经 resolveModalWidth cap）',
+            type: 'number',
+            defaultVal: '600',
+          },
           { prop: 'showSteps', desc: '是否显示 Steps 导航条', type: 'boolean', defaultVal: 'true' },
           {
             prop: 'maskClosable',

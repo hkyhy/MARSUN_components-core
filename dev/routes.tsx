@@ -7,6 +7,7 @@ export const showcaseRoutes = (
     <Route path="agenthub">
       <Route path="chat" element={<ExamplePage />} />
       <Route path="knowledgebase" element={<ExamplePage />} />
+      <Route path="report" element={<ExamplePage />} />
     </Route>
     <Route path="auth" element={<ExamplePage />} />
     <Route path="descriptions" element={<ExamplePage />} />
