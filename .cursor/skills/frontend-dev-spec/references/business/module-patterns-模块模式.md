@@ -597,6 +597,8 @@ export default ManageActionButtons;
 > **目录结构约束**：表单字段必须放 `Form/` 目录，弹窗容器必须放 `Modal/` 目录。Modal 中不得直接内联字段组件，必须从 `Form/` 目录引用。
 >
 > **业务标准**：新模块、新表单统一从 `@hkyhy/marsun-components-core` 导入 FormInfo 栈（**禁止**直连 `@kne/form-info`）。存量未迁移模块可暂留 antd Form。多步场景用 `FormSteps` / `FormStepsModal`，不用新建 antd `StepForm`。
+>
+> **弹窗居中**：所有 Modal（`FormModal` / `FormStepsModal` / core `Modal` / `StepModal`）须 **居中**（`centered`；core `Modal`/`StepModal` 已强制）。非表单详情/报告弹窗用 core **`Modal`**（`title` 必填、`actions`→ButtonGroup、`size` S/M/L）；报告叙事布局用 AgentHub **`ReportTemplate`**。
 
 ### 2.1 Form 组件（放 `Form/` 目录，纯字段渲染：`FormInfo` + 字段列表）
 

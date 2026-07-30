@@ -163,6 +163,25 @@ import styles from './style.module.scss';
 
 **禁止**：在已包裹 `VirtualScrollbar` 的容器上再写 `overflow-auto` / `overflow-y-auto`（滚动由 viewport 承担）。
 
+### 报告类 Modal（根因分析等）
+
+长报告弹窗须 **core `Modal` + 单滚动面 + sticky footer**，禁止「外壳 VS + 报告体 VS + tab panel overflow」叠三层。
+
+| 项       | 规范                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 壳       | 从 `@hkyhy/marsun-components-core` 导入 **`Modal`**（非直连 antd）；**始终居中**；`size="L"`（或 `width` 锚点）；`scrollable`；`title` 必填；可选 `info`（`DescriptionItem[]` → 标题旁 `Info` + `TooltipInfo`，对齐 InteractiveBlock）与 `description`（标题行下方次要文案）；标题右侧 `actions` 用 ButtonGroup listArray（首个可见项未设 `type` 时默认 `primary`）；关闭 Icon 不得压住 Action |
+| 宽度     | S/M/L = 480/720/960；`effective = min(锚点, 100vw-64)`，**只可缩小不可放大**；未给默认则按视口自动选档再 cap（见 `resolveModalWidth`）                                                                                                                                                                                                                                                         |
+| 高度     | 按 size 固定 body 可视高；内容仅纵向滚；`overflow-x: hidden`，内容 `min-width:0; max-width:100%`                                                                                                                                                                                                                                                                                               |
+| 报告布局 | 叙事用 AgentHub **`ReportTemplate`** + **`ReportMetaStrip`**（默认四列均分：实测/阈值/基准/超出）；**不展示报告级置信度**                                                                                                                                                                                                                                                                      |
+| 滚动     | Modal `scrollable` 单层 VS；报告体 `scrollOwner="parent"`，禁止 tab 面板再写 `overflow-y-auto`                                                                                                                                                                                                                                                                                                 |
+| Footer   | HITL 与「关闭」放 Modal `footer`；备注态由 footer 内组件自持                                                                                                                                                                                                                                                                                                                                   |
+| Tabs     | antd `Tabs`，content `width: 100%`；区块少灰底糊层，证据列表用 `InteractiveBlock surface="inset"`                                                                                                                                                                                                                                                                                              |
+| 空态     | core `Empty iconType="simple"`                                                                                                                                                                                                                                                                                                                                                                 |
+
+参考：`repos/Agent_QualityAnalysis/frontend` 的 `Alerts/Modal/AnalyzeModal` + `Rca/Detail/RootCauseReport`；core `Modal/examples/ModalBasicDemo`、`AgentHub/Report/examples/ReportTemplateDemo`。
+
+**所有业务 Modal（含 FormModal / StepModal）须 `centered`**；非表单弹窗优先 core `Modal`。
+
 ### 布局与 flex 约定
 
 滚动区在 flex 列布局中须保证高度链不断：
@@ -251,6 +270,8 @@ Chat 等已接入模块，改动时保持 `VirtualScrollbar` + `ref`/`onScroll` 
 ### 适用场景
 
 列表项、表单分组头、卡片摘要等**带操作性**的展示块（非纯静态文本）。从 `@hkyhy/marsun-components-core` 导入 `InteractiveBlock`。
+
+**列表表面**：归档检索 / 证据列表等用 `surface="inset"`（灰底、hover、`selected`）；默认 `plain` 无额外底。**禁止**在 inset 外包一层白半透明/重复灰底。
 
 ### 信息层级（自上而下）
 

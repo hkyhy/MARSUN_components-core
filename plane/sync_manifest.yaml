@@ -816,7 +816,7 @@ tasks:
 - id: P6.3.59
   milestone: P6.3
   name: frontend-dev-spec 同步 Modal/Report/Inset
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: docs
   owner: 黄金芳

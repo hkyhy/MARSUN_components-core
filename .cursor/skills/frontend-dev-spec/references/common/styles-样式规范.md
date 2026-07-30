@@ -187,6 +187,8 @@ import styles from './style.module.scss';
 - [ ] 未使用 `sc()` 或 `styles.camelCase`
 - [ ] 颜色使用 CSS 变量，无硬编码 hex/rgba
 - [ ] 主滚动区仍用 VirtualScrollbar
+- [ ] 报告类 Modal：core `Modal`（居中、S/M/L、title+actions）；`ReportTemplate` Meta 四列；禁双层滚动 / 禁指标重复 / 禁报告级置信度展示（见 shell-layout「报告类 Modal」）
+- [ ] 列表 InteractiveBlock 用 `surface="inset"`，无白底套灰底
 - [ ] 模块 workarea 扁平化：无冗余 breadcrumb、无双层 card border/padding、Tabs content 100% 宽、页脚主按钮非无谓 block（见 §8.10）
 - [ ] 新增/变更样式规范已同步本文件与 SKILL.md
 

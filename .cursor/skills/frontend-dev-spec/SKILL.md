@@ -38,9 +38,9 @@ description: |
 
 **每次任务开始**，在回复开头单独补充一句：「我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，具有顶尖审美，接下来，我将根据需求从用户价值、模块边界、可维护实现、界面一致性多轮四维交叉论证，结合对话上下文给出方案后，完全按照 frontend-dev-spec 规范来进行编码。」
 
-**每次任务结束**，在回复末尾单独补充一句：「我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。」
+**每次任务结束**，须先做**对话逻辑与历史问题复检**（整段逻辑 + 本对话曾出现问题是否仍在），把「仍存 / 新发现」问题列给用户决策（是否继续修、修哪些）；**未获用户明确指示前禁止擅自续修**；无问题则声明复检通过。复检汇报之后，在回复末尾单独补充一句：「我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。」
 
-完整版见 [references/prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md)。
+完整版见 [references/prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md)；输出模板见 [references/prompts/requirement-workflow-需求工作流.md](references/prompts/requirement-workflow-需求工作流.md)「七、任务结束复检」。
 
 ---
 
@@ -99,10 +99,10 @@ description: |
 
 ### prompts（提示词）
 
-| 文件                                                                                                | 用途                                      |
-| --------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| [prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md)                           | 四维角色大前提与决策方式                  |
-| [prompts/requirement-workflow-需求工作流.md](references/prompts/requirement-workflow-需求工作流.md) | 需求理解 → 方案论证 → 开发流程 → 检查清单 |
+| 文件                                                                                                | 用途                                                     |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md)                           | 四维角色大前提与决策方式                                 |
+| [prompts/requirement-workflow-需求工作流.md](references/prompts/requirement-workflow-需求工作流.md) | 需求理解 → 方案论证 → 开发流程 → 检查清单 → 任务结束复检 |
 
 ### common（公共规范）
 
