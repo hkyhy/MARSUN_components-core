@@ -67,15 +67,32 @@
 }
 
 .list {
-  list-style: none;
+  list-style: none !important;
   margin: 0;
   padding: 0;
   max-height: 200px;
   overflow: auto;
+
+  ul {
+    list-style: none !important;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 .listItem {
   margin: 0;
+  list-style: none !important;
+  padding-left: 0;
+
+  &::marker {
+    content: none !important;
+    display: none !important;
+  }
+
+  &::before {
+    content: none !important;
+  }
 }
 
 .row {
@@ -89,6 +106,36 @@
   &:active {
     cursor: grabbing;
   }
+}
+
+.foldBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: none !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  line-height: 1;
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.88);
+    background: transparent !important;
+  }
+}
+
+.foldSpacer {
+  width: 16px;
+  flex-shrink: 0;
 }
 
 .grip {

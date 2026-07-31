@@ -5,8 +5,11 @@ import type {
   TableColumnConfigItem,
 } from './columnConfigTypes';
 
+export type { ColumnTypeAny };
 /** 列配置齿轮列 key；不进面板 / 持久化 */
 export const COLUMN_CONFIG_COL_KEY = '__marsun_column_config';
+/** 弹性占位列：吃掉表宽多余空间，避免固定列被撑开；不进面板 / 持久化 */
+export const FLEX_SPACER_COL_KEY = '__marsun_flex_spacer';
 
 function colKey(col: ColumnTypeAny, index: number): string {
   if (col.key != null && String(col.key) !== '') return String(col.key);
@@ -16,8 +19,15 @@ function colKey(col: ColumnTypeAny, index: number): string {
   return `__col_${index}`;
 }
 
-function isConfigCol(col: ColumnTypeAny, index: number): boolean {
-  return colKey(col, index) === COLUMN_CONFIG_COL_KEY;
+/** 内部列（齿轮 / 弹性占位等）：不进列配置面板与持久化 */
+export function isInternalColumnKey(key: string): boolean {
+  return (
+    key === COLUMN_CONFIG_COL_KEY || key === FLEX_SPACER_COL_KEY || key.startsWith('__marsun_')
+  );
+}
+
+function isInternalCol(col: ColumnTypeAny, index: number): boolean {
+  return isInternalColumnKey(colKey(col, index));
 }
 
 /** 叶子相对父级的短 id：TGCV_finished → finished；否则用完整 key */
@@ -41,7 +51,7 @@ export function columnsToConfig(
   if (!columns?.length) return [];
   return (columns as ColumnTypeAny[])
     .map((col, i) => {
-      if (isConfigCol(col, i)) return null;
+      if (isInternalCol(col, i)) return null;
       const full = colKey(col, i);
       const id = parentId ? shortChildId(parentId, full) : full;
       const children = col.children?.length
@@ -61,7 +71,7 @@ export function columnsToPanelItems(
   if (!columns?.length) return [];
   return (columns as ColumnTypeAny[])
     .map((col, i) => {
-      if (isConfigCol(col, i)) return null;
+      if (isInternalCol(col, i)) return null;
       const full = colKey(col, i);
       const id = parentId ? shortChildId(parentId, full) : full;
       const label = titleToLabel(col.title) || id;
@@ -231,6 +241,38 @@ export function panelItemsToConfig(items: ColumnConfigPanelItem[]): TableColumnC
     if (children?.length) base.children = children;
     return base;
   });
+}
+
+/** 按配置路径隐藏节点（含子树） */
+export function hideColumnAtPath(
+  items: TableColumnConfigItem[],
+  path: string[],
+): TableColumnConfigItem[] {
+  if (!path.length) return items;
+  const [head, ...rest] = path;
+  return items.map((it) => {
+    if (it.id !== head) return it;
+    if (!rest.length) {
+      return hideConfigDeep(it);
+    }
+    const children = it.children?.length ? hideColumnAtPath(it.children, rest) : it.children;
+    const allHidden = children?.length ? children.every(isConfigHidden) : it.hidden;
+    return { ...it, children, hidden: allHidden || it.hidden };
+  });
+}
+
+function hideConfigDeep(item: TableColumnConfigItem): TableColumnConfigItem {
+  return {
+    ...item,
+    hidden: true,
+    children: item.children?.map(hideConfigDeep),
+  };
+}
+
+function isConfigHidden(item: TableColumnConfigItem): boolean {
+  if (item.hidden) return true;
+  if (item.children?.length && item.children.every(isConfigHidden)) return true;
+  return false;
 }
 
 /** 用已保存 config 给面板打 hidden 标记，并按 config 排序 */

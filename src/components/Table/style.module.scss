@@ -1,3 +1,197 @@
+.marsun-table-shell {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.marsun-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.marsun-table-row-config {
+  flex-wrap: wrap;
+}
+
 .marsun-table {
   width: 100%;
+
+  /*
+   * width:100% 铺满；min-width=可见列合计（多列横滚）。
+   * 多余宽度分给未设 width 的非固定列（指标列），固定列保持像素宽。
+   */
+  :global(.ant-table-content table),
+  :global(.ant-table-header table),
+  :global(.ant-table-body table),
+  :global(.ant-table-summary table) {
+    width: 100% !important;
+    min-width: var(--marsun-table-scroll-x, 100%) !important;
+    table-layout: fixed !important;
+  }
+
+  /*
+   * 固定列必须用不透明实色。antd 的 --ant-table-row-hover-bg 等可能是半透明 fill，
+   * sticky 单元格一旦用半透明底，横向滚动内容会穿透（尤其 hover / selected）。
+   * antd 6 / rc-table：cell-fix + cell-fix-start|end；hover 类为 cell-row-hover。
+   */
+  :global(.ant-table-cell-fix),
+  :global(.ant-table-cell-fix-left),
+  :global(.ant-table-cell-fix-right),
+  :global(.ant-table-cell-fix-start),
+  :global(.ant-table-cell-fix-end),
+  :global(.ant-table-cell-fix-left-first),
+  :global(.ant-table-cell-fix-left-last),
+  :global(.ant-table-cell-fix-right-first),
+  :global(.ant-table-cell-fix-right-last) {
+    background: #fff !important;
+    background-color: #fff !important;
+    opacity: 1 !important;
+  }
+
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix),
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix-left),
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix-right),
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix-start),
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix-end),
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix-left-first),
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix-left-last),
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix-right-first),
+  :global(.ant-table-thead > tr > th.ant-table-cell-fix-right-last) {
+    background: #f8fafc !important;
+    background-color: #f8fafc !important;
+  }
+
+  :global(.ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix),
+  :global(.ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix-left),
+  :global(.ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix-right),
+  :global(.ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix-start),
+  :global(.ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix-end) {
+    background: #e6f4ff !important;
+    background-color: #e6f4ff !important;
+  }
+
+  /* antd6：按 cell-row-hover；同时保留 tr:hover 兜底 */
+  :global(.ant-table-tbody > tr > td.ant-table-cell-fix.ant-table-cell-row-hover),
+  :global(.ant-table-tbody > tr > td.ant-table-cell-fix-left.ant-table-cell-row-hover),
+  :global(.ant-table-tbody > tr > td.ant-table-cell-fix-right.ant-table-cell-row-hover),
+  :global(.ant-table-tbody > tr > td.ant-table-cell-fix-start.ant-table-cell-row-hover),
+  :global(.ant-table-tbody > tr > td.ant-table-cell-fix-end.ant-table-cell-row-hover),
+  :global(.ant-table-tbody > tr:hover > td.ant-table-cell-fix),
+  :global(.ant-table-tbody > tr:hover > td.ant-table-cell-fix-left),
+  :global(.ant-table-tbody > tr:hover > td.ant-table-cell-fix-right),
+  :global(.ant-table-tbody > tr:hover > td.ant-table-cell-fix-start),
+  :global(.ant-table-tbody > tr:hover > td.ant-table-cell-fix-end) {
+    background: #fafafa !important;
+    background-color: #fafafa !important;
+  }
+
+  :global(
+    .ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix.ant-table-cell-row-hover
+  ),
+  :global(
+    .ant-table-tbody
+      > tr.ant-table-row-selected
+      > td.ant-table-cell-fix-left.ant-table-cell-row-hover
+  ),
+  :global(
+    .ant-table-tbody
+      > tr.ant-table-row-selected
+      > td.ant-table-cell-fix-right.ant-table-cell-row-hover
+  ),
+  :global(
+    .ant-table-tbody
+      > tr.ant-table-row-selected
+      > td.ant-table-cell-fix-start.ant-table-cell-row-hover
+  ),
+  :global(
+    .ant-table-tbody
+      > tr.ant-table-row-selected
+      > td.ant-table-cell-fix-end.ant-table-cell-row-hover
+  ),
+  :global(.ant-table-tbody > tr.ant-table-row-selected:hover > td.ant-table-cell-fix),
+  :global(.ant-table-tbody > tr.ant-table-row-selected:hover > td.ant-table-cell-fix-left),
+  :global(.ant-table-tbody > tr.ant-table-row-selected:hover > td.ant-table-cell-fix-right),
+  :global(.ant-table-tbody > tr.ant-table-row-selected:hover > td.ant-table-cell-fix-start),
+  :global(.ant-table-tbody > tr.ant-table-row-selected:hover > td.ant-table-cell-fix-end) {
+    background: #bae0ff !important;
+    background-color: #bae0ff !important;
+  }
+
+  /* 表头 / 行：仅 hover 显示眼睛 */
+  :global(.ant-table-thead > tr > th:hover) .headerEyeBtn,
+  :global(.ant-table-tbody > tr:hover) .rowEyeBtn,
+  :global(.ant-table-tbody > tr > td.ant-table-cell-row-hover) .rowEyeBtn {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.headerTitleWithEye {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  padding-right: 14px;
+  box-sizing: border-box;
+}
+
+.headerTitleText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerEyeBtn,
+.rowEyeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  padding: 0;
+  border: none !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none;
+  color: var(--font-color-grey, #64748b);
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0;
+  pointer-events: none;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    color: var(--color-primary, #2563eb);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0 !important;
+  }
+
+  /* 覆盖全局 button 样式 */
+  &:global(button) {
+    border: none;
+    background: transparent;
+  }
+}
+
+.headerEyeBtn {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.rowSelectWithEye {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
 }

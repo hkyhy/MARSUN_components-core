@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, type DragEvent, type FC, type ReactNode } from 'react';
 import { Button, Checkbox, Collapse, Empty, Input, Popover, Space, Tooltip } from 'antd';
-import { Settings, Undo2 } from '../Icons';
+import { ChevronDown, ChevronRight, Settings, Undo2 } from '../Icons';
 import type { ColumnConfigPanelItem, TableColumnConfigItem } from './columnConfigTypes';
 import { mergePanelWithConfig, panelItemsToConfig, splitVisibleHidden } from './columnConfigUtils';
 import styles from './columnConfig.module.scss';
@@ -31,8 +31,11 @@ const DragList: FC<{
   onChange: (next: ColumnConfigPanelItem[]) => void;
   onToggle: (id: string, hidden: boolean) => void;
   depth?: number;
-}> = ({ items, search, onChange, onToggle, depth = 0 }) => {
+  collapsedIds: Set<string>;
+  onToggleCollapse: (id: string) => void;
+}> = ({ items, search, onChange, onToggle, depth = 0, collapsedIds, onToggleCollapse }) => {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const searching = Boolean(search.trim());
 
   const filtered = useMemo(() => {
     if (!search.trim()) return items.map((it, i) => ({ it, i }));
@@ -63,53 +66,77 @@ const DragList: FC<{
 
   return (
     <ul className={styles.list} style={{ paddingLeft: depth ? 12 : 0 }}>
-      {filtered.map(({ it, i }) => (
-        <li key={it.id} className={styles.listItem}>
-          <div
-            className={styles.row}
-            draggable={!search.trim()}
-            onDragStart={(e) => onDragStart(e, i)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => onDrop(e, i)}
-          >
-            <span className={styles.grip} aria-hidden>
-              ⠿
-            </span>
-            <Checkbox checked={!it.hidden} onChange={(e) => onToggle(it.id, !e.target.checked)}>
-              <span className={styles.label}>{it.label || it.id}</span>
-            </Checkbox>
-          </div>
-          {it.children?.length ? (
-            <DragList
-              items={it.children}
-              search={search}
-              depth={depth + 1}
-              onChange={(childNext) => {
-                const next = items.map((x) => (x.id === it.id ? { ...x, children: childNext } : x));
-                onChange(next);
-              }}
-              onToggle={(cid, hidden) => {
-                const next = items.map((x) => {
-                  if (x.id !== it.id || !x.children) return x;
-                  const children = x.children.map((c) =>
-                    c.id === cid
-                      ? { ...c, hidden }
-                      : c.children
-                        ? {
-                            ...c,
-                            children: toggleDeep(c.children, cid, hidden),
-                          }
-                        : c,
+      {filtered.map(({ it, i }) => {
+        const hasChildren = Boolean(it.children?.length);
+        const expanded = searching || !collapsedIds.has(it.id);
+        return (
+          <li key={it.id} className={styles.listItem}>
+            <div
+              className={styles.row}
+              draggable={!searching}
+              onDragStart={(e) => onDragStart(e, i)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => onDrop(e, i)}
+            >
+              {hasChildren ? (
+                <button
+                  type="button"
+                  className={styles.foldBtn}
+                  aria-label={expanded ? '折叠' : '展开'}
+                  aria-expanded={expanded}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleCollapse(it.id);
+                  }}
+                >
+                  {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                </button>
+              ) : (
+                <span className={styles.foldSpacer} aria-hidden />
+              )}
+              <span className={styles.grip} aria-hidden>
+                ⠿
+              </span>
+              <Checkbox checked={!it.hidden} onChange={(e) => onToggle(it.id, !e.target.checked)}>
+                <span className={styles.label}>{it.label || it.id}</span>
+              </Checkbox>
+            </div>
+            {hasChildren && expanded ? (
+              <DragList
+                items={it.children!}
+                search={search}
+                depth={depth + 1}
+                collapsedIds={collapsedIds}
+                onToggleCollapse={onToggleCollapse}
+                onChange={(childNext) => {
+                  const next = items.map((x) =>
+                    x.id === it.id ? { ...x, children: childNext } : x,
                   );
-                  const allHidden = children.every((c) => c.hidden);
-                  return { ...x, children, hidden: allHidden ? true : hidden ? x.hidden : false };
-                });
-                onChange(next);
-              }}
-            />
-          ) : null}
-        </li>
-      ))}
+                  onChange(next);
+                }}
+                onToggle={(cid, hidden) => {
+                  const next = items.map((x) => {
+                    if (x.id !== it.id || !x.children) return x;
+                    const children = x.children.map((c) =>
+                      c.id === cid
+                        ? { ...c, hidden }
+                        : c.children
+                          ? {
+                              ...c,
+                              children: toggleDeep(c.children, cid, hidden),
+                            }
+                          : c,
+                    );
+                    const allHidden = children.every((c) => c.hidden);
+                    return { ...x, children, hidden: allHidden ? true : hidden ? x.hidden : false };
+                  });
+                  onChange(next);
+                }}
+              />
+            ) : null}
+          </li>
+        );
+      })}
     </ul>
   );
 };
@@ -184,11 +211,13 @@ export const ColumnConfigPopover: FC<ColumnConfigPanelProps> = ({
   const [searchVisible, setSearchVisible] = useState('');
   const [searchHidden, setSearchHidden] = useState('');
   const [saving, setSaving] = useState(false);
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(() => new Set());
 
   const syncDraft = useCallback(() => {
     setDraft(mergePanelWithConfig(defaultItems, savedConfig));
     setSearchVisible('');
     setSearchHidden('');
+    setCollapsedIds(new Set());
   }, [defaultItems, savedConfig]);
 
   const handleOpenChange = (next: boolean) => {
@@ -209,8 +238,18 @@ export const ColumnConfigPopover: FC<ColumnConfigPanelProps> = ({
     setDraft((prev) => toggleInTree(prev, id, nextHidden));
   };
 
+  const onToggleCollapse = useCallback((id: string) => {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
   const onReset = () => {
     setDraft(defaultItems.map((d) => ({ ...d, children: d.children?.map((c) => ({ ...c })) })));
+    setCollapsedIds(new Set());
   };
 
   const onOk = async () => {
@@ -256,6 +295,8 @@ export const ColumnConfigPopover: FC<ColumnConfigPanelProps> = ({
                   search={searchVisible}
                   onChange={setVisibleList}
                   onToggle={onToggle}
+                  collapsedIds={collapsedIds}
+                  onToggleCollapse={onToggleCollapse}
                 />
               </>
             ),
@@ -278,6 +319,8 @@ export const ColumnConfigPopover: FC<ColumnConfigPanelProps> = ({
                   search={searchHidden}
                   onChange={setHiddenList}
                   onToggle={onToggle}
+                  collapsedIds={collapsedIds}
+                  onToggleCollapse={onToggleCollapse}
                 />
               </>
             ),
