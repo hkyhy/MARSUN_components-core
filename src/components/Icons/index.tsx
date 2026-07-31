@@ -27,6 +27,7 @@ import {
   Database as DatabaseIcon,
   Download as DownloadIcon,
   Eye as EyeIcon,
+  EyeOff as EyeOffIcon,
   FileArchive as FileArchiveIcon,
   File as FileIcon,
   FileImage as FileImageIcon,
@@ -141,6 +142,7 @@ export const Crown = createIcon(CrownIcon, { filled: true });
 export const Database = createIcon(DatabaseIcon);
 export const Download = createIcon(DownloadIcon);
 export const Eye = createIcon(EyeIcon);
+export const EyeOff = createIcon(EyeOffIcon);
 export const File = createIcon(FileIcon);
 export const FileArchive = createIcon(FileArchiveIcon);
 export const FileImage = createIcon(FileImageIcon);
@@ -221,6 +223,7 @@ export const ICON_NAMES = [
   'Database',
   'Download',
   'Eye',
+  'EyeOff',
   'File',
   'FileArchive',
   'FileImage',
@@ -302,6 +305,7 @@ export const ICON_REGISTRY: Record<IconName, React.FC<IconProps>> = {
   Database,
   Download,
   Eye,
+  EyeOff,
   File,
   FileArchive,
   FileImage,

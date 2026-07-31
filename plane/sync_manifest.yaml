@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.63
+  next_task_id: P6.3.68
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -874,3 +874,82 @@ tasks:
     Refs: P6.3
     typecheck 修复后重推 chore(release) v0.1.34；Related: P6.3.60/P6.3.61
 
+- id: P6.3.63
+  milestone: P6.3
+  name: Icons 导出 EyeOff
+  status: 已完成
+  priority: P1
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-31'
+  target_date: '2026-07-31'
+  tags:
+  - frontend
+  - components
+  note: |
+    Refs: P6.3
+    Table 列/行隐藏眼睛图标依赖
+
+- id: P6.3.64
+  milestone: P6.3
+  name: Table 多级表头列藏与会话行隐藏
+  status: 进行中
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-07-31'
+  target_date: '2026-07-31'
+  tags:
+  - frontend
+  - components
+  note: |
+    Refs: P6.3
+    列配置 user_key；多级表头 hover 直藏；rowConfig 会话态；固定列不透明
+
+- id: P6.3.65
+  milestone: P6.3
+  name: Table 行隐藏与三级表头 Demo 注册
+  status: 进行中
+  priority: P2
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-31'
+  target_date: '2026-07-31'
+  tags:
+  - frontend
+  - examples
+  note: |
+    Refs: P6.3
+    TableRowHideDemo / TableThreeLevelHeaderDemo + examples-registry
+
+- id: P6.3.66
+  milestone: P6.3
+  name: 同步 Table 列/行配置到 component-mapping
+  status: 进行中
+  priority: P2
+  kind: docs
+  owner: 黄金芳
+  start_date: '2026-07-31'
+  target_date: '2026-07-31'
+  tags:
+  - docs
+  - spec
+  note: |
+    Refs: P6.3
+    frontend-dev-spec component-mapping 镜像
+
+- id: P6.3.67
+  milestone: P6.3
+  name: 发版 marsun-components-core v0.1.35
+  status: 进行中
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-07-31'
+  target_date: '2026-07-31'
+  tags:
+  - infra
+  - release
+  note: |
+    Refs: P6.3
+    chore(release) v0.1.35；含 EyeOff + Table 行/列隐藏；Related: P6.3.63-66
