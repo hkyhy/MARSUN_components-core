@@ -1,6 +1,6 @@
 {
   "title": "Table 表格",
-  "description": "基于 antd Table 的列表包装：默认横向滚动、受控分页 showSizeChanger/showTotal、空态 Empty。示例覆盖单表头、多表头；传入 tableName 可启用「编辑表格」列显隐/排序（fetch/save 由业务注入）。",
+  "description": "基于 antd Table 的列表包装：默认横向滚动、受控分页、空态 Empty。支持单/多/三级表头、列配置与行隐藏（TablePrefs v2：columns + hiddenRowKeys）。",
   "examples": [
     {
       "title": "单表头",
@@ -18,9 +18,23 @@
     },
     {
       "title": "列配置（编辑表格）",
-      "description": "基于多表头 + tableName；最右独立齿轮列（跨表头总高度），fetch/save 本例为内存",
+      "description": "基于多表头 + tableName；齿轮面板支持多级折叠；表头眼睛可直接隐藏列",
       "component": "@/components/Table/examples/TableColumnConfigDemo",
       "sourcePath": "@/components/Table/examples/TableColumnConfigDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "三级表头列配置",
+      "description": "成纱在线 → 指标 → SAP；TablePrefs v2；表头眼睛 + 面板折叠",
+      "component": "@/components/Table/examples/TableThreeLevelHeaderDemo",
+      "sourcePath": "@/components/Table/examples/TableThreeLevelHeaderDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "行隐藏",
+      "description": "rowConfigEnabled + lockedRowKeys；勾选旁眼睛隐藏单行（会话 state，不进 user_key）",
+      "component": "@/components/Table/examples/TableRowHideDemo",
+      "sourcePath": "@/components/Table/examples/TableRowHideDemo/index.tsx",
       "block": true
     }
   ],
@@ -47,33 +61,64 @@
         },
         {
           "prop": "tableName",
-          "desc": "稳定偏好 key；业务列表必填。与 columnConfigEnabled 配合启用列配置",
+          "desc": "稳定偏好 key；业务列表必填",
           "type": "string"
         },
         {
           "prop": "columnConfigEnabled",
-          "desc": "是否启用「编辑表格」；默认 !!tableName。为 true 时最右追加独立齿轮列（跨多级表头）",
+          "desc": "是否启用列配置齿轮；默认 !!tableName",
           "type": "boolean",
           "defaultVal": "!!tableName"
         },
         {
+          "prop": "fetchTablePrefs",
+          "desc": "拉取 TablePrefs v2（columns + hiddenRowKeys）；优先于 fetchColumnConfig",
+          "type": "(tableName: string) => Promise<TablePrefs | null | undefined>"
+        },
+        {
+          "prop": "saveTablePrefs",
+          "desc": "持久化 TablePrefs v2",
+          "type": "(tableName: string, prefs: TablePrefs) => Promise<void>"
+        },
+        {
           "prop": "fetchColumnConfig",
-          "desc": "挂载时拉取列配置；返回 null 用默认 columns",
+          "desc": "仅列配置（兼容旧调用）；无 fetchTablePrefs 时使用",
           "type": "(tableName: string) => Promise<TableColumnConfigItem[] | null | undefined>"
         },
         {
           "prop": "saveColumnConfig",
-          "desc": "点确定后持久化列配置（id / hidden / children）",
+          "desc": "仅持久化 columns（兼容）；有 saveTablePrefs 时优先 prefs",
           "type": "(tableName: string, items: TableColumnConfigItem[]) => Promise<void>"
         },
         {
-          "prop": "onColumnConfigChange",
-          "desc": "确定后回调当前配置",
-          "type": "(items: TableColumnConfigItem[]) => void"
+          "prop": "rowConfigEnabled",
+          "desc": "启用行隐藏（过滤 dataSource + 默认工具条）",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "lockedRowKeys",
+          "desc": "不可隐藏的行 key（如主对标）",
+          "type": "Key[]"
+        },
+        {
+          "prop": "rowHideSelectedKeys",
+          "desc": "当前勾选行；用于「隐藏选中行」",
+          "type": "Key[]"
+        },
+        {
+          "prop": "hiddenRowKeys",
+          "desc": "受控隐藏行；不传则用 prefs",
+          "type": "Key[]"
+        },
+        {
+          "prop": "onHiddenRowKeysChange",
+          "desc": "隐藏行变更回调",
+          "type": "(keys: string[]) => void"
         },
         {
           "prop": "…rest",
-          "desc": "其余透传 antd TableProps（columns、dataSource、rowKey、loading 等）",
+          "desc": "其余透传 antd TableProps",
           "type": "TableProps"
         }
       ]
