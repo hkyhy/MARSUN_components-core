@@ -925,7 +925,7 @@ tasks:
 - id: P6.3.66
   milestone: P6.3
   name: 同步 Table 列/行配置到 component-mapping
-  status: 进行中
+  status: 已完成
   priority: P2
   kind: docs
   owner: 黄金芳
