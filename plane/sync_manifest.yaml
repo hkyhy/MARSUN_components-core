@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.71
+  next_task_id: P6.3.72
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1001,3 +1001,19 @@ tasks:
   note: |
     Refs: P6.3
     chore(release) v0.1.36；含表头色带+列配置级联；Related: P6.3.68/P6.3.69
+
+- id: P6.3.71
+  milestone: P6.3
+  name: 补交 examples-registry 再生内容
+  status: 已完成
+  priority: P2
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-08-03'
+  target_date: '2026-08-03'
+  tags:
+  - frontend
+  - examples
+  note: |
+    Refs: P6.3
+    补交 P6.3.69 漏提交的 examples-registry.ts；Related: P6.3.69
