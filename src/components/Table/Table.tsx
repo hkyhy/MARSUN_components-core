@@ -116,18 +116,44 @@ function resolveRecordKey<RecordType extends object>(
   return String(index);
 }
 
-/** 多级表头 title 注入眼睛；path 为 TableColumnConfigItem id 路径 */
+/** 一级组色带数量（与 SCSS headerGroup0..5 对齐） */
+const HEADER_GROUP_PALETTE_SIZE = 6;
+
+/** 多级表头 title 注入眼睛；同色系按一级组，depth 加深浅 */
 function injectHeaderHideEyes<RecordType extends object>(
   columns: ColumnsType<RecordType>,
   onHidePath: (path: string[]) => void,
   parentFullKey?: string,
   path: string[] = [],
+  depth = 0,
+  groupIndex?: number,
 ): ColumnsType<RecordType> {
+  let groupSeq = 0;
+
   return (columns as ColumnTypeAny[]).map((col, i) => {
     const full = colFullKey(col, i);
     if (isInternalColumnKey(full)) return col as ColumnType<RecordType>;
     const configId = parentFullKey ? shortChildId(parentFullKey, full) : full;
     const nextPath = [...path, configId];
+    const prevOnHeaderCell = col.onHeaderCell;
+
+    /** 顶层有 children 的列为一级组，分配色带；固定列叶子不着色 */
+    let gIdx = groupIndex;
+    if (depth === 0) {
+      gIdx = col.children?.length ? groupSeq++ : undefined;
+    }
+
+    const depthClass =
+      gIdx == null
+        ? undefined
+        : depth === 0
+          ? styles.headerDepth0
+          : depth === 1
+            ? styles.headerDepth1
+            : styles.headerDepth2;
+    const groupClass =
+      gIdx == null ? undefined : styles[`headerGroup${gIdx % HEADER_GROUP_PALETTE_SIZE}`];
+
     const titleNode = (
       <span className={styles.headerTitleWithEye}>
         <span className={styles.headerTitleText}>{col.title as ReactNode}</span>
@@ -146,19 +172,36 @@ function injectHeaderHideEyes<RecordType extends object>(
         </Tooltip>
       </span>
     );
+    const mergeHeaderCell = (c: ColumnTypeAny) => {
+      const prev =
+        typeof prevOnHeaderCell === 'function'
+          ? (prevOnHeaderCell as (col: ColumnTypeAny) => Record<string, unknown>)(c)
+          : (prevOnHeaderCell as Record<string, unknown> | undefined) || {};
+      return {
+        ...prev,
+        className: classNames((prev as { className?: string }).className, groupClass, depthClass),
+      };
+    };
     if (col.children?.length) {
       return {
         ...col,
         title: titleNode,
+        onHeaderCell: mergeHeaderCell,
         children: injectHeaderHideEyes(
           col.children as ColumnsType<RecordType>,
           onHidePath,
           full,
           nextPath,
+          depth + 1,
+          gIdx,
         ),
       } as ColumnType<RecordType>;
     }
-    return { ...col, title: titleNode } as ColumnType<RecordType>;
+    return {
+      ...col,
+      title: titleNode,
+      onHeaderCell: mergeHeaderCell,
+    } as ColumnType<RecordType>;
   }) as ColumnsType<RecordType>;
 }
 

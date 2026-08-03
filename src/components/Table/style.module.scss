@@ -140,8 +140,91 @@
 
 .headerTitleText {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  line-height: 1.25;
+  text-align: center;
+  word-break: break-word;
+}
+
+/* 一级组同色系 + depth 加深浅（无装饰色条） */
+.headerDepth0 {
+  font-weight: 700 !important;
+}
+.headerDepth1 {
+  font-weight: 600 !important;
+}
+.headerDepth2 {
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  color: #475569 !important;
+}
+
+/* group0 蓝 */
+.headerGroup0.headerDepth0 {
+  background: #bfdbfe !important;
+}
+.headerGroup0.headerDepth1 {
+  background: #dbeafe !important;
+}
+.headerGroup0.headerDepth2 {
+  background: #eff6ff !important;
+}
+
+/* group1 青 */
+.headerGroup1.headerDepth0 {
+  background: #a5f3fc !important;
+}
+.headerGroup1.headerDepth1 {
+  background: #cffafe !important;
+}
+.headerGroup1.headerDepth2 {
+  background: #ecfeff !important;
+}
+
+/* group2 紫 */
+.headerGroup2.headerDepth0 {
+  background: #ddd6fe !important;
+}
+.headerGroup2.headerDepth1 {
+  background: #ede9fe !important;
+}
+.headerGroup2.headerDepth2 {
+  background: #f5f3ff !important;
+}
+
+/* group3 琥珀 */
+.headerGroup3.headerDepth0 {
+  background: #fde68a !important;
+}
+.headerGroup3.headerDepth1 {
+  background: #fef3c7 !important;
+}
+.headerGroup3.headerDepth2 {
+  background: #fffbeb !important;
+}
+
+/* group4 绿 */
+.headerGroup4.headerDepth0 {
+  background: #bbf7d0 !important;
+}
+.headerGroup4.headerDepth1 {
+  background: #dcfce7 !important;
+}
+.headerGroup4.headerDepth2 {
+  background: #f0fdf4 !important;
+}
+
+/* group5 玫瑰 */
+.headerGroup5.headerDepth0 {
+  background: #fecdd3 !important;
+}
+.headerGroup5.headerDepth1 {
+  background: #ffe4e6 !important;
+}
+.headerGroup5.headerDepth2 {
+  background: #fff1f2 !important;
 }
 
 .headerEyeBtn,

@@ -114,24 +114,7 @@ const DragList: FC<{
                   );
                   onChange(next);
                 }}
-                onToggle={(cid, hidden) => {
-                  const next = items.map((x) => {
-                    if (x.id !== it.id || !x.children) return x;
-                    const children = x.children.map((c) =>
-                      c.id === cid
-                        ? { ...c, hidden }
-                        : c.children
-                          ? {
-                              ...c,
-                              children: toggleDeep(c.children, cid, hidden),
-                            }
-                          : c,
-                    );
-                    const allHidden = children.every((c) => c.hidden);
-                    return { ...x, children, hidden: allHidden ? true : hidden ? x.hidden : false };
-                  });
-                  onChange(next);
-                }}
+                onToggle={onToggle}
               />
             ) : null}
           </li>
@@ -140,25 +123,6 @@ const DragList: FC<{
     </ul>
   );
 };
-
-function toggleDeep(
-  items: ColumnConfigPanelItem[],
-  id: string,
-  hidden: boolean,
-): ColumnConfigPanelItem[] {
-  return items.map((it) => {
-    if (it.id === id) return { ...it, hidden };
-    if (it.children) {
-      const children = toggleDeep(it.children, id, hidden);
-      return {
-        ...it,
-        children,
-        hidden: children.every((c) => c.hidden) ? true : it.hidden && hidden,
-      };
-    }
-    return it;
-  });
-}
 
 function toggleInTree(
   items: ColumnConfigPanelItem[],
@@ -226,12 +190,21 @@ export const ColumnConfigPopover: FC<ColumnConfigPanelProps> = ({
   };
 
   const { visible, hidden } = useMemo(() => splitVisibleHidden(draft), [draft]);
+  /** 仅顶层 hidden，供可见区拖拽后 merge，避免把「摘出的二/三级扁平项」写回成顶层 */
+  const topLevelHidden = useMemo(() => draft.filter((d) => d.hidden), [draft]);
 
   const setVisibleList = (list: ColumnConfigPanelItem[]) => {
-    setDraft(mergeSections(list, hidden));
+    setDraft(mergeSections(list, topLevelHidden));
   };
   const setHiddenList = (list: ColumnConfigPanelItem[]) => {
-    setDraft(mergeSections(visible, list));
+    const topIds = new Set(topLevelHidden.map((d) => d.id));
+    const newTopHidden = list.filter((i) => topIds.has(i.id));
+    setDraft(
+      mergeSections(
+        draft.filter((d) => !d.hidden),
+        newTopHidden,
+      ),
+    );
   };
 
   const onToggle = (id: string, nextHidden: boolean) => {

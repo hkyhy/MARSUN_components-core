@@ -309,12 +309,15 @@ export function mergePanelWithConfig(
     }
     const hidden =
       Boolean(cfg.hidden) || Boolean(children?.length && children.every((c) => c.hidden));
+    // 父 hidden 时级联子树，避免「父隐子显」的脏持久化态
+    const nextChildren =
+      hidden && children?.length ? children.map((c) => cascadePanelHidden(c, true)) : children;
     return {
       id: src.id,
       title: src.title,
       label: src.label,
       hidden,
-      children,
+      children: nextChildren,
     };
   };
 
@@ -336,15 +339,47 @@ function clonePanel(item: ColumnConfigPanelItem): ColumnConfigPanelItem {
   };
 }
 
+/** 面板项整棵子树打 hidden（加载已存 config 时与 toggle 级联对齐） */
+function cascadePanelHidden(item: ColumnConfigPanelItem, hidden: boolean): ColumnConfigPanelItem {
+  return {
+    ...item,
+    hidden,
+    children: item.children?.map((c) => cascadePanelHidden(c, hidden)),
+  };
+}
+
 export function splitVisibleHidden(items: ColumnConfigPanelItem[]): {
   visible: ColumnConfigPanelItem[];
   hidden: ColumnConfigPanelItem[];
 } {
-  const visible: ColumnConfigPanelItem[] = [];
-  const hidden: ColumnConfigPanelItem[] = [];
-  for (const it of items) {
-    if (it.hidden) hidden.push(it);
-    else visible.push(it);
+  const visible = items.filter((it) => !it.hidden);
+  const topHidden = items.filter((it) => it.hidden);
+  const nestedHidden: ColumnConfigPanelItem[] = [];
+
+  const walk = (nodes: ColumnConfigPanelItem[], pathLabels: string[]) => {
+    for (const it of nodes) {
+      if (it.hidden) {
+        const pathLabel = [...pathLabels, it.label || it.id].join(' / ');
+        nestedHidden.push({
+          ...it,
+          label: pathLabel,
+          // 隐藏区扁平展示；子树已整体隐藏时保留 children 供展开，否则不再嵌套重复项
+          children: it.children?.length ? it.children : undefined,
+        });
+        continue;
+      }
+      if (it.children?.length) {
+        walk(it.children, [...pathLabels, it.label || it.id]);
+      }
+    }
+  };
+
+  // 仅从「仍显示的顶层」往下收二/三级隐藏项（顶层整棵隐藏已在 topHidden）
+  for (const top of visible) {
+    if (top.children?.length) {
+      walk(top.children, [top.label || top.id]);
+    }
   }
-  return { visible, hidden };
+
+  return { visible, hidden: [...topHidden, ...nestedHidden] };
 }

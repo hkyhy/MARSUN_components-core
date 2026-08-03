@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.68
+  next_task_id: P6.3.71
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -953,3 +953,51 @@ tasks:
   note: |
     Refs: P6.3
     chore(release) v0.1.35；含 EyeOff + Table 行/列隐藏；Related: P6.3.63-66
+
+- id: P6.3.68
+  milestone: P6.3
+  name: Table 一级组色带与列配置级联修复
+  status: 已完成
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-08-03'
+  target_date: '2026-08-03'
+  tags:
+  - frontend
+  - components
+  note: |
+    Refs: P6.3
+    多级表头一级组同色系/depth 深浅；列配置 hidden 级联与 merge 修复；Related: P6.3.64
+
+- id: P6.3.69
+  milestone: P6.3
+  name: 再生 examples-registry 索引
+  status: 进行中
+  priority: P2
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-08-03'
+  target_date: '2026-08-03'
+  tags:
+  - frontend
+  - examples
+  note: |
+    Refs: P6.3
+    collect-examples 再生；Related: P6.3.68
+
+- id: P6.3.70
+  milestone: P6.3
+  name: 发版 marsun-components-core v0.1.36
+  status: 进行中
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-08-03'
+  target_date: '2026-08-03'
+  tags:
+  - infra
+  - release
+  note: |
+    Refs: P6.3
+    chore(release) v0.1.36；含表头色带+列配置级联；Related: P6.3.68/P6.3.69
