@@ -973,7 +973,7 @@ tasks:
 - id: P6.3.69
   milestone: P6.3
   name: 再生 examples-registry 索引
-  status: 进行中
+  status: 已完成
   priority: P2
   kind: chore
   owner: 黄金芳
