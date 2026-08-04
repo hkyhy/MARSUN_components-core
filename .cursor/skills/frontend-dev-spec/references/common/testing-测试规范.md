@@ -1,5 +1,7 @@
 # 测试规范 Testing
 
+> **写代码门禁（总控）**：提交前须走 [da-workflow · test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md)——同任务补测 → 本人跑通 → `da standards scan`。本文件是前端 vitest 细则。
+
 ### 10.1 技术栈
 
 | 工具                        | 用途                                              |

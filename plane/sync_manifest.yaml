@@ -1037,7 +1037,7 @@ tasks:
 - id: P6.3.73
   milestone: P6.3
   name: 同步 frontend-dev-spec 测试门禁与角色循环
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: docs
   owner: 黄金芳

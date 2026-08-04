@@ -14,6 +14,8 @@ description: |
   marsun_components-core 新增或变更导出、Props/行为/新能力时，须同步包根 index.ts、component-mapping-组件映射.md，并在该组件 examples/ 增加或更新对应场景 Demo（能力点与 Demo 一一对应，如 Table 的单表头、多表头、列配置），登记 meta.json 与 apiDoc；禁止只改实现不补示例。
   业务列表禁止直连 antd Table：必须用 @hkyhy/marsun-components-core 的 Table；必须传稳定 tableName；是否可自定义列用 columnConfigEnabled（默认 true）；开启时注入 fetchColumnConfig/saveColumnConfig（QA 用 userPrefs → user_key_get/set，契约见 backend-dev/platform-dev/用户偏好）。豁免：Form TableList、纯 HTML table、components showcase ApiDoc 表。
   前端新接或改造任一 REST 路径（含「已有平台接口」）时，同任务必须更新 marsun_arch backend-dev 对应契约三件套（接口.md + OpenAPI + 测试用例）；禁止只写 src/api client。
+  写组件、改纯逻辑或提交前：须走写代码门禁（核心原则 #43）——同任务补/改 __tests__ → 本人跑通 vitest/npm run test → da standards scan；统一流水线见 da-workflow/references/test-and-selfcheck-写代码自检与测试.md。用户说自检/跑测试/提交前检查时亦触发。
+  方案定稿后或页面可点后：须跑角色循环验证（核心原则 #44）——需求用顶尖产品经理视角、前端用顶尖前端+UI 视角；输出必须改/建议改/可接受，未经确认勿改。用户说再验证/循环验证时亦触发。见 da-workflow/references/role-loop-review-角色循环验证.md。
   本任务若解决了可复用、非显而易见的联调/组件/规范问题，须同任务写入对应 skill reference / mapping / 契约（禁止只留在对话；见核心原则 #42）。
   此技能提供统一的目录结构、命名规范、组件拆分方式和代码模板，确保所有模块遵循一致的架构风格。
 ---
@@ -88,6 +90,8 @@ description: |
 40. **非 prod 组件展示切换** `(common)`：所有业务前端子仓库（非 marsun_components-core dev app）须在 `App.tsx` 用 `import.meta.env.DEV` 双 guard 接入：（1）antd `FloatButton` 在业务页与 `/components` 间切换（图标 `LayoutGrid` / `House`，均从 `@hkyhy/marsun-components-core`）；（2）`/components` 路由 + `ComponentsLayout` + `componentRoutes`（collect-examples 自动生成）。生产 build 不包含上述代码。参考 `repos/maoyang_data-asset-system/src/App.tsx`；新建仓库 checklist 见 [examples-组件示例.md](references/common/examples-组件示例.md) §8.8
 41. **REST 契约同任务落 backend-dev** `(common)`：新接或改造任一 REST（含「已有平台接口」如 `user_key_get`/`user_key_set`）时，**同任务**更新 marsun_arch `backend-dev/{data-dev|agent-dev|platform-dev|mock}/` 三件套（`接口.md` + OpenAPI + 测试用例）；禁止只写 `src/api/*.ts`。落点见 [backend-dev-spec / openapi-apifox §3.2](../backend-dev-spec/references/openapi-apifox-契约标注.md)；用户偏好示例：[platform-dev/用户偏好](../../../backend-dev/platform-dev/用户偏好/接口.md)
 42. **可复用问题同任务沉淀** `(common)`：Cursor 联调/开发中若解决了**可复用、非显而易见**的问题（组件用法、布局、环境、信封/分页、落点冲突等），须**同任务**写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping；禁止只留在对话。仅本事项不可复用者写 WorkRecord 进展即可。**禁止**另建「踩坑大全」第二真相源，**禁止**把工程踩坑写入 `TextilePublicKnowledge/`。落点见 [marsun-arch-doc-spec / placement-guide](../marsun-arch-doc-spec/references/placement-guide.md)
+43. **写代码门禁（自动化测试 + 自检）** `(common)`：新建组件 / 改纯逻辑须**同任务**补或更新 `__tests__`（见 [testing-测试规范](references/common/testing-测试规范.md)）；提交前**本人**跑通 `npm run test` 或 `npx vitest run <path>`（禁止以 AI「声称测过」代替）；再 `da standards scan` → `da standards commit`。无对应测试不得标任务完成（可 `[WIP]`）。统一流水线与加强自检清单：[da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md)。接 REST 时另须契约用例（#41），不互相替代。
+44. **角色循环验证** `(common)`：方案/交互定稿后（动手前）须以**顶尖产品经理**视角复审；页面可点后（提交前）须以**顶尖前端工程师 + UI 设计师**视角复审。输出 **必须改 / 建议改 / 可接受**，**未经用户确认禁止擅自改**。口令与模板见 [da-workflow/role-loop-review](../da-workflow/references/role-loop-review-角色循环验证.md)。不替代「任务结束复检」（仍必做）与 #43 门禁。
 
 ---
 
@@ -106,18 +110,18 @@ description: |
 
 ### common（公共规范）
 
-| 场景                                              | 文件                                                                                                        |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 技术栈 React 19 + antd 6                          | SKILL.md「技术栈」+ [common/component-mapping-组件映射.md](references/common/component-mapping-组件映射.md) |
-| 目录结构、命名速查                                | [common/directory-structure-目录结构.md](references/common/directory-structure-目录结构.md)                 |
-| Common / @kne / antd 映射                         | [common/component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)（含 Core 版本管理） |
-| 主题 Token、颜色                                  | [common/theme-主题Token.md](references/common/theme-主题Token.md)                                           |
-| SCSS Modules、样式目录                            | [common/styles-样式规范.md](references/common/styles-样式规范.md)                                           |
-| 页面壳与布局（Loading / 滚动 / InteractiveBlock） | [common/shell-layout-页面壳与布局.md](references/common/shell-layout-页面壳与布局.md)                       |
-| Filter 筛选组件                                   | [common/filter-筛选组件.md](references/common/filter-筛选组件.md)                                           |
-| 组件 Examples / meta.json                         | [common/examples-组件示例.md](references/common/examples-组件示例.md)                                       |
-| 测试                                              | [common/testing-测试规范.md](references/common/testing-测试规范.md)                                         |
-| 代码格式化 / ESLint                               | [common/code-formatting-代码格式化.md](references/common/code-formatting-代码格式化.md)                     |
+| 场景                                              | 文件                                                                                                                                                                     |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 技术栈 React 19 + antd 6                          | SKILL.md「技术栈」+ [common/component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)                                                              |
+| 目录结构、命名速查                                | [common/directory-structure-目录结构.md](references/common/directory-structure-目录结构.md)                                                                              |
+| Common / @kne / antd 映射                         | [common/component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)（含 Core 版本管理）                                                              |
+| 主题 Token、颜色                                  | [common/theme-主题Token.md](references/common/theme-主题Token.md)                                                                                                        |
+| SCSS Modules、样式目录                            | [common/styles-样式规范.md](references/common/styles-样式规范.md)                                                                                                        |
+| 页面壳与布局（Loading / 滚动 / InteractiveBlock） | [common/shell-layout-页面壳与布局.md](references/common/shell-layout-页面壳与布局.md)                                                                                    |
+| Filter 筛选组件                                   | [common/filter-筛选组件.md](references/common/filter-筛选组件.md)                                                                                                        |
+| 组件 Examples / meta.json                         | [common/examples-组件示例.md](references/common/examples-组件示例.md)                                                                                                    |
+| 测试 / 写代码门禁                                 | [common/testing-测试规范.md](references/common/testing-测试规范.md) + [da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) |
+| 代码格式化 / ESLint                               | [common/code-formatting-代码格式化.md](references/common/code-formatting-代码格式化.md)                                                                                  |
 
 ### business（业务规范）
 
@@ -130,23 +134,24 @@ description: |
 
 ### 场景速查
 
-| 场景                             | 先读                                       | 再读                                                                         |
-| -------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------- |
-| 接新需求 / 改交互                | prompts/mindset → requirement-workflow     | 按任务选 common/business                                                     |
-| 新建业务模块                     | business/module-patterns                   | common/directory-structure                                                   |
-| 筛选项 / 部门人员                | common/filter + business/department-person | filter §5.9（Item loading + 面板 Spin + Empty；禁 options loading→PageSpin） |
-| 权限 / 批量操作                  | business/permissions-data                  | —                                                                            |
-| 主题 / Tag 颜色                  | common/theme + common/component-mapping    | common/styles                                                                |
-| 页面壳 / 滚动 / Loading / 内容块 | common/shell-layout-页面壳与布局           | common/component-mapping                                                     |
-| 组件 Demo                        | common/examples                            | —                                                                            |
-| 非 prod 组件展示切换             | common/examples §8.8 + routing-api §13.5   | SKILL.md #40                                                                 |
-| 新增/变更组件                    | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow                                         |
-| 可复用踩坑沉淀                   | SKILL.md #42 + requirement-workflow 检查项 | placement-guide（marsun-arch-doc-spec）                                      |
-| 样式 / className / SCSS          | common/styles                              | common/directory-structure（命名速查）                                       |
-| 模块 workarea 扁平布局           | common/styles §8.10                        | SKILL.md #33                                                                 |
-| 写测试                           | common/testing                             | —                                                                            |
-| 新建仓库 / 缺 lint               | common/code-formatting                     | —                                                                            |
-| 修改规范 / 同步子仓库            | common/skills-sync-规范同步                | —                                                                            |
+| 场景                             | 先读                                       | 再读                                                                                               |
+| -------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| 接新需求 / 改交互                | prompts/mindset → requirement-workflow     | 按任务选 common/business                                                                           |
+| 新建业务模块                     | business/module-patterns                   | common/directory-structure                                                                         |
+| 筛选项 / 部门人员                | common/filter + business/department-person | filter §5.9（Item loading + 面板 Spin + Empty；禁 options loading→PageSpin）                       |
+| 权限 / 批量操作                  | business/permissions-data                  | —                                                                                                  |
+| 主题 / Tag 颜色                  | common/theme + common/component-mapping    | common/styles                                                                                      |
+| 页面壳 / 滚动 / Loading / 内容块 | common/shell-layout-页面壳与布局           | common/component-mapping                                                                           |
+| 组件 Demo                        | common/examples                            | —                                                                                                  |
+| 非 prod 组件展示切换             | common/examples §8.8 + routing-api §13.5   | SKILL.md #40                                                                                       |
+| 新增/变更组件                    | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow                                                               |
+| 可复用踩坑沉淀                   | SKILL.md #42 + requirement-workflow 检查项 | placement-guide（marsun-arch-doc-spec）                                                            |
+| 样式 / className / SCSS          | common/styles                              | common/directory-structure（命名速查）                                                             |
+| 模块 workarea 扁平布局           | common/styles §8.10                        | SKILL.md #33                                                                                       |
+| 写测试 / 提交前自检              | common/testing + SKILL.md #43              | [da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) |
+| 角色循环验证 / 再验证            | SKILL.md #44 + mindset                     | [da-workflow/role-loop-review](../da-workflow/references/role-loop-review-角色循环验证.md)         |
+| 新建仓库 / 缺 lint               | common/code-formatting                     | —                                                                                                  |
+| 修改规范 / 同步子仓库            | common/skills-sync-规范同步                | —                                                                                                  |
 
 **命名约定 Naming**：reference 文件采用 `{英文主题}-{中文简述}.md`（与 [backend-dev-spec](../backend-dev-spec/SKILL.md) 一致），便于检索与跨语言协作；分层目录 `common` / `business` / `prompts` 保留。
 

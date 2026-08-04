@@ -21,9 +21,9 @@
 
 1. 阅读对话上下文与相关 PRD/计划文档，归纳需求目标与验收标准。
 2. 从四维（产品 / 架构 / 开发 / UI）交叉论证方案，对照 `common/` 与 `business/` 规范。
-3. 方案可行后再编码；需求歧义时归纳假设并标注待确认项，不静默猜测。
-4. 实现完成后按 [requirement-workflow-需求工作流.md](requirement-workflow-需求工作流.md) 检查清单自检；若涉及组件新增或变更，确认规范文档与提示词已同步更新；若解决了可复用非显而易见问题，确认已写入对应 skill reference（禁止只留在对话）。提交前台账取号须 `plane_pull` + 挂钉表大颗粒父（见 [task-relationships](../../../da-workflow/references/task-relationships.md) / [task-naming](../../../da-workflow/references/task-naming.md)）。
-5. **任务结束复检**（须在收尾句之前；含仅改提示词/规范文档）：
+3. 方案可行后再编码；需求歧义时归纳假设并标注待确认项，不静默猜测。方案定稿后、动手前须跑一次**角色循环验证 · 需求**（顶尖产品经理视角；见 [role-loop-review](../../../da-workflow/references/role-loop-review-角色循环验证.md) §2.1）：输出必须改/建议改/可接受，**未经用户确认禁止擅自改方案或开写代码**。
+4. 实现完成后按 [requirement-workflow-需求工作流.md](requirement-workflow-需求工作流.md) 检查清单自检，并过写代码门禁（[test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) · SKILL #43：本人跑通 vitest/`npm run test` → `da standards scan`）；页面可点后须再跑**角色循环验证 · 前端**（顶尖前端 + UI；role-loop-review §2.3）；若涉及组件新增或变更，确认规范文档与提示词已同步更新；若解决了可复用非显而易见问题，确认已写入对应 skill reference（禁止只留在对话）。提交前台账取号须 `plane_pull` + 挂钉表大颗粒父（见 [task-relationships](../../../da-workflow/references/task-relationships.md) / [task-naming](../../../da-workflow/references/task-naming.md)）。
+5. **任务结束复检**（须在收尾句之前；含仅改提示词/规范文档；**在角色循环验证交决策之后或声明通过之后**）：
    1. **整段逻辑复检**：对照本轮需求目标与验收标准，复查刚改代码/文档的主路径、边界、数据流、规范符合性（产品 / 架构 / 开发 / UI 四维，点到为止，不空跑 checklist）。
    2. **历史问题回扫**：检索本对话中已提出、已修复或用户提到过的问题，逐项核对是否仍存在（回归 / 未闭环）。
    3. **向用户交决策**：用简洁列表输出「仍存问题 / 新发现问题」（各含一句话影响）；明确请用户选择：是否继续修、修哪些。

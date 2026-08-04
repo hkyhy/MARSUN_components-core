@@ -20,6 +20,8 @@
 | 开发 | 纯 UI 优先 `@hkyhy/marsun-components-core`？业务 wrapper 留本地 Common？最小 diff？可测试？                                                                                                                                                                                      |
 | UI   | PageHeaderLayout、ButtonGroup、主题色、信息层级是否一致？滚动区是否用 VirtualScrollbar（不占位）？数据加载是否用 PageShellProvider + ModulePageShell/PageHeaderLayout spinning（禁止局部 loading 文案）？主 workarea 是否扁平（无冗余 breadcrumb、无双层 card border/padding）？ |
 
+方案论证结束后、动手编码前：跑 [role-loop-review · 需求](../../../da-workflow/references/role-loop-review-角色循环验证.md)（顶尖产品经理视角）；交决策后再进入「三、开发流程」。
+
 ## 三、开发流程
 
 新建模块时按以下顺序执行（**目录结构是大前提，必须先建好目录再填充内容**）：
@@ -63,23 +65,24 @@
 
 ## 四、按需阅读规范
 
-| 场景                      | 先读                                                                                                                                                  | 再读                                                                                   |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| 接新需求 / 改交互         | [mindset-角色大前提.md](mindset-角色大前提.md)                                                                                                        | 按任务选 common/business                                                               |
-| 新建业务模块              | [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md)                                                                    | [../common/directory-structure-目录结构.md](../common/directory-structure-目录结构.md) |
-| 筛选项                    | [../common/filter-筛选组件.md](../common/filter-筛选组件.md)                                                                                          | —                                                                                      |
-| 列表/表单内容块           | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/styles-样式规范.md](../common/styles-样式规范.md) §8.11                     |
-| 部门 / 人员               | [../common/filter-筛选组件.md](../common/filter-筛选组件.md) + [../business/department-person-部门人员.md](../business/department-person-部门人员.md) | —                                                                                      |
-| 权限 / 批量操作           | [../business/permissions-data-权限与常量.md](../business/permissions-data-权限与常量.md)                                                              | —                                                                                      |
-| 路由 / API                | [../business/routing-api-路由与API.md](../business/routing-api-路由与API.md)                                                                          | —                                                                                      |
-| 主题 / Tag 颜色           | [../common/theme-主题Token.md](../common/theme-主题Token.md) + [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)     | [../common/styles-样式规范.md](../common/styles-样式规范.md)                           |
-| 滚动区 / Loading / 内容块 | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)     |
-| 组件 Demo                 | [../common/examples-组件示例.md](../common/examples-组件示例.md)                                                                                      | SKILL.md #23、component-mapping                                                        |
-| 新增/变更组件             | [SKILL.md](../../SKILL.md) 核心原则 #23                                                                                                               | component-mapping + 专题 reference                                                     |
-| 样式 / className          | [../common/styles-样式规范.md](../common/styles-样式规范.md)                                                                                          | [../common/directory-structure-目录结构.md](../common/directory-structure-目录结构.md) |
-| 写测试                    | [../common/testing-测试规范.md](../common/testing-测试规范.md)                                                                                        | —                                                                                      |
-| 新建仓库 / 格式化工具链   | [../common/code-formatting-代码格式化.md](../common/code-formatting-代码格式化.md)                                                                    | 技术栈须 React 19 + antd 6（SKILL.md）                                                 |
-| 事项工作记录              | [work-record/SKILL.md](../../../work-record/SKILL.md)                                                                                                 | —                                                                                      |
+| 场景                      | 先读                                                                                                                                                  | 再读                                                                                                               |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 接新需求 / 改交互         | [mindset-角色大前提.md](mindset-角色大前提.md)                                                                                                        | 按任务选 common/business                                                                                           |
+| 新建业务模块              | [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md)                                                                    | [../common/directory-structure-目录结构.md](../common/directory-structure-目录结构.md)                             |
+| 筛选项                    | [../common/filter-筛选组件.md](../common/filter-筛选组件.md)                                                                                          | —                                                                                                                  |
+| 列表/表单内容块           | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/styles-样式规范.md](../common/styles-样式规范.md) §8.11                                                 |
+| 部门 / 人员               | [../common/filter-筛选组件.md](../common/filter-筛选组件.md) + [../business/department-person-部门人员.md](../business/department-person-部门人员.md) | —                                                                                                                  |
+| 权限 / 批量操作           | [../business/permissions-data-权限与常量.md](../business/permissions-data-权限与常量.md)                                                              | —                                                                                                                  |
+| 路由 / API                | [../business/routing-api-路由与API.md](../business/routing-api-路由与API.md)                                                                          | —                                                                                                                  |
+| 主题 / Tag 颜色           | [../common/theme-主题Token.md](../common/theme-主题Token.md) + [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)     | [../common/styles-样式规范.md](../common/styles-样式规范.md)                                                       |
+| 滚动区 / Loading / 内容块 | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)                                 |
+| 组件 Demo                 | [../common/examples-组件示例.md](../common/examples-组件示例.md)                                                                                      | SKILL.md #23、component-mapping                                                                                    |
+| 新增/变更组件             | [SKILL.md](../../SKILL.md) 核心原则 #23                                                                                                               | component-mapping + 专题 reference                                                                                 |
+| 样式 / className          | [../common/styles-样式规范.md](../common/styles-样式规范.md)                                                                                          | [../common/directory-structure-目录结构.md](../common/directory-structure-目录结构.md)                             |
+| 写测试 / 提交前自检       | [../common/testing-测试规范.md](../common/testing-测试规范.md)                                                                                        | 统一门禁：[da-workflow/test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) |
+| 角色循环验证 / 再验证     | [da-workflow/role-loop-review](../../../da-workflow/references/role-loop-review-角色循环验证.md)                                                      | SKILL #44 · mindset                                                                                                |
+| 新建仓库 / 格式化工具链   | [../common/code-formatting-代码格式化.md](../common/code-formatting-代码格式化.md)                                                                    | 技术栈须 React 19 + antd 6（SKILL.md）                                                                             |
+| 事项工作记录              | [work-record/SKILL.md](../../../work-record/SKILL.md)                                                                                                 | —                                                                                                                  |
 
 ## 五、完成前检查清单
 
@@ -107,7 +110,8 @@
 - [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting-代码格式化.md`）
 - [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
 - [ ] **可复用问题已同任务沉淀**到 skill reference / mapping / 契约（禁止只留在对话；见 SKILL #42）
-- [ ] 测试通过
+- [ ] 测试通过（本人执行：`npm run test` 或 `npx vitest run <path>`；门禁见 [test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) · SKILL #43）
+- [ ] **角色循环验证**已完成（SKILL #44）：方案后跑过「需求」场景；页面可点后跑过「前端」场景；或用户已确认跳过；模板见 [role-loop-review](../../../da-workflow/references/role-loop-review-角色循环验证.md)
 - [ ] **新任务台账**：
   1. `plane_pull`（或 `pm_pipeline --step plane-pull`）
   2. 扫描 snapshot 名称 `S3.3.(\d+)`，候选 id = `max+1`（**禁止**盲信 `meta.next_task_id`；大颗粒号段如 73–88 勿占用，见 [task-naming](../../../da-workflow/references/task-naming.md)）
