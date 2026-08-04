@@ -4,6 +4,9 @@
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: clip;
 }
 
 .message-item-message-row-reverse {
@@ -31,7 +34,7 @@
 
 .message-item-message-content-assistant {
   align-items: flex-start;
-  max-width: 88%;
+  max-width: 72%;
 }
 
 .message-item-message-user-bubble {
@@ -48,6 +51,7 @@
 
 .message-item-message-user-bubble-text {
   white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .message-item-message-assistant-bubble {
@@ -65,7 +69,7 @@
   word-break: break-word;
   min-width: 0;
   max-width: 100%;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .message-item-message-loading-dots {
@@ -95,7 +99,7 @@
 }
 
 .message-item-message-answer-markdown {
-  max-width: none;
+  max-width: 100%;
   min-width: 0;
   word-break: break-word;
   white-space: pre-wrap;

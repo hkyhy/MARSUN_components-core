@@ -105,12 +105,88 @@ const MessageItem: React.FC<MessageItemProps> = ({
 
   const copyText = useCallback(async (text: string) => {
     if (!text.trim()) return;
-    try {
+
+    const verifyClipboard = async () => {
+      if (!navigator.clipboard?.readText) return null;
+      try {
+        return await navigator.clipboard.readText();
+      } catch {
+        return null;
+      }
+    };
+
+    const copyWithClipboardApi = async () => {
+      if (!navigator.clipboard) return false;
+
+      if (typeof ClipboardItem !== 'undefined' && typeof navigator.clipboard.write === 'function') {
+        try {
+          const item = new ClipboardItem({
+            'text/plain': Promise.resolve(new Blob([text], { type: 'text/plain' })),
+          });
+          await navigator.clipboard.write([item]);
+          const got = await verifyClipboard();
+          // got === null：无读权限，信任 write；空串则视为未写入
+          if (got === null || got === text) return true;
+          if (got === '') return false;
+        } catch {
+          /* fall through to writeText */
+        }
+      }
+
+      if (typeof navigator.clipboard.writeText !== 'function') return false;
       await navigator.clipboard.writeText(text);
-      antdMessage.success('已复制');
+      const got = await verifyClipboard();
+      if (got === '') return false;
+      return got === null || got === text;
+    };
+
+    const copyWithSelection = () => {
+      const el = document.createElement('div');
+      el.textContent = text;
+      el.setAttribute('contenteditable', 'true');
+      el.style.cssText =
+        'position:fixed;top:0;left:0;width:2px;height:2px;padding:0;margin:0;border:none;outline:none;opacity:0.01;overflow:hidden;z-index:2147483647;white-space:pre;user-select:text;-webkit-user-select:text;';
+      document.body.appendChild(el);
+
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      el.focus();
+
+      let ok = false;
+      try {
+        ok = document.execCommand('copy');
+      } finally {
+        selection?.removeAllRanges();
+        document.body.removeChild(el);
+      }
+      return ok;
+    };
+
+    try {
+      if (await copyWithClipboardApi()) {
+        antdMessage.success('已复制');
+        return;
+      }
     } catch {
-      antdMessage.error('复制失败');
+      /* 继续 selection 回退 */
     }
+
+    try {
+      if (copyWithSelection()) {
+        const got = await verifyClipboard();
+        if (got === null || got === text) {
+          antdMessage.success('已复制');
+          return;
+        }
+      }
+    } catch {
+      /* fall through */
+    }
+
+    antdMessage.error('复制失败，请手动选择文本复制');
   }, []);
 
   const assistantCopyText = normalizeDisplayText(parsedContent.answer);

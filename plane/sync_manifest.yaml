@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.72
+  next_task_id: P6.3.75
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1017,3 +1017,51 @@ tasks:
   note: |
     Refs: P6.3
     补交 P6.3.69 漏提交的 examples-registry.ts；Related: P6.3.69
+
+- id: P6.3.72
+  milestone: P6.3
+  name: AgentHub MessageItem 剪贴板与消息布局
+  status: 已完成
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-08-04'
+  target_date: '2026-08-04'
+  tags:
+  - frontend
+  - agenthub
+  note: |
+    Refs: P6.3
+    MessageItem 剪贴板 ClipboardItem/writeText/execCommand fallback；消息区宽度与 overflow
+
+- id: P6.3.73
+  milestone: P6.3
+  name: 同步 frontend-dev-spec 测试门禁与角色循环
+  status: 进行中
+  priority: P1
+  kind: docs
+  owner: 黄金芳
+  start_date: '2026-08-04'
+  target_date: '2026-08-04'
+  tags:
+  - docs
+  - spec
+  note: |
+    Refs: P6.3
+    frontend-dev-spec #43/#44 测试门禁与角色循环验证
+
+- id: P6.3.74
+  milestone: P6.3
+  name: 发版 marsun-components-core v0.1.37
+  status: 进行中
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-08-04'
+  target_date: '2026-08-04'
+  tags:
+  - infra
+  - release
+  note: |
+    Refs: P6.3
+    chore(release) v0.1.37；含 AgentHub 剪贴板与布局；Related: P6.3.72
