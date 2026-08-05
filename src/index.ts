@@ -124,6 +124,8 @@ export * from './components/InteractiveBlock';
 export * from './components/Layout';
 export * from './components/Modal';
 export * from './components/Permissions';
+export * from './components/OrgTree';
+export * from './components/StateBar';
 export * from './components/Stat';
 export * from './components/Table';
 export * from './components/Tag';

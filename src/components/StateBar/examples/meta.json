@@ -1,0 +1,59 @@
+{
+  "title": "StateBar 状态栏",
+  "description": "基于 antd Tabs 的状态切换条，支持 tab / radio / step；tabBarExtraContent 放域内主操作。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "type、size、isInner、受控 activeKey 与右侧 extra",
+      "component": "@/components/StateBar/examples/BasicDemo",
+      "sourcePath": "@/components/StateBar/examples/BasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "StateBarProps",
+      "rows": [
+        {
+          "prop": "stateOption",
+          "desc": "状态项：key + tab/label；可带 children 展示面板",
+          "type": "StateBarOption[]",
+          "defaultVal": "[]"
+        },
+        {
+          "prop": "type",
+          "desc": "展示样式",
+          "type": "'tab' | 'radio' | 'step'",
+          "defaultVal": "'tab'"
+        },
+        {
+          "prop": "activeKey",
+          "desc": "当前激活 key（受控）",
+          "type": "string"
+        },
+        {
+          "prop": "onChange",
+          "desc": "切换回调",
+          "type": "(key: string) => void"
+        },
+        {
+          "prop": "tabBarExtraContent",
+          "desc": "右侧额外内容（主操作按钮）",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "isInner",
+          "desc": "底部线延展至容器全宽",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "size",
+          "desc": "尺寸（透传 antd Tabs）",
+          "type": "'small' | 'middle' | 'large'",
+          "defaultVal": "'middle'"
+        }
+      ]
+    }
+  ]
+}

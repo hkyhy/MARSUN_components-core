@@ -1,0 +1,58 @@
+.marsun-org-tree {
+  :global(.ant-tree-treenode) {
+    width: 100%;
+  }
+
+  :global(.ant-tree-node-content-wrapper) {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.marsun-org-tree-row {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  /* 键盘 / 触控焦点：始终显操作 */
+  &:focus-within .marsun-org-tree-actions {
+    opacity: 1;
+  }
+}
+
+.marsun-org-tree-name {
+  display: inline-block;
+  max-width: 20rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.marsun-org-tree-extra {
+  margin-left: 8px;
+  color: var(--font-color-grey, #8c8c8c);
+  font-size: 12px;
+}
+
+.marsun-org-tree-actions {
+  margin-left: 8px;
+  flex-shrink: 0;
+  /* 触控默认常显 */
+  opacity: 1;
+}
+
+/* 桌面精确指针：默认隐藏，hover 显示（须写在同一 media 内，避免嵌套 & 被拆出） */
+@media (hover: hover) and (pointer: fine) {
+  .marsun-org-tree-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .marsun-org-tree-row:hover .marsun-org-tree-actions {
+    opacity: 1;
+  }
+}

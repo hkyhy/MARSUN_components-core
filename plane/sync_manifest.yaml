@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.78
+  next_task_id: P6.3.79
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1116,4 +1116,21 @@ tasks:
     Refs: P6.3
     Related: P6.3.75
     feat 已 bump 0.1.38 但未走 chore(release) 触发 CI；补 chore(release): v0.1.38 发 npm
+
+- id: P6.3.78
+  milestone: P6.3
+  name: StateBar OrgTree 与发版 v0.1.39
+  status: 已完成
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-08-05'
+  target_date: '2026-08-05'
+  tags:
+  - frontend
+  - release
+  note: |
+    Refs: P6.3
+    Related: P6.3.77
+    StateBar / OrgTree（贴名操作、deleteOkText、触控可见、Tooltip）；examples/tests；chore(release) v0.1.39
 

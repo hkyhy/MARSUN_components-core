@@ -1,0 +1,52 @@
+{
+  "title": "OrgTree 组织树",
+  "description": "对齐 Assets 组织架构：默认展开、节点 hover 增删改；纯 UI，业务自行接 API。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "可编辑树与节点操作回调",
+      "component": "@/components/OrgTree/examples/BasicDemo",
+      "sourcePath": "@/components/OrgTree/examples/BasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "OrgTreeProps",
+      "rows": [
+        {
+          "prop": "nodes",
+          "desc": "树数据（id/name/parentId/children）",
+          "type": "OrgTreeNode[]"
+        },
+        {
+          "prop": "loading",
+          "desc": "加载态",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "editable",
+          "desc": "是否展示节点操作区",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "onAdd",
+          "desc": "添加子节点",
+          "type": "(parentId: string) => void"
+        },
+        {
+          "prop": "onEdit",
+          "desc": "编辑节点",
+          "type": "(node) => void"
+        },
+        {
+          "prop": "onDelete",
+          "desc": "确认删除后回调",
+          "type": "(node) => void | Promise<void>"
+        }
+      ]
+    }
+  ]
+}

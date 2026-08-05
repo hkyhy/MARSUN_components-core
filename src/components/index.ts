@@ -8,6 +8,8 @@ export * from './InteractiveBlock';
 export * from './Layout';
 export * from './Modal';
 export * from './Permissions';
+export * from './OrgTree';
+export * from './StateBar';
 export * from './Stat';
 export * from './Table';
 export * from './Tag';
