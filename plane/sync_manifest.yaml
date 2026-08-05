@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.75
+  next_task_id: P6.3.76
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1065,3 +1065,20 @@ tasks:
   note: |
     Refs: P6.3
     chore(release) v0.1.37；含 AgentHub 剪贴板与布局；Related: P6.3.72
+
+- id: P6.3.75
+  milestone: P6.3
+  name: Permissions 权限组件移植与 v0.1.38
+  status: 已完成
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: '2026-08-05'
+  target_date: '2026-08-05'
+  tags:
+  - frontend
+  - auth
+  note: |
+    Refs: P6.3
+    对照 kne-union Permissions 移植；MarsunCoreProvider.auth.permissions；
+    hidden/tooltip/error；hooks；examples；发版 v0.1.38

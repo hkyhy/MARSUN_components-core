@@ -2,11 +2,7 @@ import { ConfigProvider } from 'antd';
 import type { ThemeConfig } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 import { DEFAULT_PRIMARY_COLOR, applyThemeToCssVariables, generateTheme } from '@/theme';
-import {
-  MarsunCoreContext,
-  type MarsunAuthContext,
-  type MarsunFetchContext,
-} from './context';
+import { MarsunCoreContext, type MarsunAuthContext, type MarsunFetchContext } from './context';
 
 export type MarsunCoreProviderProps = {
   children: React.ReactNode;
@@ -37,6 +33,7 @@ const MarsunCoreProvider: React.FC<MarsunCoreProviderProps> = ({
       auth: {
         isAuthenticated: authProp?.isAuthenticated ?? false,
         user: authProp?.user ?? null,
+        permissions: authProp?.permissions ?? [],
         hasAnyRole: authProp?.hasAnyRole ?? (() => false),
         hasPermission: authProp?.hasPermission ?? (() => false),
       },
@@ -56,19 +53,14 @@ const MarsunCoreProvider: React.FC<MarsunCoreProviderProps> = ({
   }, [primaryColor]);
 
   const content = withConfigProvider ? (
-    <ConfigProvider
-      theme={antdTheme}
-      getPopupContainer={() => document.body}
-    >
+    <ConfigProvider theme={antdTheme} getPopupContainer={() => document.body}>
       {children}
     </ConfigProvider>
   ) : (
     children
   );
 
-  return (
-    <MarsunCoreContext.Provider value={contextValue}>{content}</MarsunCoreContext.Provider>
-  );
+  return <MarsunCoreContext.Provider value={contextValue}>{content}</MarsunCoreContext.Provider>;
 };
 
 export default MarsunCoreProvider;

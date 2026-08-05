@@ -7,6 +7,7 @@ export * from './Form';
 export * from './InteractiveBlock';
 export * from './Layout';
 export * from './Modal';
+export * from './Permissions';
 export * from './Stat';
 export * from './Table';
 export * from './Tag';

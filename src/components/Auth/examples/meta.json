@@ -1,6 +1,6 @@
 {
   "title": "Auth 权限控制",
-  "description": "基于角色的权限管理方案，支持页面级和按钮级权限控制；含侧栏用户卡片。",
+  "description": "基于角色的权限管理方案：PermissionGuard（角色/单权限 + fallback）；按钮/区域三种呈现见独立 Permissions 组件；含侧栏用户卡片。",
   "examples": [
     {
       "title": "hasPermission 权限判断",

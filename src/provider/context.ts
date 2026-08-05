@@ -4,6 +4,8 @@ import { createContext, useContext } from 'react';
 export type MarsunAuthContext = {
   isAuthenticated: boolean;
   user: Record<string, unknown> | null;
+  /** 当前用户权限码列表（Permissions 组件 / usePermissions 优先读取） */
+  permissions?: string[];
   hasAnyRole?: (roles: string[]) => boolean;
   hasPermission?: (permission: string) => boolean;
 };
@@ -26,6 +28,7 @@ export type MarsunCoreContextValue = {
 const defaultAuth: MarsunAuthContext = {
   isAuthenticated: false,
   user: null,
+  permissions: [],
   hasAnyRole: () => false,
   hasPermission: () => false,
 };
