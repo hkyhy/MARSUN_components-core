@@ -17,7 +17,7 @@ npm install @hkyhy/marsun-components-core antd@^6 react@^19 react-dom@^19
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 安装（**提交态**）                | `package.json` → `"@hkyhy/marsun-components-core": "^0.1.17"`（**须与 npm 已发布最新版一致**；核对 `npm view @hkyhy/marsun-components-core version`） |
 | 本地联调（**勿改 package.json**） | 环境变量 + Vite alias，见下「本地链」；`package.json` / lockfile **保持 semver**                                                                      |
-| 全局 Provider                     | 根节点包裹 `MarsunCoreProvider`（`auth` / `fetch` 由业务注入）                                                                                        |
+| 全局 Provider                     | 根节点包裹 `MarsunCoreProvider`（`auth` 含 `permissions` / `hasPermission` / `hasAnyRole`；`fetch` 由业务注入）                                       |
 | 样式                              | `import '@hkyhy/marsun-components-core/styles'`                                                                                                       |
 | 公共 Token                        | `import '@hkyhy/marsun-components-core/tokens'`（在 global.scss 或 main 最早加载）                                                                    |
 | 主题                              | `generateTheme` / `applyThemeToCssVariables` / `applyCssTokenOverrides` 从 `@hkyhy/marsun-components-core/theme`                                      |
@@ -62,12 +62,12 @@ rg 'marsun_components-core|"link": true' package-lock.json  # 须为空（相对
 
 **semver 须已发布且与实版一致**：
 
-| 仓库                     | `package.json` 字段               | 规则                                                                                |
-| ------------------------ | --------------------------------- | ----------------------------------------------------------------------------------- |
-| `marsun_components-core` | `"version"`                       | feat 开发时 **= npm 已发布最新**；仅 `chore(release)` commit 内允许 **npm+1 patch** |
-| 业务项目                 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版，与 lockfile 解析版本一致                         |
+| 仓库                     | `package.json` 字段               | 规则                                                                                            |
+| ------------------------ | --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `marsun_components-core` | `"version"`                       | feat 开发时 **= npm 已发布最新**；仅**交付功能 commit**内允许 **npm+1 patch**（与功能同包）     |
+| 业务项目                 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版，与 lockfile 解析版本一致；为本功能升版时与业务 diff **同包** |
 
-**core 发版**：`chore(release): vX.Y.Z` push main → CI publish；**禁止**本地 `npm publish`。细则见下文「Core 版本管理」。
+**core 发版**：功能 commit 内 bump version → push main → CI publish；**禁止**仅 bump 的独立 `chore(release)`；**禁止**本地 `npm publish`。细则见下文「Core 版本管理」。
 
 提交前核对：
 
@@ -99,12 +99,17 @@ import {
   Input,
   ReactForm,
   useField,
+  Permissions,
+  usePermissionsPass,
+  PermissionGuard,
+  MarsunCoreProvider,
 } from '@hkyhy/marsun-components-core';
 // 业务域 — 留在 maoyang 本地
 import { DepartmentSelect } from '@/components/Common/Form/DepartmentSelect';
 import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 ```
 
+**权限 UI**：`Permissions`（权限码 + hidden/tooltip/error）与 `PermissionGuard`（角色/单权限 + fallback）并存；权限列表注入 `MarsunCoreProvider auth.permissions`。细则见 [business/permissions-data-权限与常量.md](../business/permissions-data-权限与常量.md)。
 **迁移原则**：包内已有的纯 UI（Filter、Tag、File、Auth 守卫、Layout 等）新代码直接从 npm 引用；含 `departmentPath`、权限常量、业务枚举的 wrapper **不得**迁入 npm，保留在 `src/components/Common/` 或 `src/components/{Domain}/`。
 
 ### npm Utils 导出（`@hkyhy/marsun-components-core`）
@@ -130,15 +135,17 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 
 ## Core 版本管理 Marsun Core Version
 
-### 核心原则：package.json 与实版一致
+### 核心原则：package.json 与实版一致；发版与功能同包
 
 **`package.json` 中的版本号必须反映真实可解析版本**，不得滞后、跳号或与 npm 脱节。
 
-| 场景                        | `marsun_components-core` 的 `version` | 业务项目的依赖                   |
-| --------------------------- | ------------------------------------- | -------------------------------- |
-| feat/fix 开发中             | `= npm 最新`（如 `0.1.17`）           | `^` + npm 最新                   |
-| 准备发版（chore commit 内） | `= npm 最新 + 1 patch`                | 仍保持上一版直至 CI publish 成功 |
-| CI publish 成功后           | `= npm 最新`                          | 升为 `^` + 新版本                |
+**硬约束**：功能驱动的升版 **不得**单独成 commit。core 内 `version` bump 与对应功能 diff **同包**；业务仓为本功能升 `@hkyhy/marsun-components-core` 时，`^` 与 lockfile 与业务 diff **同包**。
+
+| 场景                        | `marsun_components-core` 的 `version` | 业务项目的依赖                                      |
+| --------------------------- | ------------------------------------- | --------------------------------------------------- |
+| feat/fix 开发中（未到交付） | `= npm 最新`（如 `0.1.17`）           | `^` + npm 最新                                      |
+| 交付功能 commit（同包发版） | `= npm 最新 + 1 patch`                | 仍保持上一版直至 CI publish 成功                    |
+| CI publish 成功后           | `= npm 最新`                          | 与消费该功能的业务 commit **同包**升为 `^` + 新版本 |
 
 核对命令：
 
@@ -162,31 +169,36 @@ node -p "require('./package.json').version"   # core 仓库
 ```bash
 node scripts/version-check.mjs                    # 检查；落后 / 跳号 exit 1
 npm run version:sync                              # 对齐 npm 最新（--apply-published）
-npm run version:check:apply                       # 写回 npm+1，准备 chore(release) commit
+npm run version:check:apply                       # 写回 npm+1，准备与功能同包的交付 commit
 ```
 
-### 发布顺序（commit/push 触发，禁止本地 npm publish）
+### 发布顺序（功能与发版同 commit；禁止本地 npm publish）
 
-1. **功能开发**：只提交 `feat`/`fix`/`docs` 等，**不修改** `package.json` version（保持 = npm 最新）。
-2. **准备发版**：
+1. **功能开发（未到交付）**：`feat`/`fix`/`docs` 等 WIP 提交 **不修改** `package.json` version（保持 = npm 最新）。
+2. **交付并发版**（同一 commit）：
    ```bash
-   node scripts/version-check.mjs          # 确认 = npm 最新
+   node scripts/version-check.mjs          # 确认当前 = npm 最新（或先 version:sync）
    npm run version:check:apply             # 写回 npm+1（仅改文件，不 publish）
    npm run build && npm test
-   git add package.json package-lock.json
-   git commit -m "chore(release): v0.1.x"
-   git push origin main                    # 单独 push，确保为 push 批次最后一条 commit
+   # 同包：src/（及 examples 等同任务变更）+ package.json / package-lock.json
+   git add src package.json package-lock.json   # 及本功能相关路径
+   # message 用功能型 feat/fix；正文可附 Release: v0.1.x（与 version 一致）
+   git push origin main
    ```
-3. **CI 自动**（`marsun_components-core` 的 `release.yml`）：校验 → build/test → 打 tag → `npm publish`。
-4. **业务项目**：npm 可见新版本后，`package.json` 改为 `^0.1.x`，`npm install`，commit lockfile。
+3. **CI 自动**（`marsun_components-core` 的 `release.yml`）：校验 → build/test → 打 tag → `npm publish`。触发条件以仓库 workflow 为准（通常识别 `package.json` version 变更）；**无需**为触发 CI 再拆独立 `chore(release)` commit。
+4. **业务项目**：npm 可见新版本后，在**消费该功能的同一 commit**内将 `package.json` 改为 `^0.1.x`、`npm install` 并提交 lockfile（**禁止**为本功能单独 `chore(deps): 升 core`）。
 
-补发失败版本：GitHub Actions → **Publish npm (manual retry)** → 输入已有 tag。
+补发失败版本（无代码变更）：GitHub Actions → **Publish npm (manual retry)** → 输入已有 tag。仅此例外允许无功能 diff 的版本/发布相关操作。
 
-### chore(release) commit
+### 功能与发版同 commit（强制）
 
-- 仅含 `package.json` / `package-lock.json` version bump（及 `CHANGELOG` 若有）
-- 不与功能 commit 混写在同一 push 批次末尾之外
-- commit message 首行须为：`chore(release): v0.1.x`（与 package.json version 一致）
+| 仓库                     | 须同包                                                                | 禁止                                                                         |
+| ------------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `marsun_components-core` | 功能 diff（`src/`、examples 等）+ `version` bump（及 CHANGELOG 若有） | 仅 bump 的独立 `chore(release): vX.Y.Z`；攒多个功能再做一个空 release commit |
+| 业务 / 依赖仓            | 为本功能升 core 时：业务 diff + `^` / lockfile                        | 先/后单独 `chore(deps): 升 core`（与功能无关的纯跟版除外）                   |
+
+- commit message：功能型 `feat(scope):` / `fix(scope):`；正文可附 `Release: v0.1.x`（与 `package.json` version 一致）
+- 多个独立功能点仍按功能拆 commit；**每个需要发版的功能 commit 各自带对应 patch**
 - **禁止**本地 `npm publish`
 
 ### npm 导出 ↔ 本地 Common 对照
@@ -208,7 +220,8 @@ npm run version:check:apply                       # 写回 npm+1，准备 chore(
 | `CommonFilter` + `Filter*`                                   | `Filter/*`                                                                                                                                                                                                                                                                                                                                                                     |
 | `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                                                                                                                                                                                                                                                                                                                                          |
 | `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                                                                                                                                                                                                                                                                                                                                       |
-| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context                                                                                                                                                                                                                                                                                                                                            |
+| `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context；`auth.permissions` 供 Permissions 读取                                                                                                                                                                                                                                                                                                    |
+| `Permissions` / `usePermissions` / `usePermissionsPass`      | 按钮/区域级权限呈现（hidden / tooltip / error）；对照 kne-union Permissions；与 `PermissionGuard`（角色/单权限 + fallback）并存                                                                                                                                                                                                                                                |
 | `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                                                                                                                                                                                                                                                                                                                                                   |
 
 ### AgentHub 导出（`@hkyhy/marsun-components-core`）
@@ -345,7 +358,8 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | `Tag`（状态展示）　　  | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`     | 传入 `status` / `role`　　　　　　　　　　　　　　                                                                                                                      |
 | `Tag`（通用）　　　　  | `SemanticTag`　　　　　　　　　　　　　　　　　　     | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                                      |
 | `Select`（部门选择）   | `DepartmentSelect`　　　　　　　　　　　　　　　　    | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                                      |
-| 权限判断　　　　　　   | `hasPermission`　　　　　　　　　　　　　　　　　     | `hasPermission(user, 'user:edit')`　　　　　　　　                                                                                                                      |
+| 权限判断　　　　　　   | `hasPermission` / `usePermissionsPass`　　　　　      | 工具函数 `hasPermission(check, key)`；组件外判定用 `usePermissionsPass({ request })`                                                                                    |
+| 权限区域控制　　　　   | `Permissions`（core）　　　　　　　　　　　　　　     | `request` + `type`（hidden/tooltip/error）；权限列表注入 `MarsunCoreProvider auth.permissions`；角色守卫仍用 `PermissionGuard`                                          |
 | 侧栏用户卡片　　　　   | `UserProfileCard`　　　　　　　　　　　　　　　　     | `name` + `sub?` + `collapsed?` + `onLogout?` / `menuItems?` + `extra?`（右侧独立操作如站内信，与主区同卡内、Dropdown 外；**不传则无扩展区**）；主区点击展开退出         |
 | 筛选栏　　　　　　　   | `CommonFilter` + Filter 子组件　　　　　　　　　　    | 见 [filter-筛选组件.md](filter-筛选组件.md)；§5.9：`loading`→Item spin + 面板 Spin；空态 `Empty`　                                                                      |
 | `Input`（筛选）　　　  | `FilterInput`　　　　　　　　　　　　　　　　　　     | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter-筛选组件.md](filter-筛选组件.md) §5.1.1）                                     |

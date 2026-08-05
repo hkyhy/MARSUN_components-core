@@ -6,7 +6,7 @@
 
 - [ ] 明确用户角色、主路径、边界条件与验收标准
 - [ ] 识别涉及模块：`src/components/{Domain}/{Module}/` 或 `src/pages/`
-- [ ] 确认是否涉及权限、筛选、部门/人员、批量操作等业务规则
+- [ ] 确认是否涉及权限、筛选、部门/人员、批量操作等业务规则；若有按钮/区域权限码三态（hidden/tooltip/error）→ core `Permissions`；角色/单权限 fallback → `PermissionGuard`（见 [permissions-data](../business/permissions-data-权限与常量.md)）
 - [ ] 需求歧义时列出假设，标注待确认项
 - [ ] **WorkRecord**：先判**事项类型**（接口对接 / 页面改版 / 工程化）再匹配文档；涉及 API → 枚举接口清单；**禁止**把 Husky、布局重构写入「*接口对接」；新建前 AskQuestion
 - [ ] **core utils**：新建 `src/utils/` 前先查 component-mapping npm Utils 表；core 已有则包根 import，禁止复制同名文件
@@ -57,11 +57,12 @@
 29. 检查：是否有对应 `.test.tsx` / `.test.ts` 且通过（见 [../common/testing-测试规范.md](../common/testing-测试规范.md)）
 30. 检查：模块页 loading 是否通过 `PageShellProvider` + `ModulePageShell`/`PageHeaderLayout` `spinning` 或 `usePageShellLoading` 实现，禁止局部 loading 文案与 Spin 叠层（见 [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)）
 31. 检查：**每次新增或更改组件**是否已同步更新规范文档与提示词（`SKILL.md`、`component-mapping-组件映射.md`、专题 reference、`requirement-workflow-需求工作流.md` 检查项、`examples/meta.json` / Demo）；代码与规范须同一任务内完成，禁止只改代码
-32. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)「Core 版本管理」）
+32. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；**发版与功能同包**（core：功能+version；业务：功能+升 `^`）；禁止独立 `chore(release)` / 为本功能拆出的 `chore(deps)`；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)「Core 版本管理」）
 33. 检查：代码格式化工具链是否已安装（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`lint-staged`、`husky` 等 devDependencies）；根目录是否有 `.prettierrc`、`eslint.config.js`、`.husky/pre-commit`；`package.json` 是否有 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts（见 [../common/code-formatting-代码格式化.md](../common/code-formatting-代码格式化.md)）
 34. 检查：模块 workarea 扁平布局——`ModulePageShell` 不传冗余 `breadcrumb`；主区 `ContentCard flat` 或无边框容器；`*-workarea-body` 无外层 padding；Tabs content `width:100%`；页脚保存等非 block（Drawer 除外）（见 [../common/styles-样式规范.md](../common/styles-样式规范.md) §8.10）
 35. 检查：**禁止重复 core utils**——`src/utils/` 不得复制 `@hkyhy/marsun-components-core` 已导出函数；日期/权限/部门/人员/HTTP 等从包根 import（见 [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md) npm Utils 表）
-36. 检查：**可复用问题沉淀**——本任务若解决了可复用、非显而易见的问题，是否已写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping（禁止只留在 Cursor 对话）；仅本事项不可复用者写 WorkRecord 即可（见 SKILL.md 核心原则 #42）
+36. 检查：**可复用问题沉淀**——本任务若解决了可复用、非显而易见的问题，是否已写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping（禁止只留在 Cursor 对话）；仅本事项不可复用者写 WorkRecord 即可（见 SKILL.md 核心原则 #43）
+37. 检查：**权限 UI**——按钮/区域权限码三态用 core `Permissions`（`auth.permissions` 已注入）；角色/单权限 + fallback 用 `PermissionGuard`；列表项用 `hidden`；禁止手写平行权限包裹 / kne Global（见 [permissions-data](../business/permissions-data-权限与常量.md)、SKILL #13）
 
 ## 四、按需阅读规范
 
@@ -72,7 +73,7 @@
 | 筛选项                    | [../common/filter-筛选组件.md](../common/filter-筛选组件.md)                                                                                          | —                                                                                                                  |
 | 列表/表单内容块           | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/styles-样式规范.md](../common/styles-样式规范.md) §8.11                                                 |
 | 部门 / 人员               | [../common/filter-筛选组件.md](../common/filter-筛选组件.md) + [../business/department-person-部门人员.md](../business/department-person-部门人员.md) | —                                                                                                                  |
-| 权限 / 批量操作           | [../business/permissions-data-权限与常量.md](../business/permissions-data-权限与常量.md)                                                              | —                                                                                                                  |
+| 权限 / 批量操作           | [../business/permissions-data-权限与常量.md](../business/permissions-data-权限与常量.md)                                                              | SKILL #13 · Permissions / PermissionGuard 分工                                                                     |
 | 路由 / API                | [../business/routing-api-路由与API.md](../business/routing-api-路由与API.md)                                                                          | —                                                                                                                  |
 | 主题 / Tag 颜色           | [../common/theme-主题Token.md](../common/theme-主题Token.md) + [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)     | [../common/styles-样式规范.md](../common/styles-样式规范.md)                                                       |
 | 滚动区 / Loading / 内容块 | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)                                 |
@@ -80,19 +81,20 @@
 | 新增/变更组件             | [SKILL.md](../../SKILL.md) 核心原则 #23                                                                                                               | component-mapping + 专题 reference                                                                                 |
 | 样式 / className          | [../common/styles-样式规范.md](../common/styles-样式规范.md)                                                                                          | [../common/directory-structure-目录结构.md](../common/directory-structure-目录结构.md)                             |
 | 写测试 / 提交前自检       | [../common/testing-测试规范.md](../common/testing-测试规范.md)                                                                                        | 统一门禁：[da-workflow/test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) |
-| 角色循环验证 / 再验证     | [da-workflow/role-loop-review](../../../da-workflow/references/role-loop-review-角色循环验证.md)                                                      | SKILL #44 · mindset                                                                                                |
+| 角色循环验证 / 再验证     | [da-workflow/role-loop-review](../../../da-workflow/references/role-loop-review-角色循环验证.md)                                                      | SKILL #45 · mindset                                                                                                |
 | 新建仓库 / 格式化工具链   | [../common/code-formatting-代码格式化.md](../common/code-formatting-代码格式化.md)                                                                    | 技术栈须 React 19 + antd 6（SKILL.md）                                                                             |
 | 事项工作记录              | [work-record/SKILL.md](../../../work-record/SKILL.md)                                                                                                 | —                                                                                                                  |
 
 ## 五、完成前检查清单
 
-- [ ] **跨仓库提交顺序**：core 先 commit+发版 → 业务 repo 按模块 commit → marsun_arch **先 WorkRecord 再** docs/spec（见 [repos-commit.md](../../../marsun-arch-doc-spec/references/repos-commit.md)）
+- [ ] **跨仓库提交顺序**：core **功能+version 同 commit** → CI publish → 业务 **功能+升依赖同 commit** → marsun_arch **先 WorkRecord 再** docs/spec（见 [repos-commit.md](../../../marsun-arch-doc-spec/references/repos-commit.md)）
+- [ ] **发版同包**：禁止仅 bump 的独立 `chore(release)`；禁止为本功能单独 `chore(deps): 升 core`（纯跟版除外；见 [component-mapping · Core 版本管理](../common/component-mapping-组件映射.md)）
 - [ ] 技术栈为 **React 19 + antd 6**（`react`/`react-dom` `^19`，`antd` `^6`；与 core peer 一致；禁止 antd 5 / React 18 作为默认路径）
 - [ ] 目录结构符合 `common/directory-structure-目录结构.md`
 - [ ] Form/Modal/Action 分离，handlers 抽离
 - [ ] ButtonGroup listArray 对象形式；CRUD 操作无 icon；Header 刷新用 `refreshAction` + `RefreshCw`
 - [ ] 图标均从 `@hkyhy/marsun-components-core` 导入，业务代码无 `lucide-react`
-- [ ] 权限/常量/API 符合 `business/permissions-data-权限与常量.md` 与 `business/routing-api-路由与API.md`
+- [ ] 权限/常量/API 符合 `business/permissions-data-权限与常量.md` 与 `business/routing-api-路由与API.md`；权限码三态用 `Permissions`，角色/单权限用 `PermissionGuard`，列表项用 `hidden`（SKILL #13）
 - [ ] 筛选 state 接入 API，Filter label 语义化（禁止「关键词」抽象 label）；部门/人员符合 `business/department-person-部门人员.md`
 - [ ] 筛选项加载态与失败：`metaLoading` 时筛选栏仍占位（禁 `return null`）；选项 loading 传 Filter* `loading`（Filter Item `Loader2 spin` + 面板 Spin，禁 loading 时「暂无数据」）；落定空态用 `Empty iconType="simple"`；失败仅 `message.error`（禁内联错误区 / HTTP raw）；筛选挂 `toolbar`；**选项 loading 禁止并入 `pageLoading`**；默认分厂来自 meta 首项，禁止硬编码 `1001`（见 [filter-筛选组件.md](../common/filter-筛选组件.md) §5.9、[shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)）
 - [ ] 带操作的列表/表单块使用 `InteractiveBlock`：info 用 `Info` + `TooltipInfo`（cursor pointer）；actions icon 与文字同色、导出用 `Download`
@@ -109,9 +111,9 @@
 - [ ] `@hkyhy/marsun-components-core` 版本与 npm 实版一致（`npm view` 核对；无 `file:` lock）
 - [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting-代码格式化.md`）
 - [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
-- [ ] **可复用问题已同任务沉淀**到 skill reference / mapping / 契约（禁止只留在对话；见 SKILL #42）
-- [ ] 测试通过（本人执行：`npm run test` 或 `npx vitest run <path>`；门禁见 [test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) · SKILL #43）
-- [ ] **角色循环验证**已完成（SKILL #44）：方案后跑过「需求」场景；页面可点后跑过「前端」场景；或用户已确认跳过；模板见 [role-loop-review](../../../da-workflow/references/role-loop-review-角色循环验证.md)
+- [ ] **可复用问题已同任务沉淀**到 skill reference / mapping / 契约（禁止只留在对话；见 SKILL #43）
+- [ ] 测试通过（本人执行：`npm run test` 或 `npx vitest run <path>`；门禁见 [test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) · SKILL #44）
+- [ ] **角色循环验证**已完成（SKILL #45）：方案后跑过「需求」场景；页面可点后跑过「前端」场景；或用户已确认跳过；模板见 [role-loop-review](../../../da-workflow/references/role-loop-review-角色循环验证.md)
 - [ ] **新任务台账**：
   1. `plane_pull`（或 `pm_pipeline --step plane-pull`）
   2. 扫描 snapshot 名称 `S3.3.(\d+)`，候选 id = `max+1`（**禁止**盲信 `meta.next_task_id`；大颗粒号段如 73–88 勿占用，见 [task-naming](../../../da-workflow/references/task-naming.md)）

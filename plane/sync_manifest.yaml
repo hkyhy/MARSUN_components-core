@@ -1082,3 +1082,21 @@ tasks:
     Refs: P6.3
     对照 kne-union Permissions 移植；MarsunCoreProvider.auth.permissions；
     hidden/tooltip/error；hooks；examples；发版 v0.1.38
+
+- id: P6.3.76
+  milestone: P6.3
+  name: 同步 Permissions frontend-dev-spec 镜像
+  status: 已完成
+  priority: P1
+  kind: docs
+  owner: 黄金芳
+  start_date: '2026-08-05'
+  target_date: '2026-08-05'
+  tags:
+  - docs
+  - spec
+  note: |
+    Refs: P6.3
+    Related: P6.3.75 / P6.11.78
+    docs(spec) 同步 frontend-dev-spec Permissions 规范镜像
+

@@ -8,7 +8,7 @@
 
 - **目录结构是大前提**：所有组件必须按 `Action/`、`Detail/`、`Form/`、`Modal/`、`List/` 目录拆分，`@kne/*` 库的使用不能绕过目录规范
 - **业务逻辑抽离到 handlers.ts**：Table 行操作和页面头部操作共有的业务逻辑必须抽到 `Action/handlers.ts`，供 `ButtonGroup` listArray 的 `onClick` 和独立 Button 组件共用
-- **列表项可见性用 `hidden` 属性**：`ButtonGroup` listArray、`StatCardList` items 等列表项配置，统一使用 `hidden` 属性控制可见性，禁止使用 `switch(role)` 返回不同数组或 `{condition && <List/>}` 条件渲染不同列表。将所有可能的项目放在一个扁平数组中，通过 `hidden: !hasAnyRole([...])` 控制每项的可见性（`StatItem` 和 `ButtonGroup` 的 listArray 均支持 `hidden`）。整个区块的权限控制仍使用 `PermissionGuard`
+- **列表项可见性用 `hidden` 属性**：`ButtonGroup` listArray、`StatCardList` items 等列表项配置，统一使用 `hidden` 属性控制可见性，禁止使用 `switch(role)` 返回不同数组或 `{condition && <List/>}` 条件渲染不同列表。将所有可能的项目放在一个扁平数组中，通过 `hidden: !hasAnyRole([...])` 控制每项的可见性（`StatItem` 和 `ButtonGroup` 的 listArray 均支持 `hidden`）。整块角色/单权限用 `PermissionGuard`；权限码三态（hidden/tooltip/error）用 core `Permissions`
 - **批量操作状态校验常量集中管理**：批量操作允许的状态列表（如 `SUBMIT_REVIEW_STATUSES`、`REVOKE_REVIEW_STATUSES`、`DELETE_STATUSES`、`ARCHIVE_STATUSES`）在 `Action/handlers.ts` 中用 `ReviewStatus` 枚举定义并 `export`，配合 `filterByStatus()` 函数过滤可操作项
 - **常量集中维护**：跨模块共享的枚举标签映射统一维护在 `src/constants/index.ts`（如 `REVIEW_STATUS_LABEL_MAP`、`FILE_STATUS_TABS`、`INITIATED_STATUS_GROUPS`、`REVIEW_STATUS_GROUPS`），模块级 `constants/status.ts` 仅从 `@/constants` 导入并重新导出，不内联数据。所有状态 key 使用枚举值不用字符串
 - **自定义 Hook 封装页面状态**：页面组件中的状态管理和业务逻辑应抽到 `hooks/use{Feature}.ts`，页面仅做 hook 解构 + 渲染
@@ -176,13 +176,14 @@ const quickEntryList: Record<string, unknown>[] = [
 <ButtonGroup list={quickEntryList} />;
 ```
 
-### `hidden` vs `PermissionGuard` 的选择
+### `hidden` vs `PermissionGuard` vs `Permissions` 的选择
 
-| 场景                                  | 使用方式          | 说明                                |
-| ------------------------------------- | ----------------- | ----------------------------------- |
-| 列表项（按钮、卡片等）按角色显示/隐藏 | `hidden` 属性     | 单个项的可见性控制                  |
-| 整个区块/组件按角色显示/隐藏          | `PermissionGuard` | 包裹整个区域，如整个 Card、整个表格 |
-| 列表项按业务状态显示/隐藏             | `hidden` 属性     | 如 `hidden: record.type !== 'FILE'` |
+| 场景                                                    | 使用方式              | 说明                                                                                                                                  |
+| ------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 列表项（按钮、卡片等）按角色显示/隐藏                   | `hidden` 属性         | 单个项的可见性控制                                                                                                                    |
+| 整个区块/组件按**角色**或**单个** permission + fallback | `PermissionGuard`     | 包裹整个区域；无 tooltip/error 三态                                                                                                   |
+| 按钮/区域按**权限码**，需 hidden / tooltip / error      | `Permissions`（core） | `request` + `type`；注入 `MarsunCoreProvider auth.permissions`；详见 [permissions-data-权限与常量.md](permissions-data-权限与常量.md) |
+| 列表项按业务状态显示/隐藏                               | `hidden` 属性         | 如 `hidden: record.type !== 'FILE'`                                                                                                   |
 
 ## 一、操作按钮模式
 

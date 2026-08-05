@@ -21,11 +21,19 @@ src/components/Common/Auth/
 ├── hasPermission.ts
 ├── PermissionGuard.tsx
 ├── ProtectedRoute.tsx
-├── examples/                    # Demo 示例
-├── __tests__/                   # 测试文件（与 examples/ 平级）
+├── examples/
+├── __tests__/
 │   ├── hasPermission.test.ts
 │   ├── PermissionGuard.test.tsx
 │   └── ProtectedRoute.test.tsx
+└── index.ts
+
+# core 仓库 Permissions（npm 导出；业务勿复制）
+src/components/Permissions/          # @hkyhy/marsun-components-core
+├── Permissions.tsx                  # + computedIsPass / usePermissions / usePermissionsPass
+├── style.module.scss
+├── examples/                        # Basic / Hooks / FunctionChildren
+├── __tests__/Permissions.test.tsx
 └── index.ts
 
 src/components/Common/Tag/
@@ -50,14 +58,14 @@ src/components/Common/Tag/
 
 ### 10.4 测试覆盖范围
 
-| 组件类型     | 必测项                 | 示例                                           |
-| ------------ | ---------------------- | ---------------------------------------------- |
-| 纯逻辑函数   | 全部分支               | `hasPermission(null, ...)` / 各角色 / 未知角色 |
-| UI 组件      | 渲染内容 + 交互回调    | 标题/按钮/链接点击 + loading 状态              |
-| Form 组件    | 字段渲染 + 提交 + 校验 | 所有 placeholder + onFinish + onBack           |
-| 条件渲染组件 | 各分支                 | `roles` 匹配/不匹配 + 未登录                   |
-| 列表组件     | 渲染 + hidden 过滤     | 全部可见 + hidden 过滤                         |
-| Tag 组件     | 文本 + 颜色 + 尺寸     | 各语义色 + hex 直传 + 默认色                   |
+| 组件类型     | 必测项                 | 示例                                                                             |
+| ------------ | ---------------------- | -------------------------------------------------------------------------------- |
+| 纯逻辑函数   | 全部分支               | `hasPermission` / `computedIsPass`（OR / 空 request / function request）         |
+| UI 组件      | 渲染内容 + 交互回调    | 标题/按钮/链接点击 + loading 状态                                                |
+| Form 组件    | 字段渲染 + 提交 + 校验 | 所有 placeholder + onFinish + onBack                                             |
+| 条件渲染组件 | 各分支                 | `PermissionGuard` roles；`Permissions` hidden/tooltip/error + hasPermission 回退 |
+| 列表组件     | 渲染 + hidden 过滤     | 全部可见 + hidden 过滤                                                           |
+| Tag 组件     | 文本 + 颜色 + 尺寸     | 各语义色 + hex 直传 + 默认色                                                     |
 
 ### 10.5 测试模板
 

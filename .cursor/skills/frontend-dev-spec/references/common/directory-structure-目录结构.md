@@ -199,6 +199,7 @@ Components 采用**两级目录结构**：`{Domain}/{Module}/`，每个 Module �
 src/components/
 ├── Common/              # 通用公共组件（无业务逻辑，跨模块复用）
 │   ├── Auth/            # 权限相关（PermissionGuard, ProtectedRoute, hasPermission）
+│   ├── Permissions/     # 优先用 npm `@hkyhy/marsun-components-core` 的 Permissions（权限码三态）；本地勿再造平行实现
 │   ├── Descriptions/    # 描述列表（CommonDescriptions）
 │   ├── TooltipInfo/     # Tooltip 详情（内部使用 CommonDescriptions）
 │   ├── Filter/          # 筛选组件（CommonFilter, FilterSelect, FilterInput, FilterDateRange, FilterNumberRange）
