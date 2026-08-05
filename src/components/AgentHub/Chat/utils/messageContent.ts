@@ -68,8 +68,8 @@ export function parseAssistantContent(content: string, streaming = false): Parse
     if (part) thinkingParts.push(part);
   }
 
-  // Streaming: before  arrives, treat all output as reasoning
-  if (streaming && lastClose === -1) {
+  // Streaming: unclosed think block — treat buffered text as reasoning until </think>
+  if (streaming && lastClose === -1 && lastOpen !== -1) {
     return {
       thinking: normalizeDisplayText(content.replace(THINK_TAG_RE, '').trim()),
       answer: '',
@@ -77,7 +77,7 @@ export function parseAssistantContent(content: string, streaming = false): Parse
     };
   }
 
-  // Streaming: unclosed think block at the end
+  // Streaming: unclosed think block at the end (open after last close)
   if (lastOpen > lastClose) {
     const beforeOpen = content.slice(0, lastOpen).replace(THINK_TAG_RE, '').trim();
     const insideThink = content

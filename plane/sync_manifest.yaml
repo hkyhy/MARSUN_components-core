@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.79
+  next_task_id: P6.3.80
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1134,3 +1134,20 @@ tasks:
     Related: P6.3.77
     StateBar / OrgTree（贴名操作、deleteOkText、触控可见、Tooltip）；examples/tests；chore(release) v0.1.39
 
+- id: P6.3.79
+  milestone: P6.3
+  name: Chat 纯文本 SSE 归入 answer 并发布 v0.1.40
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-08-05'
+  target_date: '2026-08-05'
+  tags:
+  - frontend
+  - AgentHub
+  - release
+  note: |
+    Refs: P6.3
+    Related: S3.3.244
+    parseAssistantContent：无 think 标签时流式正文归 answer；发版 v0.1.40

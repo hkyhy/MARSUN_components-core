@@ -41,12 +41,12 @@ describe('parseAssistantContent', () => {
     expect(result.answer).toBe('');
   });
 
-  it('treats streaming output as thinking before ', () => {
+  it('treats plain streaming output as answer when no think tags', () => {
     const content = '我们根据知识库内容回答问题。首先分析…';
     const result = parseAssistantContent(content, true);
-    expect(result.isThinking).toBe(true);
-    expect(result.thinking).toBe(content);
-    expect(result.answer).toBe('');
+    expect(result.isThinking).toBe(false);
+    expect(result.thinking).toBe('');
+    expect(result.answer).toBe(content);
   });
 
   it('splits thinking and answer after  while still streaming', () => {
