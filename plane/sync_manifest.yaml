@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.77
+  next_task_id: P6.3.78
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1099,4 +1099,21 @@ tasks:
     Refs: P6.3
     Related: P6.3.75 / P6.11.78
     docs(spec) 同步 frontend-dev-spec Permissions 规范镜像
+
+- id: P6.3.77
+  milestone: P6.3
+  name: 补发 marsun-components-core v0.1.38
+  status: 已完成
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-08-05'
+  target_date: '2026-08-05'
+  tags:
+  - infra
+  - release
+  note: |
+    Refs: P6.3
+    Related: P6.3.75
+    feat 已 bump 0.1.38 但未走 chore(release) 触发 CI；补 chore(release): v0.1.38 发 npm
 
