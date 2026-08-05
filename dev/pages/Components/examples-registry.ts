@@ -1801,6 +1801,32 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/orgtree': {
+    title: 'OrgTree 组织树',
+    description: '对齐 Assets 组织架构：默认展开、节点 hover 增删改；纯 UI，业务自行接 API。',
+    examples: [
+      {
+        title: '基础用法',
+        description: '可编辑树与节点操作回调',
+        component: React.lazy(() => import('@/components/OrgTree/examples/BasicDemo')),
+        sourcePath: () => import('@/components/OrgTree/examples/BasicDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'OrgTreeProps',
+        rows: [
+          { prop: 'nodes', desc: '树数据（id/name/parentId/children）', type: 'OrgTreeNode[]' },
+          { prop: 'loading', desc: '加载态', type: 'boolean', defaultVal: 'false' },
+          { prop: 'editable', desc: '是否展示节点操作区', type: 'boolean', defaultVal: 'false' },
+          { prop: 'onAdd', desc: '添加子节点', type: '(parentId: string) => void' },
+          { prop: 'onEdit', desc: '编辑节点', type: '(node) => void' },
+          { prop: 'onDelete', desc: '确认删除后回调', type: '(node) => void | Promise<void>' },
+        ],
+      },
+    ],
+  },
   '/components/permissions': {
     title: 'Permissions 权限控制',
     description:
@@ -1953,6 +1979,44 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'className', desc: '容器 className', type: 'string' },
           { prop: 'inline', desc: '内联模式', type: 'boolean' },
           { prop: 'fontSize', desc: '内联模式字体大小', type: 'number' },
+        ],
+      },
+    ],
+  },
+  '/components/statebar': {
+    title: 'StateBar 状态栏',
+    description:
+      '基于 antd Tabs 的状态切换条，支持 tab / radio / step；tabBarExtraContent 放域内主操作。',
+    examples: [
+      {
+        title: '基础用法',
+        description: 'type、size、isInner、受控 activeKey 与右侧 extra',
+        component: React.lazy(() => import('@/components/StateBar/examples/BasicDemo')),
+        sourcePath: () => import('@/components/StateBar/examples/BasicDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'StateBarProps',
+        rows: [
+          {
+            prop: 'stateOption',
+            desc: '状态项：key + tab/label；可带 children 展示面板',
+            type: 'StateBarOption[]',
+            defaultVal: '[]',
+          },
+          { prop: 'type', desc: '展示样式', type: "'tab' | 'radio' | 'step'", defaultVal: "'tab'" },
+          { prop: 'activeKey', desc: '当前激活 key（受控）', type: 'string' },
+          { prop: 'onChange', desc: '切换回调', type: '(key: string) => void' },
+          { prop: 'tabBarExtraContent', desc: '右侧额外内容（主操作按钮）', type: 'ReactNode' },
+          { prop: 'isInner', desc: '底部线延展至容器全宽', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'size',
+            desc: '尺寸（透传 antd Tabs）',
+            type: "'small' | 'middle' | 'large'",
+            defaultVal: "'middle'",
+          },
         ],
       },
     ],
