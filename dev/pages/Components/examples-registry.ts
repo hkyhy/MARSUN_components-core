@@ -637,7 +637,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/auth': {
     title: 'Auth 权限控制',
-    description: '基于角色的权限管理方案，支持页面级和按钮级权限控制；含侧栏用户卡片。',
+    description:
+      '基于角色的权限管理方案：PermissionGuard（角色/单权限 + fallback）；按钮/区域三种呈现见独立 Permissions 组件；含侧栏用户卡片。',
     examples: [
       {
         title: 'hasPermission 权限判断',
@@ -1795,6 +1796,93 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             prop: 'beforeEnter',
             desc: '进入该步骤前的校验',
             type: '() => boolean | Promise<boolean>',
+          },
+        ],
+      },
+    ],
+  },
+  '/components/permissions': {
+    title: 'Permissions 权限控制',
+    description:
+      '对照 kne-union Permissions：按权限码控制区域展示（hidden / tooltip / error），权限源为 MarsunCoreProvider.auth.permissions。',
+    examples: [
+      {
+        title: '基础权限控制',
+        description: '切换 hidden / tooltip / error，对比有权限与无权限呈现',
+        component: React.lazy(() => import('@/components/Permissions/examples/BasicDemo')),
+        sourcePath: () => import('@/components/Permissions/examples/BasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'Hooks 使用',
+        description: 'usePermissions、usePermissionsPass、computedIsPass',
+        component: React.lazy(() => import('@/components/Permissions/examples/HooksDemo')),
+        sourcePath: () => import('@/components/Permissions/examples/HooksDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '函数式子组件',
+        description: 'children 为函数时根据 isPass 自定义渲染',
+        component: React.lazy(
+          () => import('@/components/Permissions/examples/FunctionChildrenDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Permissions/examples/FunctionChildrenDemo/index.tsx?raw'),
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'PermissionsProps',
+        rows: [
+          {
+            prop: 'type',
+            desc: '无权限呈现：hidden 隐藏 / tooltip 可见不可点 / error 展示 403',
+            type: "'hidden' | 'tooltip' | 'error'",
+            defaultVal: "'hidden'",
+          },
+          {
+            prop: 'tagName',
+            desc: 'tooltip 模式下包裹节点的标签名',
+            type: 'string',
+            defaultVal: "'span'",
+          },
+          {
+            prop: 'message',
+            desc: '无权限提示文案',
+            type: 'string',
+            defaultVal: "'您暂无权限，请联系管理员'",
+          },
+          {
+            prop: 'request',
+            desc: '所需权限；string[] 为 OR；也可传 (permissions)=>boolean；空/未传视为通过',
+            type: 'string[] | ((permissions: string[]) => boolean) | (() => boolean)',
+            defaultVal: 'undefined',
+          },
+          {
+            prop: 'children',
+            desc: '受保护内容，或函数 ({ isPass, type, request }) => ReactNode',
+            type: 'ReactNode | ((props: PermissionsRenderProps) => ReactNode)',
+          },
+          { prop: 'className', desc: 'tooltip 包裹层额外 className', type: 'string' },
+        ],
+      },
+      {
+        componentName: 'Hooks / Utils',
+        rows: [
+          {
+            prop: 'usePermissions',
+            desc: '读取 MarsunCoreProvider.auth.permissions',
+            type: '() => { permissions: string[] }',
+          },
+          {
+            prop: 'usePermissionsPass',
+            desc: '判断 request 是否通过；无 permissions 列表时回退 hasPermission',
+            type: '({ request }) => boolean',
+          },
+          {
+            prop: 'computedIsPass',
+            desc: '纯函数判定；数组为 OR',
+            type: '({ permissions, request }) => boolean',
           },
         ],
       },

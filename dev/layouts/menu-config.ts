@@ -22,6 +22,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
   { key: '/components/layout', label: 'Layout' },
   { key: '/components/llmformattedtext', label: 'LlmFormattedText' },
   { key: '/components/modal', label: 'Modal' },
+  { key: '/components/permissions', label: 'Permissions' },
   { key: '/components/sparkline', label: 'Sparkline' },
   { key: '/components/stat', label: 'Stat' },
   { key: '/components/table', label: 'Table' },

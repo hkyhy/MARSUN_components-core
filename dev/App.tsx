@@ -16,6 +16,7 @@ const App: React.FC = () => {
     <MarsunCoreProvider
       auth={{
         isAuthenticated: true,
+        permissions: ['user:edit'],
         hasAnyRole: (roles) => roles.includes('admin'),
         hasPermission: (key) => key === 'user:edit',
       }}
