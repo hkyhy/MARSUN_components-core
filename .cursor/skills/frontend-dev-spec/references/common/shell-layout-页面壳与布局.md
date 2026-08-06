@@ -121,6 +121,16 @@ PageSpin 自身（core 内置）：`flex: 1; min-height: 200px; min-height: 0` o
 - body 内 `<p className="loading">加载中…</p>` 与整页 Spin 叠层
 - 把 Modal 放在 `ModulePageShell` children 内且不设 `spinning={false}` 时期望可点
 
+### 管理台页头信息三档（禁止叠床架屋）
+
+| 层级                                       | 用途                   | 规则                                              |
+| ------------------------------------------ | ---------------------- | ------------------------------------------------- |
+| **L0** `description` / `headerDescription` | 一句业务说明（≤40 字） | 唯一常显摘要；来自路由 meta                       |
+| **L1** 可折叠指引（Collapse，默认收起）    | 运维清单 / Wave 说明   | 禁止与 L0 同级再铺 Alert                          |
+| **L2** 文档                                | 使用指南 / 产品文      | 危险操作用 `Modal.confirm`，勿用常驻 Alert 堆重点 |
+
+**禁止**：页头同时堆 `description` + 全局 note + 多个 `Alert`；**禁止**页头刷新按钮与角色 Tag（角色进 `UserProfileCard`）。列表默认 `pageSize=20`。分域用 `StateBar` + `tabBarExtraContent`。
+
 ---
 
 ## 二、虚拟滚动条 Virtual Scrollbar
@@ -232,6 +242,25 @@ import styles from './style.module.scss';
 | `src/layouts/MainLayout/index.tsx`       | 主内容区（含 Tour `contentRef`）、左侧 Sider 菜单 |
 | `src/layouts/AgentHubLayout/index.tsx`   | 主内容区                                          |
 | `src/layouts/ComponentsLayout/index.tsx` | 右侧内容区、左侧 Sider 菜单                       |
+
+### AgentAppShell 业务壳（SSO Admin / QA / 研效台）
+
+`AgentAppShell`（`@hkyhy/marsun-components-core`）用于左 sider + 右顶栏的 Agent/管理业务壳。对齐仓：
+
+| 仓                      | Layout                  | 品牌         | sider 折叠 localStorage     |
+| ----------------------- | ----------------------- | ------------ | --------------------------- |
+| `marsun_sso` Admin      | `layouts/AdminAppShell` | SSO 管理中心 | `sso_admin_sider_collapsed` |
+| `Agent_QualityAnalysis` | `layouts/AppShell`      | 质量分析     | `qa_sider_collapsed`        |
+| `marsun_rd_ops`         | `layouts/AppShell`      | 研效台       | `rdops_sider_collapsed`     |
+
+接入约定：
+
+1. 根包 `PageShellProvider` →（可选 `MarsunCoreProvider`）→ `AgentAppShell` → 主内容区 `VirtualScrollbar` → `<Outlet />`
+2. 页面用本地薄封装的 `ModulePageShell`（转调 core）+ `spinning`；**禁止**主滚动区 `overflow-auto` / `overflow-y-auto`
+3. **侧栏折叠必须可工作**：受控 `collapsed` + `onToggleCollapsed`，并持久化到上表 localStorage key（`'1'`/`'0'`）；改壳时不得去掉折叠按钮或受控状态
+4. `siderFooter` 用 `UserProfileCard`（会话 `/me`）；顶栏 `headerTitle`/`headerDescription` 来自 `usePageShell().meta` 或路由 `constants/nav` meta
+
+参考：`repos/marsun_sso/frontend/src/layouts/AdminAppShell`、`repos/marsun_rd_ops/frontend/src/layouts/AppShell`。
 
 ### 层 2：高频业务滚动区
 
