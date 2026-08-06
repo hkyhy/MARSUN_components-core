@@ -104,7 +104,8 @@ const UploadedFiles: React.FC<UploadedFilesProps> = ({ fileList, onRemove }) => 
           key={file.uid}
           className={classNames(
             classNames('upload-file-row', styles['upload-file-row']),
-            file.status === 'error' && classNames('upload-file-row-error', styles['upload-file-row-error']),
+            file.status === 'error' &&
+              classNames('upload-file-row-error', styles['upload-file-row-error']),
           )}
         >
           <div className={classNames('upload-label', styles['upload-label'])}>
@@ -114,7 +115,10 @@ const UploadedFiles: React.FC<UploadedFilesProps> = ({ fileList, onRemove }) => 
               {getExt(file.name)}
             </Tag>
             {file.size && (
-              <Typography.Text type="secondary" className={classNames('upload-title', styles['upload-title'])}>
+              <Typography.Text
+                type="secondary"
+                className={classNames('upload-title', styles['upload-title'])}
+              >
                 {formatSize(file.size)}
               </Typography.Text>
             )}
@@ -204,14 +208,14 @@ const CommonUpload = React.forwardRef<CommonUploadRef, CommonUploadProps>(
     const concurrent = concurrentCount ?? 3;
 
     const beforeUploadFn = React.useCallback(
-      (file: File): boolean => {
+      (file: File) => {
         if (getPermission && !getPermission(file)) {
           message.error('无权限上传此文件');
-          return false;
+          return Upload.LIST_IGNORE;
         }
         if (file.size > effectiveFileSize) {
           message.error(`文件超出 ${formatSize(effectiveFileSize)} 限制`);
-          return false;
+          return Upload.LIST_IGNORE;
         }
         return true;
       },

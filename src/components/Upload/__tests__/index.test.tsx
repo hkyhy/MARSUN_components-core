@@ -1,4 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { fireEvent, render, waitFor } from '@testing-library/react';
+import React from 'react';
+import { Upload as AntdUpload, message } from 'antd';
+import CommonUpload from '../index';
 
 // Test the utility functions extracted from Upload component
 // These are the pure functions defined inline in the component
@@ -46,5 +50,39 @@ describe('Upload utils', () => {
     it('handles dot at start', () => {
       expect(getExt('.gitignore')).toBe('GITIGNORE');
     });
+  });
+});
+
+describe('CommonUpload size gate', () => {
+  beforeEach(() => {
+    vi.spyOn(message, 'error').mockImplementation(() => undefined as never);
+  });
+
+  it('rejects oversized file with LIST_IGNORE so it is not kept in fileList', async () => {
+    const onChange = vi.fn();
+    const { container } = render(
+      <CommonUpload variant="button" fileSize={1024} value={[]} onChange={onChange} />,
+    );
+
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    expect(input).toBeTruthy();
+
+    const oversized = new File([new Uint8Array(2048)], 'big.bin', {
+      type: 'application/octet-stream',
+    });
+    Object.defineProperty(oversized, 'size', { value: 2048 });
+
+    fireEvent.change(input, { target: { files: [oversized] } });
+
+    await waitFor(() => {
+      expect(message.error).toHaveBeenCalled();
+    });
+
+    // LIST_IGNORE: antd should not add the file; onChange may fire with empty list or not at all
+    const lastCall = onChange.mock.calls.at(-1);
+    if (lastCall) {
+      expect(lastCall[0]).toEqual([]);
+    }
+    expect(AntdUpload.LIST_IGNORE).toBeTruthy();
   });
 });

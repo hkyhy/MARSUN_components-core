@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.81
+  next_task_id: P6.3.82
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1168,3 +1168,22 @@ tasks:
     Refs: P6.3
     Related: P6.3.79
     chore(release): v0.1.40 触发 CI；examples-registry 与 frontend-dev-spec 镜像同步
+
+- id: P6.3.81
+  milestone: P6.3
+  name: Upload 超限改 LIST_IGNORE 并发版 0.1.42
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-08-06'
+  target_date: '2026-08-06'
+  tags:
+  - frontend
+  - upload
+  - release
+  note: |
+    Refs: P6.3
+    Related: P3.7.77
+    beforeUpload 返回 Upload.LIST_IGNORE；version 0.1.42（npm 待登录后 publish）
+
