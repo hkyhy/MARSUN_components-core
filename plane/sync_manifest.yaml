@@ -1155,7 +1155,7 @@ tasks:
 - id: P6.3.80
   milestone: P6.3
   name: 补发 npm 0.1.40 并同步 StateBar 规范示例
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: chore
   owner: 黄金芳
