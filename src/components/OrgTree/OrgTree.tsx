@@ -20,6 +20,9 @@ export type OrgTreeProps = {
   /** 展示节点内增删改操作 */
   editable?: boolean;
   className?: string;
+  /** 受控选中（点选节点，如右侧岗位面板） */
+  selectedKeys?: Key[];
+  onSelect?: (node: { id: string; name: string; parentId: string | null } | null) => void;
   onAdd?: (parentId: string) => void;
   onEdit?: (node: { id: string; name: string; parentId: string | null }) => void;
   /** 确认删除后回调；由业务执行 API */
@@ -40,6 +43,22 @@ function collectAllKeys(nodes: OrgTreeNode[]): string[] {
   return keys;
 }
 
+function findOrgNode(
+  list: OrgTreeNode[],
+  id: string,
+): { id: string; name: string; parentId: string | null } | null {
+  for (const n of list) {
+    if (n.id === id) {
+      return { id: n.id, name: n.name, parentId: n.parentId ?? null };
+    }
+    if (n.children?.length) {
+      const hit = findOrgNode(n.children, id);
+      if (hit) return hit;
+    }
+  }
+  return null;
+}
+
 /**
  * 组织树（对齐 Assets 组织架构行为）：默认展开、节点 hover 增删改。
  * 纯 UI，无业务 API。
@@ -49,6 +68,8 @@ const OrgTree: React.FC<OrgTreeProps> = ({
   loading = false,
   editable = false,
   className,
+  selectedKeys,
+  onSelect,
   onAdd,
   onEdit,
   onDelete,
@@ -151,6 +172,12 @@ const OrgTree: React.FC<OrgTreeProps> = ({
         treeData={treeData}
         expandedKeys={expandedKeys}
         onExpand={(keys) => setExpandedKeys(keys)}
+        selectedKeys={selectedKeys}
+        onSelect={(keys) => {
+          if (!onSelect) return;
+          const id = keys[0] != null ? String(keys[0]) : '';
+          onSelect(id ? findOrgNode(nodes, id) : null);
+        }}
         showLine
         blockNode
       />
