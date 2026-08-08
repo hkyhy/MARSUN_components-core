@@ -51,6 +51,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 与 ci.yml 一致：typecheck 依赖 examples-registry.ts，须先 collect
+      - name: Collect examples
+        run: npm run collect-examples
+
       - name: Typecheck
         run: npm run typecheck
 

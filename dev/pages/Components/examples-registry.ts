@@ -882,103 +882,66 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
     examples: [
       {
         title: '完整筛选栏',
-        description: 'CommonFilter 完整组合；含 Segmented 桌面/移动布局预览（layoutMode）',
+        description: 'CommonFilter 完整组合：下拉、输入、单日期（月）、日期范围、数字范围筛选器',
         component: React.lazy(() => import('@/components/Filter/examples/CommonFilterDemo')),
         sourcePath: () => import('@/components/Filter/examples/CommonFilterDemo.tsx?raw'),
         block: true,
       },
       {
-        title: '移动端 / 窄屏',
-        description:
-          'layoutMode=mobile：横滑 pill、隐藏标签、已选横滑与展开；对齐 ReactFilter 移动壳（SKILL #46）',
-        component: React.lazy(() => import('@/components/Filter/examples/CommonFilterMobileDemo')),
-        sourcePath: () => import('@/components/Filter/examples/CommonFilterMobileDemo.tsx?raw'),
-        block: true,
-      },
-      {
-        title: '桌面 / 移动切换',
-        description: 'Segmented 切换 layoutMode（desktop | mobile），同一组 Filter* 预览双端交互',
-        component: React.lazy(
-          () => import('@/components/Filter/examples/CommonFilterLayoutSwitchDemo'),
-        ),
-        sourcePath: () =>
-          import('@/components/Filter/examples/CommonFilterLayoutSwitchDemo.tsx?raw'),
-        block: true,
-      },
-      {
-        title: 'list 条件隐藏',
-        description: 'list 模式用 hidden / display 按条件隐藏；含桌面/移动布局预览',
-        component: React.lazy(
-          () => import('@/components/Filter/examples/CommonFilterListVisibilityDemo'),
-        ),
-        sourcePath: () =>
-          import('@/components/Filter/examples/CommonFilterListVisibilityDemo.tsx?raw'),
-        block: true,
-      },
-      {
         title: '单选 / 多选筛选器',
-        description: 'FilterSelect 单选、可搜索、多选；loading/空态；含桌面/移动布局预览',
+        description: 'FilterSelect 单选、可搜索、多选；loading Item+面板 Spin；空态 Empty',
         component: React.lazy(() => import('@/components/Filter/examples/FilterSelectDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterSelectDemo/index.tsx?raw'),
       },
       {
         title: '输入框筛选器',
-        description: 'FilterInput 文本输入筛选（语义化 label）；含桌面/移动布局预览',
+        description: 'FilterInput 关键词搜索输入框',
         component: React.lazy(() => import('@/components/Filter/examples/FilterInputDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterInputDemo.tsx?raw'),
       },
       {
         title: '日期范围筛选器',
-        description: 'FilterDateRange 日期区间选择，支持快捷选项；含桌面/移动布局预览',
+        description: 'FilterDateRange 日期区间选择，支持快捷选项',
         component: React.lazy(() => import('@/components/Filter/examples/FilterDateRangeDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterDateRangeDemo.tsx?raw'),
       },
       {
         title: '单日期筛选器',
-        description: 'FilterDatePicker 日/月/年粒度与快捷选项；含桌面/移动布局预览',
+        description: 'FilterDatePicker 单日期选择，支持日 / 月 / 年粒度与快捷选项',
         component: React.lazy(() => import('@/components/Filter/examples/FilterDatePickerDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterDatePickerDemo.tsx?raw'),
       },
       {
         title: '数字范围筛选器',
-        description: 'FilterNumberRange 数值区间选择，支持单位后缀；含桌面/移动布局预览',
+        description: 'FilterNumberRange 数值区间选择，支持单位后缀',
         component: React.lazy(() => import('@/components/Filter/examples/FilterNumberRangeDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterNumberRangeDemo.tsx?raw'),
       },
       {
         title: '树形筛选器',
-        description: 'FilterTreeSelect：组织树 / leafOnly；loading/空态；含桌面/移动布局预览',
+        description:
+          'FilterTreeSelect：组织树任意深勾选；分厂→品种 leafOnly；loading Item+面板 Spin；空态 Empty',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTreeSelectDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterTreeSelectDemo/index.tsx?raw'),
       },
       {
         title: '级联路径筛选器',
-        description: 'FilterCascader：leafOnly / onChangePath / dependsOn；含桌面/移动布局预览',
+        description:
+          'FilterCascader：分厂→品种两列路径；leafOnly 只写叶子；多选须点确定才提交；onChangePath；对比 dependsOn 主对标',
         component: React.lazy(() => import('@/components/Filter/examples/FilterCascaderDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterCascaderDemo/index.tsx?raw'),
         block: true,
       },
       {
         title: '声明式依赖 / 动态拉取',
-        description: 'dependsOn + loadData + panelExtra；含桌面/移动布局预览',
+        description: 'dependsOn + loadData + panelExtra：月份驱动主对标；对比面板内嵌纺纱方法',
         component: React.lazy(() => import('@/components/Filter/examples/FilterDependsDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterDependsDemo.tsx?raw'),
         block: true,
       },
       {
-        title: 'S3 质量分析筛选',
-        description:
-          '对齐 VarietyHistorySearchBar：对标模式 + FilterCascader leafOnly + 主对标月份 / 新品种属性搜树 panelExtra；含布局预览',
-        component: React.lazy(
-          () => import('@/components/Filter/examples/QualityAnalysisFilterDemo'),
-        ),
-        sourcePath: () =>
-          import('@/components/Filter/examples/QualityAnalysisFilterDemo/index.tsx?raw'),
-        block: true,
-      },
-      {
         title: '筛选触发器',
-        description: 'FilterTrigger 未选中 / 已选中 / 可展开 / loading；含桌面/移动布局预览',
+        description: 'FilterTrigger 未选中 / 已选中 / 可展开 / loading 四种状态',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTriggerDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterTriggerDemo/index.tsx?raw'),
       },
@@ -990,32 +953,9 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
       {
         title: '筛选 Popover',
-        description: 'FilterPopover 触发器 + 面板组合；含桌面/移动布局预览（移动为 sheet）',
+        description: 'FilterPopover 触发器 + 面板组合，确定后提交草稿值',
         component: React.lazy(() => import('@/components/Filter/examples/FilterPopoverDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterPopoverDemo/index.tsx?raw'),
-      },
-      {
-        title: '类型日期范围',
-        description:
-          'FilterTypeDateRange：date/month/week + 快捷项；Marsun 值 { type, range }；含布局预览',
-        component: React.lazy(() => import('@/components/Filter/examples/FilterTypeDateRangeDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterTypeDateRangeDemo.tsx?raw'),
-        block: true,
-      },
-      {
-        title: 'Tag 列表筛选',
-        description: 'FilterList：单选/多选 CheckableTag；popover / inline；含布局预览',
-        component: React.lazy(() => import('@/components/Filter/examples/FilterListDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterListDemo.tsx?raw'),
-        block: true,
-      },
-      {
-        title: 'SuperSelect / 业务选择器',
-        description:
-          'FilterSuperSelect / TableList / Function / Industry / Address / City；kne wrap + Marsun 值；含布局预览',
-        component: React.lazy(() => import('@/components/Filter/examples/FilterKneSelectDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterKneSelectDemo.tsx?raw'),
-        block: true,
       },
     ],
     apiDoc: [
@@ -1030,16 +970,6 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             required: true,
           },
           { prop: 'active', desc: '是否有值（控制选中态样式）', type: 'boolean' },
-          {
-            prop: 'hidden',
-            desc: '为 true 时不渲染该筛选项；支持 boolean 或函数；与 display 二选一，display 优先',
-            type: 'boolean | ((ctx) => boolean)',
-          },
-          {
-            prop: 'display',
-            desc: '为 false 时不渲染该筛选项；支持 boolean 或函数；与 hidden 二选一，display 优先',
-            type: 'boolean | ((ctx) => boolean)',
-          },
           {
             prop: 'dependsOn',
             desc: '依赖的其它 filterKey；变化时默认清空本项并触发 loadData',
@@ -1292,12 +1222,6 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         rows: [
           { prop: 'children', desc: '子筛选器组件', type: 'React.ReactNode', required: true },
           {
-            prop: 'list',
-            desc: '筛选项 JSX 数组；item 的 hidden===true 或 display===false 时不渲染',
-            type: 'React.ReactNode[]',
-          },
-          { prop: 'extra', desc: '右侧额外内容（与筛选项两端对齐）', type: 'React.ReactNode' },
-          {
             prop: 'onClearAll',
             desc: '清空全部额外回调（内部已通过 onRemove 自动清空）',
             type: '() => void',
@@ -1308,28 +1232,6 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             desc: '已选标签 value 最大字符数，超出显示 ... 并在 hover 时展示完整内容',
             type: 'number',
             defaultVal: '20',
-          },
-          {
-            prop: 'displayLine',
-            desc: '默认展示的筛选项个数；超出收入「更多」。移动布局下忽略',
-            type: 'number',
-          },
-          {
-            prop: 'layoutMode',
-            desc: 'auto 跟视口；mobile / desktop 强制。默认 auto',
-            type: "'auto' | 'mobile' | 'desktop'",
-            defaultVal: 'auto',
-          },
-          {
-            prop: 'measureContainer',
-            desc: '为 true 时 auto 按根容器宽度判定（窄预览）；默认 false 避免半栏误判',
-            type: 'boolean',
-            defaultVal: 'false',
-          },
-          {
-            prop: 'forceMobile',
-            desc: '已废弃：true→mobile，false→desktop；请用 layoutMode',
-            type: 'boolean',
           },
         ],
       },
