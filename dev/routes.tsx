@@ -22,6 +22,7 @@ export const showcaseRoutes = (
     <Route path="modal" element={<ExamplePage />} />
     <Route path="orgtree" element={<ExamplePage />} />
     <Route path="permissions" element={<ExamplePage />} />
+    <Route path="reactfilter" element={<ExamplePage />} />
     <Route path="sparkline" element={<ExamplePage />} />
     <Route path="stat" element={<ExamplePage />} />
     <Route path="statebar" element={<ExamplePage />} />

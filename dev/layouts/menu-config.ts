@@ -24,6 +24,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
   { key: '/components/modal', label: 'Modal' },
   { key: '/components/orgtree', label: 'OrgTree' },
   { key: '/components/permissions', label: 'Permissions' },
+  { key: '/components/reactfilter', label: 'ReactFilter' },
   { key: '/components/sparkline', label: 'Sparkline' },
   { key: '/components/stat', label: 'Stat' },
   { key: '/components/statebar', label: 'StateBar' },
