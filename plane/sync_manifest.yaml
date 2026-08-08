@@ -1241,3 +1241,22 @@ tasks:
     Refs: P6.3
     Related: P6.3.83
     tsconfig allowJs 修复 TS7016；chore(release): v0.1.44 触发 npm
+
+- id: P6.3.85
+  milestone: P6.3
+  name: ReactFilter 补 kne 依赖与 lib external 重发 v0.1.44
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-08-08'
+  target_date: '2026-08-08'
+  tags:
+  - frontend
+  - release
+  - ci
+  note: |
+    Refs: P6.3
+    Related: P6.3.84
+    补 @kne/super-select|super-select-plus|overflow-items 入 package.json+lock；
+    vite.config.lib.ts external；chore(release) 重发 v0.1.44
