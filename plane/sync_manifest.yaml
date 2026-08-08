@@ -1280,6 +1280,25 @@ tasks:
     补 QualityAnalysisReactFilterDemo.module.scss + FilterLayoutPreview.module.scss；
     chore(release) 再发 v0.1.44
 
+- id: P6.3.88
+  milestone: P6.3
+  name: release.yml collect-examples 对齐 CI 重发 v0.1.44
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-08-08'
+  target_date: '2026-08-08'
+  tags:
+  - frontend
+  - release
+  - ci
+  note: |
+    Refs: P6.3
+    Related: P6.3.86
+    Release typecheck 缺 collect-examples，引用已删 FilterKneSelectDemo/FilterListDemo；
+    对齐 release/publish 与重生 examples-registry
+
 - id: P6.3.87
   milestone: P6.3
   name: CI 重试发布 npm v0.1.44（registry 仍缺包）

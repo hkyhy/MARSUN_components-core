@@ -4,4 +4,5 @@
 - SuperSelect / SelectTree 弹层全局修补（`superSelectPopup.scss`）
 - 运行时依赖：`@kne/super-select` / `@kne/super-select-plus` / `@kne/overflow-items`（`package.json` + lib `external`）
 - Showcase：补齐 QualityAnalysis ReactFilter Demo / FilterLayoutPreview 样式（`build:showcase`）
+- Release：`release.yml`/`publish.yml` typecheck 前对齐 `collect-examples`（与 CI 一致）
 - CI：`tsconfig` `allowJs` 以支持 ReactFilter `.jsx` typecheck
