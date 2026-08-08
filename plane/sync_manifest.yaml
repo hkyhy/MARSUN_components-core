@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.84
+  next_task_id: P6.3.85
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1223,3 +1223,21 @@ tasks:
     Related: S3.3.251
     kne ReactFilter 整包移植；SuperSelect 弹层修补；FilterValueDisplay hover 小号字+max-height；
     Showcase S3 质量分析 Demo；Release: v0.1.44
+
+- id: P6.3.84
+  milestone: P6.3
+  name: ReactFilter CI allowJs 与 chore(release) v0.1.44
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-08-08'
+  target_date: '2026-08-08'
+  tags:
+  - frontend
+  - release
+  - ci
+  note: |
+    Refs: P6.3
+    Related: P6.3.83
+    tsconfig allowJs 修复 TS7016；chore(release): v0.1.44 触发 npm
