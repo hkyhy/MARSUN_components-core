@@ -1,0 +1,31 @@
+// @ts-nocheck
+const message = {
+  filterText: '筛选',
+  moreText: '更多',
+  selectedText: '您已选择',
+  clearAllText: '清空全部',
+  toggleUpText: '收起',
+  selectedTextAdvanced: '已选',
+  clearText: '清空筛选',
+  otherText: '其他',
+  cancelText: '取消',
+  determineText: '确定',
+  year: '年',
+  over: '{count}{unit}以上',
+  lessThan: '{count}{unit}以下',
+  inputPlaceholder: '请输入{label}',
+  pleaseInput: '请输入',
+  defaultInputPlaceholder: '请输入{label}',
+  maxSelectedCount: '最多选择{count}项',
+  customTime: '自定义时间',
+  monthly: '按月',
+  weekly: '按周',
+  last7Days: '近7天',
+  thisMonth: '本月',
+  last3Months: '近三个月',
+  thisYear: '当年',
+  fullYear: '本年度',
+  pleaseSelect: '请选择',
+};
+
+export default message;

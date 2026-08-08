@@ -1,3 +1,6 @@
+/** ReactFilter SuperSelect/SelectTree 弹层全局修补（进 `/styles` 产物） */
+import './components/ReactFilter/superSelectPopup.scss';
+
 // Provider & theme
 export { MarsunCoreProvider, useMarsunAuth, useMarsunCore, useMarsunFetch } from './provider';
 export type { MarsunCoreProviderProps, MarsunAuthContext, MarsunFetchContext } from './provider';
@@ -28,6 +31,7 @@ export {
   recentDayRange,
   recentYearRange,
   recentDayRangeStrings,
+  formatDateTimeDisplay,
 } from './utils/date';
 export {
   formatPickerValue,
@@ -119,6 +123,46 @@ export * from './components/Descriptions';
 export * from './components/Empty';
 export * from './components/File';
 export * from './components/Filter';
+// ReactFilter (@kne/react-filter port). FilterProvider aliased to avoid clash with Common FilterProvider.
+export {
+  default as Filter,
+  fields as reactFilterFields,
+  getFilterValue,
+  useFilter as useReactFilter,
+  withFilterValue,
+  SearchInput as ReactFilterSearchInput,
+  FilterProvider as ReactFilterProvider,
+  pickSelectValues,
+  createFilterValueMapper,
+  useSearchParamsValue,
+  filterInterceptors,
+  singleSelectInterceptor,
+  multiSelectInterceptor,
+  FILTER_CLASS,
+  AdvancedFilter,
+  FilterValueDisplay,
+  FilterItem as ReactFilterItem,
+  FilterLines,
+  FilterOuter,
+  PopoverItem,
+  withFieldItem,
+  FilterItemContainer,
+  TypeDateRangePickerField,
+  NumberRangeFilterItem,
+  InputFilterItem as ReactInputFilterItem,
+  DatePickerFilterItem as ReactDatePickerFilterItem,
+  DateRangePickerFilterItem as ReactDateRangePickerFilterItem,
+  TypeDateRangePickerFilterItem,
+  SuperSelectFilterItem,
+  SelectTableListFilterItem,
+  SelectTreeFilterItem,
+  SelectCascaderFilterItem,
+  SelectFunctionFilterItem,
+  SelectIndustryFilterItem,
+  SelectAddressFilterItem,
+  SelectCascader,
+} from './components/ReactFilter';
+export type { FilterValueItem, FilterValue } from './components/ReactFilter';
 export * from './components/Form';
 export * from './components/InteractiveBlock';
 export * from './components/Layout';

@@ -1,0 +1,211 @@
+/**
+ * SuperSelect 列表弹层修补（挂 body，非 CSS Module）。
+ *
+ * 重要：规则必须限定在「列表」容器（.select-list-scroll-list / .ant-list），
+ * 禁止作用到 SelectCascader（.select-cascader-content）——级联行用横向 ant-space(checkbox+label)，
+ * 若全局强制 space 纵向/width:100% 会叠字、列溢出。
+ *
+ * 桌面列表弹层：
+ *   .ant-dropdown[class*=kne-super-select] → .over-content → .select-list-scroll-list(simplebar)
+ *   → .ant-space / .ant-list → .select-list-item
+ */
+
+/* —— 列表：宽度链 —— */
+.ant-dropdown[class*='kne-super-select'] .over-content,
+.ant-dropdown .over-content,
+[class*='kne-super-select'].over-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .simplebar-wrapper,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .simplebar-mask,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .simplebar-offset,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .simplebar-content-wrapper,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .simplebar-content,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-spin-nested-loading,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-spin-container,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-list,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-list-items,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-space,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-space-item,
+.ant-popover .select-list-scroll-list,
+.ant-popover .select-list-scroll-list .simplebar-content,
+.ant-popover .select-list-scroll-list .ant-space,
+.ant-popover .select-list-scroll-list .ant-space-item {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-space,
+.ant-popover .select-list-scroll-list .ant-space {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-space-item,
+.ant-popover .select-list-scroll-list .ant-space-item {
+  display: block !important;
+  width: 100% !important;
+  flex: none !important;
+  align-self: stretch !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-list-items,
+.ant-popover .select-list-scroll-list .ant-list-items {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+/* 多选列表行：Checkbox Flex + content Flex */
+.ant-dropdown[class*='kne-super-select'] .select-list-item,
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-list-item,
+.ant-popover .select-list-item,
+.ant-popover .select-list-scroll-list .ant-list-item {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-item > .ant-flex:first-child,
+.ant-popover .select-list-item > .ant-flex:first-child {
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-item .ant-checkbox-wrapper,
+.ant-popover .select-list-item .ant-checkbox-wrapper {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  margin-inline-end: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-item .select-list-item-content,
+.ant-popover .select-list-item .select-list-item-content {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  margin-right: 0 !important;
+  overflow: hidden !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-item .select-list-item-label,
+.ant-popover .select-list-item .select-list-item-label {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-item .ant-checkbox .ant-checkbox-inner,
+.ant-popover .select-list-item .ant-checkbox .ant-checkbox-inner {
+  width: 16px !important;
+  height: 16px !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: var(--ant-color-border, #d9d9d9) !important;
+  background: #fff !important;
+  box-sizing: border-box !important;
+}
+
+.ant-dropdown[class*='kne-super-select']
+  .select-list-item
+  .ant-checkbox-checked
+  .ant-checkbox-inner,
+.ant-popover .select-list-item .ant-checkbox-checked .ant-checkbox-inner {
+  border-color: var(--primary-color, var(--ant-color-primary, #1677ff)) !important;
+  background: var(--primary-color, var(--ant-color-primary, #1677ff)) !important;
+}
+
+/*
+ * 树（SelectTree）：层级缩进依赖
+ *   ant-tree-indent-unit（每层一块）+ ant-tree-switcher / switcher-noop（同宽占位）
+ * 禁止把 noop 宽度收成 0，否则叶子与父级齐平；也勿强改 treenode 为自定义 flex/gap，会打乱 indent。
+ */
+.ant-dropdown[class*='kne-super-select'] .select-tree-scroll-list .ant-tree,
+.ant-popover .select-tree-scroll-list .ant-tree {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-tree-scroll-list .ant-tree-indent,
+.ant-popover .select-tree-scroll-list .ant-tree-indent,
+.ant-dropdown[class*='kne-super-select'] .select-tree-scroll-list .ant-tree-switcher,
+.ant-popover .select-tree-scroll-list .ant-tree-switcher {
+  flex: none !important;
+  flex-shrink: 0 !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-tree-scroll-list .ant-tree-indent-unit,
+.ant-popover .select-tree-scroll-list .ant-tree-indent-unit {
+  display: inline-block !important;
+  width: 24px !important;
+  flex: none !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-tree-scroll-list .ant-tree-switcher,
+.ant-popover .select-tree-scroll-list .ant-tree-switcher {
+  width: 24px !important;
+  min-width: 24px !important;
+  margin: 0 !important;
+  /* kne 默认 translateY 会让箭头/占位错位，树缩进场景复位 */
+  transform: none !important;
+  align-self: center !important;
+}
+
+/* 叶子 noop：保留 24px 占位（错落对齐），只去掉空图标 */
+.ant-dropdown[class*='kne-super-select']
+  .select-tree-scroll-list
+  .ant-tree-switcher.ant-tree-switcher-noop,
+.ant-popover .select-tree-scroll-list .ant-tree-switcher.ant-tree-switcher-noop {
+  width: 24px !important;
+  min-width: 24px !important;
+  max-width: 24px !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.ant-dropdown[class*='kne-super-select']
+  .select-tree-scroll-list
+  .ant-tree-switcher.ant-tree-switcher-noop::before,
+.ant-popover .select-tree-scroll-list .ant-tree-switcher.ant-tree-switcher-noop::before {
+  display: none !important;
+  content: none !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-tree-scroll-list .ant-tree-node-content-wrapper,
+.ant-popover .select-tree-scroll-list .ant-tree-node-content-wrapper {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-tree-scroll-list .select-tree-item-label,
+.ant-popover .select-tree-scroll-list .select-tree-item-label {
+  color: var(--ant-color-text, rgba(0, 0, 0, 0.88)) !important;
+}
+
+.ant-dropdown[class*='kne-super-select']
+  .select-tree-scroll-list
+  .ant-tree-checkbox
+  .ant-tree-checkbox-inner,
+.ant-popover .select-tree-scroll-list .ant-tree-checkbox .ant-tree-checkbox-inner {
+  width: 16px !important;
+  height: 16px !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: var(--ant-color-border, #d9d9d9) !important;
+  background: #fff !important;
+}

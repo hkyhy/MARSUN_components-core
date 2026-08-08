@@ -45,3 +45,16 @@ export function recentDayRangeStrings(span: number | '1y'): [string, string] {
   const [start, end] = span === '1y' ? recentYearRange() : recentDayRange(span);
   return [start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD')];
 }
+
+/**
+ * 展示用日期时间：统一为 `YYYY-MM-DD HH:mm:ss`。
+ * 非法 / 空串回退原文或 `—`。
+ */
+export function formatDateTimeDisplay(value?: string | null, empty = '—'): string {
+  if (value == null) return empty;
+  const raw = String(value).trim();
+  if (!raw) return empty;
+  const parsed = dayjs(raw);
+  if (!parsed.isValid()) return raw;
+  return parsed.format('YYYY-MM-DD HH:mm:ss');
+}

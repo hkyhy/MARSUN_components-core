@@ -1,0 +1,107 @@
+{
+  "title": "ReactFilter（kne）",
+  "description": "厂商移植自 @kne/react-filter。**新页列表筛选 SSOT**；CommonFilter 为存量过渡。含 S3 质量分析 ReactFilter 示例。",
+  "examples": [
+    {
+      "title": "基础 Filter",
+      "description": "最小示例：Filter + InputFilterItem；含 Segmented + ResponsiveProvider 桌面/移动预览",
+      "component": "@/components/ReactFilter/examples/BaseDemo",
+      "sourcePath": "@/components/ReactFilter/examples/BaseDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "S3 质量分析 · ReactFilter",
+      "description": "新页 SSOT：对标模式 + PopoverItem 壳 + Cascader.Panel（leafOnly 单选/多选）；含布局预览",
+      "component": "@/components/ReactFilter/examples/QualityAnalysisReactFilterDemo",
+      "sourcePath": "@/components/ReactFilter/examples/QualityAnalysisReactFilterDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "基础筛选",
+      "description": "Filter 多字段组合；含桌面/移动布局预览（ResponsiveProvider container）",
+      "component": "@/components/ReactFilter/examples/FilterComboDemo",
+      "sourcePath": "@/components/ReactFilter/examples/FilterComboDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "searchParamsValue",
+      "description": "useSearchParamsValue 从平铺 URL 参数解析筛选初始值，可选清理已消费 key；Filter value/onChange 由业务自行 seed",
+      "component": "@/components/ReactFilter/examples/SearchParamsValueDemo",
+      "sourcePath": "@/components/ReactFilter/examples/SearchParamsValueDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "定制 className",
+      "description": "通过稳定全局类名（根 react-filter + 内部短类名）用 CSS 选择器定制 Filter 内部样式；可用 FILTER_CLASS 引用类名",
+      "component": "@/components/ReactFilter/examples/ClassNameDemo",
+      "sourcePath": "@/components/ReactFilter/examples/ClassNameDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "高级筛选",
+      "description": "AdvancedFilter 多行布局；含桌面/移动布局预览",
+      "component": "@/components/ReactFilter/examples/AdvancedFilterDemo",
+      "sourcePath": "@/components/ReactFilter/examples/AdvancedFilterDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "筛选字段组件",
+      "description": "全字段 + SuperSelect / 业务选择器；含桌面/移动布局预览",
+      "component": "@/components/ReactFilter/examples/FilterFieldsDemo",
+      "sourcePath": "@/components/ReactFilter/examples/FilterFieldsDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "搜索输入",
+      "description": "SearchInput debounce + IME；含桌面/移动布局预览",
+      "component": "@/components/ReactFilter/examples/SearchInputDemo",
+      "sourcePath": "@/components/ReactFilter/examples/SearchInputDemo.tsx",
+      "block": true
+    },
+    {
+      "title": "已选值展示",
+      "description": "使用 FilterValueDisplay 组件展示已选择的筛选条件，支持单独删除和清空全部",
+      "component": "@/components/ReactFilter/examples/FilterValueDisplayDemo",
+      "sourcePath": "@/components/ReactFilter/examples/FilterValueDisplayDemo.tsx"
+    },
+    {
+      "title": "弹出层筛选",
+      "description": "PopoverItem 多种交互；含桌面/移动布局预览",
+      "component": "@/components/ReactFilter/examples/PopoverItemDemo",
+      "sourcePath": "@/components/ReactFilter/examples/PopoverItemDemo.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "Filter",
+      "rows": [
+        {
+          "prop": "list",
+          "desc": "筛选项行：FilterItemConfig[][]，项为 { type, props }",
+          "type": "Array<Array<{ type: ComponentType; props: object }>>",
+          "required": true
+        },
+        {
+          "prop": "value",
+          "desc": "筛选值数组 FilterValueItem[]",
+          "type": "FilterValue",
+          "required": false
+        },
+        {
+          "prop": "onChange",
+          "desc": "值变更回调",
+          "type": "(value: FilterValue) => void"
+        }
+      ]
+    },
+    {
+      "componentName": "FilterValueItem",
+      "rows": [
+        { "prop": "name", "desc": "字段名", "type": "string", "required": true },
+        { "prop": "label", "desc": "展示标签", "type": "ReactNode" },
+        { "prop": "value", "desc": "字段值", "type": "unknown", "required": true }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  formatDateTimeDisplay,
   recentDayRange,
   recentDayRangeStrings,
   recentYearRange,
@@ -56,5 +57,11 @@ describe('date utils', () => {
       end: '2026-07-07 23:59:59',
     };
     expect(toApiStartEnd(input.start, input.end)).toEqual(input);
+  });
+
+  it('formatDateTimeDisplay formats ISO to YYYY-MM-DD HH:mm:ss', () => {
+    expect(formatDateTimeDisplay('2026-08-07T18:01:35')).toBe('2026-08-07 18:01:35');
+    expect(formatDateTimeDisplay('not-a-date')).toBe('not-a-date');
+    expect(formatDateTimeDisplay(undefined)).toBe('—');
   });
 });

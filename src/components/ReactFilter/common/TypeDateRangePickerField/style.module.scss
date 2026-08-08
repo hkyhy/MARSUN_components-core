@@ -1,0 +1,32 @@
+.shortcuts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.shortcut-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 12px;
+  font-size: 12px;
+  line-height: 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: var(--bg-color-grey-1, #f5f5f5);
+  color: var(--font-color-grey, #666);
+  user-select: none;
+
+  &:hover {
+    background: var(--primary-color-1, rgba(24, 144, 255, 0.1));
+    color: var(--primary-color, #1890ff);
+  }
+
+  &.is-active {
+    background: var(--primary-color-1, rgba(24, 144, 255, 0.1));
+    color: var(--primary-color, #1890ff);
+  }
+}

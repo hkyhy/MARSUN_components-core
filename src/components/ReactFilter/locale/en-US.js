@@ -1,0 +1,31 @@
+// @ts-nocheck
+const message = {
+  filterText: 'Filter',
+  moreText: 'More',
+  selectedText: 'Selected',
+  clearAllText: 'Clear All',
+  toggleUpText: 'Pack Up',
+  selectedTextAdvanced: 'Selected',
+  clearText: 'Clear Filter',
+  otherText: 'Other',
+  cancelText: 'Cancel',
+  determineText: 'Determine',
+  year: 'year',
+  over: 'over {count} {unit}s',
+  lessThan: 'less than {count} {unit}s',
+  inputPlaceholder: 'Please enter {label}',
+  pleaseInput: 'Please enter ',
+  defaultInputPlaceholder: 'Please enter {label}',
+  maxSelectedCount: 'Select up to {count} items',
+  customTime: 'Custom Time',
+  monthly: 'Monthly',
+  weekly: 'Weekly',
+  last7Days: 'Last 7 Days',
+  thisMonth: 'This Month',
+  last3Months: 'Last 3 Months',
+  thisYear: 'Year to Date',
+  fullYear: 'Full Year',
+  pleaseSelect: 'Please Select',
+};
+
+export default message;
