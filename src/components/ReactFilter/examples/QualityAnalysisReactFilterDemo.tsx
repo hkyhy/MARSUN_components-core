@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PopoverItem } from '../index';
 import ReactFilterLayoutPreview from './ReactFilterLayoutPreview';
-import styles from '../../Filter/examples/QualityAnalysisFilterDemo/style.module.scss';
+import styles from './QualityAnalysisReactFilterDemo.module.scss';
 
 type SearchMode = 'historical' | 'new';
 type KneVal = { label: string; value: string } | null;

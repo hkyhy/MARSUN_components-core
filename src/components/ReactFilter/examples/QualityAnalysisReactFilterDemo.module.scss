@@ -1,0 +1,96 @@
+.quality-analysis-filter-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.quality-analysis-filter-demo-mode {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quality-analysis-filter-demo-mode-label {
+  font-size: 12px;
+  color: var(--font-color-grey, #64748b);
+  flex-shrink: 0;
+}
+
+.quality-analysis-filter-demo-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--font-color-grey, #64748b);
+  line-height: 1.5;
+}
+
+.panel-extra-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--fill-color-grey-4, #f8fafc);
+  border: 1px solid var(--border-color-split, #eef2f7);
+}
+
+.panel-extra-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panel-extra-hint {
+  font-size: 12px;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+.panel-extra-search-btn {
+  flex-shrink: 0;
+}
+
+.panel-month-picker {
+  width: 140px;
+}
+
+.compare-enum-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.compare-enum-select {
+  width: 100%;
+}
+
+.compare-range-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compare-range-row {
+  display: grid;
+  grid-template-columns: 72px 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.compare-attr-field-label {
+  font-size: 12px;
+  color: var(--font-color-grey, #64748b);
+  white-space: nowrap;
+}
+
+.compare-attr-sep {
+  font-size: 12px;
+  color: var(--font-color-grey, #64748b);
+  text-align: center;
+}
+
+.compare-range-input {
+  width: 100%;
+}
