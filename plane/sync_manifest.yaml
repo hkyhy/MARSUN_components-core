@@ -1260,3 +1260,22 @@ tasks:
     Related: P6.3.84
     补 @kne/super-select|super-select-plus|overflow-items 入 package.json+lock；
     vite.config.lib.ts external；chore(release) 重发 v0.1.44
+
+- id: P6.3.86
+  milestone: P6.3
+  name: ReactFilter Showcase Demo 样式补齐重发 v0.1.44
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-08-08'
+  target_date: '2026-08-08'
+  tags:
+  - frontend
+  - release
+  - ci
+  note: |
+    Refs: P6.3
+    Related: P6.3.85
+    补 QualityAnalysisReactFilterDemo.module.scss + FilterLayoutPreview.module.scss；
+    chore(release) 再发 v0.1.44
