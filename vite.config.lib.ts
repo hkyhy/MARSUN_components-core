@@ -59,6 +59,7 @@ export default defineConfig({
         '@js-preview/excel',
         'docx-preview',
         'pptx-preview',
+        'jszip',
       ],
       output: {
         preserveModules: true,

@@ -17,6 +17,74 @@ async function fetchPreviewBlob(url: string): Promise<ArrayBuffer> {
   return res.arrayBuffer();
 }
 
+function mapPreviewError(err: unknown, kind: string): string {
+  const raw = err instanceof Error ? err.message : String(err ?? '');
+  if (kind === 'excel' && /anchors/i.test(raw)) {
+    return '该 Excel 含图表/绘图等对象，当前预览引擎无法解析，请下载后用本地软件打开';
+  }
+  if (raw && !/^Cannot read properties/i.test(raw) && !/^undefined/i.test(raw)) {
+    return raw;
+  }
+  return kind === 'excel' ? 'Excel 预览失败，请下载后查看' : '预览加载失败';
+}
+
+/** exceljs/@js-preview 对部分含 drawing/chart 的 xlsx 会在 reconcile 时读 anchors 崩溃；去掉绘图部件后重试。 */
+async function stripExcelDrawings(data: ArrayBuffer): Promise<ArrayBuffer | null> {
+  try {
+    const { default: JSZip } = await import('jszip');
+    const zip = await JSZip.loadAsync(data);
+    const names = Object.keys(zip.files);
+    const drop = names.filter(
+      (n) =>
+        n.startsWith('xl/drawings/') ||
+        n.startsWith('xl/charts/') ||
+        n.startsWith('xl/diagrams/') ||
+        /drawing[0-9]*\.xml$/i.test(n),
+    );
+    if (drop.length === 0) return null;
+    for (const n of drop) {
+      zip.remove(n);
+    }
+    // 清理 worksheet 中的 drawing 引用，避免指向已删部件
+    await Promise.all(
+      names
+        .filter((n) => /^xl\/worksheets\/[^/]+\.xml$/i.test(n) && zip.file(n))
+        .map(async (n) => {
+          const file = zip.file(n);
+          if (!file) return;
+          const xml = await file.async('string');
+          const cleaned = xml
+            .replace(/<drawing[^>]*\/>/gi, '')
+            .replace(/<drawing[^>]*>[\s\S]*?<\/drawing>/gi, '');
+          if (cleaned !== xml) zip.file(n, cleaned);
+        }),
+    );
+    return zip.generateAsync({ type: 'arraybuffer' });
+  } catch {
+    return null;
+  }
+}
+
+async function previewExcelBuffer(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jsPreviewExcel: { init: (el: HTMLElement) => any },
+  container: HTMLElement,
+  data: ArrayBuffer,
+) {
+  const instance = jsPreviewExcel.init(container);
+  try {
+    await instance.preview(data);
+    return () => instance.destroy();
+  } catch (err) {
+    try {
+      instance.destroy();
+    } catch {
+      // ignore
+    }
+    throw err;
+  }
+}
+
 async function renderExcel(container: HTMLElement, data: ArrayBuffer) {
   const [{ default: jsPreviewExcel }] = await Promise.all([
     import('@js-preview/excel'),
@@ -28,9 +96,25 @@ async function renderExcel(container: HTMLElement, data: ArrayBuffer) {
     480,
   );
   container.style.height = `${height}px`;
-  const instance = jsPreviewExcel.init(container);
-  await instance.preview(data);
-  return () => instance.destroy();
+
+  try {
+    return await previewExcelBuffer(jsPreviewExcel, container, data);
+  } catch (firstErr) {
+    const msg = firstErr instanceof Error ? firstErr.message : String(firstErr ?? '');
+    if (!/anchors/i.test(msg)) {
+      throw firstErr instanceof Error ? firstErr : new Error(mapPreviewError(firstErr, 'excel'));
+    }
+    const stripped = await stripExcelDrawings(data);
+    if (!stripped) {
+      throw firstErr instanceof Error ? firstErr : new Error(mapPreviewError(firstErr, 'excel'));
+    }
+    container.innerHTML = '';
+    try {
+      return await previewExcelBuffer(jsPreviewExcel, container, stripped);
+    } catch (retryErr) {
+      throw retryErr instanceof Error ? retryErr : new Error(mapPreviewError(retryErr, 'excel'));
+    }
+  }
 }
 
 async function renderWord(container: HTMLElement, data: ArrayBuffer) {
@@ -103,7 +187,7 @@ const FilePreviewContent: React.FC<FilePreviewContentProps> = ({
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : '预览加载失败');
+          setError(mapPreviewError(err, kind));
         }
       } finally {
         if (!cancelled) setLoading(false);
