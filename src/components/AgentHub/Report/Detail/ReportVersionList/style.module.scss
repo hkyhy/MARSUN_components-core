@@ -1,0 +1,69 @@
+.marsun-report-version-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.marsun-report-version-list-title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--font-color, #0f172a);
+  flex-shrink: 0;
+}
+
+.marsun-report-version-list-scroll-wrap {
+  flex: 1;
+  min-height: 0;
+}
+
+.marsun-report-version-list-scroll {
+  min-height: 0;
+}
+
+.marsun-report-version-list-items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.marsun-report-version-list-item {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--radius-card, 8px);
+  background: var(--bg-color-grey-1, #f8fafc);
+  color: var(--font-color, #0f172a);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.4;
+
+  &:hover {
+    background: var(--bg-color-grey-2, #f1f5f9);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color, #2563eb);
+    outline-offset: 1px;
+  }
+}
+
+.marsun-report-version-list-item--static {
+  cursor: default;
+
+  &:hover {
+    background: var(--bg-color-grey-1, #f8fafc);
+  }
+}
+
+.marsun-report-version-list-item--selected {
+  background: var(--primary-color-bg, #eff6ff);
+}

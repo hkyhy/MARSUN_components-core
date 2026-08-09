@@ -1,0 +1,39 @@
+.marsun-report-html-preview {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.marsun-report-html-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.marsun-report-html-preview-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--font-color, #0f172a);
+}
+
+.marsun-report-html-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.marsun-report-html-preview-frame {
+  width: 100%;
+  flex: 1;
+  min-height: 420px;
+  border: none;
+  border-radius: var(--radius-card, 8px);
+  background: var(--bg-color-grey-1, #f8fafc);
+}

@@ -1,0 +1,35 @@
+.marsun-report-archive-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.marsun-report-archive-modal-meta,
+.marsun-report-archive-modal-summary {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--font-color-grey-1, #64748b);
+}
+
+.marsun-report-archive-modal-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.marsun-report-archive-modal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--font-color, #0f172a);
+}
+
+.marsun-report-archive-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
