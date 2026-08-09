@@ -4,3 +4,5 @@
 - StatCard：`suffix` / `precision`
 - PermissionBindPanel：`readOnly` 只读预览
 - TooltipInfo / OrgTree / Form `kneFormInfo` 导出补齐
+
+<!-- release-trigger -->
