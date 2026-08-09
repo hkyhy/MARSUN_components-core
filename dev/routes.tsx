@@ -21,6 +21,7 @@ export const showcaseRoutes = (
     <Route path="llmformattedtext" element={<ExamplePage />} />
     <Route path="modal" element={<ExamplePage />} />
     <Route path="orgtree" element={<ExamplePage />} />
+    <Route path="permissionbindpanel" element={<ExamplePage />} />
     <Route path="permissions" element={<ExamplePage />} />
     <Route path="reactfilter" element={<ExamplePage />} />
     <Route path="sparkline" element={<ExamplePage />} />

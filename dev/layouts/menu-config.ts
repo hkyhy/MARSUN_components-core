@@ -23,6 +23,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
   { key: '/components/llmformattedtext', label: 'LlmFormattedText' },
   { key: '/components/modal', label: 'Modal' },
   { key: '/components/orgtree', label: 'OrgTree' },
+  { key: '/components/permissionbindpanel', label: 'PermissionBindPanel' },
   { key: '/components/permissions', label: 'Permissions' },
   { key: '/components/reactfilter', label: 'ReactFilter' },
   { key: '/components/sparkline', label: 'Sparkline' },
