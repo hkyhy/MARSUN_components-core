@@ -20,6 +20,7 @@ description: |
   方案定稿后或页面可点后：须跑角色循环验证（核心原则 #45）——需求用顶尖产品经理视角、前端用顶尖前端+UI 视角；输出必须改/建议改/可接受，未经确认勿改。用户说再验证/循环验证时亦触发。见 da-workflow/references/role-loop-review-角色循环验证.md。
   本任务若解决了可复用、非显而易见的联调/组件/规范问题，须同任务写入对应 skill reference / mapping / 契约（禁止只留在对话；见核心原则 #43）。
   质量分析沙盘 FOCUS 矩阵、PlantMetricMatrix、focusMetricsTree、focusLeafSapCode、focus-metric-matrix 投影时触发 references/business/focus-matrix-前端投影.md（列在 FE；测值键保持 Doris 纯洁性）。
+  台账/报告类模块（Actions、Rca、Effectiveness）全量对齐重构、Hub ReactFilter 聚合筛选、pageSize 标准 options、Detail 大块拆子目录、utils 单文件拆目录、FormModal 签发/采纳、Drawer+VirtualScrollbar 下钻、删孤儿时触发 references/business/module-patterns-模块模式.md §10 与 common/directory-structure（utils 拆目录 Vite shim）、common/filter-筛选组件.md §5.10。
   此技能提供统一的目录结构、命名规范、组件拆分方式和代码模板，确保所有模块遵循一致的架构风格。
 ---
 
@@ -96,6 +97,7 @@ description: |
 43. **可复用问题同任务沉淀** `(common)`：Cursor 联调/开发中若解决了**可复用、非显而易见**的问题（组件用法、布局、环境、信封/分页、落点冲突等），须**同任务**写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping；禁止只留在对话。仅本事项不可复用者写 WorkRecord 进展即可。**禁止**另建「踩坑大全」第二真相源，**禁止**把工程踩坑写入 `TextilePublicKnowledge/`。落点见 [marsun-arch-doc-spec / placement-guide](../marsun-arch-doc-spec/references/placement-guide.md)
 44. **写代码门禁（自动化测试 + 自检）** `(common)`：新建组件 / 改纯逻辑须**同任务**补或更新 `__tests__`（见 [testing-测试规范](references/common/testing-测试规范.md)）；提交前**本人**跑通 `npm run test` 或 `npx vitest run <path>`（禁止以 AI「声称测过」代替）；再 `da standards scan` → `da standards commit`。无对应测试不得标任务完成（可 `[WIP]`）。统一流水线与加强自检清单：[da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md)。接 REST 时另须契约用例（#42），不互相替代。
 45. **角色循环验证** `(common)`：方案/交互定稿后（动手前）须以**顶尖产品经理**视角复审；页面可点后（提交前）须以**顶尖前端开发 + UI 设计**视角复审。输出 **必须改 / 建议改 / 可接受**，**未经用户确认禁止擅自改**。口令以「再次验证：…」开头，模板见 [da-workflow/role-loop-review](../da-workflow/references/role-loop-review-角色循环验证.md)。不替代「任务结束复检」（仍必做）与 #44 门禁。
+46. **台账/报告模块对齐** `(business)`：Actions / Rca / Effectiveness 等列表+详情模块全量重构时，按 [module-patterns §10](references/business/module-patterns-模块模式.md)——ReactFilter 聚合 `value`/`onChange`（[filter §5.10](references/common/filter-筛选组件.md)）；分页默认 20 + `10/20/30/50/100`；Detail/utils 大块拆子目录且 **utils 删单文件须留 shim**（[directory-structure](references/common/directory-structure-目录结构.md)）；写操作用 `FormModal`+FormInfo；说明用 `Info`+`TooltipInfo`；只读下钻 Drawer + `VirtualScrollbar`；业务 Table 开列配置 + `userPrefs`；模块树内扫除 CommonFilter / overflow:auto / antd Tag / CircleHelp。禁止造台账公共基类。
 
 ---
 
@@ -114,18 +116,19 @@ description: |
 
 ### common（公共规范）
 
-| 场景                                              | 文件                                                                                                                                                                     |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 技术栈 React 19 + antd 6                          | SKILL.md「技术栈」+ [common/component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)                                                              |
-| 目录结构、命名速查                                | [common/directory-structure-目录结构.md](references/common/directory-structure-目录结构.md)                                                                              |
-| Common / @kne / antd 映射                         | [common/component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)（含 Core 版本管理）                                                              |
-| 主题 Token、颜色                                  | [common/theme-主题Token.md](references/common/theme-主题Token.md)                                                                                                        |
-| SCSS Modules、样式目录                            | [common/styles-样式规范.md](references/common/styles-样式规范.md)                                                                                                        |
-| 页面壳与布局（Loading / 滚动 / InteractiveBlock） | [common/shell-layout-页面壳与布局.md](references/common/shell-layout-页面壳与布局.md)                                                                                    |
-| Filter 筛选组件                                   | [common/filter-筛选组件.md](references/common/filter-筛选组件.md)                                                                                                        |
-| 组件 Examples / meta.json                         | [common/examples-组件示例.md](references/common/examples-组件示例.md)                                                                                                    |
-| 测试 / 写代码门禁                                 | [common/testing-测试规范.md](references/common/testing-测试规范.md) + [da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) |
-| 代码格式化 / ESLint                               | [common/code-formatting-代码格式化.md](references/common/code-formatting-代码格式化.md)                                                                                  |
+| 场景                                              | 文件                                                                                                                                                                                |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 技术栈 React 19 + antd 6                          | SKILL.md「技术栈」+ [common/component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)                                                                         |
+| 目录结构、命名速查                                | [common/directory-structure-目录结构.md](references/common/directory-structure-目录结构.md)                                                                                         |
+| Common / @kne / antd 映射                         | [common/component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)（含 Core 版本管理）                                                                         |
+| 主题 Token、颜色                                  | [common/theme-主题Token.md](references/common/theme-主题Token.md)                                                                                                                   |
+| SCSS Modules、样式目录                            | [common/styles-样式规范.md](references/common/styles-样式规范.md)                                                                                                                   |
+| 页面壳与布局（Loading / 滚动 / InteractiveBlock） | [common/shell-layout-页面壳与布局.md](references/common/shell-layout-页面壳与布局.md)                                                                                               |
+| Filter 筛选组件                                   | [common/filter-筛选组件.md](references/common/filter-筛选组件.md)（§5.10 聚合 FilterBar）                                                                                           |
+| 台账/报告模块对齐（Rca/Actions/Effectiveness）    | [business/module-patterns-模块模式.md](references/business/module-patterns-模块模式.md) §10 + [directory-structure utils 拆目录](references/common/directory-structure-目录结构.md) |
+| 组件 Examples / meta.json                         | [common/examples-组件示例.md](references/common/examples-组件示例.md)                                                                                                               |
+| 测试 / 写代码门禁                                 | [common/testing-测试规范.md](references/common/testing-测试规范.md) + [da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md)            |
+| 代码格式化 / ESLint                               | [common/code-formatting-代码格式化.md](references/common/code-formatting-代码格式化.md)                                                                                             |
 
 ### business（业务规范）
 

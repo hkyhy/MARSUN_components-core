@@ -161,6 +161,33 @@ src/utils/{Module}/            # 如 src/utils/Users/format.ts
 src/constants/{Module}/        # 如 src/constants/Users/status.ts
 ```
 
+#### 大 utils / Detail 块拆目录（Vite 兼容）
+
+单文件 `utils/{name}.ts` 或 Detail 内联块膨胀（约 ≥300–400 LOC、多域导出）时，**按导出域拆目录**，禁止再抽无二次调用的抽象基类：
+
+```
+utils/
+├── reportDisplay.ts            # 可选：兼容 shim（见下）
+└── reportDisplay/
+    ├── index.ts                # barrel re-export（实现 SSOT）
+    ├── phenomenon.ts
+    ├── review.ts
+    └── …
+
+Detail/RcaBentoGrid/
+├── index.tsx                   # 薄编排
+├── PhenomenonStrip/
+├── ReviewBar/
+└── …
+```
+
+**硬约束（拆文件防白屏）**：
+
+1. 删除 `foo.ts` 并新建同名目录 `foo/` 后，浏览器/Vite 模块图可能仍请求 `/…/foo.ts`；该路径若不存在，dev server 回落 `index.html` → **MIME `text/html` 白屏**（Console：`Expected a JavaScript-or-Wasm module script`）。
+2. **过渡期必须保留** 同路径薄 shim：`utils/foo.ts` 仅 `export * from './foo/index'`，**禁止**在 shim 写业务逻辑。新代码可 import `…/foo` 或 `…/foo/index`。
+3. 拆完后硬刷新或重启 Vite；验收：`curl -sI http://localhost:5173/src/…/foo.ts` 的 `Content-Type` 须为 `text/javascript`（不得为 `text/html`）。
+4. Detail 大块：原样迁出为子目录组件，主文件只编排；Table 须稳定 `tableName` + `userPrefs`（见 SKILL #3）。
+
 ### API 目录
 
 **`src/api/` 按功能模块拆分**，每个模块一个文件，`index.ts` 作为 barrel 文件统一导出。

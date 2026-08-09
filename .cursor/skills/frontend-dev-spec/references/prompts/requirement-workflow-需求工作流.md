@@ -70,6 +70,7 @@
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | 接新需求 / 改交互         | [mindset-角色大前提.md](mindset-角色大前提.md)                                                                                                        | 按任务选 common/business                                                                                           |
 | 新建业务模块              | [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md)                                                                    | [../common/directory-structure-目录结构.md](../common/directory-structure-目录结构.md)                             |
+| 台账/报告全量对齐         | [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md) §10                                                                | filter §5.10 + directory-structure（utils shim）                                                                   |
 | 筛选项                    | [../common/filter-筛选组件.md](../common/filter-筛选组件.md)                                                                                          | —                                                                                                                  |
 | 列表/表单内容块           | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/styles-样式规范.md](../common/styles-样式规范.md) §8.11                                                 |
 | 部门 / 人员               | [../common/filter-筛选组件.md](../common/filter-筛选组件.md) + [../business/department-person-部门人员.md](../business/department-person-部门人员.md) | —                                                                                                                  |
@@ -98,6 +99,9 @@
 - [ ] 权限/常量/API 符合 `business/permissions-data-权限与常量.md` 与 `business/routing-api-路由与API.md`；权限码三态用 `Permissions`，角色/单权限用 `PermissionGuard`，列表项用 `hidden`（SKILL #13）
 - [ ] 筛选 state 接入 API，Filter label 语义化（禁止「关键词」抽象 label）；部门/人员符合 `business/department-person-部门人员.md`
 - [ ] 筛选项加载态与失败：`metaLoading` 时筛选栏仍占位（禁 `return null`）；选项 loading 传 Filter* `loading`（Filter Item `Loader2 spin` + 面板 Spin，禁 loading 时「暂无数据」）；落定空态用 `Empty iconType="simple"`；失败仅 `message.error`（禁内联错误区 / HTTP raw）；筛选挂 `toolbar`；**选项 loading 禁止并入 `pageLoading`**；默认分厂来自 meta 首项，禁止硬编码 `1001`（见 [filter-筛选组件.md](../common/filter-筛选组件.md) §5.9、[shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)）
+- [ ] **列表 FilterBar**：新页/改造用 ReactFilter + 聚合 `value`/`onChange`/`onClearAll`（清空恢复业务默认）；禁止散落多回调；分页默认 20 + `showSizeChanger` options `10/20/30/50/100`（见 filter §5.10）
+- [ ] **台账/报告对齐**（触及 Actions/Rca/Effectiveness 或同类 Hub）：按 [module-patterns §10](../business/module-patterns-模块模式.md)；写操作 FormModal；说明 Info+TooltipInfo；只读 Drawer+VirtualScrollbar；Table `tableName`+userPrefs；模块内 CommonFilter/overflow:auto/antd Tag/CircleHelp 归零
+- [ ] **utils/Detail 拆目录**：删 `foo.ts` 建 `foo/` 时保留 `foo.ts` shim（`export * from './foo/index'`），否则 Vite 易 MIME 白屏（见 [directory-structure](../common/directory-structure-目录结构.md)）
 - [ ] 带操作的列表/表单块使用 `InteractiveBlock`：info 用 `Info` + `TooltipInfo`（cursor pointer）；actions icon 与文字同色、导出用 `Download`
 - [ ] workarea 少 border：列表项用背景块 + gap，禁止 border-bottom 分割线（§8.11）
 - [ ] Tooltip 详情用 TooltipInfo，长 ID 类字段须 `minWidth: 220` 且 content 可换行

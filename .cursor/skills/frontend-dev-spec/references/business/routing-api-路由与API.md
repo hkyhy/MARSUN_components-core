@@ -7,13 +7,32 @@
 | 入口          | 仅允许字段                                                                                                  | 禁止                                                            |
 | ------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | 预警根因      | `factoryCode`/`factoryName`/`varietyCode`/`varietyName`/`indicatorCode`/`indicatorName`/`date`/`sessionId?` | `werks`/`factory`/`monthlySeries`/`value`/`forceRegenerate` 等  |
-| 对比/质量分析 | `diffs` + `primary`/`compare`（各四字段）+ `sessionId?`                                                     | `month`/`compareMode`/`cottonBatch`/`plants`/`monthlySeries` 等 |
+| 对比/质量分析 | `diffs`（≥1）+ `primary`/`compare`（各四字段）+ `sessionId?`                                                | `month`/`compareMode`/`cottonBatch`/`plants`/`monthlySeries` 等 |
 
 时序/证据由服务端自取。FE 组装见 `repos/Agent_QualityAnalysis/frontend/src/utils/rcaPayload.ts`；契约 SSOT：`backend-dev/agent-dev/S3/质量预警任务跟踪/根因与对比分析/`。
+
+**FOCUS 矩阵**：`focus-metric-matrix` 响应常无 `diffs`；质量分析页须用 `buildCompareDiffsFromMatrixRows` 按主/对比行双侧实测值推导后再打 `compare/stream`。`diffs` 为空时禁止发 SSE，也勿回退 `/api/sandbox/analyze` / `/api/agent/analyze`（400/422 同样不回退）。
+
+### RCA 归档列表 / 详情投影（贴源 Name 字段）
+
+`GET /api/v1/data-service/rca/reports` 列表行与详情 `report.phenomenon` **不以** `factory`/`variety`/`metric` 为 SSOT，贴源为：
+
+| 用途       | 字段                                                                                     |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| 列表标题   | 优先 `eventLabel`；否则 `indicatorName` · `factoryName`                                  |
+| 列表副标题 | `alertMonth`/`bizMonth` 或 `createdAt`；无 eventLabel 时补 `varietyName`                 |
+| 列表摘要   | `summaryPreview` / `summary`（经 `listItemSummaryPreview`）                              |
+| 现象条     | `factoryName` / `varietyName` / `indicatorName`（`buildPhenomenonDisplay` 兼容旧三字段） |
+
+Hub 列表必须走 `listItemTitle` / `listItemSubtitle` / `listItemSummaryPreview`，禁止手写 `item.metric · item.factory`。详情预览须把接口 `request` 一并传入 `RootCauseReport`（对比矩阵列名）。实现：`Rca/utils/reportDisplay/*`、`Rca/List/ArchiveList`。
 
 ## 质量分析 FOCUS 矩阵（边界）
 
 沙盘 `focus-metric-matrix`：**接口只出 Doris/SAP/工艺列码**；三级表头与一对多列投影只在前端。见 [focus-matrix-前端投影.md](focus-matrix-前端投影.md) 与 backend-dev-spec [focus-matrix-前后端边界.md](../../../backend-dev-spec/references/focus-matrix-前后端边界.md)。
+
+## 质量分析 factory-varieties（时段）
+
+`POST /api/v1/data-service/factory-varieties`：`queryType=all`（主对标）必带 `start`/`end`；**`queryType=match`（对比分厂品种）不传 `start`/`end`**（服务端补默认窗）。时段进矩阵时写在 `varietyList[]` 各项上。实现：`fetchVarietySearch` + `loadCompareForVariety`。
 
 ## API 按模块拆分
 

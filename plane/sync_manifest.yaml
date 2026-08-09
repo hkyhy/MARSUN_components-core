@@ -1416,7 +1416,7 @@ tasks:
 - id: P6.3.95
   milestone: P6.3
   name: frontend-dev-spec skills 与 examples-registry 同步
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: docs
   owner: 黄金芳

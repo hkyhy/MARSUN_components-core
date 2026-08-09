@@ -597,3 +597,34 @@ return (
   </CommonFilter>
 );
 ```
+
+### 5.10 列表 FilterBar：聚合 `value` / `onChange`（新页硬约束）
+
+台账 / Hub / 归档类列表（Actions、Rca、Effectiveness 嵌入筛选等）**禁止**再向父组件散落 `onQChange` / `onFactoryChange` / … 四五个回调。筛选栏统一：
+
+| 约定  | 说明                                                                                                                                                                 |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Props | `value: DomainFilters` + `onChange(next)` + `onClearAll`（清空时由 Hub **恢复业务默认**，如「报告日=今天」，禁止静默清空成无默认）                                   |
+| 实现  | core `Filter` + `ReactInputFilterItem` / `SuperSelectFilterItem` / `ReactDatePickerFilterItem`（或 DateRange）+ `createFilterValueMapper` + `getFilterValue`         |
+| 清空  | `next.length === 0` → 调 `onClearAll()`（内部 `resetFilters()`），不要只 `setFilters({})`                                                                            |
+| 分页  | 列表默认 **pageSize=20**；`showSizeChanger`；options **`10/20/30/50/100`**（常量放模块 `constants/pagination.ts`）；`setPage(page, pageSize?)` 改 size 时回到第 1 页 |
+
+```tsx
+// ✅ FilterBar 聚合 filters
+export type ArchiveFilterBarProps = {
+  meta: MetaFilters | null;
+  value: RcaArchiveFilters;
+  onChange: (next: RcaArchiveFilters) => void;
+  onClearAll: () => void;
+};
+
+// Hub
+<ArchiveFilterBar
+  meta={meta}
+  value={filters}
+  onChange={setFilters}
+  onClearAll={() => resetFilters()}
+/>;
+```
+
+参考：`QualityAnalysis/Rca/List/ArchiveFilterBar`、`QualityAnalysis/Actions/List/FilterBar`、`Common/List/GlobalFilterBar`。

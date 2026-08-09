@@ -22,7 +22,8 @@
 - **Form 与 Modal 分离模式**（从 `@hkyhy/marsun-components-core` 导入 FormInfo 栈：Form/ 放 `FormInfo`+字段列表；Modal/ 用 `FormModal` + `formProps.onSubmit`，或多步用 `FormStepsModal`）
 - **校验规则**（字段 `rule` 字符串，如 `rule="REQ"`、`rule="REQ TEL"`、`rule="EMAIL"`）
 - 详情页使用 CommonDescriptions
-- **Tooltip 详情展示**：hover 展示结构化详情时统一使用 `TooltipInfo`，传入 `DescriptionItem[]`，禁止直接用 antd `Tooltip` + 手写 `div` 拼接字段
+- **台账/报告全量对齐**（§10）：Hub ReactFilter 聚合筛选、标准分页、Detail/utils 拆目录 + Vite shim、FormModal 决策弹窗、Drawer+VirtualScrollbar 下钻、孤儿迁出
+- **Tooltip 详情展示**：hover 展示结构化详情时统一使用 `TooltipInfo`，传入 `DescriptionItem[]`，禁止直接用 antd `Tooltip` + 手写 `div` 拼接字段；触发器用 **`Info`**，禁止 `CircleHelp`
 - **部门与人员选择全量展示**：部门筛选用 `FilterTreeSelect` 加载完整组织树，禁止按角色裁剪；人员选择器展示全量在职用户（`PersonOptionRow` + `matchPersonOptionSearch`），详见 [department-person-部门人员.md](department-person-部门人员.md)
 - **部门完整路径展示**：所有部门名称必须显示自上而下完整路径（如 `技术部/信息部`），详见 [department-person-部门人员.md](department-person-部门人员.md)
 - 列表 columns 工厂函数（放 `List/` 目录，操作列引用 `Action/` 目录的按钮组件）
@@ -1527,3 +1528,55 @@ export const FeedbackStatusTag: React.FC<{ status: string }> = ({ status }) => {
 | 领导审批　 | `VOLCANO`　　 | `'volcano'`　　 | 待分管领导审批　　　　　　　　　　　 |
 | 辅助/变更  | `CYAN`　　　  | `'cyan'`　　　  | 修改优先级、辅助信息　　　　　　　　 |
 | 重要/关注  | `GOLD`　　　  | `'gold'`　　　  | 重要标记、关注项　　　　　　　　　　 |
+
+## 十、台账 / 报告模块全量对齐模式（Actions · Rca · Effectiveness）
+
+> 对齐 Actions / Rca / Effectiveness 重构口径；**不造**「台账/报告」公共基类或并行 SSOT。业务契约与门禁语义（如 HITL 签发）保持不变。
+
+### 10.1 目标目录（增量）
+
+```
+components/{Domain}/{Module}/
+  index.ts                 # barrel：Hub / FilterBar / List / hooks 常用符号
+  constants/pagination.ts  # DEFAULT_PAGE_SIZE=20 + PAGE_SIZE_OPTIONS
+  hooks/use{Feature}.ts    # pageSize 状态化；setPage(page, pageSize?)
+  List/{Feature}FilterBar/ # ReactFilter + value/onChange（见 filter §5.10）
+  List/{Feature}List/      # VirtualScrollbar + Pagination showSizeChanger
+  Detail/{BigBlock}/       # 薄编排
+    SubBlockA/ …           # 原内联块原样迁出，禁止无二次调用的抽象层
+  Form/{X}Form/            # FormInfo 字段（rule="REQ"）
+  Modal/{X}Modal/          # FormModal + formProps；只读下钻保留 Drawer
+  utils/{domain}/          # 大 utils 拆目录 + 可选 shim（见 directory-structure）
+```
+
+页面 `pages/{Module}` 保持薄壳；Hub 走 `Detail/{Module}HubView`。
+
+### 10.2 壳层（可先独立验收）
+
+1. **筛选**：CommonFilter → ReactFilter；聚合 `value`/`onChange`；清空恢复默认（§5.10）。
+2. **分页**：默认 20；`10/20/30/50/100`；改 pageSize 回第 1 页。
+3. **孤儿清理**：确认无引用（或先迁调用方到目标模块）再删。例：Rca `ActionBoard` → Actions；`ItemExecutionPanel` → `ActionFollowPanel`；删无用 `ReportHeaderActions` / 兼容 re-export。
+4. **扫查归零**（模块树内）：`CommonFilter`、`overflow: auto` / `overflow-y: auto`、antd `Tag`、`CircleHelp`、`columnConfigEnabled={false}`（业务表）。
+
+### 10.3 报告体 / 决策 / 下钻
+
+| 区域            | 规范                                                                                                                                    |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Detail 大块     | 子目录原样迁出；主文件只编排；Tag 用 `SemanticTag`                                                                                      |
+| 嵌入 Table      | 稳定 `tableName` + `fetchTableColumnConfig` / `saveTableColumnConfig`（`@/api/userPrefs`）                                              |
+| 写操作弹窗      | antd `Modal`+`Form` → core **`FormModal` + FormInfo**；行内嵌表单可留 `Form`+`FormInfo`，字段与 Modal **同一套 label/rule/placeholder** |
+| 说明文案        | **`Info` + `TooltipInfo`**（禁止 `CircleHelp`）；状态仍用 `SemanticTag`                                                                 |
+| 只读下钻 / 历史 | 保留 **Drawer**（不强改 FormModal）；主滚动与长 JSON 用 **VirtualScrollbar**                                                            |
+| utils 拆分      | 按域拆 `utils/{name}/` + 过渡期 `utils/{name}.ts` shim（防 Vite MIME 白屏）                                                             |
+
+### 10.4 明确不做
+
+- 不引入台账/报告公共基类或第二真相源
+- 不把 History/Evidence 类只读 Drawer 强改 FormModal
+- 不改 OpenAPI / 后端字段；不顺手改无关模块
+
+### 10.5 自检
+
+- `npx tsc -p tsconfig.app.json --noEmit`（根 `tsc --noEmit` 若仅 project references 空 `files` 会假绿）
+- 相关 `vitest`；手测 Hub 筛选/翻页/pageSize、深链、报告预览、采纳/签发、证据下钻滚动与列配置、Alerts/Sandbox 嵌入不回归
+- 拆文件后：`curl -sI …/{旧文件}.ts` 须为 `text/javascript`（shim 或改 import）

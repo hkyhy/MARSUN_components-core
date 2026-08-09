@@ -5,13 +5,15 @@
 
 ## 前端只做这些
 
-| 事项         | 落点                                                                           |
-| ------------ | ------------------------------------------------------------------------------ |
-| 三级表头列树 | **优先**响应 `data.headerTree`；缺省回落 `FOCUS_METRIC_GROUPS`（leafId ASCII） |
-| 表头可见文案 | `leaf.metricName`；**禁止**用 `sapCode` / `metricList.metricCode` 当列标题     |
-| 列偏好键     | `columnKey = leafId`；`tableName`：`qa_sandbox_plant_metric_matrix_v3`         |
-| 取数         | `sapCode` → `cells[sap]`；`sapCode==null` →「未接入」                          |
-| 工艺列       | `leafId === sapCode`（ADS 列名）；`metricName`=Comment 中文                    |
+| 事项         | 落点                                                                                                                                                                                           |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 三级表头列树 | **优先**响应 `data.headerTree`；缺省回落 `FOCUS_METRIC_GROUPS`（leafId ASCII）                                                                                                                 |
+| 表头可见文案 | `leaf.metricName`；列 `title` **必须是 string**（列配置面板遇 ReactNode 会显示 key）；禁止 sapCode 当标题；**禁止**把 `display:block` 样式挂到 Column.className（会打穿 table-cell，表头竖排） |
+| 固定列 hover | 分厂/品种 `title`=展示名；**禁止** `title={factoryCode\|varietyCode}`                                                                                                                          |
+| 列偏好键     | `columnKey = leafId`（勿再拼 `groupId_indicatorId_leafId`）；`tableName`：`qa_sandbox_plant_metric_matrix_v3`                                                                                  |
+| 取数         | `sapCode` → `cells[sap]`；`sapCode==null` →「未接入」                                                                                                                                          |
+| 工艺列       | `leafId === sapCode`（ADS 列名）；`metricName`=Comment 中文                                                                                                                                    |
+| 配料列       | `sapCode`=棉/纤字段（`micronaire`/`avgLengthMm`…）；与成品相同按 `cells[sap]` 取数；勿期待 `cottonList`                                                                                        |
 
 ## 前端禁止
 
