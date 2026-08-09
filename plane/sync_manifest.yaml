@@ -1431,7 +1431,7 @@ tasks:
 - id: P6.3.96
   milestone: P6.3
   name: chore release 发布 npm v0.1.47
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: chore
   owner: 黄金芳
