@@ -9,3 +9,6 @@ dist-showcase
 coverage
 **/secret-key*
 src/assets/secret-key*
+
+# local npm pack artifacts
+*.tgz
