@@ -11,8 +11,6 @@
 
 时序/证据由服务端自取。FE 组装见 `repos/Agent_QualityAnalysis/frontend/src/utils/rcaPayload.ts`；契约 SSOT：`backend-dev/agent-dev/S3/质量预警任务跟踪/根因与对比分析/`。
 
-**证据「查看原始数据」** `GET …/rca/evidence/drilldown`：优先用 `evidence.data` 内嵌 series/records；不足再请求。Query 须带三码 `factoryCode`/`varietyCode`/`indicatorCode`（兼容旧 `factory`/`variety`/`metric`）；FE 归一见 `EvidenceDrilldownDrawer` `buildDrilldownQueryParams`。
-
 ## 质量分析 FOCUS 矩阵（边界）
 
 沙盘 `focus-metric-matrix`：**接口只出 Doris/SAP/工艺列码**；三级表头与一对多列投影只在前端。见 [focus-matrix-前端投影.md](focus-matrix-前端投影.md) 与 backend-dev-spec [focus-matrix-前后端边界.md](../../../backend-dev-spec/references/focus-matrix-前后端边界.md)。

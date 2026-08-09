@@ -57,7 +57,7 @@
 29. 检查：是否有对应 `.test.tsx` / `.test.ts` 且通过（见 [../common/testing-测试规范.md](../common/testing-测试规范.md)）
 30. 检查：模块页 loading 是否通过 `PageShellProvider` + `ModulePageShell`/`PageHeaderLayout` `spinning` 或 `usePageShellLoading` 实现，禁止局部 loading 文案与 Spin 叠层（见 [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)）
 31. 检查：**每次新增或更改组件**是否已同步更新规范文档与提示词（`SKILL.md`、`component-mapping-组件映射.md`、专题 reference、`requirement-workflow-需求工作流.md` 检查项、`examples/meta.json` / Demo）；代码与规范须同一任务内完成，禁止只改代码
-32. 检查：`@hkyhy/marsun-components-core` 版本——业务项目 `package.json` 依赖 **须与 npm 已发布最新版一致**（`npm view @hkyhy/marsun-components-core version`）；core 仓库 `version` 字段不得落后 npm；**发版与功能同包**（core：功能+version；业务：功能+升 `^`）；禁止独立 `chore(release)` / 为本功能拆出的 `chore(deps)`；禁止 `file:` / lockfile `link: true`（见 [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)「Core 版本管理」）
+32. 检查：`@hkyhy/marsun-components-core` 版本——业务项目依赖 **须与 npm 已发布最新版一致**；core 交付时功能+`version` bump 同包；**npm 仅** push 首行 `chore(release): v{version}` 触发 `release.yml`（`feat`/`fix` 不会发包）；禁止本地 `npm publish` / 为本功能拆 `chore(deps)` / `file:`；core **新增运行时 import** 须同 commit 写 `package.json`+lock + `vite.config.lib.ts` `external`，并 `npm ci && npm run build`（见 [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)「Core 版本管理」「运行时依赖与 lib external」）
 33. 检查：代码格式化工具链是否已安装（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`lint-staged`、`husky` 等 devDependencies）；根目录是否有 `.prettierrc`、`eslint.config.js`、`.husky/pre-commit`；`package.json` 是否有 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts（见 [../common/code-formatting-代码格式化.md](../common/code-formatting-代码格式化.md)）
 34. 检查：模块 workarea 扁平布局——`ModulePageShell` 不传冗余 `breadcrumb`；主区 `ContentCard flat` 或无边框容器；`*-workarea-body` 无外层 padding；Tabs content `width:100%`；页脚保存等非 block（Drawer 除外）（见 [../common/styles-样式规范.md](../common/styles-样式规范.md) §8.10）
 35. 检查：**禁止重复 core utils**——`src/utils/` 不得复制 `@hkyhy/marsun-components-core` 已导出函数；日期/权限/部门/人员/HTTP 等从包根 import（见 [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md) npm Utils 表）
@@ -87,8 +87,9 @@
 
 ## 五、完成前检查清单
 
-- [ ] **跨仓库提交顺序**：core **功能+version 同 commit** → CI publish → 业务 **功能+升依赖同 commit** → marsun_arch **先 WorkRecord 再** docs/spec（见 [repos-commit.md](../../../marsun-arch-doc-spec/references/repos-commit.md)）
-- [ ] **发版同包**：禁止仅 bump 的独立 `chore(release)`；禁止为本功能单独 `chore(deps): 升 core`（纯跟版除外；见 [component-mapping · Core 版本管理](../common/component-mapping-组件映射.md)）
+- [ ] **跨仓库提交顺序**：core **功能+version** → CI verify 绿 → **`chore(release): vX.Y.Z`** 发 npm → 业务 **功能+升依赖同 commit** → marsun_arch WorkRecord/docs（见 [repos-commit.md](../../../marsun-arch-doc-spec/references/repos-commit.md)）
+- [ ] **core 发 npm**：已 bump 的 version 须有匹配的 `chore(release): v{version}` push（或功能 commit 首行即该格式）；禁止本地 `npm publish`；禁止为本功能单独 `chore(deps): 升 core`（纯跟版除外；见 [component-mapping · Core 版本管理](../common/component-mapping-组件映射.md)）
+- [ ] **core 新依赖**：源码新增 `import 'pkg'` 时，`package.json`+lock + `vite.config.lib.ts` `external`（含 CSS 子路径）同包；提交前干净树 `npm ci && npm run build`（见 [component-mapping · 运行时依赖与 lib external](../common/component-mapping-组件映射.md)）
 - [ ] 技术栈为 **React 19 + antd 6**（`react`/`react-dom` `^19`，`antd` `^6`；与 core peer 一致；禁止 antd 5 / React 18 作为默认路径）
 - [ ] 目录结构符合 `common/directory-structure-目录结构.md`
 - [ ] Form/Modal/Action 分离，handlers 抽离

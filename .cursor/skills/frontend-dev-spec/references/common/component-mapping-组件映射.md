@@ -53,19 +53,6 @@ export default defineConfig({
 
 联调前在 `marsun_components-core` 执行 `npm run build`（或 watch）。**禁止**为本地链改 `package.json` 为 `file:`；也**禁止** `npm link` 后 commit 带 `link: true` 的 lockfile。
 
-**TypeScript 类型（本地未发布 API）**：Vite alias 只影响运行时打包；`tsc` 仍读 `node_modules` 类型。若本地 core 已有尚未发布到 npm 的导出（如 `StateBar` / `OrgTree` / `Permissions`），业务项目须在 `tsconfig.json` `paths` 指向兄弟仓 `dist`（对齐 Assets），**勿**改 `package.json` 为 `file:`：
-
-```jsonc
-// 例：marsun_sso/frontend（相对 frontend/ 到兄弟仓）
-"paths": {
-  "@hkyhy/marsun-components-core": ["../../marsun_components-core/dist/index.d.ts"]
-}
-// 例：maoyang_data-asset-system（相对项目根）
-"@hkyhy/marsun-components-core": ["../marsun_components-core/dist/index.d.ts"]
-```
-
-npm 发版含这些导出后，业务升 `^` 即可；CI 无兄弟仓时依赖已发布包类型。
-
 **禁止提交 `file:` 依赖**：Git 中的 `package.json` / `package-lock.json` 不得出现 `"@hkyhy/marsun-components-core": "file:..."`、指向 monorepo 兄弟目录的 `resolved`，或 `"link": true` 的本地链。Agent/commit 前检查：
 
 ```bash
@@ -80,7 +67,7 @@ rg 'marsun_components-core|"link": true' package-lock.json  # 须为空（相对
 | `marsun_components-core` | `"version"`                       | feat 开发时 **= npm 已发布最新**；仅**交付功能 commit**内允许 **npm+1 patch**（与功能同包）     |
 | 业务项目                 | `"@hkyhy/marsun-components-core"` | **必须**为 `^` + npm 已发布最新版，与 lockfile 解析版本一致；为本功能升版时与业务 diff **同包** |
 
-**core 发版**：功能 commit 内 bump version → push main → CI publish；**禁止**仅 bump 的独立 `chore(release)`；**禁止**本地 `npm publish`。细则见下文「Core 版本管理」。
+**core 发版**：功能 commit 内 bump `version` → CI `verify` 绿 → push **`chore(release): v{version}`** 触发 `release.yml` → tag + `npm publish`。`feat`/`fix` 首行 **不会**发 npm。补发用 Actions **Publish npm (manual retry)**。**禁止**本地 `npm publish`。细则见下文「Core 版本管理」。
 
 提交前核对：
 
@@ -148,17 +135,21 @@ import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 
 ## Core 版本管理 Marsun Core Version
 
-### 核心原则：package.json 与实版一致；发版与功能同包
+### 核心原则：package.json 与实版一致；npm 由 CI `chore(release)` 发布
 
 **`package.json` 中的版本号必须反映真实可解析版本**，不得滞后、跳号或与 npm 脱节。
 
-**硬约束**：功能驱动的升版 **不得**单独成 commit。core 内 `version` bump 与对应功能 diff **同包**；业务仓为本功能升 `@hkyhy/marsun-components-core` 时，`^` 与 lockfile 与业务 diff **同包**。
+**硬约束**：
 
-| 场景                        | `marsun_components-core` 的 `version` | 业务项目的依赖                                      |
-| --------------------------- | ------------------------------------- | --------------------------------------------------- |
-| feat/fix 开发中（未到交付） | `= npm 最新`（如 `0.1.17`）           | `^` + npm 最新                                      |
-| 交付功能 commit（同包发版） | `= npm 最新 + 1 patch`                | 仍保持上一版直至 CI publish 成功                    |
-| CI publish 成功后           | `= npm 最新`                          | 与消费该功能的业务 commit **同包**升为 `^` + 新版本 |
+- core 内 `version` bump 与对应功能 diff **同包**（功能 commit）；业务仓升 `^`/lockfile 与业务 diff **同包**。
+- **触发 npm**：仅 `release.yml` 在 `main` push 且 **head commit 首行**匹配 `chore(release): v{package.json.version}` 时执行（见仓库 `.github/workflows/release.yml`）。
+- **`feat` / `fix` / `docs` 首行不会 publish**——即使已 bump version。
+
+| 场景                                 | `marsun_components-core` 的 `version` | 业务项目的依赖                                      |
+| ------------------------------------ | ------------------------------------- | --------------------------------------------------- |
+| feat/fix 开发中（未到交付）          | `= npm 最新`（如 `0.1.17`）           | `^` + npm 最新                                      |
+| 交付功能 commit（已 bump，未发 npm） | `= npm 最新 + 1 patch`                | 仍保持上一版直至 `chore(release)` CI 成功           |
+| `chore(release): vX.Y.Z` CI 成功后   | `= npm 最新`                          | 与消费该功能的业务 commit **同包**升为 `^` + 新版本 |
 
 核对命令：
 
@@ -185,34 +176,68 @@ npm run version:sync                              # 对齐 npm 最新（--apply-
 npm run version:check:apply                       # 写回 npm+1，准备与功能同包的交付 commit
 ```
 
-### 发布顺序（功能与发版同 commit；禁止本地 npm publish）
+### 发布顺序（禁止本地 npm publish）
 
-1. **功能开发（未到交付）**：`feat`/`fix`/`docs` 等 WIP 提交 **不修改** `package.json` version（保持 = npm 最新）。
-2. **交付并发版**（同一 commit）：
+1. **功能开发（未到交付）**：`feat`/`fix`/`docs` 等 WIP **不修改** `package.json` version（保持 = npm 最新）。
+2. **交付功能 + bump**（推荐拆两步，便于先看 CI verify）：
    ```bash
    node scripts/version-check.mjs          # 确认当前 = npm 最新（或先 version:sync）
    npm run version:check:apply             # 写回 npm+1（仅改文件，不 publish）
-   npm run build && npm test
-   # 同包：src/（及 examples 等同任务变更）+ package.json / package-lock.json
-   git add src package.json package-lock.json   # 及本功能相关路径
-   # message 用功能型 feat/fix；正文可附 Release: v0.1.x（与 version 一致）
+   npm run typecheck && npm run build && npm test
+   # 同包：功能 diff + package.json
+   # message：feat(scope): … / fix(scope): …（可附正文 Release: v0.1.x）
+   git push origin main                    # 触发 ci.yml verify；不会 npm publish
+   ```
+3. **触发 npm publish**（`release.yml`，**首行必须完全匹配**）：
+   ```bash
+   # package.json.version 已是待发版号（如上一步 0.1.44）
+   # 允许空 diff 或仅文档；首行格式硬约束：
+   #   chore(release): v0.1.44
+   #   chore(release): v0.1.44 可选说明
+   git commit --allow-empty -m "chore(release): v0.1.44"
    git push origin main
    ```
-3. **CI 自动**（`marsun_components-core` 的 `release.yml`）：校验 → build/test → 打 tag → `npm publish`。触发条件以仓库 workflow 为准（通常识别 `package.json` version 变更）；**无需**为触发 CI 再拆独立 `chore(release)` commit。
-4. **业务项目**：npm 可见新版本后，在**消费该功能的同一 commit**内将 `package.json` 改为 `^0.1.x`、`npm install` 并提交 lockfile（**禁止**为本功能单独 `chore(deps): 升 core`）。
+   CI：校验首行 ↔ version → typecheck → build → 打 `v{version}` tag → `npm publish`。
+4. **单提交合并路径**（功能与发布同一 push）：首行直接写 `chore(release): vX.Y.Z …`，同 commit 含功能 diff + version bump（历史 `chore(release): v0.1.43 …` 即此路径）。
+5. **业务项目**：npm 可见新版本后，在**消费该功能的同一 commit**内升 `^0.1.x` + lockfile（**禁止**为本功能单独 `chore(deps): 升 core`，纯跟版除外）。
 
-补发失败版本（无代码变更）：GitHub Actions → **Publish npm (manual retry)** → 输入已有 tag。仅此例外允许无功能 diff 的版本/发布相关操作。
+补发失败版本：GitHub Actions → **Publish npm (manual retry)**（`publish.yml`）→ 输入已有 tag。
 
-### 功能与发版同 commit（强制）
+### 运行时依赖与 lib `external`（防 CI build 解析失败）
 
-| 仓库                     | 须同包                                                                | 禁止                                                                         |
-| ------------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `marsun_components-core` | 功能 diff（`src/`、examples 等）+ `version` bump（及 CHANGELOG 若有） | 仅 bump 的独立 `chore(release): vX.Y.Z`；攒多个功能再做一个空 release commit |
-| 业务 / 依赖仓            | 为本功能升 core 时：业务 diff + `^` / lockfile                        | 先/后单独 `chore(deps): 升 core`（与功能无关的纯跟版除外）                   |
+`vite.config.lib.ts` 以 **库模式**打包：`rollupOptions.external` 中的包**不会**打进 `dist`，由消费方通过 core 的 `dependencies` / `peerDependencies` 安装。新增源码 `import` 时：
 
-- commit message：功能型 `feat(scope):` / `fix(scope):`；正文可附 `Release: v0.1.x`（与 `package.json` version 一致）
-- 多个独立功能点仍按功能拆 commit；**每个需要发版的功能 commit 各自带对应 patch**
+| 必须同 commit                                                      | 说明                                                                               |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `package.json` `dependencies`（或确属 peer 的 `peerDependencies`） | 与 `import 'pkg'` / `import 'pkg/…'` 对齐；**禁止**只改源码、依赖留在本地未提交    |
+| `package-lock.json`                                                | `npm install pkg` 后同包；CI 用 `npm ci`                                           |
+| `vite.config.lib.ts` → `rollupOptions.external`                    | 与已有 `@kne/*` 同模式；**含 CSS 子路径**（如 `@kne/super-select/dist/index.css`） |
+
+**提交前（Agent / 本人）**：在 `repos/marsun_components-core` 执行 `npm ci && npm run typecheck && npm run build && npm run build:showcase`（干净树，勿只靠本机已装过的 `node_modules`）。Showcase Demo 的 `import` 样式/资源须**同包提交**（禁止引用未进 Git 的兄弟 Demo 路径）。
+
+反例（v0.1.44）：ReactFilter 已 import `@kne/super-select`，但 deps 未进 Git → CI `Rollup failed to resolve import "@kne/super-select"`。
+
+### Agent / 提交检查（防漏发 npm）
+
+| 检查                           | 说明                                                                                                                                                                              |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| bump 后是否已 `chore(release)` | `feat` 已把 version 推到 `0.1.x` 但未发 npm → **必须**再推 `chore(release): v0.1.x`                                                                                               |
+| 首行格式                       | `^chore\(release\): v${VERSION}( \|$)`；`VERSION` = 当前 `package.json`                                                                                                           |
+| npm 是否已有该版               | `npm view @hkyhy/marsun-components-core@version version` 已存在则 release job 会失败                                                                                              |
+| ReactFilter / 厂商 `.jsx`      | `tsconfig.json` / `tsconfig.build.json` 须 `allowJs: true`，否则 CI typecheck 报 TS7016                                                                                           |
+| 新增运行时 import              | `package.json` + lock + `vite.config.lib.ts` `external` 三处同包；`npm ci && npm run build` 绿                                                                                    |
+| Showcase Demo 资源             | Demo 引用的 `.scss` / 静态资源须在仓库内可解析；提交前 `npm run build:showcase` 绿                                                                                                |
+| `examples-registry`            | 改 Demo/`meta.json` 后同包 `npm run collect-examples`；`release.yml`/`publish.yml` 须在 typecheck 前 collect（与 `ci.yml` 一致），否则会引用已删 Demo 路径导致发版 typecheck 失败 |
+
+### 功能与 version 同包；发布 commit 另计
+
+| 仓库                     | 须同包                                         | 说明                                                 |
+| ------------------------ | ---------------------------------------------- | ---------------------------------------------------- |
+| `marsun_components-core` | 功能 diff + `version` bump                     | publish 另用 `chore(release): vX.Y.Z`（可空 commit） |
+| 业务 / 依赖仓            | 为本功能升 core 时：业务 diff + `^` / lockfile | 禁止先/后单独 `chore(deps): 升 core`（纯跟版除外）   |
+
 - **禁止**本地 `npm publish`
+- 多个独立功能点仍按功能拆 commit；**每个需要发版的功能各自 bump patch，并各自或合并做一次 `chore(release)`**
 
 ### npm 导出 ↔ 本地 Common 对照
 
@@ -358,36 +383,34 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 
 ### Common 组件（本地或 npm）
 
-| antd 组件　　　　　　  | Common 封装　　　　　　　　　　　　　　　　　　　     | 使用方式　　　　　　　　　　　　　　　　　　　　　                                                                                                                                                                                                                                      |
-| ---------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Descriptions`　　　   | `CommonDescriptions`　　　　　　　　　　　　　　　    | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                                                                                                                                                     |
-| `Tooltip`（详情）　    | `TooltipInfo`　　　　　　　　　　　　　　　　　　     | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                                                                                                                                                                   |
-| 页面头部布局　　　　   | `PageHeaderLayout`　　　　　　　　　　　　　　　　    | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                                                                                                                                                                |
-| 模块页壳（AppShell）   | `ModulePageShell` + `PageShellProvider`　　　　　     | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                                                                                                                 |
-| Agent 业务壳　　　　   | `AgentAppShell`　　　　　　　　　　　　　　　　　     | 左 sider（品牌/菜单/footer 槽）+ 右顶栏；`menuItems` + `siderFooter`（如 `UserProfileCard`）+ `children`；纯 UI。**适用**：SSO Admin、质量分析（QA）、研效台（`marsun_rd_ops`）；折叠须受控并持久化（见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md) AgentAppShell 节） |
-| 主内容卡片　　　　　   | `ContentCard`（`@hkyhy/marsun-components-core`）      | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles-样式规范.md](styles-样式规范.md) §8.10                                                                                                                                                                                |
-| 可滚动区域　　　　　   | `VirtualScrollbar`　　　　　　　　　　　　　　　　    | `wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['...'])`；`ref` → viewport；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                                                                     |
-| 模块/页面样式          | `style.module.scss`                                   | 每模块/页面必选（无样式时空文件）；见 [styles-样式规范.md](styles-样式规范.md)                                                                                                                                                                                                          |
-| `Tag`（状态展示）　　  | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`     | 传入 `status` / `role`　　　　　　　　　　　　　　                                                                                                                                                                                                                                      |
-| `Tag`（通用）　　　　  | `SemanticTag`　　　　　　　　　　　　　　　　　　     | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                                                                                                                                                      |
-| `Select`（部门选择）   | `DepartmentSelect`　　　　　　　　　　　　　　　　    | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                                                                                                                                                      |
-| 权限判断　　　　　　   | `hasPermission` / `usePermissionsPass`　　　　　      | 工具函数 `hasPermission(check, key)`；组件外判定用 `usePermissionsPass({ request })`                                                                                                                                                                                                    |
-| 权限区域控制　　　　   | `Permissions`（core）　　　　　　　　　　　　　　     | `request` + `type`（hidden/tooltip/error）；权限列表注入 `MarsunCoreProvider auth.permissions`；角色守卫仍用 `PermissionGuard`                                                                                                                                                          |
-| 侧栏用户卡片　　　　   | `UserProfileCard`　　　　　　　　　　　　　　　　     | Admin 约定：`name`=中文角色、`sub`=账号；**禁止**页头放角色 Tag / 刷新；`extra?` 为右侧独立操作                                                                                                                                                                                         |
-| 状态栏 / 分域 Tab　　  | `StateBar`（core）　　　　　　　　　　　　　　　　    | `stateOption` + `activeKey`/`onChange` + `tabBarExtraContent`（域内主操作）；`type` tab/radio/step；对齐 kne StateBar                                                                                                                                                                   |
-| 组织树　　　　　　　   | `OrgTree`（core）　　　　　　　　　　　　　　　　     | 操作紧贴名称；`deleteOkText`/`deleteOkType`（软禁用传「禁用」）；精确指针 hover 显操作、触控常显、`focus-within`；长名 Tooltip；业务接 API；**禁止**平行 `DeptTree`                                                                                                                     |
-| 筛选栏　　　　　　　   | `CommonFilter` + Filter 子组件　　　　　　　　　　    | 见 [filter-筛选组件.md](filter-筛选组件.md)；§5.9：`loading`→Item spin + 面板 Spin；空态 `Empty`　                                                                                                                                                                                      |
-| `Input`（筛选）　　　  | `FilterInput`　　　　　　　　　　　　　　　　　　     | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter-筛选组件.md](filter-筛选组件.md) §5.1.1）                                                                                                                                                     |
-| 展示/表单内容块        | `InteractiveBlock`（`@hkyhy/marsun-components-core`） | title/info/actions/subtitle/tags；列表用 `surface="inset"`；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                                                                                                             |
-| 非表单弹窗　　　　　   | `Modal`（core）　　　　　　　　　　　　　　　　　     | 必填 `title`；可选 `info`（TooltipInfo）/`description`；`actions`→ButtonGroup；`size` S/M/L；强制 `centered`；`scrollable` 可选；见 shell-layout「报告类 Modal」                                                                                                                        |
-| Agent 报告布局　　　   | `ReportTemplate` / `ReportMetaStrip`　　　　　　　    | AgentHub 报告壳；Meta 默认四列；无业务 API；见 `AgentHub/Report` examples                                                                                                                                                                                                               |
-| 步骤弹窗　　　　　　   | `StepModal`　　　　　　　　　　　　　　　　　　　     | 多步非表单；强制居中；宽度经 `resolveModalWidth` cap                                                                                                                                                                                                                                    |
-| `Select`（筛选）　　   | `FilterSelect`　　　　　　　　　　　　　　　　　　    | `filterKey` + `options`/`loadData` + `value` + `onChange` + 可选 `loading`　　                                                                                                                                                                                                          |
-| `TreeSelect`（筛选）   | `FilterTreeSelect`　　　　　　　　　　　　　　　　    | `filterKey` + `treeData`/`loadData` + `value` + `onChange` + 可选 `loading`（Item spin + 面板 Spin + Empty）　                                                                                                                                                                          |
-| `Cascader`（筛选路径） | `FilterCascader`　　　　　　　　　　　　　　　　　    | `filterKey` + `treeData`/`options`/`loadData` + `leafOnly` + 可选 `onChangePath` / `loading`；多选须点确定才提交；分厂→品种等路径列用 Cascader，任意深树仍用 TreeSelect                                                                                                                 |
-| `FilterTrigger`　　　  | `FilterTrigger`　　　　　　　　　　　　　　　　　     | Filter Item；`loading` 时右侧 `Loader2 spin` 替换 chevron                                                                                                                                                                                                                               |
-| `RangePicker`（筛选）  | `FilterDateRange`　　　　　　　　　　　　　　　　     | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                                                                                                                                                                                                                                     |
-| 数字范围（筛选）　　   | `FilterNumberRange`　　　　　　　　　　　　　　　     | `filterKey` + `value` + `onChange` + `unit` + 可选 `min`/`max`/`precision`/`step`；确定时左≤右                                                                                                                                                                                          |
+| antd 组件　　　　　　  | Common 封装　　　　　　　　　　　　　　　　　　　                               | 使用方式　　　　　　　　　　　　　　　　　　　　　                                                                                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Descriptions`　　　   | `CommonDescriptions`　　　　　　　　　　　　　　　                              | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                                                                                                                                                     |
+| `Tooltip`（详情）　    | `TooltipInfo`　　　　　　　　　　　　　　　　　　                               | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                                                                                                                                                                   |
+| 页面头部布局　　　　   | `PageHeaderLayout`　　　　　　　　　　　　　　　　                              | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                                                                                                                                                                |
+| 模块页壳（AppShell）   | `ModulePageShell` + `PageShellProvider`　　　　　                               | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                                                                                                                 |
+| Agent 业务壳　　　　   | `AgentAppShell`　　　　　　　　　　　　　　　　　                               | 左 sider（品牌/菜单/footer 槽）+ 右顶栏；`menuItems` + `siderFooter`（如 `UserProfileCard`）+ `children`；纯 UI。**适用**：SSO Admin、质量分析（QA）、研效台（`marsun_rd_ops`）；折叠须受控并持久化（见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md) AgentAppShell 节） |
+| 主内容卡片　　　　　   | `ContentCard`（`@hkyhy/marsun-components-core`）                                | 默认带 border/shadow；模块主区用 `flat` + `noPadding`；见 [styles-样式规范.md](styles-样式规范.md) §8.10                                                                                                                                                                                |
+| 可滚动区域　　　　　   | `VirtualScrollbar`　　　　　　　　　　　　　　　　                              | `wrapperClassName` / `className` 传 `classNames('{组件}-{功能}', styles['...'])`；`ref` → viewport；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                                                                     |
+| 模块/页面样式          | `style.module.scss`                                                             | 每模块/页面必选（无样式时空文件）；见 [styles-样式规范.md](styles-样式规范.md)                                                                                                                                                                                                          |
+| `Tag`（状态展示）　　  | `MemberStatusTag` / `RoleTag` / `ReviewStatusTag`                               | 传入 `status` / `role`　　　　　　　　　　　　　　                                                                                                                                                                                                                                      |
+| `Tag`（通用）　　　　  | `SemanticTag`　　　　　　　　　　　　　　　　　　                               | 统一 Tag 组件，颜色必须使用 `SEMANTIC_COLORS` 常量                                                                                                                                                                                                                                      |
+| `Select`（部门选择）   | `DepartmentSelect`　　　　　　　　　　　　　　　　                              | 自动加载部门列表　　　　　　　　　　　　　　　　　                                                                                                                                                                                                                                      |
+| 权限判断　　　　　　   | `hasPermission` / `usePermissionsPass`　　　　　                                | 工具函数 `hasPermission(check, key)`；组件外判定用 `usePermissionsPass({ request })`                                                                                                                                                                                                    |
+| 权限区域控制　　　　   | `Permissions`（core）　　　　　　　　　　　　　　                               | `request` + `type`（hidden/tooltip/error）；权限列表注入 `MarsunCoreProvider auth.permissions`；角色守卫仍用 `PermissionGuard`                                                                                                                                                          |
+| 侧栏用户卡片　　　　   | `UserProfileCard`　　　　　　　　　　　　　　　　                               | `name` + `sub?` + `collapsed?` + `onLogout?` / `menuItems?` + `extra?`（右侧独立操作如站内信，与主区同卡内、Dropdown 外；**不传则无扩展区**）；主区点击展开退出                                                                                                                         |
+| 筛选栏　　　　　　　   | `CommonFilter` + Filter 子组件　　　　　　　　　　                              | 见 [filter-筛选组件.md](filter-筛选组件.md)；§5.9：`loading`→Item spin + 面板 Spin；空态 `Empty`　                                                                                                                                                                                      |
+| `Input`（筛选）　　　  | `FilterInput`　　　　　　　　　　　　　　　　　　                               | `filterKey` + **语义化** `label` + `value` + `onChange`（禁止 label「关键词」，见 [filter-筛选组件.md](filter-筛选组件.md) §5.1.1）                                                                                                                                                     |
+| 展示/表单内容块        | `InteractiveBlock`（`@hkyhy/marsun-components-core`）                           | title/info/actions/subtitle/tags；列表用 `surface="inset"`；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                                                                                                             |
+| 非表单弹窗　　　　　   | `Modal`（core）　　　　　　　　　　　　　　　　　                               | 必填 `title`；可选 `info`（TooltipInfo）/`description`；`actions`→ButtonGroup；`size` S/M/L；强制 `centered`；`scrollable` 可选；见 shell-layout「报告类 Modal」                                                                                                                        |
+| Agent 报告布局　　　   | `ReportTemplate` / `ReportMetaStrip` / `ReportExportLayout` / `ReportWorkspace` | AgentHub 报告壳；导出工作台 `api` DI；主从 `ReportWorkspace`；见 `AgentHub/Report` examples                                                                                                                                                                                             |
+| 步骤弹窗　　　　　　   | `StepModal`　　　　　　　　　　　　　　　　　　　                               | 多步非表单；强制居中；宽度经 `resolveModalWidth` cap                                                                                                                                                                                                                                    |
+| `Select`（筛选）　　   | `FilterSelect`　　　　　　　　　　　　　　　　　　                              | `filterKey` + `options`/`loadData` + `value` + `onChange` + 可选 `loading`　　                                                                                                                                                                                                          |
+| `TreeSelect`（筛选）   | `FilterTreeSelect`　　　　　　　　　　　　　　　　                              | `filterKey` + `treeData`/`loadData` + `value` + `onChange` + 可选 `loading`（Item spin + 面板 Spin + Empty）　                                                                                                                                                                          |
+| `Cascader`（筛选路径） | `FilterCascader`　　　　　　　　　　　　　　　　　                              | `filterKey` + `treeData`/`options`/`loadData` + `leafOnly` + 可选 `onChangePath` / `loading`；多选须点确定才提交；分厂→品种等路径列用 Cascader，任意深树仍用 TreeSelect                                                                                                                 |
+| `FilterTrigger`　　　  | `FilterTrigger`　　　　　　　　　　　　　　　　　                               | Filter Item；`loading` 时右侧 `Loader2 spin` 替换 chevron                                                                                                                                                                                                                               |
+| `RangePicker`（筛选）  | `FilterDateRange`　　　　　　　　　　　　　　　　                               | `filterKey` + `value` + `onChange`，输出 YYYY-MM-DD                                                                                                                                                                                                                                     |
+| 数字范围（筛选）　　   | `FilterNumberRange`　　　　　　　　　　　　　　　                               | `filterKey` + `value` + `onChange` + `unit` + 可选 `min`/`max`/`precision`/`step`；确定时左≤右                                                                                                                                                                                          |
 
 ### Icons（`@hkyhy/marsun-components-core`）
 

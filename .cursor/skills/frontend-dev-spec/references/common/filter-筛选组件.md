@@ -1,19 +1,88 @@
 # 筛选组件 Filter
 
+### 5.0 ReactFilter vs CommonFilter（共存 · 新页默认 ReactFilter）
+
+| 体系                        | 包内路径                  | 适用场景                                                                                                                                                                                                                                                                                                                                                                         |
+| --------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ReactFilter（`Filter`）** | `components/ReactFilter/` | **Marsun 业务列表筛选栏 SSOT（新页默认）**；厂商移植自 `@kne/react-filter`。运行时依赖 `@kne/super-select` / `@kne/super-select-plus` / `@kne/overflow-items`（须在 core `package.json` + lib `external`，见 [component-mapping · 运行时依赖](component-mapping-组件映射.md)）。`ModulePageShell` toolbar、页内 filter 条新建/改造优先用此。禁止直连 antd Select/DatePicker 等。 |
+| **CommonFilter + Filter\*** | `components/Filter/`      | **存量过渡**：既有页可继续用；逐步替换为 ReactFilter。值模型为 Marsun plain（`string` / `string[]` 等）。                                                                                                                                                                                                                                                                        |
+
+```tsx
+// Marsun 列表页（新页推荐 / 硬约束）
+import {
+  Filter,
+  getFilterValue,
+  ReactInputFilterItem,
+  type FilterValue,
+} from '@hkyhy/marsun-components-core';
+
+// 存量 CommonFilter（过渡，勿用于新页默认）
+import { CommonFilter, FilterSelect, FilterInput } from '@hkyhy/marsun-components-core';
+```
+
+根导出对易冲突符号做了别名：`FilterProvider` → `ReactFilterProvider`，`useFilter` → `useReactFilter`，`FilterItem` → `ReactFilterItem`，以及部分 `*FilterItem` 字段组件加 `React` 前缀（如 `ReactInputFilterItem`）；完整 fields 见 `reactFilterFields` / `Filter.fields`。取值用 `getFilterValue(filterValue)` 将 kne `{ label, value }` 压成扁平字段对象。
+
+#### 字段对位（存量迁移参考）
+
+| ReactFilter `*FilterItem`（根导出常带 `React` 前缀）           | CommonFilter 对位（存量）                                               |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `InputFilterItem` / `ReactInputFilterItem`                     | `FilterInput`                                                           |
+| `NumberRangeFilterItem`                                        | `FilterNumberRange`                                                     |
+| `DatePickerFilterItem` / `ReactDatePickerFilterItem`           | `FilterDatePicker`                                                      |
+| `DateRangePickerFilterItem` / `ReactDateRangePickerFilterItem` | `FilterDateRange`                                                       |
+| `TypeDateRangePickerFilterItem`                                | `FilterTypeDateRange`（`{ type, range }`）                              |
+| `SuperSelectFilterItem`                                        | `FilterSuperSelect`                                                     |
+| `SelectTableListFilterItem`                                    | `FilterSelectTableList`                                                 |
+| `SelectTreeFilterItem`                                         | `FilterTreeSelect`                                                      |
+| `SelectCascaderFilterItem`                                     | `FilterCascader`                                                        |
+| `SelectFunction` / `Industry` / `Address`                      | `FilterSelectFunction` / `FilterSelectIndustry` / `FilterSelectAddress` |
+| AdvancedFilter `ListFilterItem`                                | `FilterList`                                                            |
+| AdvancedFilter `CityFilterItem`                                | `FilterCity`                                                            |
+
+CommonFilter **自有**：`FilterSelect`、`FilterTrigger`、`FilterPanel`、`FilterPopover`，以及 `dependsOn` / `loadData`。适配器：`kneToMarsun` / `marsunToKne`（`Filter/kneValueAdapter.ts`）。
+
+- **新建 / 本任务新建列表筛选**：用 `Filter`（ReactFilter）+ `React*FilterItem` + `getFilterValue`。
+- **存量 CommonFilter 页**：触及任务时可迁；未触及不强制本任务全仓替换。
+- **仍禁止**：列表筛选栏直连 antd `Select` / `DatePicker` / `RangePicker` / `TreeSelect` / `Cascader`。
+
+#### CommonFilter 主题 / 移动交互（对齐 ReactFilter 壳 · 存量）
+
+#### CommonFilter 主题 / 移动交互（对齐 ReactFilter 壳）
+
+CommonFilter **保留**受控字段 + 注册制；视觉与交互壳对齐 kne ReactFilter：
+
+| 能力     | 行为                                                                                                                                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 窄屏检测 | 默认跟**视口**（`max-width: 767px`）；根节点 `is-mobile`。半栏 showcase 不误判。需跟容器时显式 `measureContainer`                                    |
+| 筛选项   | 移动：单行横滑 + pill；桌面：既有 Trigger                                                                                                            |
+| 打开态   | `visited`：实心主色底 + 白字（对齐 ReactFilter `is-visited`）                                                                                        |
+| 弹出     | 桌面 Popover；移动 sheet（`max-height` 限制，内容可滚）+ 遮罩 + 确认/取消                                                                            |
+| 已选区   | 移动横滑 + 可选展开/收起 + 边缘阴影                                                                                                                  |
+| 过多项   | 可选 `displayLine` /「更多」（默认兼容现网全展示）                                                                                                   |
+| 布局切换 | `layoutMode`: `auto` \| `mobile` \| `desktop`；Showcase 用 `FilterLayoutPreview`（Segmented）包交互 Demo，示例见「桌面 / 移动切换」及各 Filter* Demo |
+| iOS      | picker/input 字号 ≥16px，避免聚焦缩放                                                                                                                |
+
+**双端验收**（SKILL #46）：窄屏下筛选可横滑、项可打开确认、已选可清除；桌面既有行为不回退。
+
 ### 5.1 组件体系
 
 筛选组件采用 **CommonFilter 容器 + 子组件自动注册** 的架构：
 
-| 组件                | 说明                                                             | 必选/可选 |
-| ------------------- | ---------------------------------------------------------------- | --------- |
-| `CommonFilter`      | 筛选栏容器，管理已选标签展示和清空                               | 必选      |
-| `FilterInput`       | 文本输入筛选（label 用语义化字段名，见 §5.1.1）                  | 可选      |
-| `FilterSelect`      | 下拉选择筛选（支持单选/多选/搜索；可选 loadData）                | 可选      |
-| `FilterTreeSelect`  | 树形选择筛选（部门树等任意深勾选；亦支持 leafOnly 级联）         | 可选      |
-| `FilterCascader`    | 级联路径筛选（分厂→品种两列；leafOnly 只写叶子；`onChangePath`） | 可选      |
-| `FilterDatePicker`  | 单日期筛选（日 / 月 / 年）                                       | 可选      |
-| `FilterDateRange`   | 日期范围筛选                                                     | 可选      |
-| `FilterNumberRange` | 数字范围筛选                                                     | 可选      |
+| 组件                                            | 说明                                                             | 必选/可选 |
+| ----------------------------------------------- | ---------------------------------------------------------------- | --------- |
+| `CommonFilter`                                  | 筛选栏容器，管理已选标签展示和清空                               | 必选      |
+| `FilterInput`                                   | 文本输入筛选（label 用语义化字段名，见 §5.1.1）                  | 可选      |
+| `FilterSelect`                                  | 下拉选择筛选（支持单选/多选/搜索；可选 loadData）                | 可选      |
+| `FilterTreeSelect`                              | 树形选择筛选（部门树等任意深勾选；亦支持 leafOnly 级联）         | 可选      |
+| `FilterCascader`                                | 级联路径筛选（分厂→品种两列；leafOnly 只写叶子；`onChangePath`） | 可选      |
+| `FilterDatePicker`                              | 单日期筛选（日 / 月 / 年）                                       | 可选      |
+| `FilterDateRange`                               | 日期范围筛选                                                     | 可选      |
+| `FilterTypeDateRange`                           | 类型日期范围（date/month/week；`{ type, range }`）               | 可选      |
+| `FilterNumberRange`                             | 数字范围筛选                                                     | 可选      |
+| `FilterList`                                    | Tag 列表（popover / inline）                                     | 可选      |
+| `FilterCity`                                    | 热门城市 + 更多地址                                              | 可选      |
+| `FilterSuperSelect` / `FilterSelectTableList`   | kne SuperSelect 适配（Marsun 值）                                | 可选      |
+| `FilterSelectFunction` / `Industry` / `Address` | kne plus 业务选择器适配                                          | 可选      |
 
 **导入方式**：
 
@@ -23,9 +92,12 @@ import {
   FilterInput,
   FilterSelect,
   FilterDateRange,
+  FilterTypeDateRange,
   FilterNumberRange,
+  FilterList,
   FilterTreeSelect,
   FilterCascader,
+  FilterSuperSelect,
 } from '@/components/Common';
 import type { FilterOption } from '@/components/Common';
 ```
@@ -121,30 +193,33 @@ const filterList = [
 
 **list 模式优势**：
 
-- 支持动态增减筛选项（如按权限显示/隐藏）
-- 与 `hidden` 属性配合控制可见性
+- 支持动态增减筛选项（如按权限 / 分类显示隐藏）
+- 与 `hidden` / `display` 属性配合控制可见性（容器会跳过不可见 item）
 - JSX 数组形式，类型安全，无需额外配置类型
 
-### 5.4 hidden 属性
+### 5.4 hidden / display 属性
 
-所有 Filter 子组件均支持 `hidden` 属性，控制筛选项的可见性：
+所有 Filter 子组件均支持 `hidden` / `display` 控制可见性（`display` 优先）：`hidden===true` 或 `display===false` 时不渲染。`CommonFilter` 的 **list 模式**也会读取 item 的这两项 props，跳过不可见项。
 
 ```tsx
 // boolean 形式
 <FilterSelect filterKey="role" label="角色" options={roleOptions} hidden={!isAdmin} />
 
+// display 形式（与 hidden 等价语义，display 优先）
+<FilterSelect filterKey="level" label="质量等级" options={levelOptions} display={category === 'AI_QUALITY'} />
+
 // 函数形式（每次渲染时动态计算）
 <FilterSelect filterKey="role" label="角色" options={roleOptions} hidden={() => !hasAnyRole([UserRole.SYSTEM_ADMIN])} />
 
-// list 模式中使用
+// list 模式中使用（推荐：扁平数组 + hidden，禁止条件 push 不同 list）
 const filterList = [
   <FilterInput key="q" filterKey="q" label="指标/摘要/ID" value={value} onChange={onChange} />,
-  <FilterSelect key="role" filterKey="role" label="角色" options={roleOptions} value={value} onChange={onChange} hidden={!isAdmin} />,
+  <FilterSelect key="level" filterKey="level" label="质量等级" options={levelOptions} value={level} onChange={onLevelChange} hidden={category === 'STORAGE_SYNC'} />,
   <FilterSelect key="status" filterKey="status" label="状态" options={statusOptions} value={value} onChange={onChange} hidden={() => !isReviewer} />,
 ];
 ```
 
-> **核心原则**：与 `ButtonGroup` listArray 的 `hidden` 保持一致，统一使用 `hidden` 属性控制可见性，禁止使用 `{condition && <FilterXxx />}` 条件渲染。
+> **核心原则**：与 `ButtonGroup` listArray 的 `hidden` 保持一致，统一使用 `hidden` / `display` 控制可见性，禁止使用 `{condition && <FilterXxx />}` 或条件 `push` 不同数组。
 
 ### 5.4.1 声明式依赖 `dependsOn` / `loadData` / `panelExtra`
 
@@ -202,6 +277,14 @@ const filterList = [
 ```
 
 > **原则**：从属条件（月份、纺纱属性）放进目标项的 `panelExtra`，**不要**与主对标/对比平铺在顶栏。业务 URL / 参数拼装仍在页面的 `loadData` / 父级 effect 内；core 只负责依赖感知、清空与刷新时机。静态 `treeData` / `options` 仍可受控覆盖 `loadData` 结果。`panelExtra` 内用 antd `DatePicker`/`Select`/`InputNumber`，禁止再嵌 `Filter*`。
+
+**S3 质量分析**：业务顶栏 `VarietyHistorySearchBar` 已用 **ReactFilter**（`Filter` + `PopoverItem` + 面板内 antd `Cascader.Panel` leafOnly；月份/新品种属性内嵌）。Showcase：「S3 质量分析 · ReactFilter」；CommonFilter 对照见 Filter「S3 质量分析筛选」（`FilterCascader` + `panelExtra`）。
+
+**已选 Tag**：`FilterValueDisplay` / CommonFilter 已选区对长文案设 `max-width` + `text-overflow: ellipsis`，hover 可看全文。
+
+**SuperSelect 列表弹层**：桌面根 `.ant-dropdown[class*=kne-super-select]`。列表宽度修补只作用在 `.select-list-scroll-list` / `.select-tree-scroll-list`，**禁止**作用到 `.select-cascader-content`（级联行是横向 Space）。见 `ReactFilter/superSelectPopup.scss`。业务须 `import '@hkyhy/marsun-components-core/styles'`。
+
+**QA 质量分析 PopoverItem 内级联**：勿嵌 kne `SelectCascader`（会套弹层 / Modal，且父级勾选与 leafOnly 不一致）。用 antd **`Cascader.Panel`** + `changeOnSelect={false}`（对齐原 `FilterCascader` `leafOnly`：不可只选分厂；主对标单选、对比多选 + `SHOW_CHILD`）。`options=[]` 时用 core `Empty`。
 
 ### 5.5 extra 属性
 

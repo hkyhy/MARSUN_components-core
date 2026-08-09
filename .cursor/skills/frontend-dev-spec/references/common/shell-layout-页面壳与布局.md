@@ -97,7 +97,7 @@ const pageLoading = metaLoading || listLoading || detailLoading;
 Filter meta / options 加载与失败时（详见 [filter-筛选组件.md](filter-筛选组件.md) §5.9）：
 
 - **推荐**：筛选栏挂 `ModulePageShell` 的 **`toolbar`**，位于 `PageSpin` 外，loading 时仍始终可见占位
-- **选项 loading**：传 Filter* `loading` → Filter Item（`Loader2 spin`）+ 面板内 Spin；**禁止**把 `primaryOptionsLoading` / `searchLoading` 等 options 请求 OR 进内容区 `pageLoading` / `spinning`
+- **选项 loading**：传 Filter\* `loading` → Filter Item（`Loader2 spin`）+ 面板内 Spin；**禁止**把 `primaryOptionsLoading` / `searchLoading` 等 options 请求 OR 进内容区 `pageLoading` / `spinning`
 - **禁止**：`metaLoading → return null` 整栏隐藏；**`suppressLoadingText` 已废弃**，不得再靠隐藏筛选栏避让 Spin
 - **失败 / 空态**：仅 `message.error`；落定后 options 为空用 core `Empty iconType="simple"`；内容区可继续空态 / Spin（矩阵等业务数据加载）
 
@@ -120,16 +120,6 @@ PageSpin 自身（core 内置）：`flex: 1; min-height: 200px; min-height: 0` o
 - 业务项目内复制 `PageSpin` / `PageShellContext`
 - body 内 `<p className="loading">加载中…</p>` 与整页 Spin 叠层
 - 把 Modal 放在 `ModulePageShell` children 内且不设 `spinning={false}` 时期望可点
-
-### 管理台页头信息三档（禁止叠床架屋）
-
-| 层级                                       | 用途                   | 规则                                              |
-| ------------------------------------------ | ---------------------- | ------------------------------------------------- |
-| **L0** `description` / `headerDescription` | 一句业务说明（≤40 字） | 唯一常显摘要；来自路由 meta                       |
-| **L1** 可折叠指引（Collapse，默认收起）    | 运维清单 / Wave 说明   | 禁止与 L0 同级再铺 Alert                          |
-| **L2** 文档                                | 使用指南 / 产品文      | 危险操作用 `Modal.confirm`，勿用常驻 Alert 堆重点 |
-
-**禁止**：页头同时堆 `description` + 全局 note + 多个 `Alert`；**禁止**页头刷新按钮与角色 Tag（角色进 `UserProfileCard`）。列表默认 `pageSize=20`。分域用 `StateBar` + `tabBarExtraContent`。
 
 ---
 
@@ -182,10 +172,11 @@ import styles from './style.module.scss';
 | 壳       | 从 `@hkyhy/marsun-components-core` 导入 **`Modal`**（非直连 antd）；**始终居中**；`size="L"`（或 `width` 锚点）；`scrollable`；`title` 必填；可选 `info`（`DescriptionItem[]` → 标题旁 `Info` + `TooltipInfo`，对齐 InteractiveBlock）与 `description`（标题行下方次要文案）；标题右侧 `actions` 用 ButtonGroup listArray（首个可见项未设 `type` 时默认 `primary`）；关闭 Icon 不得压住 Action |
 | 宽度     | S/M/L = 480/720/960；`effective = min(锚点, 100vw-64)`，**只可缩小不可放大**；未给默认则按视口自动选档再 cap（见 `resolveModalWidth`）                                                                                                                                                                                                                                                         |
 | 高度     | 按 size 固定 body 可视高；内容仅纵向滚；`overflow-x: hidden`，内容 `min-width:0; max-width:100%`                                                                                                                                                                                                                                                                                               |
-| 报告布局 | 叙事用 AgentHub **`ReportTemplate`** + **`ReportMetaStrip`**（默认四列均分：实测/阈值/基准/超出）；**不展示报告级置信度**                                                                                                                                                                                                                                                                      |
-| 滚动     | Modal `scrollable` 单层 VS；报告体 `scrollOwner="parent"`，禁止 tab 面板再写 `overflow-y-auto`                                                                                                                                                                                                                                                                                                 |
+| 报告布局 | QA 根因：`RcaBentoGrid` 单栏（现象→结论→证据→原因→知识→排查→改善）；**不展示报告级/假设级置信度**；证据标签映射见 `reportDisplay.resolveEvidenceLabels`；有 `knowledgeRefs` 时证据列表去掉 knowledge 类                                                                                                                                                                                        |
+| 滚动     | Modal `scrollable` 单层 VS；报告体 `scrollOwner="parent"`，禁止再写 `overflow-y-auto`                                                                                                                                                                                                                                                                                                          |
 | Footer   | HITL 与「关闭」放 Modal `footer`；备注态由 footer 内组件自持                                                                                                                                                                                                                                                                                                                                   |
-| Tabs     | antd `Tabs`，content `width: 100%`；区块少灰底糊层，证据列表用 `InteractiveBlock surface="inset"`                                                                                                                                                                                                                                                                                              |
+| 结构     | **无**分析流/改善建议 Tabs；对比回显 `summarySections`/`pivotRows`/`layerDiffs`；列表摘要用 `listItemSummaryPreview`（契约 `summary`）                                                                                                                                                                                                                                                         |
+| 决策     | rating 1–5 必填；已 reject 可「撤销不采纳」；历史详情默认可继续决策                                                                                                                                                                                                                                                                                                                            |
 | 空态     | core `Empty iconType="simple"`                                                                                                                                                                                                                                                                                                                                                                 |
 
 参考：`repos/Agent_QualityAnalysis/frontend` 的 `Alerts/Modal/AnalyzeModal` + `Rca/Detail/RootCauseReport`；core `Modal/examples/ModalBasicDemo`、`AgentHub/Report/examples/ReportTemplateDemo`。
@@ -258,7 +249,7 @@ import styles from './style.module.scss';
 1. 根包 `PageShellProvider` →（可选 `MarsunCoreProvider`）→ `AgentAppShell` → 主内容区 `VirtualScrollbar` → `<Outlet />`
 2. 页面用本地薄封装的 `ModulePageShell`（转调 core）+ `spinning`；**禁止**主滚动区 `overflow-auto` / `overflow-y-auto`
 3. **侧栏折叠必须可工作**：受控 `collapsed` + `onToggleCollapsed`，并持久化到上表 localStorage key（`'1'`/`'0'`）；改壳时不得去掉折叠按钮或受控状态
-4. `siderFooter` 用 `UserProfileCard`（会话 `/me`）；顶栏 `headerTitle`/`headerDescription` 来自 `usePageShell().meta` 或路由 `constants/nav` meta
+4. `siderFooter` 用 `UserProfileCard`（会话 `/me`）：`name`=姓名、`nameMeta`=工号（与 name 不同才传）、`sub`=角色；顶栏 `headerTitle`/`headerDescription` 来自 `usePageShell().meta` 或路由 `constants/nav` meta
 
 参考：`repos/marsun_sso/frontend/src/layouts/AdminAppShell`、`repos/marsun_rd_ops/frontend/src/layouts/AppShell`。
 
@@ -350,6 +341,7 @@ Chat 等已接入模块，改动时保持 `VirtualScrollbar` + `ref`/`onScroll` 
 
 ```tsx
 import { Download, InteractiveBlock, SEMANTIC_COLORS } from '@hkyhy/marsun-components-core';
+import { listItemSummaryPreview } from '@/components/QualityAnalysis/Rca/utils/reportDisplay';
 
 <InteractiveBlock
   title={`${item.metric} · ${item.factory}`}
@@ -360,7 +352,7 @@ import { Download, InteractiveBlock, SEMANTIC_COLORS } from '@hkyhy/marsun-compo
   subtitle={`${item.variety} · ${item.alertMonth}`}
   tags={[{ label: '预警', color: SEMANTIC_COLORS.WARNING }]}
   tagsPlacement="inline"
-  description={item.summaryPreview}
+  description={listItemSummaryPreview(item)}
   actions={[
     {
       key: 'export',

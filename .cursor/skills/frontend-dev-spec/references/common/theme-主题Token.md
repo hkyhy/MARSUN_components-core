@@ -25,11 +25,18 @@ Ant Design Theme Token & Semantic Token 统一在 `src/styles/theme.ts` 中配�
 import '@hkyhy/marsun-components-core/styles';
 import '@hkyhy/marsun-components-core/tokens';
 import '../styles/global.scss';
+import zhCN from 'antd/locale/zh_CN';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+
+dayjs.locale('zh-cn'); // 与 ConfigProvider locale={zhCN} 成对；缺省会出现「2026年 Aug」中英混杂
 
 useEffect(() => {
   applyThemeToCssVariables(settings.themeColor);
 }, [settings.themeColor]);
 ```
+
+**DatePicker / 筛选日期面板 locale**：antd `ConfigProvider locale={zhCN}` 管组件文案；**月名、星期**由 dayjs 渲染，须同时 `import 'dayjs/locale/zh-cn'` + `dayjs.locale('zh-cn')`（对齐 QA `main/index.tsx`）。
 
 **项目 `global.scss`**：
 
