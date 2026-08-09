@@ -5,6 +5,7 @@ description: |
   当用户要求开发新功能模块、新建组件、重构组件结构、样式/className/SCSS Modules 规范、Tailwind 迁移、或涉及 src/components 或 src/pages 目录下的文件操作时，应使用此技能。
   当需要在 Tooltip 中展示结构化详情（如添加人/添加时间）时，必须使用 TooltipInfo（来自 `@hkyhy/marsun-components-core` 或本地 Common 封装）。
   当需要按权限码控制按钮/区域显示（hidden / tooltip / error）、或使用 usePermissions / usePermissionsPass 时，必须使用 `@hkyhy/marsun-components-core` 的 Permissions（权限列表注入 MarsunCoreProvider auth.permissions）；角色/单权限 + fallback 仍用 PermissionGuard。见 references/business/permissions-data-权限与常量.md。
+  增减/重命名 Assets·SSO 权限码、绑权目录、侧栏门禁、defaultGranted 基线时：须读 references/business/permissions-catalog-改权限齐套.md 并同任务齐套（码表/矩阵/菜单/清单/测试），禁止兼容旧码 OR。
   当页面或模块存在可滚动区域时，必须使用 VirtualScrollbar（来自 `@hkyhy/marsun-components-core`），禁止在主滚动区使用 overflow-auto / overflow-y-auto；Layout 级接入方式见 references/common/shell-layout-页面壳与布局.md。
   当模块页或列表页存在数据加载态时，必须使用 core 的 PageSpin + PageShellProvider（App Layout 包裹 Provider；页面用 ModulePageShell / PageHeaderLayout 的 spinning 或 usePageShellLoading）；禁止业务内手写「加载中…」叠层。见 references/common/shell-layout-页面壳与布局.md。
   当新建或初始化前端子仓库、或 package.json 缺少格式化工具链时，须按 references/common/code-formatting-代码格式化.md 安装 Prettier + ESLint + Husky（含 `prepare`、`lint-staged` script、`.husky/pre-commit`），配置对齐 `repos/maoyang_data-asset-system` 与 `repos/marsun_components-core`。
@@ -18,6 +19,7 @@ description: |
   写组件、改纯逻辑或提交前：须走写代码门禁（核心原则 #44）——同任务补/改 __tests__ → 本人跑通 vitest/npm run test → da standards scan；统一流水线见 da-workflow/references/test-and-selfcheck-写代码自检与测试.md。用户说自检/跑测试/提交前检查时亦触发。
   方案定稿后或页面可点后：须跑角色循环验证（核心原则 #45）——需求用顶尖产品经理视角、前端用顶尖前端+UI 视角；输出必须改/建议改/可接受，未经确认勿改。用户说再验证/循环验证时亦触发。见 da-workflow/references/role-loop-review-角色循环验证.md。
   本任务若解决了可复用、非显而易见的联调/组件/规范问题，须同任务写入对应 skill reference / mapping / 契约（禁止只留在对话；见核心原则 #43）。
+  质量分析沙盘 FOCUS 矩阵、PlantMetricMatrix、focusMetricsTree、focusLeafSapCode、focus-metric-matrix 投影时触发 references/business/focus-matrix-前端投影.md（列在 FE；测值键保持 Doris 纯洁性）。
   此技能提供统一的目录结构、命名规范、组件拆分方式和代码模板，确保所有模块遵循一致的架构风格。
 ---
 
@@ -79,7 +81,7 @@ description: |
 28. **公共 Token 三层接入** `(common)`：静态默认值 `import '@hkyhy/marsun-components-core/tokens'` → 运行时 `applyThemeToCssVariables(primaryColor)` → 项目 `tokens.css` 仅扩展领域变量。CSS 变量命名统一 `--primary-color` / `--font-color-grey-*`，禁止项目自建 `--color-primary` 平行体系。详见 [common/theme-主题Token.md](references/common/theme-主题Token.md)
 29. **Commit 同步 Plane** `(common)`：子仓库已配置 Plane 时，**每次 git commit 后**须 `@da pm dry-run` → sync，更新 `sync_manifest` 任务 status；新任务 id 须对齐钉钉层级（`S3.3.*` 等，见 [da-workflow/task-naming](../da-workflow/references/task-naming.md)）；**取号前 `plane_pull`，`id = max(名称 S3.3.N)+1`，勿盲信 `next_task_id`**；细粒度挂钉表 V0.2 大颗粒 `parent_issue`（见 [task-relationships](../da-workflow/references/task-relationships.md)）；my-plane 维持 `M003-*` 例外
 30. **core 依赖提交态** `(common)`：`package.json` 中 `@hkyhy/marsun-components-core` **提交时必须 semver**，且**版本号与 npm 已发布最新版一致**（如 `^0.1.15`）；禁止 `file:` / lockfile `link: true`；本地联调用 `MARSUN_CORE_LOCAL` + Vite alias。详见 [component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)
-31. **core 版本与实版一致；发版与功能同包** `(common)`：`marsun_components-core` 开发中 version **= npm 已发布最新**；交付时 **同一 commit** 含功能 diff + `version` bump（`npm run version:check:apply` 写回 npm+1），push 触发 CI publish；**禁止**仅 bump 的独立 `chore(release)`；业务仓为本功能升 core 时 `^`/lockfile 与业务 diff **同包**（禁止拆 `chore(deps)`）；**禁止本地 npm publish**。见 [component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)
+31. **core 版本与实版一致；npm 由 `chore(release)` CI 发布** `(common)`：`marsun_components-core` 开发中 version **= npm 已发布最新**；交付时功能 commit 内 `version` bump（`npm run version:check:apply`）；**npm publish 仅** `release.yml` 在 push **首行** `chore(release): v{version}` 时触发（`feat`/`fix` push **不会**发 npm）。推荐：功能+version 同 commit → CI verify 绿 → 再推 `chore(release): vX.Y.Z`；或单提交首行即 `chore(release): vX.Y.Z …`（含功能+version）。业务仓升 `^`/lockfile 与业务 diff **同包**；**禁止本地 npm publish**。**新增源码运行时 `import`**：须同 commit 写入 `package.json`+lock，并加入 `vite.config.lib.ts` `rollupOptions.external`（含 CSS 子路径）；提交前 `npm ci && npm run build && npm run build:showcase`。改 Demo/`meta.json` 须同包 `collect-examples`；`release.yml` typecheck 前须 collect（与 CI 一致）。见 [component-mapping-组件映射.md](references/common/component-mapping-组件映射.md)
 32. **模块页全局 Loading** `(common)`：`PageSpin`、`PageShellProvider`、`usePageShellLoading`、`ModulePageShell` 来自 `@hkyhy/marsun-components-core`；App Layout 须包 `PageShellProvider`；页面用 `spinning` 或 `usePageShellLoading`，禁止局部 loading 文案叠层。见 [shell-layout-页面壳与布局.md](references/common/shell-layout-页面壳与布局.md)
 33. **代码格式化与 Lint** `(common)`：所有前端子仓库须安装 Prettier + ESLint + Husky 工具链（`prettier`、`eslint`、`eslint-config-prettier`、`eslint-plugin-prettier`、`typescript-eslint`、`lint-staged`、`husky` 等），根目录配置 `.prettierrc` + `eslint.config.js` + `.husky/pre-commit`，`package.json` 提供 `lint` / `lint:fix` / `format` / `lint-staged` / `prepare` scripts；参考 `repos/maoyang_data-asset-system` 与 `repos/marsun_components-core`。详见 [code-formatting-代码格式化.md](references/common/code-formatting-代码格式化.md)
 34. **模块主区扁平布局** `(business)`：`ModulePageShell` 已提供 `title`/`description` 时，**禁止**再传与 title 重复的 `breadcrumb`；主内容 workarea **禁止**双层 card（外层 border + 内层 padding）。主区用 `ContentCard flat` 或等价 `flex:1` 容器；Tabs/Table 内容区 `width:100%`；页脚主操作按钮默认 **非 block**（Drawer/窄容器可用 `saveBlock`）。详见 [styles-样式规范.md](references/common/styles-样式规范.md)「模块 workarea 扁平化」
@@ -127,12 +129,13 @@ description: |
 
 ### business（业务规范）
 
-| 场景                                  | 文件                                                                                          |
-| ------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Action/Form/Modal/List 模式与代码模板 | [business/module-patterns-模块模式.md](references/business/module-patterns-模块模式.md)       |
-| 权限、常量、批量操作                  | [business/permissions-data-权限与常量.md](references/business/permissions-data-权限与常量.md) |
-| 部门树、人员选择、完整路径            | [business/department-person-部门人员.md](references/business/department-person-部门人员.md)   |
-| API 拆分、页面路由、多域组件路由      | [business/routing-api-路由与API.md](references/business/routing-api-路由与API.md)             |
+| 场景                                  | 文件                                                                                                |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Action/Form/Modal/List 模式与代码模板 | [business/module-patterns-模块模式.md](references/business/module-patterns-模块模式.md)             |
+| 权限、常量、批量操作                  | [business/permissions-data-权限与常量.md](references/business/permissions-data-权限与常量.md)       |
+| 改权限齐套（码表/矩阵/绑权/文档）     | [business/permissions-catalog-改权限齐套.md](references/business/permissions-catalog-改权限齐套.md) |
+| 部门树、人员选择、完整路径            | [business/department-person-部门人员.md](references/business/department-person-部门人员.md)         |
+| API 拆分、页面路由、多域组件路由      | [business/routing-api-路由与API.md](references/business/routing-api-路由与API.md)                   |
 
 ### 场景速查
 

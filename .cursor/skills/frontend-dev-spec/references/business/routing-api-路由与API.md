@@ -1,5 +1,22 @@
 # API 与路由 Routing API
 
+## S3 根因 / 对比报告 SSE（入参收口）
+
+`POST …/rca/analyze/alert/stream` · `…/compare/stream`（刘军，HTTP `extra=forbid`）：
+
+| 入口          | 仅允许字段                                                                                                  | 禁止                                                            |
+| ------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 预警根因      | `factoryCode`/`factoryName`/`varietyCode`/`varietyName`/`indicatorCode`/`indicatorName`/`date`/`sessionId?` | `werks`/`factory`/`monthlySeries`/`value`/`forceRegenerate` 等  |
+| 对比/质量分析 | `diffs` + `primary`/`compare`（各四字段）+ `sessionId?`                                                     | `month`/`compareMode`/`cottonBatch`/`plants`/`monthlySeries` 等 |
+
+时序/证据由服务端自取。FE 组装见 `repos/Agent_QualityAnalysis/frontend/src/utils/rcaPayload.ts`；契约 SSOT：`backend-dev/agent-dev/S3/质量预警任务跟踪/根因与对比分析/`。
+
+**证据「查看原始数据」** `GET …/rca/evidence/drilldown`：优先用 `evidence.data` 内嵌 series/records；不足再请求。Query 须带三码 `factoryCode`/`varietyCode`/`indicatorCode`（兼容旧 `factory`/`variety`/`metric`）；FE 归一见 `EvidenceDrilldownDrawer` `buildDrilldownQueryParams`。
+
+## 质量分析 FOCUS 矩阵（边界）
+
+沙盘 `focus-metric-matrix`：**接口只出 Doris/SAP/工艺列码**；三级表头与一对多列投影只在前端。见 [focus-matrix-前端投影.md](focus-matrix-前端投影.md) 与 backend-dev-spec [focus-matrix-前后端边界.md](../../../backend-dev-spec/references/focus-matrix-前后端边界.md)。
+
 ## API 按模块拆分
 
 `src/api/` 目录按功能模块拆分为独立文件（如 `auth.ts`、`user.ts`、`file.ts`、`review.ts` 等），每个文件导出一个 `xxxApi` 对象。`src/api/index.ts` 作为 barrel 文件统一 re-export 所有 API 对象，确保现有 `import { xxxApi } from '@/api'` 引用无需修改。禁止在 `index.ts` 中直接定义 API 对象。
@@ -261,3 +278,14 @@ const App: React.FC = () => {
 - 页面路由从 `src/pages/{Module}/routes.tsx` 导入，组件展示路由从 `src/components/routes.tsx` 导入
 - 新增页面路由时，在对应模块的 `routes.tsx` 中添加
 - 新增组件展示路由时，在对应子模块的 `examples/meta.json` 中维护示例配置，由 `collect-examples` 脚本自动生成路由和 menu；多子模块业务域无需手动编辑 `{Domain}/routes.tsx`
+
+## Assets / S3 IAM 薄壳与 SSO API
+
+业务「权限设置」页走 `src/api/ssoIam.ts` → SSO `/api/iam/*`：
+
+| 页面门禁                  | 允许调用的 SSO                                                          | 禁止                                        |
+| ------------------------- | ----------------------------------------------------------------------- | ------------------------------------------- |
+| `dept:view` / `user:view` | 本租户 **GET**（org-units / users / roles / shared-groups / EP 预览等） | 把普通用户接到仅 Admin 的写接口当唯一读路径 |
+| `system:permission`       | 同上 + 角色/共享组/任命 **写**（后端仍校验 IAM Admin）                  | FE 对仅 `user:view` 展示可保存任命          |
+
+契约见 `backend-dev/platform-dev/IAM管理/接口.md`「本租户只读 vs Admin 写」。

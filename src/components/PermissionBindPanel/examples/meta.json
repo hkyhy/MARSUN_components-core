@@ -1,0 +1,53 @@
+{
+  "title": "PermissionBindPanel 绑权三栏",
+  "description": "角色绑权信息架构：页面模块 → 业务功能点分类 → 实际业务功能点；SYSTEM 入口门禁；RESOURCE 不展示。",
+  "examples": [
+    {
+      "title": "基础三栏勾选",
+      "description": "左栏页面模块，主区按分类分组；未勾入口时业务模块禁用",
+      "component": "@/components/PermissionBindPanel/examples/BasicDemo",
+      "sourcePath": "@/components/PermissionBindPanel/examples/BasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "PermissionBindPanelProps",
+      "rows": [
+        {
+          "prop": "catalog",
+          "desc": "三栏目录；缺省时按 code 前缀扁平分组",
+          "type": "PermissionBindCatalog | null",
+          "defaultVal": "undefined"
+        },
+        {
+          "prop": "permissions",
+          "desc": "可绑权限列表（id/code/name/layer）；RESOURCE 自动过滤",
+          "type": "PermissionBindItem[]"
+        },
+        {
+          "prop": "value",
+          "desc": "已选 permissionId",
+          "type": "string[]"
+        },
+        {
+          "prop": "onChange",
+          "desc": "勾选变更",
+          "type": "(nextIds: string[]) => void"
+        },
+        {
+          "prop": "systemEntryCodes",
+          "desc": "SYSTEM 入口码；未勾时禁用 requiresSystemEntry 模块",
+          "type": "string[]",
+          "defaultVal": "[]"
+        },
+        {
+          "prop": "height",
+          "desc": "面板高度",
+          "type": "number",
+          "defaultVal": "420"
+        }
+      ]
+    }
+  ]
+}

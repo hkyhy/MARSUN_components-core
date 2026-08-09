@@ -15,10 +15,6 @@
 
 角色显示名从 `GET /api/permissions/role-options` 获取，通过 `roleOptionsStore` / `getRoleLabel()` 使用；禁止 `ROLE_LABEL_MAP` 硬编码。
 
-## SSO Admin 枚举字典
-
-SSO 管理台（`marsun_sso` `/admin`）表格 / 筛选 / 表单枚举走 **`GET /api/iam/dictionaries`**（`{ version, groups }`），前端 `AdminDictionaryProvider`（`label` / `options`）。**禁止**硬编码英文 code 作展示文案（如 `SYSTEM` / `APP`）；布尔态用户状态用组 `userActive`（`true`/`false`），勿再造平行 `userStatus`。契约见 [backend-dev/platform-dev/IAM管理/接口.md](../../../../backend-dev/platform-dev/IAM管理/接口.md)。
-
 ## 权限定义（管理端）
 
 全量权限定义从 `GET /api/permissions/permissions` 获取，由权限管理页拉取后 props 下发；禁止 `ALL_PERMISSIONS` 前端副本。
