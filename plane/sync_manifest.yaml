@@ -1367,7 +1367,7 @@ tasks:
 - id: P6.3.92
   milestone: P6.3
   name: FilePreview Excel anchors 加固
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feature
   owner: 黄金芳
@@ -1382,7 +1382,7 @@ tasks:
 - id: P6.3.93
   milestone: P6.3
   name: chore release 发布 npm v0.1.46
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: chore
   owner: 黄金芳
