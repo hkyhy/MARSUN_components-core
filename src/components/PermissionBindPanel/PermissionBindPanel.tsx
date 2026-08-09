@@ -11,8 +11,11 @@ export type PermissionBindPanelProps = {
   onChange: (nextIds: string[]) => void;
   /** SYSTEM 入口码；未勾时禁用 requiresSystemEntry 模块 */
   systemEntryCodes?: string[];
+  /** 只读预览（如用户有效权限）：勾选态展示、禁止改、左右栏仍受 height 约束 */
+  readOnly?: boolean;
   className?: string;
   style?: CSSProperties;
+  /** 左右栏最大高度（默认 420） */
   height?: number;
 };
 
@@ -163,6 +166,7 @@ export default function PermissionBindPanel({
   value,
   onChange,
   systemEntryCodes = [],
+  readOnly = false,
   className,
   style,
   height = 420,
@@ -189,22 +193,24 @@ export default function PermissionBindPanel({
   const lockedIdSet = useMemo(() => new Set(lockedIds), [lockedIds]);
 
   const systemEntryOpen = useMemo(() => {
+    if (readOnly) return true;
     if (!systemEntryCodes.length) return true;
     const entryIds = bindable.filter((p) => systemEntryCodes.includes(p.code)).map((p) => p.id);
     if (!entryIds.length) return true;
     return entryIds.some((id) => value.includes(id));
-  }, [systemEntryCodes, bindable, value]);
+  }, [readOnly, systemEntryCodes, bindable, value]);
 
   /** SYSTEM 入口打开时才强制基线；关掉入口时允许 strip 业务码 */
   const mergeLocked = (ids: string[]) =>
     systemEntryOpen ? [...new Set([...ids, ...lockedIds])] : ids;
 
   useEffect(() => {
+    if (readOnly) return;
     if (!systemEntryOpen || !lockedIds.length) return;
     const missing = lockedIds.filter((id) => !value.includes(id));
     if (missing.length) onChange(mergeLocked(value));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lockedIds.join('|'), systemEntryOpen]);
+  }, [lockedIds.join('|'), systemEntryOpen, readOnly]);
 
   const [activeModule, setActiveModule] = useState('');
 
@@ -224,16 +230,19 @@ export default function PermissionBindPanel({
     Boolean(mod?.requiresSystemEntry && !systemEntryOpen);
 
   const setIds = (next: string[]) => {
+    if (readOnly) return;
     onChange(mergeLocked(next));
   };
 
   const toggleId = (id: string, on: boolean) => {
+    if (readOnly) return;
     if (systemEntryOpen && lockedIdSet.has(id)) return;
     if (on) setIds([...value, id]);
     else setIds(value.filter((x) => x !== id));
   };
 
   const toggleAllInModule = (mod: ResolvedModule, on: boolean) => {
+    if (readOnly) return;
     const optionalIds = mod.perms.filter((p) => !lockedIdSet.has(p.id)).map((p) => p.id);
     if (on) setIds([...value, ...optionalIds]);
     else {
@@ -313,17 +322,21 @@ export default function PermissionBindPanel({
               }}
             >
               <Typography.Text strong>{active.label}</Typography.Text>
-              <Checkbox
-                disabled={locked || active.perms.every((p) => lockedIdSet.has(p.id))}
-                checked={active.perms.length > 0 && active.perms.every((p) => value.includes(p.id))}
-                indeterminate={
-                  active.perms.some((p) => value.includes(p.id)) &&
-                  !active.perms.every((p) => value.includes(p.id))
-                }
-                onChange={(e) => toggleAllInModule(active, e.target.checked)}
-              >
-                全选本模块
-              </Checkbox>
+              {readOnly ? null : (
+                <Checkbox
+                  disabled={locked || active.perms.every((p) => lockedIdSet.has(p.id))}
+                  checked={
+                    active.perms.length > 0 && active.perms.every((p) => value.includes(p.id))
+                  }
+                  indeterminate={
+                    active.perms.some((p) => value.includes(p.id)) &&
+                    !active.perms.every((p) => value.includes(p.id))
+                  }
+                  onChange={(e) => toggleAllInModule(active, e.target.checked)}
+                >
+                  全选本模块
+                </Checkbox>
+              )}
             </div>
 
             {active.categories.map((cat) => (
@@ -333,11 +346,12 @@ export default function PermissionBindPanel({
                 value={value}
                 moduleDisabled={locked}
                 lockedIdSet={lockedIdSet}
+                readOnly={readOnly}
                 onToggle={toggleId}
               />
             ))}
 
-            {locked ? (
+            {!readOnly && locked ? (
               <Typography.Text type="warning" style={{ display: 'block', marginTop: 12 }}>
                 请先勾选 SYSTEM 入口权，再勾选业务权限。基线权限仍保持勾选。
               </Typography.Text>
@@ -354,12 +368,14 @@ function CategoryBlock({
   value,
   moduleDisabled,
   lockedIdSet,
+  readOnly,
   onToggle,
 }: {
   category: ResolvedCategory;
   value: string[];
   moduleDisabled: boolean;
   lockedIdSet: Set<string>;
+  readOnly: boolean;
   onToggle: (id: string, on: boolean) => void;
 }) {
   return (
@@ -393,7 +409,7 @@ function CategoryBlock({
           return (
             <Checkbox
               key={perm.id}
-              disabled={isBaseline || moduleDisabled}
+              disabled={readOnly || isBaseline || moduleDisabled}
               checked={value.includes(perm.id)}
               onChange={(e) => onToggle(perm.id, e.target.checked)}
             >

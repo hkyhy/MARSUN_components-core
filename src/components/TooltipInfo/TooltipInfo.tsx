@@ -45,14 +45,20 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
       destroyOnHidden
       classNames={{ root: ['tooltip-info-overlay', overlayClassName].filter(Boolean).join(' ') }}
       styles={{
+        root: {
+          maxWidth: 320,
+        },
         container: {
+          boxSizing: 'border-box',
           minWidth: 220,
-          maxWidth: 360,
+          width: '100%',
           padding: '8px 12px',
           background: 'var(--tooltip-info-bg, var(--bg-color-white, #ffffff))',
           color: 'var(--tooltip-info-color, var(--font-color, #222222))',
           boxShadow: '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12)',
           ...overlayStyle,
+          // 硬上限：避免 Descriptions 长文把气泡横向撑爆
+          maxWidth: 320,
         },
       }}
       getPopupContainer={() => document.body}

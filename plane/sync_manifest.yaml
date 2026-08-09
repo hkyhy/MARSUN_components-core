@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.94
+  next_task_id: P6.3.97
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1397,3 +1397,49 @@ tasks:
     Related: P6.3.92
     chore(release) 触发 CI publish @hkyhy/marsun-components-core@0.1.46
 
+- id: P6.3.94
+  milestone: P6.3
+  name: Upload/Stat/绑权/Tooltip/OrgTree 组件增强
+  status: 已完成
+  priority: P0
+  kind: feature
+  owner: 黄金芳
+  start_date: "2026-08-09"
+  target_date: "2026-08-09"
+  tags: [frontend, components]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3
+    Upload picture-card；StatCard suffix/precision；PermissionBindPanel readOnly；
+    TooltipInfo/OrgTree/Form kneFormInfo 导出
+
+- id: P6.3.95
+  milestone: P6.3
+  name: frontend-dev-spec skills 与 examples-registry 同步
+  status: 进行中
+  priority: P1
+  kind: docs
+  owner: 黄金芳
+  start_date: "2026-08-09"
+  target_date: "2026-08-09"
+  tags: [docs, skills]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3
+    Related: P6.3.94
+
+- id: P6.3.96
+  milestone: P6.3
+  name: chore release 发布 npm v0.1.47
+  status: 进行中
+  priority: P0
+  kind: chore
+  owner: 黄金芳
+  start_date: "2026-08-09"
+  target_date: "2026-08-09"
+  tags: [release, npm]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3
+    Related: P6.3.94
+    chore(release) 触发 CI publish @hkyhy/marsun-components-core@0.1.47

@@ -24,8 +24,9 @@
 
 .marsun-org-tree-name {
   display: inline-block;
-  max-width: 20rem;
+  flex: 1;
   min-width: 0;
+  /* 不设固定 max-width：由树容器宽度决定，避免「华茂集团 · H…」过早截断 */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -178,7 +178,12 @@ export * from './components/Tag';
 export * from './components/TooltipInfo';
 export * from './components/Tour';
 export { default as CommonUpload } from './components/Upload';
-export type { CommonUploadProps, CommonUploadRef, UploadVariant } from './components/Upload';
+export type {
+  CommonUploadProps,
+  CommonUploadRef,
+  UploadListType,
+  UploadVariant,
+} from './components/Upload';
 export * from './components/VirtualScrollbar';
 export * from './components/Icons';
 export * from './components/Sparkline';

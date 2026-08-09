@@ -89,7 +89,18 @@ const OrgTree: React.FC<OrgTreeProps> = ({
       key: node.id,
       title: (
         <div className={classNames('marsun-org-tree-row', styles['marsun-org-tree-row'])}>
-          <Tooltip title={node.name}>
+          <Tooltip
+            title={
+              node.nameExtra ? (
+                <>
+                  {node.name}
+                  {node.nameExtra}
+                </>
+              ) : (
+                node.name
+              )
+            }
+          >
             <span className={classNames('marsun-org-tree-name', styles['marsun-org-tree-name'])}>
               {node.name}
               {node.nameExtra ? (

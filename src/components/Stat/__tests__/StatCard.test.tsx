@@ -26,4 +26,12 @@ describe('StatCard', () => {
     fireEvent.click(screen.getByText('1'));
     expect(onClick).toHaveBeenCalledOnce();
   });
+
+  it('renders suffix and precision', () => {
+    const { container } = render(
+      <StatCard title="采纳率" value={55.91} precision={1} suffix="%" />,
+    );
+    expect(container.textContent).toMatch(/55\.9/);
+    expect(screen.getByText('%')).toBeInTheDocument();
+  });
 });

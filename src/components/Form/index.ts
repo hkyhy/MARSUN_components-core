@@ -25,6 +25,7 @@ export {
   InputNumber,
   Switch,
   RadioGroup,
+  TreeSelect,
   SubmitButton,
   ResetButton,
   CancelButton,

@@ -1,60 +1,5 @@
 @use '@/styles/mixins' as *;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .upload-root {
   max-width: xl;
 }
@@ -67,7 +12,9 @@
 .upload-wrapper {
   color: var(--primary-color);
   cursor: pointer;
-  &:hover { text-decoration: underline; }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .upload-inner {
@@ -81,7 +28,8 @@
 
 .upload-body {
   border-radius: 8px;
-  border-width: 1px; border-style: solid;
+  border-width: 1px;
+  border-style: solid;
   padding: 16px;
 }
 
@@ -126,6 +74,9 @@
 
 .upload-link {
   margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .upload-label {
@@ -135,13 +86,69 @@
   min-width: 0;
 }
 
+.upload-thumb-btn {
+  display: block;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-color-grey);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.upload-thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.upload-picture-root {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.upload-picture-card {
+  :global(.ant-upload-list-item-container),
+  :global(.ant-upload.ant-upload-select) {
+    width: 104px !important;
+    height: 104px !important;
+  }
+}
+
+.upload-picture-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--font-color-grey);
+}
+
+.upload-picture-trigger-text {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
 .upload-value {
   color: var(--font-color-grey-1);
   flex-shrink: 0;
 }
 
 .upload-meta {
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .upload-icon {
@@ -166,8 +173,12 @@
 
 .upload-toolbar {
   color: var(--font-color-grey);
-  &:hover { border-color: var(--primary-color); }
-  &:hover { color: var(--primary-color); }
+  &:hover {
+    border-color: var(--primary-color);
+  }
+  &:hover {
+    color: var(--primary-color);
+  }
 }
 
 .upload-list {

@@ -9,8 +9,6 @@ export interface StatItem extends Omit<StatCardProps, 'inline' | 'fontSize'> {
   colProps?: ColProps;
   /** 是否隐藏，为 true 时不渲染 */
   hidden?: boolean;
-  /** 后缀 */
-  suffix?: React.ReactNode;
 }
 
 export interface StatCardListProps {

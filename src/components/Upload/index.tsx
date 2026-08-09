@@ -1,5 +1,6 @@
-import { Trash2, File, Inbox, Upload as UploadIcon } from '@/components/Icons';
-import { Button, message, Tag, Typography, Upload } from 'antd';
+import { Trash2, File, Inbox, Plus, Upload as UploadIcon } from '@/components/Icons';
+import { SEMANTIC_COLORS, SemanticTag } from '@/components/Tag';
+import { Button, Image, message, Typography, Upload } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import React from 'react';
 import styles from './style.module.scss';
@@ -9,6 +10,9 @@ import classNames from 'classnames';
 
 /** 上传变体 */
 export type UploadVariant = 'panel' | 'button';
+
+/** 已选文件列表样式：text=行列表；picture-card=图片卡片（含预览） */
+export type UploadListType = 'text' | 'picture-card';
 
 export interface CommonUploadProps {
   /* ---- antd Form.Item 兼容属性 ---- */
@@ -32,6 +36,8 @@ export interface CommonUploadProps {
   /* ---- UI 变体 ---- */
   /** panel = 拖拽面板（Dragger 样式），button = 按钮（默认） */
   variant?: UploadVariant;
+  /** 列表展现；图片场景用 picture-card（预览+缩略图） */
+  listType?: UploadListType;
   children?: React.ReactNode;
   renderTips?: () => React.ReactNode;
 
@@ -87,52 +93,90 @@ function getExt(filename: string): string {
   return idx >= 0 ? filename.slice(idx + 1).toUpperCase() : '';
 }
 
-/* ---------- 子组件：已上传文件列表 ---------- */
+function resolvePreviewUrl(file: UploadFile): string {
+  if (file.url) return file.url;
+  if (file.thumbUrl) return file.thumbUrl;
+  if (file.originFileObj) return URL.createObjectURL(file.originFileObj);
+  return '';
+}
+
+/* ---------- 子组件：文本行列表 ---------- */
 
 interface UploadedFilesProps {
   fileList: UploadFile[];
   onRemove: (uid: string) => void;
+  onPreview?: (file: UploadFile) => void;
 }
 
-const UploadedFiles: React.FC<UploadedFilesProps> = ({ fileList, onRemove }) => {
+const UploadedFiles: React.FC<UploadedFilesProps> = ({ fileList, onRemove, onPreview }) => {
   if (!fileList.length) return null;
 
   return (
     <div className={classNames('upload-link', styles['upload-link'])}>
-      {fileList.map((file) => (
-        <div
-          key={file.uid}
-          className={classNames(
-            classNames('upload-file-row', styles['upload-file-row']),
-            file.status === 'error' &&
-              classNames('upload-file-row-error', styles['upload-file-row-error']),
-          )}
-        >
-          <div className={classNames('upload-label', styles['upload-label'])}>
-            <File className={classNames('upload-value', styles['upload-value'])} />
-            <span className={classNames('upload-meta', styles['upload-meta'])}>{file.name}</span>
-            <Tag color="processing" className={classNames('upload-icon', styles['upload-icon'])}>
-              {getExt(file.name)}
-            </Tag>
-            {file.size && (
-              <Typography.Text
-                type="secondary"
-                className={classNames('upload-title', styles['upload-title'])}
-              >
-                {formatSize(file.size)}
-              </Typography.Text>
+      {fileList.map((file) => {
+        const previewable = Boolean(
+          file.url || file.thumbUrl || file.originFileObj?.type?.startsWith('image/'),
+        );
+        return (
+          <div
+            key={file.uid}
+            className={classNames(
+              classNames('upload-file-row', styles['upload-file-row']),
+              file.status === 'error' &&
+                classNames('upload-file-row-error', styles['upload-file-row-error']),
             )}
+          >
+            <div className={classNames('upload-label', styles['upload-label'])}>
+              {file.thumbUrl || (file.url && file.type?.startsWith('image/')) ? (
+                <button
+                  type="button"
+                  className={classNames('upload-thumb-btn', styles['upload-thumb-btn'])}
+                  onClick={() => onPreview?.(file)}
+                  title="预览"
+                >
+                  <img
+                    className={classNames('upload-thumb', styles['upload-thumb'])}
+                    src={file.thumbUrl || file.url}
+                    alt={file.name}
+                  />
+                </button>
+              ) : (
+                <File className={classNames('upload-value', styles['upload-value'])} />
+              )}
+              <span className={classNames('upload-meta', styles['upload-meta'])}>{file.name}</span>
+              <SemanticTag
+                color={SEMANTIC_COLORS.INFO}
+                className={classNames('upload-icon', styles['upload-icon'])}
+              >
+                {getExt(file.name)}
+              </SemanticTag>
+              {file.size ? (
+                <Typography.Text
+                  type="secondary"
+                  className={classNames('upload-title', styles['upload-title'])}
+                >
+                  {formatSize(file.size)}
+                </Typography.Text>
+              ) : null}
+            </div>
+            <div className={classNames('upload-row-actions', styles['upload-row-actions'])}>
+              {previewable && onPreview ? (
+                <Button type="link" size="small" onClick={() => onPreview(file)}>
+                  预览
+                </Button>
+              ) : null}
+              <Button
+                type="text"
+                danger
+                size="small"
+                icon={<Trash2 />}
+                onClick={() => onRemove(file.uid)}
+                className={classNames('upload-desc', styles['upload-desc'])}
+              />
+            </div>
           </div>
-          <Button
-            type="text"
-            danger
-            size="small"
-            icon={<Trash2 />}
-            onClick={() => onRemove(file.uid)}
-            className={classNames('upload-desc', styles['upload-desc'])}
-          />
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
@@ -142,29 +186,8 @@ const UploadedFiles: React.FC<UploadedFilesProps> = ({ fileList, onRemove }) => 
 /**
  * CommonUpload — 通用上传组件
  *
- * - 在 antd `<Form.Item>` 内使用时，通过 `value`/`onChange` 自动接入表单
- * - 独立使用时，通过 `onSave` 获取文件列表
- *
- * ## 两种变体
- *
- * - **`variant="button"`（默认）** — 虚线边框按钮 + 底部提示文案 + 已传文件列表
- * - **`variant="panel"`** — Dragger 拖拽面板 + 底部已传文件列表
- *
- * @example
- * ```tsx
- * // 在 Form.Item 中使用
- * <Form.Item name="files" label="简历附件" rules={[{ required: true, message: '请上传文件' }]}>
- *   <CommonUpload accept=".pdf,.jpg,.png" maxLength={10} />
- * </Form.Item>
- *
- * // 独立使用（Modal 内、非表单场景）
- * <CommonUpload variant="panel" accept=".doc,.pdf" onSave={(list) => setFiles(list)} />
- *
- * // ref 手动触发上传
- * const ref = useRef<CommonUploadRef>(null);
- * <CommonUpload ref={ref} onUpload={...} />;
- * ref.current?.upload();
- * ```
+ * - `listType="text"`（默认）：行列表；图片有缩略图时可「预览」
+ * - `listType="picture-card"`：antd 图片卡片（内置预览/删除图标）
  */
 const CommonUpload = React.forwardRef<CommonUploadRef, CommonUploadProps>(
   (
@@ -173,6 +196,7 @@ const CommonUpload = React.forwardRef<CommonUploadRef, CommonUploadProps>(
       onChange,
       className,
       variant,
+      listType = 'text',
       size,
       children,
       renderTips,
@@ -191,6 +215,12 @@ const CommonUpload = React.forwardRef<CommonUploadRef, CommonUploadProps>(
   ) => {
     const [innerFileList, setInnerFileList] = React.useState<UploadFile[]>([]);
     const [uploading, setUploading] = React.useState(false);
+    const [preview, setPreview] = React.useState<{ open: boolean; url: string; title: string }>({
+      open: false,
+      url: '',
+      title: '',
+    });
+    const blobUrlsRef = React.useRef<string[]>([]);
 
     // 受控模式：value 优先；非受控：内部状态
     const fileList = value ?? innerFileList;
@@ -268,7 +298,83 @@ const CommonUpload = React.forwardRef<CommonUploadRef, CommonUploadProps>(
       uploading,
     ]);
 
+    const openPreview = React.useCallback((file: UploadFile) => {
+      const url = resolvePreviewUrl(file);
+      if (!url) {
+        message.warning('暂无法预览该文件');
+        return;
+      }
+      if (url.startsWith('blob:')) {
+        blobUrlsRef.current.push(url);
+      }
+      setPreview({ open: true, url, title: file.name || '预览' });
+    }, []);
+
+    React.useEffect(
+      () => () => {
+        blobUrlsRef.current.forEach((u) => URL.revokeObjectURL(u));
+        blobUrlsRef.current = [];
+      },
+      [],
+    );
+
     const tips = renderTips?.() ?? buildTips(accept, fileSize, maxLength);
+    const canAddMore = !maxLength || fileList.length < maxLength;
+
+    const previewNode = (
+      <Image
+        alt={preview.title}
+        style={{ display: 'none' }}
+        src={preview.url}
+        preview={{
+          visible: preview.open,
+          src: preview.url,
+          onVisibleChange: (visible) => setPreview((prev) => ({ ...prev, open: visible })),
+        }}
+      />
+    );
+
+    if (listType === 'picture-card') {
+      return (
+        <div
+          className={classNames('upload-picture-root', styles['upload-picture-root'], className)}
+        >
+          <Upload
+            listType="picture-card"
+            fileList={fileList}
+            beforeUpload={beforeUploadFn}
+            onChange={(info) => setFileList(info.fileList)}
+            onPreview={openPreview}
+            multiple={multiple}
+            directory={directory}
+            accept={accept}
+            showUploadList={{ showPreviewIcon: true, showRemoveIcon: true }}
+            customRequest={({ onSuccess }) => onSuccess?.({})}
+            className={classNames('upload-picture-card', styles['upload-picture-card'])}
+          >
+            {canAddMore ? (
+              <div
+                className={classNames('upload-picture-trigger', styles['upload-picture-trigger'])}
+              >
+                <Plus size={20} />
+                <div
+                  className={classNames(
+                    'upload-picture-trigger-text',
+                    styles['upload-picture-trigger-text'],
+                  )}
+                >
+                  上传图片
+                </div>
+              </div>
+            ) : null}
+          </Upload>
+          {tips ? (
+            <div className={classNames('upload-list', styles['upload-list'])}>{tips}</div>
+          ) : null}
+          {previewNode}
+        </div>
+      );
+    }
 
     if (variant === 'panel') {
       return (
@@ -293,13 +399,15 @@ const CommonUpload = React.forwardRef<CommonUploadRef, CommonUploadProps>(
             <UploadedFiles
               fileList={fileList}
               onRemove={(uid) => setFileList((prev) => prev.filter((f) => f.uid !== uid))}
+              onPreview={openPreview}
             />
           )}
+          {previewNode}
         </div>
       );
     }
 
-    // button mode (default)
+    // button mode (default) + text list
     return (
       <div className={className}>
         <Upload
@@ -327,8 +435,10 @@ const CommonUpload = React.forwardRef<CommonUploadRef, CommonUploadProps>(
           <UploadedFiles
             fileList={fileList}
             onRemove={(uid) => setFileList((prev) => prev.filter((f) => f.uid !== uid))}
+            onPreview={openPreview}
           />
         )}
+        {previewNode}
       </div>
     );
   },

@@ -10,6 +10,10 @@ export interface StatCardProps {
   value: number;
   /** 前缀图标 */
   prefix?: React.ReactNode;
+  /** 后缀（如 %、单位） */
+  suffix?: React.ReactNode;
+  /** 小数精度 */
+  precision?: number;
   /** 数值颜色 */
   color?: string;
   /** 点击回调 */
@@ -27,21 +31,35 @@ const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
   prefix,
+  suffix,
+  precision,
   color = '#1677ff',
   onClick,
   inline = false,
   fontSize,
   style,
 }) => {
+  const statistic = (
+    <Statistic
+      title={title}
+      value={value}
+      prefix={prefix}
+      suffix={suffix}
+      precision={precision}
+      valueStyle={{ color, ...(fontSize ? { fontSize } : {}) }}
+    />
+  );
+
   if (inline) {
     return (
-      <div className={onClick ? classNames('stat-card-clickable', styles['stat-card-clickable']) : undefined} onClick={onClick} style={style}>
-        <Statistic
-          title={title}
-          value={value}
-          prefix={prefix}
-          valueStyle={{ color, ...(fontSize ? { fontSize } : {}) }}
-        />
+      <div
+        className={
+          onClick ? classNames('stat-card-clickable', styles['stat-card-clickable']) : undefined
+        }
+        onClick={onClick}
+        style={style}
+      >
+        {statistic}
       </div>
     );
   }
@@ -50,9 +68,12 @@ const StatCard: React.FC<StatCardProps> = ({
     <Card
       hoverable={!!onClick}
       onClick={onClick}
-      className={onClick ? classNames('stat-card-clickable', styles['stat-card-clickable']) : undefined}
+      className={
+        onClick ? classNames('stat-card-clickable', styles['stat-card-clickable']) : undefined
+      }
+      style={style}
     >
-      <Statistic title={title} value={value} prefix={prefix} valueStyle={{ color }} />
+      {statistic}
     </Card>
   );
 };
