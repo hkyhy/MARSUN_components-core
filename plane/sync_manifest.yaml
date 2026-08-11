@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.97
+  next_task_id: P6.3.99
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1443,3 +1443,18 @@ tasks:
     Refs: P6.3
     Related: P6.3.94
     chore(release) 触发 CI publish @hkyhy/marsun-components-core@0.1.47
+
+- id: P6.3.98
+  milestone: P6.3
+  name: Tags 长文案 ellipsis 与 showLength 紧凑 Tooltip
+  status: 已完成
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-08-11"
+  target_date: "2026-08-11"
+  tags: [frontend, components, tag]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3
+    Tags showLength 长文案 nowrap+ellipsis；TagsShowLengthDemo；发布 npm 0.1.48

@@ -3,12 +3,22 @@
 .tags-tag-list {
   @include flex-row(4px);
   flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .tags-tag-list-nowrap {
   flex-wrap: nowrap;
+  overflow: hidden;
+
+  :global(.ant-tag) {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .tags-tag-list-tooltip {
   max-width: 320px;
+  flex-wrap: wrap;
 }

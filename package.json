@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.47",
+  "version": "0.1.48",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -32,7 +32,11 @@
   },
   "sideEffects": [
     "**/*.css",
-    "**/*.scss"
+    "**/*.scss",
+    "./src/utils/ensureDayjsZhCn.ts",
+    "./dist/utils/ensureDayjsZhCn.js",
+    "./src/index.ts",
+    "./dist/index.js"
   ],
   "files": [
     "dist"

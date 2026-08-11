@@ -23,26 +23,43 @@ describe('Tags', () => {
   });
 
   it('renders all tags when tags count does not exceed showLength', () => {
-    render(<Tags tags={['钉钉', '录屏']} showLength={2} />);
-    expect(screen.getByText('钉钉')).toBeInTheDocument();
-    expect(screen.getByText('录屏')).toBeInTheDocument();
-    expect(screen.queryByText('+1')).not.toBeInTheDocument();
+    const { container } = render(<Tags tags={['钉钉', '录屏']} showLength={2} />);
+    const visible = container.querySelector('.tags-tag-list');
+    expect(visible?.textContent).toContain('钉钉');
+    expect(visible?.textContent).toContain('录屏');
+    expect(visible?.textContent).not.toContain('+');
+  });
+
+  it('keeps two long tags visible under showLength (compact ellipsis via CSS)', () => {
+    const { container } = render(
+      <Tags tags={['系统管理员', 'S3 系统管理员 (配置落地)']} showLength={2} />,
+    );
+    const visible =
+      container.querySelector('.tags-tag-list-nowrap') || container.querySelector('.tags-tag-list');
+    expect(visible?.textContent).toContain('系统管理员');
+    expect(visible?.textContent).toContain('S3 系统管理员 (配置落地)');
+    expect(visible?.textContent).not.toContain('+');
   });
 
   it('truncates tags and shows overflow count when exceeding showLength', () => {
-    render(<Tags tags={['钉钉', '录屏', '教程', '操作演示', '会议']} showLength={2} />);
-    expect(screen.getByText('钉钉')).toBeInTheDocument();
-    expect(screen.getByText('录屏')).toBeInTheDocument();
-    expect(screen.queryByText('教程')).not.toBeInTheDocument();
-    expect(screen.getByText('+3')).toBeInTheDocument();
+    const { container } = render(
+      <Tags tags={['钉钉', '录屏', '教程', '操作演示', '会议']} showLength={2} />,
+    );
+    const visible =
+      container.querySelector('.tags-tag-list-nowrap') || container.querySelector('.tags-tag-list');
+    expect(visible?.textContent).toContain('钉钉');
+    expect(visible?.textContent).toContain('录屏');
+    expect(visible?.textContent).toContain('+3');
+    expect(visible?.textContent).not.toContain('教程');
   });
 
   it('falls back to showing all tags when showLength is invalid', () => {
-    render(<Tags tags={['钉钉', '录屏', '教程']} showLength={0} />);
-    expect(screen.getByText('钉钉')).toBeInTheDocument();
-    expect(screen.getByText('录屏')).toBeInTheDocument();
-    expect(screen.getByText('教程')).toBeInTheDocument();
-    expect(screen.queryByText('+1')).not.toBeInTheDocument();
+    const { container } = render(<Tags tags={['钉钉', '录屏', '教程']} showLength={0} />);
+    const visible = container.querySelector('.tags-tag-list');
+    expect(visible?.textContent).toContain('钉钉');
+    expect(visible?.textContent).toContain('录屏');
+    expect(visible?.textContent).toContain('教程');
+    expect(visible?.textContent).not.toContain('+');
   });
 
   it('applies custom color', () => {
