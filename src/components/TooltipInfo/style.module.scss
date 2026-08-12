@@ -1,36 +1,24 @@
-/* antd 6：root / container / inner 均可能承载内容，统一限宽 + 表格换行 */
+/* antd 6：root 用 width:auto + min/max-width 稳定气泡宽度，避免 table max-content 循环塌陷 */
 :global(.tooltip-info-overlay) {
-  max-width: 320px !important;
+  max-width: 380px !important;
 
   :global(.ant-tooltip-container),
   :global(.ant-tooltip-inner) {
     box-sizing: border-box;
     min-width: 220px !important;
-    max-width: 320px !important;
-    width: 100%;
+    max-width: 380px !important;
     padding: 8px 12px;
   }
 
+  /* descriptions 形态：bordered=false 走 dl 布局，仍兜底限宽与换行 */
   :global(.ant-descriptions) {
     width: 100%;
     min-width: 0;
     max-width: 100%;
   }
 
-  :global(.ant-descriptions-view) {
-    width: 100%;
-    overflow: hidden;
-  }
-
-  :global(.ant-descriptions) table {
-    table-layout: fixed !important;
-    width: 100% !important;
-  }
-
   :global(.ant-descriptions-item-label),
   :global(.ant-descriptions-item-label-content) {
-    width: 4.5em;
-    max-width: 4.5em;
     white-space: nowrap !important;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -44,4 +32,26 @@
     word-break: break-word !important;
     overflow-wrap: anywhere;
   }
+}
+
+/* note 形态：标题 + 描述分层 */
+:global(.tooltip-info-overlay) :global(.tooltip-info-note) {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 240px;
+  max-width: 380px;
+  line-height: 1.5;
+}
+
+:global(.tooltip-info-overlay) :global(.tooltip-info-note-title) {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+:global(.tooltip-info-overlay) :global(.tooltip-info-note-desc) {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--font-color-grey-1, #8c8c8c);
 }

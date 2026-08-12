@@ -4,7 +4,16 @@ import React, { useState } from 'react';
 
 const STATE_OPTIONS = [
   { key: 'all', tab: '全部' },
-  { key: 'pending', tab: '待处理' },
+  {
+    key: 'pending',
+    tab: '待处理',
+    info: [
+      {
+        label: '待处理',
+        value: '尚未完成根因定位与处置的预警；按 SLA 倒序排列，超时置顶。',
+      },
+    ],
+  },
   { key: 'done', tab: '已完成' },
 ];
 

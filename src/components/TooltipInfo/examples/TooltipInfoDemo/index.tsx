@@ -7,12 +7,33 @@ import classNames from 'classnames';
 const TooltipInfoDemo: React.FC = () => (
   <div className={classNames('tooltip-info-demo-root', styles['tooltip-info-demo-root'])}>
     <TooltipInfo content={MOCK_ROLE_META_ITEMS}>
-      <span className={classNames('tooltip-info-demo-container', styles['tooltip-info-demo-container'])}>高管</span>
+      <span
+        className={classNames('tooltip-info-demo-container', styles['tooltip-info-demo-container'])}
+      >
+        高管
+      </span>
     </TooltipInfo>
     <TooltipInfo content={MOCK_DELETE_META_ITEMS}>
-      <SemanticTag color="danger" className={classNames('tooltip-info-demo-wrapper', styles['tooltip-info-demo-wrapper'])}>
+      <SemanticTag
+        color="danger"
+        className={classNames('tooltip-info-demo-wrapper', styles['tooltip-info-demo-wrapper'])}
+      >
         文件已删除
       </SemanticTag>
+    </TooltipInfo>
+    <TooltipInfo
+      type="note"
+      note={{
+        title: '考核对照 G-JZ（只读）',
+        description:
+          'data-service 考核标准六表（MySQL），按分厂与年度加载标准值、满分权重、考核说明与项目备注。',
+      }}
+    >
+      <span
+        className={classNames('tooltip-info-demo-container', styles['tooltip-info-demo-container'])}
+      >
+        考核对照 G-JZ ⓘ
+      </span>
     </TooltipInfo>
   </div>
 );

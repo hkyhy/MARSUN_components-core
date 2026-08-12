@@ -16,9 +16,14 @@
       "rows": [
         {
           "prop": "stateOption",
-          "desc": "状态项：key + tab/label；可带 children 展示面板",
+          "desc": "状态项：key + tab/label；可带 children 展示面板；info 给标题旁加 Info + TooltipInfo",
           "type": "StateBarOption[]",
           "defaultVal": "[]"
+        },
+        {
+          "prop": "StateBarOption.info",
+          "desc": "标题旁 Info icon + TooltipInfo（DescriptionItem[]，对齐 Modal/InteractiveBlock）；为空不展示",
+          "type": "DescriptionItem[]"
         },
         {
           "prop": "type",

@@ -1,10 +1,10 @@
 {
   "title": "TooltipInfo 详情提示",
-  "description": "用于在 Tooltip 中展示结构化详情信息，内部统一使用 CommonDescriptions 渲染。",
+  "description": "用于在 Tooltip 中展示结构化详情信息。descriptions 形态用 CommonDescriptions 渲染；note 形态用标题+描述分层（粗体标题 + 次级色描述）。",
   "examples": [
     {
       "title": "基础用法",
-      "description": "hover 触发元素展示 DescriptionItem 详情",
+      "description": "hover 触发元素展示 DescriptionItem 详情；第三个为 note 形态（标题+描述）",
       "component": "@/components/TooltipInfo/examples/TooltipInfoDemo",
       "sourcePath": "@/components/TooltipInfo/examples/TooltipInfoDemo/index.tsx",
       "block": true
@@ -15,10 +15,20 @@
       "componentName": "TooltipInfoProps",
       "rows": [
         {
+          "prop": "type",
+          "desc": "展示形态：descriptions=结构化详情（默认）；note=标题+描述分层",
+          "type": "'descriptions' | 'note'",
+          "defaultVal": "'descriptions'"
+        },
+        {
           "prop": "content",
-          "desc": "详情描述项，内部使用 CommonDescriptions 渲染",
-          "type": "DescriptionItem[]",
-          "required": true
+          "desc": "type='descriptions' 的详情项，内部用 CommonDescriptions 渲染",
+          "type": "DescriptionItem[]"
+        },
+        {
+          "prop": "note",
+          "desc": "type='note' 的标题与描述（title 粗体、description 次级色）",
+          "type": "{ title: ReactNode; description: ReactNode }"
         },
         {
           "prop": "children",
@@ -28,15 +38,25 @@
         },
         {
           "prop": "column",
-          "desc": "CommonDescriptions 列数",
+          "desc": "CommonDescriptions 列数（仅 descriptions 形态）",
           "type": "number",
           "defaultVal": "1"
         },
         {
           "prop": "hidden",
-          "desc": "为 true 或 content 为空时不展示 Tooltip",
+          "desc": "为 true 时不展示 Tooltip；descriptions 形态下 content 为空也不展示",
           "type": "boolean",
           "defaultVal": "false"
+        },
+        {
+          "prop": "minWidth",
+          "desc": "气泡最小宽度，descriptions 默认 220 / note 默认 240",
+          "type": "number"
+        },
+        {
+          "prop": "maxWidth",
+          "desc": "气泡最大宽度，descriptions 默认 320 / note 默认 380",
+          "type": "number"
         },
         {
           "prop": "placement",
