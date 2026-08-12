@@ -1444,6 +1444,22 @@ tasks:
     Related: P6.3.94
     chore(release) 触发 CI publish @hkyhy/marsun-components-core@0.1.47
 
+- id: P6.3.97
+  milestone: P6.3
+  name: chore release v0.1.47 标签补登记
+  status: 已完成
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: "2026-08-09"
+  target_date: "2026-08-09"
+  tags: [release, npm]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3
+    Related: P6.3.96
+    commit 曾挂 Task: P6.3.97；补台账空号与 0.1.47 release 对齐
+
 - id: P6.3.98
   milestone: P6.3
   name: Tags 长文案 ellipsis 与 showLength 紧凑 Tooltip
