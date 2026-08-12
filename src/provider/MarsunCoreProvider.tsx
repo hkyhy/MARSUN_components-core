@@ -2,6 +2,7 @@ import { ConfigProvider } from 'antd';
 import type { ThemeConfig } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 import { DEFAULT_PRIMARY_COLOR, applyThemeToCssVariables, generateTheme } from '@/theme';
+import '@/utils/ensureDayjsZhCn';
 import { MarsunCoreContext, type MarsunAuthContext, type MarsunFetchContext } from './context';
 
 export type MarsunCoreProviderProps = {

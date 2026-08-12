@@ -1,0 +1,16 @@
+.segmented-radio {
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+
+.block {
+  display: flex;
+  width: 100%;
+
+  :global {
+    .ant-radio-button-wrapper {
+      flex: 1;
+      text-align: center;
+    }
+  }
+}

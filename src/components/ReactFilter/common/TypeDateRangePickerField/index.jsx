@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import style from './style.module.scss';
 import useFilterPopupContainer from '../../hooks/useFilterPopupContainer';
 import { MOBILE_POPUP_Z_INDEX } from '../../constants/mobilePopup';
+import '@/utils/ensureDayjsZhCn';
 
 const FIELD_MOBILE_POPUP_CLASS = 'react-filter-field-mobile-popup';
 

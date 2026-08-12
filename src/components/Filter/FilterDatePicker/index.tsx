@@ -1,5 +1,6 @@
 import { DatePicker } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
+import '@/utils/ensureDayjsZhCn';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   formatPickerValue,

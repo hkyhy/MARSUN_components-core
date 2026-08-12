@@ -5,6 +5,7 @@ import get from 'lodash/get';
 import style from '../style.module.scss';
 import dayjs from 'dayjs';
 import withLocale from '../withLocale';
+import '@/utils/ensureDayjsZhCn';
 
 const TypeDateRangePickerFilterItem = withLocale(({ label, value, onChange, ...props }) => {
   return (

@@ -2,6 +2,7 @@
 import { DatePicker, Flex } from 'antd';
 import withFieldItem from '../withFieldItem';
 import dayjs from 'dayjs';
+import '@/utils/ensureDayjsZhCn';
 import style from '../style.module.scss';
 import withLocale from '../withLocale';
 import classnames from 'classnames';

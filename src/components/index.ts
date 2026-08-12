@@ -10,6 +10,7 @@ export * from './Modal';
 export * from './Permissions';
 export * from './OrgTree';
 export * from './StateBar';
+export * from './SegmentedRadio';
 export * from './Stat';
 export * from './Table';
 export * from './Tag';

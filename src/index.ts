@@ -1,5 +1,7 @@
 /** ReactFilter SuperSelect/SelectTree 弹层全局修补（进 `/styles` 产物） */
 import './components/ReactFilter/superSelectPopup.scss';
+/** DatePicker 月名：同一份 dayjs 注册 zh-cn（见 ensureDayjsZhCn） */
+import './utils/ensureDayjsZhCn';
 
 // Provider & theme
 export { MarsunCoreProvider, useMarsunAuth, useMarsunCore, useMarsunFetch } from './provider';
@@ -172,6 +174,7 @@ export * from './components/PermissionBindPanel';
 export * from './components/OrgTree';
 
 export * from './components/StateBar';
+export * from './components/SegmentedRadio';
 export * from './components/Stat';
 export * from './components/Table';
 export * from './components/Tag';

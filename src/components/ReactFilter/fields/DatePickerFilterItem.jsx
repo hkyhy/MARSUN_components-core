@@ -2,6 +2,7 @@
 import { DatePicker } from 'antd';
 import withFieldItem from '../withFieldItem';
 import dayjs from 'dayjs';
+import '@/utils/ensureDayjsZhCn';
 import withLocale from '../withLocale';
 import style from '../style.module.scss';
 import classnames from 'classnames';
