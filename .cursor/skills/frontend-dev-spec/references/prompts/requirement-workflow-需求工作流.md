@@ -4,23 +4,29 @@
 
 ## 一、需求理解
 
+- [ ] **会话收口**（控用量）：本轮一句话目标 + 验收 ≤5；路径/仓边界已写清；若用户「全部/齐套/循环验证」→ 已拆成「本轮只验一项」或已建议新开聊天。模板见 [cursor-session-prompt](../../../da-workflow/references/cursor-session-prompt-会话与提示词.md) · [da mindset](../../../da-workflow/references/mindset-角色大前提.md) · [FE 叠加 mindset](mindset-角色大前提.md)
+- [ ] **过长/不合规已提示**：若命中 [cursor-session-prompt §1.1](../../../da-workflow/references/cursor-session-prompt-会话与提示词.md)（约 ≥30 轮、多次 Plan→Implement、空转续聊、缺边界、长窗提交等）→ 本轮已写出 ⚠️ 会话提示并等用户确认；**禁止未提示就动手**
 - [ ] 明确用户角色、主路径、边界条件与验收标准
 - [ ] 识别涉及模块：`src/components/{Domain}/{Module}/` 或 `src/pages/`
 - [ ] 确认是否涉及权限、筛选、部门/人员、批量操作等业务规则；若有按钮/区域权限码三态（hidden/tooltip/error）→ core `Permissions`；角色/单权限 fallback → `PermissionGuard`（见 [permissions-data](../business/permissions-data-权限与常量.md)）
+- [ ] **新系统 IAM / RBAC / 功能权限点 / Wave 接线 /「对齐 Assets 权限」**：先读 [iam-system-onboard-新系统IAM接入齐套.md](../business/iam-system-onboard-新系统IAM接入齐套.md) 全套检查表，再改代码；禁止只改菜单或 `hasPermission≡true`
+- [ ] **大表列表 / queryList**：预估行量或曾慢查时，方案须含「选择性筛选门禁 + 默认窗」（产品定条件集；后端 400；前端 `canQuery` + 默认当月/首厂等）。见 [filter §5.11](../common/filter-筛选组件.md)、[list-api 选择性筛选](../../../backend-dev-spec/references/common/list-api-列表分页.md)
+- [ ] **增减/重命名权限码**：同任务齐套（码表/矩阵/bindCatalog/清单/PRD/Test/七问），见 [permissions-catalog-改权限齐套.md](../business/permissions-catalog-改权限齐套.md)
 - [ ] 需求歧义时列出假设，标注待确认项
 - [ ] **WorkRecord**：先判**事项类型**（接口对接 / 页面改版 / 工程化）再匹配文档；涉及 API → 枚举接口清单；**禁止**把 Husky、布局重构写入「*接口对接」；新建前 AskQuestion
 - [ ] **core utils**：新建 `src/utils/` 前先查 component-mapping npm Utils 表；core 已有则包根 import，禁止复制同名文件
 
-## 二、方案论证（四方交叉）
+## 二、方案论证（五方交叉）
 
 | 维度 | 论证要点                                                                                                                                                                                                                                                                         |
 | ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 产品 | 交互路径是否最短？边界是否覆盖？                                                                                                                                                                                                                                                 |
+| 产品 | 交互路径是否最短？边界是否覆盖？大表列表是否声明选择性门禁与默认窗？                                                                                                                                                                                                             |
 | 架构 | 目录结构、handlers 抽离、单一数据来源是否合规？组件变更是否同步更新规范文档与提示词？                                                                                                                                                                                            |
-| 开发 | 纯 UI 优先 `@hkyhy/marsun-components-core`？业务 wrapper 留本地 Common？最小 diff？可测试？                                                                                                                                                                                      |
+| 开发 | 纯 UI 优先 `@hkyhy/marsun-components-core`？业务 wrapper 留本地 Common？最小 diff？可测试？本轮 scope 是否可在单会话验收（过大则拆轮/新窗，见 [cursor-session-prompt](../../../da-workflow/references/cursor-session-prompt-会话与提示词.md)）？                                 |
 | UI   | PageHeaderLayout、ButtonGroup、主题色、信息层级是否一致？滚动区是否用 VirtualScrollbar（不占位）？数据加载是否用 PageShellProvider + ModulePageShell/PageHeaderLayout spinning（禁止局部 loading 文案）？主 workarea 是否扁平（无冗余 breadcrumb、无双层 card border/padding）？ |
+| 测试 | 验收标准能否当场检验？主路径/边界/空错态/权限否证是否可测？同任务单测或契约用例是否可规划齐全？不可测或漏测风险是否已标注？                                                                                                                                                      |
 
-方案论证结束后、动手编码前：跑 [role-loop-review · 需求](../../../da-workflow/references/role-loop-review-角色循环验证.md)（顶尖产品经理视角）；交决策后再进入「三、开发流程」。
+方案论证结束后、动手编码前：按 [role-loop-review §1](../../../da-workflow/references/role-loop-review-角色循环验证.md) 判断是否命中**需求 §2.1**——命中则跑（顶尖产品经理视角），未命中声明跳过；交决策后再进入「三、开发流程」。
 
 ## 三、开发流程
 
@@ -63,18 +69,20 @@
 35. 检查：**禁止重复 core utils**——`src/utils/` 不得复制 `@hkyhy/marsun-components-core` 已导出函数；日期/权限/部门/人员/HTTP 等从包根 import（见 [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md) npm Utils 表）
 36. 检查：**可复用问题沉淀**——本任务若解决了可复用、非显而易见的问题，是否已写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping（禁止只留在 Cursor 对话）；仅本事项不可复用者写 WorkRecord 即可（见 SKILL.md 核心原则 #43）
 37. 检查：**权限 UI**——按钮/区域权限码三态用 core `Permissions`（`auth.permissions` 已注入）；角色/单权限 + fallback 用 `PermissionGuard`；列表项用 `hidden`；禁止手写平行权限包裹 / kne Global（见 [permissions-data](../business/permissions-data-权限与常量.md)、SKILL #13）
+38. 检查：**权限齐套 / IAM 接线**——若本任务改码或接 EP/PEP：清单+PRD+Test+证据是否同任务更新；Bridge 是否注入真实 permissions；是否全仓搜旧 DEMO/废码；独立 authz env 是否登记（见 [iam-system-onboard](../business/iam-system-onboard-新系统IAM接入齐套.md)、[permissions-catalog](../business/permissions-catalog-改权限齐套.md)）
 
 ## 四、按需阅读规范
 
 | 场景                      | 先读                                                                                                                                                  | 再读                                                                                                               |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| 接新需求 / 改交互         | [mindset-角色大前提.md](mindset-角色大前提.md)                                                                                                        | 按任务选 common/business                                                                                           |
+| 接新需求 / 改交互         | [da mindset](../../../da-workflow/references/mindset-角色大前提.md) → [FE mindset](mindset-角色大前提.md)                                             | 按任务选 common/business                                                                                           |
 | 新建业务模块              | [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md)                                                                    | [../common/directory-structure-目录结构.md](../common/directory-structure-目录结构.md)                             |
 | 台账/报告全量对齐         | [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md) §10                                                                | filter §5.10 + directory-structure（utils shim）                                                                   |
 | 筛选项                    | [../common/filter-筛选组件.md](../common/filter-筛选组件.md)                                                                                          | —                                                                                                                  |
 | 列表/表单内容块           | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/styles-样式规范.md](../common/styles-样式规范.md) §8.11                                                 |
 | 部门 / 人员               | [../common/filter-筛选组件.md](../common/filter-筛选组件.md) + [../business/department-person-部门人员.md](../business/department-person-部门人员.md) | —                                                                                                                  |
 | 权限 / 批量操作           | [../business/permissions-data-权限与常量.md](../business/permissions-data-权限与常量.md)                                                              | SKILL #13 · Permissions / PermissionGuard 分工                                                                     |
+| 新系统 IAM / 改权限齐套   | [../business/iam-system-onboard-新系统IAM接入齐套.md](../business/iam-system-onboard-新系统IAM接入齐套.md)                                            | [permissions-catalog-改权限齐套.md](../business/permissions-catalog-改权限齐套.md) · 清单/PRD/Test/证据            |
 | 路由 / API                | [../business/routing-api-路由与API.md](../business/routing-api-路由与API.md)                                                                          | —                                                                                                                  |
 | 主题 / Tag 颜色           | [../common/theme-主题Token.md](../common/theme-主题Token.md) + [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)     | [../common/styles-样式规范.md](../common/styles-样式规范.md)                                                       |
 | 滚动区 / Loading / 内容块 | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)                                 |
@@ -99,6 +107,7 @@
 - [ ] 权限/常量/API 符合 `business/permissions-data-权限与常量.md` 与 `business/routing-api-路由与API.md`；权限码三态用 `Permissions`，角色/单权限用 `PermissionGuard`，列表项用 `hidden`（SKILL #13）
 - [ ] 筛选 state 接入 API，Filter label 语义化（禁止「关键词」抽象 label）；部门/人员符合 `business/department-person-部门人员.md`
 - [ ] 筛选项加载态与失败：`metaLoading` 时筛选栏仍占位（禁 `return null`）；选项 loading 传 Filter* `loading`（Filter Item `Loader2 spin` + 面板 Spin，禁 loading 时「暂无数据」）；落定空态用 `Empty iconType="simple"`；失败仅 `message.error`（禁内联错误区 / HTTP raw）；筛选挂 `toolbar`；**选项 loading 禁止并入 `pageLoading`**；默认分厂来自 meta 首项，禁止硬编码 `1001`（见 [filter-筛选组件.md](../common/filter-筛选组件.md) §5.9、[shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)）
+- [ ] **大表列表门禁**：对接万级+ `queryList` 时——默认窗（年月/厂等）+ `canQuery` 不发无筛选请求；清空恢复默认；弱条件不可单独成门；契约/后端 400 对齐（见 filter §5.11、[list-api](../../../backend-dev-spec/references/common/list-api-列表分页.md)）
 - [ ] **列表 FilterBar**：新页/改造用 ReactFilter + 聚合 `value`/`onChange`/`onClearAll`（清空恢复业务默认）；禁止散落多回调；分页默认 20 + `showSizeChanger` options `10/20/30/50/100`（见 filter §5.10）
 - [ ] **台账/报告对齐**（触及 Actions/Rca/Effectiveness 或同类 Hub）：按 [module-patterns §10](../business/module-patterns-模块模式.md)；写操作 FormModal；说明 Info+TooltipInfo；只读 Drawer+VirtualScrollbar；Table `tableName`+userPrefs；模块内 CommonFilter/overflow:auto/antd Tag/CircleHelp 归零
 - [ ] **utils/Detail 拆目录**：删 `foo.ts` 建 `foo/` 时保留 `foo.ts` shim（`export * from './foo/index'`），否则 Vite 易 MIME 白屏（见 [directory-structure](../common/directory-structure-目录结构.md)）
@@ -118,7 +127,7 @@
 - [ ] 业务项目无重复 core utils（`src/utils/date.ts` 等与 component-mapping 冲突的文件须删除并改 import）
 - [ ] **可复用问题已同任务沉淀**到 skill reference / mapping / 契约（禁止只留在对话；见 SKILL #43）
 - [ ] 测试通过（本人执行：`npm run test` 或 `npx vitest run <path>`；门禁见 [test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) · SKILL #44）
-- [ ] **角色循环验证**已完成（SKILL #45）：方案后跑过「需求」场景；页面可点后跑过「前端」场景；或用户已确认跳过；模板见 [role-loop-review](../../../da-workflow/references/role-loop-review-角色循环验证.md)
+- [ ] **角色循环验证**已完成（SKILL #45）：按 [role-loop-review §1](../../../da-workflow/references/role-loop-review-角色循环验证.md) 触发表——适用场景已跑或已声明跳过（含一句话理由）；安全 §2.5 仅在命中时跑；模板见 role-loop-review
 - [ ] **新任务台账**：
   1. `plane_pull`（或 `pm_pipeline --step plane-pull`）
   2. 扫描 snapshot 名称 `S3.3.(\d+)`，候选 id = `max+1`（**禁止**盲信 `meta.next_task_id`；大颗粒号段如 73–88 勿占用，见 [task-naming](../../../da-workflow/references/task-naming.md)）
@@ -132,18 +141,19 @@
 - [ ] WorkRecord 已写入**正确类型**的大事文档（接口对接 / 页面改版 / 工程化分列）；非 API 进展未混入「*接口对接」
 - [ ] 若本任务有对应 WorkRecord 大事文档，已追加「进展记录」；新增 API 须补接口行；Mock 与正式接口区分状态（Mock 勿标已完成）
 - [ ] **任务结束复检**已完成（见「七、任务结束复检」）：逻辑 + 历史问题回扫已汇报，或已声明复检通过；未擅自续修
+- [ ] **会话卫生**：本轮未在超长窗上无边界扩仓；未为「继续」空转重搜全仓；提交若另开短窗或已声明只交付；**凡命中 §1.1 已写出 ⚠️ 提示**（见 [cursor-session-prompt](../../../da-workflow/references/cursor-session-prompt-会话与提示词.md)）
 
 ## 六、回复开头
 
-任务开始时，在回复开头单独补充一句（见 [mindset-角色大前提.md](mindset-角色大前提.md) 执行方式第 0 条）：
+任务开始时，在回复开头单独补充一句（见 [FE mindset](mindset-角色大前提.md) 执行方式第 0 条；模板 SSOT 见 [da mindset](../../../da-workflow/references/mindset-角色大前提.md)）：
 
-> 我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，具有顶尖审美，接下来，我将根据需求从用户价值、模块边界、可维护实现、界面一致性多轮四维交叉论证，结合对话上下文给出方案后，完全按照 frontend-dev-spec 规范来进行编码。
+> 我是产品经理、架构师、全栈开发者、UI 工程师和测试工程师的综合体，五类角色在各自领域内均达世界前十水平，具有顶尖审美，接下来，我将根据需求从用户价值、模块边界、可维护实现、界面一致性、可测与验收多轮五维交叉论证，结合对话上下文给出方案后，完全按照 frontend-dev-spec 规范来进行编码。
 
 ## 七、任务结束复检（须在收尾句之前）
 
-每次任务实现 / 改规范结束后、说「请审阅」收尾句**之前**（见 [mindset-角色大前提.md](mindset-角色大前提.md) 执行方式第 5 条）：
+每次任务实现 / 改规范结束后、说「请审阅」收尾句**之前**（见 [FE mindset](mindset-角色大前提.md) 执行方式第 4 条 · [da mindset §5](../../../da-workflow/references/mindset-角色大前提.md#执行方式通用)）：
 
-- [ ] 已复检本轮改动的主路径 / 边界 / 数据流 / 规范符合性（产品 / 架构 / 开发 / UI，点到为止）
+- [ ] 已复检本轮改动的主路径 / 边界 / 数据流 / 规范符合性 / 可测性（产品 / 架构 / 开发 / UI / 测试，点到为止）
 - [ ] 已回扫本对话中曾出现的问题是否仍在（回归 / 未闭环）
 - [ ] 已向用户列出待决策项（或声明复检通过）
 - [ ] 未获用户明确指示前未擅自继续修复
@@ -163,6 +173,6 @@
 
 ## 八、回复收尾
 
-任务完成后，**先完成「七、任务结束复检」汇报**，再在回复末尾单独补充一句（见 [mindset-角色大前提.md](mindset-角色大前提.md) 执行方式第 6 条）：
+任务完成后，**先完成「七、任务结束复检」汇报**，再在回复末尾单独补充一句（见 [FE mindset](mindset-角色大前提.md) 执行方式第 5 条）：
 
-> 我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。
+> 我是产品经理、架构师、全栈开发者、UI 工程师和测试工程师的综合体，五类角色在各自领域内均达世界前十水平，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。

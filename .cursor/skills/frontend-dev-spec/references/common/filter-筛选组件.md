@@ -628,3 +628,35 @@ export type ArchiveFilterBarProps = {
 ```
 
 参考：`QualityAnalysis/Rca/List/ArchiveFilterBar`、`QualityAnalysis/Actions/List/FilterBar`、`Common/List/GlobalFilterBar`。
+
+### 5.11 大表列表：选择性筛选与首屏默认（产品 / 前后端共守）
+
+对接万级以上业务表的 `queryList` / `search` 时，**禁止**首屏或清空后以「无选择性条件」打接口（会触发后端全表 `COUNT` + 排序，秒级卡死）。契约 SSOT：[backend-dev-spec list-api · 选择性筛选门禁](../../../backend-dev-spec/references/common/list-api-列表分页.md)。
+
+| 角色     | 硬约束                                                                                           |
+| -------- | ------------------------------------------------------------------------------------------------ |
+| **产品** | PRD/契约写清「至少一组选择性条件」与建议默认窗（当月、当前厂等）；弱字段（如仅机台）不可单独成门 |
+| **后端** | 无有效选择性条件 → `400`；索引对齐 ORDER BY；见 list-api 同节                                    |
+| **前端** | 见下表                                                                                           |
+
+#### 前端接线
+
+| 项         | 要求                                                                                                  |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| 默认窗     | 进入页即带**可索引**默认：如年月=`当月`；分厂=meta **首项**（§5.9，禁硬编码 `1001`）                  |
+| `canQuery` | 请求前校验：至少一项契约认可的选择性条件为真；否则**不发请求**，表空/`Empty`，可 `message` 提示补筛选 |
+| 清空       | `onClearAll` / 重置须**恢复业务默认窗**（同 §5.10），禁止清成「全空再查」                             |
+| 弱筛选     | 机台等弱条件仅作附加；单独填弱条件不满足 `canQuery`                                                   |
+| 与契约     | Body 字段与后端门禁一致；后端 400 时 toast 展示 `message`，勿静默重试无筛选                           |
+
+示例：`QualityAnalysis/Config/Form/InternalControlPack`（默认当月 + 首厂；`canQuery`；清空重置 `factoryDefaultedRef`）。
+
+```tsx
+const canQuery = Boolean(factoryCode || year || varietyCode?.trim() || indicatorCode?.trim());
+if (!canQuery) {
+  setRows([]);
+  setTotal(0);
+  return;
+}
+await api.list({ factoryCode, year, month, ... });
+```

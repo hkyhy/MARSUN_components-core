@@ -27,8 +27,10 @@ target_date: '2026-07-15'
 ```
 
 - **任务** 有 `owner` → sync 写入 Plane assignee（`PLANE_PUSH_ASSIGNEE=1` 或 YAML 显式 owner 时生效）
-- **任务** 无 `owner` → 不覆盖 Plane 已有 assignee
-- **`start_date` / `target_date`** → 写入 Work Item 起止日期；缺省可继承 milestone `plan_date`
+- **任务** 无 `owner` → 不覆盖 Plane 已有 assignee；**进行中任务缺 owner 会被 `validate_manifest` 硬拦截**
+- **`start_date` / `target_date`** → 写入 Work Item 起止日期；缺省可继承 milestone `plan_date`；**进行中任务缺日期硬拦截**
+- **负责人须为该 Plane 项目成员**：workspace 有邮箱但未加入项目时 PATCH assignees 会被清空（例：刘军未进 P6 → 勿写 owner: 刘军，或先加项目成员）
+- **与关系门禁配套**：仅有负责人/日期仍不够；Module / `parent_issue` / `related_tasks` 见 [task-relationships](task-relationships.md)
 
 ## 环境变量（兜底）
 

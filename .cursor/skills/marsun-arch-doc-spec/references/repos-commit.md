@@ -26,7 +26,7 @@
 | 子仓库 **已有 Plane**                                              | 在**该子仓库**内 commit，使用**该仓库** `plane/project.yaml` + `plane/sync_manifest.yaml`；**按功能/模块拆成多个原子 commit**，每个 commit 的 `type(scope)` 与 `Task:` 对应该次 diff；**须与钉表 depth-2 Issue 对齐**（钉表有独立事项 → 业务仓须有对应台账 id，见 [da-workflow/commit-format](../../da-workflow/references/commit-format.md)） |
 | 子仓库 **无 Plane**                                                | **停止**，运行检测脚本，将 `suggest` / `fallbacks` **提示给用户**，由用户选择 bootstrap 本仓库或走 marsun_arch                                                                                                                                                                                                                                 |
 | 仅 **skills 镜像**（`frontend-dev-spec` / `marsun-arch-doc-spec`） | marsun_arch 改源 → `node scripts/sync-skills.mjs`（hook 自动）→ 子仓库 `docs(spec)` **单独** commit，不与业务混 commit                                                                                                                                                                                                                         |
-| **跨仓库同一功能**（含 `@hkyhy/marsun-components-core`）           | **先 core 提交并发布版本** → 业务仓库 `chore(deps)` 对齐 semver → **marsun_arch 先 WorkRecord 再 docs/spec commit**                                                                                                                                                                                                                            |
+| **跨仓库同一功能**（含 `@hkyhy/marsun-components-core`）           | **先 core：功能 + version 同 commit** → CI publish → **业务：功能 + 升 `^` 同 commit** → **marsun_arch 先 WorkRecord 再 docs/spec**；禁止独立 `chore(release)` / 为本功能拆 `chore(deps)`                                                                                                                                                      |
 
 ## 跨仓库提交顺序（必守）
 
@@ -34,26 +34,28 @@
 
 ```
 1. marsun_components-core（若有 src 变更）
-   → bump package.json 版本 → commit → 发布 npm → 其他仓库再改 ^x.y.z
+   → 功能 diff + bump package.json version **同 commit** → push → CI 发布 npm
+   → 禁止仅 bump 的独立 chore(release)
 
 2. 业务子仓库（如 Agent_QualityAnalysis）
-   → 按 scope 拆分原子 commit（shared / 模块 / deps 分列）
+   → 按 scope 拆分原子 commit；为本功能升 core 时 **业务 diff + ^/lockfile 同包**
+   → 禁止为本功能单独 chore(deps): 升 core（与功能无关的纯跟版除外）
    → 每 commit：timeline-sync → task done → pm sync PATCH
 
 3. marsun_arch（meta-repo）
    → 先追加 WorkRecord「进展记录」（对应子仓库 commit）
-   → 再 docs(spec) / docs(work-record) / plane 台账 等原子 commit
+   → 再 docs(spec) / docs(work-record) 等原子 commit；**台账 YAML 变更随对应业务/文档同包**，禁止单独「只改 plane/」commit（纯台账治理除外）
    → 最后 node scripts/sync-frontend-dev-spec.mjs（若改了 shared 规范）
 ```
 
-| 步骤       | 仓库                           | 说明                                                                    |
-| ---------- | ------------------------------ | ----------------------------------------------------------------------- |
-| core 优先  | `repos/marsun_components-core` | 仅 pick `src/` + 版本号；不与 `.cursor/skills` 镜像混 commit            |
-| 业务模块   | `repos/<业务>`                 | `feat(rca)` / `feat(shared)` 等按目录拆分；`chore(deps)` 单独 commit    |
-| WorkRecord | `marsun_arch`                  | **先于** meta-repo 的 WorkRecord 路径 commit                            |
-| 规范源     | `marsun_arch`                  | `frontend-dev-spec` shared 变更 → sync 脚本 → 各 repo 可选 `docs(spec)` |
+| 步骤       | 仓库                           | 说明                                                                                         |
+| ---------- | ------------------------------ | -------------------------------------------------------------------------------------------- |
+| core 优先  | `repos/marsun_components-core` | **同包** pick `src/`（及 examples 等）+ 版本号；不与 `.cursor/skills` 镜像混 commit          |
+| 业务模块   | `repos/<业务>`                 | `feat(rca)` / `feat(shared)` 等按目录拆分；为本功能升 core 须与功能 **同包**（纯跟版可独立） |
+| WorkRecord | `marsun_arch`                  | **先于** meta-repo 的 WorkRecord 路径 commit                                                 |
+| 规范源     | `marsun_arch`                  | `frontend-dev-spec` shared 变更 → sync 脚本 → 各 repo 可选 `docs(spec)`                      |
 
-**禁止**：ARCH 未写 WorkRecord 就 commit 子仓库进展；core 未发版就让 QA `package.json` 指向不存在版本。
+**禁止**：ARCH 未写 WorkRecord 就 commit 子仓库进展；core 未发版就让 QA `package.json` 指向不存在版本；功能驱动的发版/升依赖拆成空 release 或单独 deps commit。
 
 ## 原子提交（Plane 已就绪时必守）
 
@@ -250,4 +252,5 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --step pla
 
 ## marsun_arch 元仓库
 
-同样在根目录**按域拆分原子 commit**（规范、PM 台账、文档分开），`Task:` 用根目录 `plane/sync_manifest.yaml`。
+同样在根目录**按域拆分原子 commit**（规范、文档等），`Task:` 用根目录 `plane/sync_manifest.yaml`。  
+**台账登记/status 须与对应业务或文档 diff 同包**，禁止拆成单独 PM 台账 commit（无业务 diff 的纯台账治理除外，见 [da-workflow/commit-format](../../da-workflow/references/commit-format.md#台账与业务同-commit强制)）。

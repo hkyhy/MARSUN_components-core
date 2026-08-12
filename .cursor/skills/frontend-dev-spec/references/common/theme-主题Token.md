@@ -36,7 +36,9 @@ useEffect(() => {
 }, [settings.themeColor]);
 ```
 
-**DatePicker / 筛选日期面板 locale**：antd `ConfigProvider locale={zhCN}` 管组件文案；**月名、星期**由 dayjs 渲染，须同时 `import 'dayjs/locale/zh-cn'` + `dayjs.locale('zh-cn')`（对齐 QA `main/index.tsx`）。
+**DatePicker / 筛选日期面板 locale**：antd `ConfigProvider locale={zhCN}` 管组件文案；**月名、星期**由 dayjs 渲染。  
+`@hkyhy/marsun-components-core` 已在 `ensureDayjsZhCn`（`MarsunCoreProvider` + `DatePickerFilterItem` / `FilterDatePicker` 等）对**同一份 dayjs** 执行 `import 'dayjs/locale/zh-cn'` + `dayjs.locale('zh-cn')`，避免筛选月面板出现 `Jan/Feb`。  
+业务仓入口仍建议保留 `ConfigProvider locale={zhCN}`；dayjs 中文可由 core 兜底（勿依赖两份 dayjs 未 dedupe 时只在业务 main 设 locale）。
 
 **项目 `global.scss`**：
 

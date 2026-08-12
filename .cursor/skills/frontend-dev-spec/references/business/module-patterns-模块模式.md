@@ -718,6 +718,7 @@ export default ModuleFormModal;
 > - Form 组件只渲染 `FormInfo` + `list` 字段（`Input`/`Select` 等从 `@hkyhy/marsun-components-core`），不含提交逻辑
 > - Modal 组件使用 `FormModal`，提交走 `formProps.onSubmit`；初值走 `formProps.data`
 > - 校验用字段 `rule` 字符串（如 `REQ`、`REQ TEL`、`EMAIL`）
+> - 默认 `column={2}`；**`block` 仅给偏重字段**（`TextArea` 备注/说明/Description、上传区等）独占一行；**禁止**给 Input / Select（含多选）加 `block`
 > - 页内非弹窗表单：外层包 `Form` + `SubmitButton` / `ResetButton`
 > - 多步：`FormSteps` / `FormStepsModal`（见 core Form showcase）
 > - 样式由 core 再导出模块侧载，业务无需单独引入 `@kne/form-info` CSS
@@ -1471,6 +1472,25 @@ export const STATUS_MAP: Record<string, { label: string; color: string }> = {
   APPROVED: { label: '已通过', color: 'green' },
   REJECTED: { label: '已驳回', color: 'red' },
 };
+```
+
+### 9.3.1 多值 Tag 列表（角色/标签等）
+
+> **SSOT**：`Tags` / `FileTags`（`@hkyhy/marsun-components-core`）。列表单元格、详情 Descriptions、只读预览**统一**用 `Tags`，禁止竖排纯文本或手写多个 `SemanticTag` 无截断。
+
+| 规则           | 说明                                                                                                                                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 截断           | **`showLength={2}`**（与 Assets 文件标签一致）；超出显示 `+N`；**长文案**即使未超限也 ellipsis，**hover** Tooltip 展示全部 Tag                                                                          |
+| 颜色           | 角色类用 `SEMANTIC_COLORS.INFO`；文件标签用 `FileTags`                                                                                                                                                  |
+| 表单多选       | Select `mode="multiple"` 须 `maxTagCount={2}` + `maxTagPlaceholder` + `tagRender` 用 `SemanticTag`（防输入框内重叠）                                                                                    |
+| 字段说明       | 需要时用 kne **`labelTips=`**（非 antd `tooltip`）；**禁止**弹层顶栏/灰字堆产品史、迁移话术、内部票号（如 SET-02）；必填靠 `rule`/`*`，能力边界用 disabled 态表达即可                                   |
+| FormInfo 列    | 默认 **`column={2}`**（与 FormInfoBaseDemo 一致）。**`block` 仅用于偏重、需独占一行的字段**：`TextArea`（备注/说明/Description）、上传区等；**禁止**给 Input / Select（含多选角色、共享组）乱加 `block` |
+| 上下文切换字段 | 如「业务系统」也进 FormInfo `Select`（禁手写 Typography+antd Select）；用 `FormDataSync` 驱动外部 reload                                                                                                |
+
+```tsx
+import { Tags, SEMANTIC_COLORS } from '@hkyhy/marsun-components-core';
+
+<Tags tags={roleNames} showLength={2} color={SEMANTIC_COLORS.INFO} empty="—" />;
 ```
 
 ### 9.4 列表 columns 中使用 SemanticTag

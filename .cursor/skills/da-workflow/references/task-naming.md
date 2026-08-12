@@ -33,14 +33,25 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
 
 ### 仓库 ↔ 钉钉编码映射
 
-| 短名     | 仓库                              | DingTalk Project | milestone（depth-1）                  | 说明                                        |
-| -------- | --------------------------------- | ---------------- | ------------------------------------- | ------------------------------------------- |
-| assets   | `repos/maoyang_data-asset-system` | **P3**           | **P3.7** 企业文件上传客户端与平台开发 | 数据资产主业务（原 P3.2 资产管理系统归此）  |
-| S3 / QA  | `repos/Agent_QualityAnalysis`     | **S3**           | **S3.3** 功能开发                     | 当前开发阶段统一挂此模块                    |
-| arch     | `marsun_arch`                     | **P6**           | **P6.11** 规范                        | frontend-dev-spec / da-workflow 等          |
-| core     | `repos/marsun_components-core`    | **P6**           | **P6.2** 组件库                       | npm 组件发布                                |
-| agent    | assets 内 AgentHub                | **S1**           | **S1.3** 功能开发 V1.0                | `plane/projects.json` agent 路由            |
-| my-plane | `repos/my-plane`                  | —                | —                                     | **例外**：维持 `M003-*`，本次不纳入层级编码 |
+| 短名     | 仓库                              | DingTalk Project | milestone（depth-1）                  | 说明                                           |
+| -------- | --------------------------------- | ---------------- | ------------------------------------- | ---------------------------------------------- |
+| assets   | `repos/maoyang_data-asset-system` | **P3**           | **P3.7** 企业文件上传客户端与平台开发 | 数据资产主业务（原 P3.2 资产管理系统归此）     |
+| S3 / QA  | `repos/Agent_QualityAnalysis`     | **S3**           | **S3.3** 功能开发                     | 当前开发阶段统一挂此模块                       |
+| arch     | `marsun_arch`                     | **P6**           | **P6.11** 规范                        | frontend-dev-spec / da-workflow 等             |
+| core     | `repos/marsun_components-core`    | **P6**           | **P6.2** 组件库                       | npm 组件发布                                   |
+| agent    | assets 内 AgentHub                | **S1**           | **S1.3** 功能开发 V1.0                | `plane/projects.json` agent 路由               |
+| my-plane | `repos/my-plane`                  | **P6**           | 按内容选 **P6.8 / P6.9**（见下表）    | Plane 产品与 TOS 底座；历史台账可仍见 `M003-*` |
+
+### P6 Module 分工（防乱挂）
+
+| Module    | 挂什么                                                                                                             | 不挂什么                                 |
+| --------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| **P6.8**  | Plane PM 产品：看板 / Issue 表单 / 里程碑勾选 / 层级码 UI（`apps/web/**/issue-modal`、非 tos 的 `apps/api/plane`） | 周报工具、arch 规范 skill                |
+| **P6.9**  | TOS / 层级取号 / `next_hierarchy_id` / 钉钉 sync 底座（`apps/api/plane/tos/`）                                     | Issue 表单 UI、周报校验                  |
+| **P6.11** | `marsun_arch` 开发规范 skill / docs（frontend-dev-spec、da-workflow 等）                                           | my-plane `apps/*`                        |
+| **P6.12** | 周报 · GitHub 统计与校验工具（及明确相关项）；`team-sync/`                                                         | my-plane 产品/TOS 改动；**禁止**当杂项筐 |
+
+路径推断 SSOT：`repos/my-plane/plane/commit-module-map.yaml` + 全局 `DEFAULT_MODULE_PATH_RULES`。拿不准 Module → AskQuestion，**禁止**静默塞进 P6.12。
 
 登记新任务前：查上表选定 `milestone`；`id` 前缀须与 `milestone` 一致（`S3.3.*` 挂 `milestone: S3.3`）。**先** `da pm dry-run` 拉 Plane 快照：merged 仓库 **CREATE module = 0**；禁止凭空 CREATE 钉表 Module，禁止用 `·` 另建同代号 Module（见 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)）。
 
@@ -100,12 +111,16 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
 
 **marsun_arch 禁止新增 `M001-*`**：元仓库交付一律 `milestone: P6.11` + `id: P6.11.{N}`。
 
+### 序号号段（钉表 Module）
+
+钉表 / Plane 层级：父码下 **max+1（最小空洞从 1）**；支持四级（`S3.3.1.1`）；不限制里程碑/任务数量。详文：[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)。
+
 ### 各仓库新任务起始
 
 ```yaml
-# Agent_QualityAnalysis — 先 plane_pull，取 max(S3.3.N)+1（2026-07-23 起为 S3.3.89+）
-# 禁止盲信 meta.next_task_id；73–88 等为大颗粒预留，见 task-relationships
-- id: S3.3.89
+# Agent_QualityAnalysis — 先 plane_pull；父码下 max+1（空则 .1）
+# 禁止盲信 meta.next_task_id
+- id: S3.3.1001
   milestone: S3.3
   parent_issue: 8ab0a122-4bcd-4133-9c14-fe0dbf014aec # 预警前端 V0.2
   name: 示例细粒度任务
@@ -117,27 +132,27 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
     Refs: S3.3.26
     简要说明
 
-# marsun_components-core — 读 meta.next_task_id（对齐后为 P6.3.28+）
-- id: P6.3.28
+# marsun_components-core — 钉表 Module 下父码取号（例）
+- id: P6.3.1
   milestone: P6.3
   name: 示例任务
   status: 进行中
 
-# marsun_arch — 从 P6.11.{N} 起（读 meta.next_task_id；**禁止**新增 M001-*）
-- id: P6.11.11
+# marsun_arch — P6.11 钉表 Module（**禁止**新增 M001-*）
+- id: P6.11.1
   milestone: P6.11
   name: S3 质量预警 data-service 接口文档
   status: 进行中
   tags: [data-dev, docs, S3]
   note: data-dev/S3智能体接口.md 等元仓库接口/规范文档
 
-# maoyang assets — 从 P3.7.{N} 起
+# maoyang assets — 钉表 Module 下父码取号
 - id: P3.7.1
   milestone: P3.7
   name: FilterTreeSelect 改用 fetchUrl
   status: 进行中
 
-# AgentHub（assets agent 项目）— 从 S1.3.{N} 起
+# AgentHub（assets agent 项目）— 钉表 Module 下父码取号
 - id: S1.3.1
   milestone: S1.3
   name: Agent 列表页对接
@@ -207,12 +222,12 @@ AI-Assisted: true
 
 **凡产生 git commit（含单文件 chore/docs），同一任务闭环内须同步 Plane**，不得「只 push 不同步」：
 
-1. `sync_manifest.yaml` 已有对应 `Task:` id（无则先登记）。
-2. 该 commit **完成**任务 → 台账 `status: 已完成`；**未完成** → `[WIP]` 且 status 保持进行中。
-3. **`@da pm dry-run`** 审 preview → **`@da pm sync`**（或 `sync_plane.py --confirm-token`）。
-4. 仅改 `plane/` 台账的 commit 也要 sync，以便 Plane 与 YAML 一致。
+1. `sync_manifest.yaml` 已有对应 `Task:` id（无则先登记，**与首次业务 diff 同 commit**）。
+2. 该 commit **完成**任务 → 台账 `status: 已完成` **写入同一 commit**；**未完成** → `[WIP]` 且 status 保持进行中。
+3. commit 后：**`@da pm dry-run`** 审 preview → **`@da pm sync`** PATCH（或 CREATE）；`timeline-sync` + `task done` 见 [plane-timeline](plane-timeline.md)。
+4. **禁止**为日常 status/登记另开仅改 `plane/` 的 commit；无业务 diff 的纯台账治理除外（见 [commit-format](commit-format.md#台账与业务同-commit强制)）。
 
-plane_ready 仓库完成任务时，还须 `da task timeline-sync` + `da task done --confirm`（见 [plane-timeline](plane-timeline.md)）。
+plane_ready 仓库完成任务时，还须 `da task timeline-sync` + `da task done --confirm`。
 
 例外：仓库尚未 bootstrap Plane（`da pm` exit 3）时先 HITL 补 `project_id`，不得跳过台账编造 Task。
 

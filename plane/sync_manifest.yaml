@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.100
+  next_task_id: P6.3.101
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1489,3 +1489,19 @@ tasks:
   note: |
     Refs: P6.3
     SegmentedRadio 导出；ensureDayjsZhCn 修 DatePicker 月名；发布 npm 0.1.49
+
+- id: P6.3.100
+  milestone: P6.3
+  name: 同步 da-workflow/frontend-dev-spec skills 与 examples-registry
+  status: 已完成
+  priority: P1
+  kind: docs
+  owner: 黄金芳
+  start_date: "2026-08-12"
+  target_date: "2026-08-12"
+  tags: [docs, skills]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3
+    Related: P6.3.99
+    镜像 arch da-workflow / frontend-dev-spec / marsun-arch-doc-spec；examples-registry 整理

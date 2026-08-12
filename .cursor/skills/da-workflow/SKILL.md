@@ -1,16 +1,14 @@
 ---
 name: da-workflow
 description: |
-  DA 团队开发总控：@da 规范审查提交、@da pm 进度同步 Plane、六步交付闭环、Task 必填与 AI 归因。
-  用户说提交/commit/push/同步 Plane/@da pm/完成开发任务时触发。
-  plane_ready 仓库 commit 后须 timeline-sync → task done --confirm → WorkRecord → pm sync PATCH（见 references/plane-timeline.md）。
-  与 work-record、weekly-report 互补：本技能管提交与 Plane 交付；work-record 管事项进展；weekly-report 管周期汇总。
+  DA 总控：提交/commit/push、同步 Plane、@da pm、开工/收工/day start、AI Native、六步交付闭环、Task 与 AI 归因。细则见 references/（plane-timeline、ai-native-daily、cursor-session-prompt）；事项进展用 work-record，周报用 weekly-report。
 ---
 
 # DA 开发工作流（marsun_arch 权威源）
 
 > 全局安装入口：`da install-config --all --scope global --ide cursor`（脚本仍在 `~/.cursor/skills/`）  
-> 速查：[docs/开发规范速查.md](../../../docs/开发规范速查.md) · 架构：[docs/vibe-guard.md](../../../docs/vibe-guard.md)
+> 速查：[docs/开发规范速查.md](../../../docs/开发规范速查.md) · 培训：[docs/AI_Native_开发培训手册-20260728.md](../../../docs/AI_Native_开发培训手册-20260728.md) · 安全：[references/vibe-guard.md](references/vibe-guard.md)  
+> 全局同规：`~/.cursor/skills/da`（`@da`）
 
 与 [work-record](../work-record/SKILL.md)、[weekly-report](../weekly-report/SKILL.md) 关系：
 
@@ -23,6 +21,10 @@ description: |
 
 权威细则：
 
+- AI Native 日常 / 三条红线 / Vibe 四步 / **会话 Focus 绑定**：[references/ai-native-daily.md](references/ai-native-daily.md)
+- **Cursor 会话与提示词（控用量）**：[references/cursor-session-prompt-会话与提示词.md](references/cursor-session-prompt-会话与提示词.md)
+- **角色大前提（五维 / 开场收尾 / 复检 SSOT）**：[references/mindset-角色大前提.md](references/mindset-角色大前提.md)
+- Task 父子与关系：[references/task-relationships.md](references/task-relationships.md)
 - Commit 格式：[references/commit-format.md](references/commit-format.md)
 - Task ID 与台账登记：[references/task-naming.md](references/task-naming.md)
 - 钉钉层级命名：[references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md)
@@ -32,6 +34,9 @@ description: |
 - `@da pm`：[references/pm-sync.md](references/pm-sync.md)
 - 可选自动建关 Issue：[references/commit-lifecycle.md](references/commit-lifecycle.md)
 - 安全清单：[references/vibe-guard.md](references/vibe-guard.md)
+- **写代码自检与自动化测试门禁**：[references/test-and-selfcheck-写代码自检与测试.md](references/test-and-selfcheck-写代码自检与测试.md)
+- **角色循环验证**（按触发表命中才跑：需求/接口/前端/测试；安全条件加查）：[references/role-loop-review-角色循环验证.md](references/role-loop-review-角色循环验证.md)
+- **会议会前/会中/会后**：[references/meeting-会议会前会中会后.md](references/meeting-会议会前会中会后.md)
 
 ---
 
@@ -50,16 +55,40 @@ da project init          # 规范 + plane/ 台账
 
 ---
 
+## 一·附、每日标准动作
+
+三句话：**任务在 Plane，提交走 DA，AI 是生产力不是玩具。** 详文：[ai-native-daily](references/ai-native-daily.md)。
+
+**无 Focus 时**：先做 [会话 Focus 绑定](references/ai-native-daily.md#21-会话-focus-绑定钉表优先--agent-择优-abc)——锚定钉表后，Agent **择优推荐** A 认领 / B 子工作项 / C 添加关系（对齐 Plane「添加子工作项」「添加关系」），用户确认后再编码。禁止静默建单。
+
+```bash
+da day start
+# 无 Focus → AskQuestion 确认 ABC（推荐项高亮）
+da task use <ID>   # 或登记子任务/关系后 use 新 id
+# ... 编码 ...
+da standards scan
+da standards commit --yes --subject "type(scope): 描述" --task <ID>
+da task timeline-sync <ID> --repo .
+da task done <ID> --confirm --repo .
+da day close --confirm
+```
+
+**三条红线**：禁裸 `git commit -m`；正文必有 `Task:`；关单必须 `timeline-sync` + `done --confirm`。
+
+**Module 选择（ephemeral / my-plane）**：拿不准 → AskQuestion；按 [task-naming · P6 Module 分工](references/task-naming.md#p6-module-分工防乱挂)（P6.8 产品 UI · P6.9 TOS · P6.11 arch 规范 · P6.12 周报工具）；**禁止**静默采用推荐项或把产品/TOS 卡塞进 P6.12。
+
 ## 二、提交前（Agent 必做）
 
 ```
 Task Progress:
 - [ ] git diff --stat — 原子性，无无关文件
 - [ ] **按功能/模块切分** — 对照钉表 depth-2 Issue；一事项一台账任务一组 commit（见 references/commit-format.md）
-- [ ] **plane_pull 取号** — 扫描 snapshot 名称 `S3.3.(\d+)`，`id = max+1`；勿盲信 `meta.next_task_id`；挂 `parent_issue` 到钉表大颗粒（见 references/task-relationships.md）
+- [ ] **台账同包** — `sync_manifest` 登记/status 与业务 diff 同一 commit；禁止事后单独 chore(pm) 只改台账（见 commit-format「台账与业务同 commit」）
+- [ ] **plane_pull 取号** — 扫描 `{module}.(\d+)`；`id = max+1`（空则 `.1`；见 dingtalk-hierarchy-naming）；勿盲信 `meta.next_task_id`；挂 `parent_issue`
 - [ ] 钉表已有独立事项 → 业务仓已登记对应 id，note 含 Refs: <钉表代号>
 - [ ] **钉表大颗粒下的增量** → 新建细粒度 id + `parent_issue`；**禁止**写进父 note「纳入本任务」后用父 id 作 `Task:`（见 task-relationships 硬规则）
 - [ ] dry-run 若 CREATE 已有 `plane_issue_id` 的钉表任务 → **硬停止**，勿改并父 note 规避
+- [ ] **测试门禁** — 前端相关 vitest / 后端契约用例本人已跑通（见 [test-and-selfcheck](references/test-and-selfcheck-写代码自检与测试.md)）
 - [ ] da standards scan — .env 硬拦；密钥/反模式
 - [ ] 审查 diff：范围、密钥、反模式（见 vibe-guard）
 - [ ] 编写 message：含 Task: / [WIP]；Agent 编辑 → AI-Assisted: true
@@ -78,17 +107,17 @@ Task Progress:
 REPO=<git 根>
 TASK=<Task 行 ID>
 
-# 新任务先 CREATE（status 进行中）
-PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"
+# 新任务先 CREATE（YAML 进行中已与业务同批改动）
+PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
 
-git commit ...   # Task: $TASK（完成时不带 [WIP]）
+git commit ...   # Task: $TASK（含台账 YAML；完成时不带 [WIP]，且 status 已为已完成）
 
 da task timeline-sync "$TASK" --repo "$REPO"
 da task done "$TASK" --confirm --repo "$REPO"
 # WorkRecord 进展（见 work-record/SKILL.md）
 
-# 台账改已完成后再 PATCH
-PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"
+# PATCH 对齐 Plane（勿再单独 git commit 改台账）
+PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
 ```
 
 | 操作                     | 活动区效果                    |
@@ -98,6 +127,8 @@ PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"
 | `da task done --confirm` | 补「📦 任务交付时间线」完成块 |
 
 **禁止**：仅用 `pm sync` 标 Done 代替 timeline-sync + task done。`project_id` 须裸 UUID。
+
+**marsun_arch Plane 归属硬规则**：`plane/project.yaml` 的 `project_id` **必须**等于 `meta.required_plane_project_id`（P6 `f7ed0394-…`）。knowledge-qa / 其它仓文档合入 **禁止**改绑到 S1（`934b5818-…`）或其它项目；`da pm` preflight / `da doctor` 会硬拦。
 
 详文：[references/plane-timeline.md](references/plane-timeline.md)
 
@@ -167,22 +198,30 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 
 ## 七、完成前检查
 
+- [ ] 当日有 Focus（`da task use`）；习惯上同时只 Focus 一个；开工时若无 Focus 已按钉表 **ABC 择优**绑定（认领/子工作项/添加关系）并经用户确认
 - [ ] commit message 含 `Task:`；完成时不带 `[WIP]`
-- [ ] plane_ready 仓库已执行 timeline-sync + task done（完成任务时）
+- [ ] 完成任务时 **台账 `status: 已完成` 已与业务同 commit**（禁止事后单独改台账）
+- [ ] plane_ready 仓库已执行 timeline-sync + task done（完成任务时；关单两步齐）
 - [ ] WorkRecord 进展已按事项类型追加（有对应文档时）
-- [ ] sync_manifest status 与 commit 语义一致后再 pm sync
+- [ ] sync_manifest status 与 commit 语义一致后再 pm sync PATCH（不再另开 git）
 - [ ] 对**当前操作的任意仓库**（非仅 QA/S3）：`da pm dry-run` 对 merged milestone **CREATE module = 0**
 - [ ] 该仓 sync **之后** `module_health_check` 通过（无同代号 `-`/`·` 双份）
 - [ ] 该仓 Plane Modules **无** 同代号 `-`/`·` 双份；误建壳已 `(重复·待删)` Archive
-- [ ] 新任务台账含 `owner`、`start_date`、`target_date`（见 plane-team-assignees）
-- [ ] Module 名跟钉表 `{id}-{name}`（P3/P6/S1/S3 同规）；Issue 才用 `{id} · {name}`
-- [ ] 无 `.env` / 密钥进暂存区
+- [ ] 新任务台账含 `owner`、`start_date`、`target_date`、`milestone`；层级增量另含 `parent_issue` + note `Refs:`/`related_tasks:`（`validate_manifest` 硬拦缺字段；见 task-relationships / plane-team-assignees）
+- [ ] Module 名跟钉表 `{id}-{name}`（P3/P6/S1/S3 同规）；Issue 才用 `{id} · {name}`（**禁止**标题塌成父级 `.1`）
+- [ ] Plane 详情：非「无模块」；有父项/关系时 UI「父项」「添加关系」可见（对照 task-relationships 核对清单）
+- [ ] 无 `.env` / 密钥进暂存区；未向 AI 喂密钥/真实用户/未公开经营数据
 - [ ] Agent 编辑含 `AI-Assisted: true`
+- [ ] 卡壳 ≥30min 且可复用：已写 `.skills/draft/` 或对应 skill reference（见 ai-native-daily）
 
 ---
 
 ## 延伸阅读
 
+- [references/ai-native-daily.md](references/ai-native-daily.md) — 每日动作、红线、Vibe 四步
+- [references/test-and-selfcheck-写代码自检与测试.md](references/test-and-selfcheck-写代码自检与测试.md) — 前后端测试门禁 + 加强自检
+- [references/role-loop-review-角色循环验证.md](references/role-loop-review-角色循环验证.md) — 角色循环验证（§1 触发表 + 安全 §2.5 条件加查）
+- [references/meeting-会议会前会中会后.md](references/meeting-会议会前会中会后.md) — 会议三段规范
 - [references/commit-format.md](references/commit-format.md) — Conventional Commits + Task 行
 - [references/task-naming.md](references/task-naming.md) — Task ID、台账字段与登记 checklist
 - [references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md) — 钉表层级与双轨 ID
@@ -193,3 +232,4 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [references/commit-lifecycle.md](references/commit-lifecycle.md) — `DA_COMMIT_LIFECYCLE=1` 自动建关
 - [references/vibe-guard.md](references/vibe-guard.md) — scan 与安全清单
 - [references/skills-sync.md](references/skills-sync.md) — 镜像同步到 repos
+- [docs/AI_Native_开发培训手册-20260728.md](../../../docs/AI_Native_开发培训手册-20260728.md) — 培训全文（含考核，人读）

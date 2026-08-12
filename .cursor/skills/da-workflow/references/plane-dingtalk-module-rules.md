@@ -1,7 +1,8 @@
 # 钉表 Module 写保护契约
 
 > 与 [dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)、[pm-sync](pm-sync.md)、[plane-team-assignees](plane-team-assignees.md) 配套。  
-> 实现：`~/.cursor/skills/platform-doc-plane-sync/scripts/sync_plane.py`
+> 实现：`~/.cursor/skills/platform-doc-plane-sync/scripts/sync_plane.py`  
+> **子序号取号**（父码下 max+1、允许四级+）见 [dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)；本文件只管 Module 写保护。
 
 ## SSOT 原则（Agent 必背）
 

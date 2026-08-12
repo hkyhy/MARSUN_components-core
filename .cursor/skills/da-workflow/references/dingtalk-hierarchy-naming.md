@@ -10,7 +10,8 @@
 ```
 depth-0  P3 / S3 / P6 / S1           → Plane Project
 depth-1  P3.2 / S3.3 / P6.11        → Plane Module（sync_manifest milestone）
-depth-2+ P3.2.1 / S3.3.15           → Plane Issue（sync_manifest id）
+depth-2  P3.2.1 / S3.3.15           → Plane Issue
+depth-3+ S3.3.1.1                   → Plane Issue（四级+，parent 为上级 Issue）
 ```
 
 **禁止**将 depth-1 Module 行重复写成 Issue。
@@ -25,6 +26,41 @@ New-schema 列（`智能体名称` / `阶段/子项目` / `任务名称` / `子�
 | DA pm sync | `S3.3.15`、`my-plane:task:M003-27`         | 各 repo `plane/sync_manifest.yaml` | commit `Task:` 行；`external_id` = `{prefix}:task:{id}` |
 
 合并场景（`origin: merged`）：钉行与 PM 台账绑定后，`id` 须与钉表层级代号一致，以便 `backfill_guard` 校验 Plane 名称与钉行前缀匹配。
+
+### 层级取号（父码下 max+1 · 允许四级+ · 2026-07 起去封顶）
+
+不限制里程碑/任务数量；无 1～1000 双轨、无 10×99 段。
+
+| 父前缀                | 例       | 建议下一号                         |
+| --------------------- | -------- | ---------------------------------- |
+| Module                | `S3.3`   | `S3.3.1` / `MS3.3.1`（勾选里程碑） |
+| Issue（Plane parent） | `S3.3.1` | `S3.3.1.1`（四级）                 |
+
+> **best-effort**：取号无预留；创建/更新时同项目同层级码会软拒绝。`da pm` / CLI：`nextChildIssueCode` 默认无 floor（空名单从 `.1` 起）。
+
+#### Plane 新建（创建弹窗）
+
+`GET /api/tos/projects/.../next-hierarchy-id/?kind=&parent_code=&parent_issue_id=`（扫号用 `parse_hierarchy_name().code`）：
+
+| 模式                    | 标题建议                 | 序号                    |
+| ----------------------- | ------------------------ | ----------------------- |
+| 勾选「里程碑」          | `M{prefix}.{n} · `       | 父码下直接子最小空洞    |
+| 不勾选                  | `{prefix}.{n} · `        | 同上                    |
+| 已选 Plane parent Issue | 父码 = parent 标题层级码 | 支持 `S3.3.1.1` 等四级+ |
+
+`{prefix}` 缺省 = Module **结构码**（`S3.3` / `D2.2`）；Module 名可带 `M`（如 `MD2.2`→`D2.2`）。
+
+示例树：
+
+```
+S3-质量预警｜智能体子项目
+  S3.3-功能开发
+    MS3.3.1-里程碑…
+    S3.3.2-任务…
+    S3.3.2.1-子任务…          ← 四级（Plane parent = S3.3.2）
+```
+
+实现辅助：`my-plane` `plane/tos/services/next_hierarchy_id.py`；`milestone_slots.suggest_overflow_module_code` 仅用于手动开 Module。
 
 ## 仓库 ↔ 钉钉编码速查
 

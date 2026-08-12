@@ -1,27 +1,7 @@
 ---
 name: frontend-dev-spec
 description: |
-  前端开发规范技能（技术栈 React 19 + antd 6；含 prompts 需求驱动与 common/business 分层规范）。当需要创建新的页面模块、组件、Action按钮、Form表单、Modal弹窗、列表页面、详情页面时触发。
-  当用户要求开发新功能模块、新建组件、重构组件结构、样式/className/SCSS Modules 规范、Tailwind 迁移、或涉及 src/components 或 src/pages 目录下的文件操作时，应使用此技能。
-  当需要在 Tooltip 中展示结构化详情（如添加人/添加时间）时，必须使用 TooltipInfo（来自 `@hkyhy/marsun-components-core` 或本地 Common 封装）。
-  当需要按权限码控制按钮/区域显示（hidden / tooltip / error）、或使用 usePermissions / usePermissionsPass 时，必须使用 `@hkyhy/marsun-components-core` 的 Permissions（权限列表注入 MarsunCoreProvider auth.permissions）；角色/单权限 + fallback 仍用 PermissionGuard。见 references/business/permissions-data-权限与常量.md。
-  增减/重命名 Assets·SSO 权限码、绑权目录、侧栏门禁、defaultGranted 基线时：须读 references/business/permissions-catalog-改权限齐套.md 并同任务齐套（码表/矩阵/菜单/清单/测试），禁止兼容旧码 OR。
-  当页面或模块存在可滚动区域时，必须使用 VirtualScrollbar（来自 `@hkyhy/marsun-components-core`），禁止在主滚动区使用 overflow-auto / overflow-y-auto；Layout 级接入方式见 references/common/shell-layout-页面壳与布局.md。
-  当模块页或列表页存在数据加载态时，必须使用 core 的 PageSpin + PageShellProvider（App Layout 包裹 Provider；页面用 ModulePageShell / PageHeaderLayout 的 spinning 或 usePageShellLoading）；禁止业务内手写「加载中…」叠层。见 references/common/shell-layout-页面壳与布局.md。
-  当新建或初始化前端子仓库、或 package.json 缺少格式化工具链时，须按 references/common/code-formatting-代码格式化.md 安装 Prettier + ESLint + Husky（含 `prepare`、`lint-staged` script、`.husky/pre-commit`），配置对齐 `repos/maoyang_data-asset-system` 与 `repos/marsun_components-core`。
-  当使用图标时，必须从 `@hkyhy/marsun-components-core` 导入 Icons（禁止业务项目直接 import lucide-react）；Header 刷新操作使用 `refreshAction` + `RefreshCw` spin。
-  当创建组件示例（examples/meta.json）时，多子模块业务域（如 Common、AgentHub）须按 {Domain}/{Module}/examples/ 组织，脚本自动生成域级父 menu 与子 menu。
-  业务前端子仓库初始化或接入组件展示时，须在 App.tsx 用 import.meta.env.DEV 挂载 antd FloatButton（业务页 ↔ /components）及 ComponentsLayout 路由；参考 repos/maoyang_data-asset-system。
-  每次新增或更改组件（含 Common 封装、Props/行为变更、全局接入方式变更）时，须同步更新对应的规范文档与提示词（SKILL.md、references、component-mapping 等），代码与规范同一任务内完成。
-  marsun_components-core 新增或变更导出、Props/行为/新能力时，须同步包根 index.ts、component-mapping-组件映射.md，并在该组件 examples/ 增加或更新对应场景 Demo（能力点与 Demo 一一对应，如 Table 的单表头、多表头、列配置），登记 meta.json 与 apiDoc；禁止只改实现不补示例。
-  业务列表禁止直连 antd Table：必须用 @hkyhy/marsun-components-core 的 Table；必须传稳定 tableName；是否可自定义列用 columnConfigEnabled（默认 true）；开启时注入 fetchColumnConfig/saveColumnConfig（QA 用 userPrefs → user_key_get/set，契约见 backend-dev/platform-dev/用户偏好）。豁免：Form TableList、纯 HTML table、components showcase ApiDoc 表。
-  前端新接或改造任一 REST 路径（含「已有平台接口」）时，同任务必须更新 marsun_arch backend-dev 对应契约三件套（接口.md + OpenAPI + 测试用例）；禁止只写 src/api client。
-  写组件、改纯逻辑或提交前：须走写代码门禁（核心原则 #44）——同任务补/改 __tests__ → 本人跑通 vitest/npm run test → da standards scan；统一流水线见 da-workflow/references/test-and-selfcheck-写代码自检与测试.md。用户说自检/跑测试/提交前检查时亦触发。
-  方案定稿后或页面可点后：须跑角色循环验证（核心原则 #45）——需求用顶尖产品经理视角、前端用顶尖前端+UI 视角；输出必须改/建议改/可接受，未经确认勿改。用户说再验证/循环验证时亦触发。见 da-workflow/references/role-loop-review-角色循环验证.md。
-  本任务若解决了可复用、非显而易见的联调/组件/规范问题，须同任务写入对应 skill reference / mapping / 契约（禁止只留在对话；见核心原则 #43）。
-  质量分析沙盘 FOCUS 矩阵、PlantMetricMatrix、focusMetricsTree、focusLeafSapCode、focus-metric-matrix 投影时触发 references/business/focus-matrix-前端投影.md（列在 FE；测值键保持 Doris 纯洁性）。
-  台账/报告类模块（Actions、Rca、Effectiveness）全量对齐重构、Hub ReactFilter 聚合筛选、pageSize 标准 options、Detail 大块拆子目录、utils 单文件拆目录、FormModal 签发/采纳、Drawer+VirtualScrollbar 下钻、删孤儿时触发 references/business/module-patterns-模块模式.md §10 与 common/directory-structure（utils 拆目录 Vite shim）、common/filter-筛选组件.md §5.10。
-  此技能提供统一的目录结构、命名规范、组件拆分方式和代码模板，确保所有模块遵循一致的架构风格。
+  React 19 + antd 6 + marsun-components-core 前端规范。触发：新建/改 src/components|pages、Form/Modal/Action/Filter/列表详情、VirtualScrollbar、PageSpin、TooltipInfo、Permissions/IAM 齐套、core Table、Icons、样式/目录、FOCUS/module-patterns、canQuery/选择性筛选、契约三件套、自检/循环验证。细则只读 references/（common|business|prompts）；禁止把规范全文写进 description。
 ---
 
 # 前端开发规范 Frontend Development Spec
@@ -40,13 +20,13 @@ description: |
 
 ## 角色大前提
 
-你是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，并具有顶尖审美。实现需求前须从用户价值、模块边界、可维护实现、界面一致性多轮四维交叉论证；结合本技能 references 与对话上下文给出方案后再编码。
+你是产品经理、架构师、全栈开发者、UI 工程师和测试工程师的综合体，五类角色在各自领域内均达世界前十水平，并具有顶尖审美。实现需求前须从用户价值、模块边界、可维护实现、界面一致性、可测与验收多轮五维交叉论证；结合本技能 references 与对话上下文给出方案后再编码。
 
-**每次任务开始**，在回复开头单独补充一句：「我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，具有顶尖审美，接下来，我将根据需求从用户价值、模块边界、可维护实现、界面一致性多轮四维交叉论证，结合对话上下文给出方案后，完全按照 frontend-dev-spec 规范来进行编码。」
+**SSOT（通用）**：[da-workflow/mindset-角色大前提.md](../da-workflow/references/mindset-角色大前提.md)（五维、会话、开场/收尾模板、复检）。  
+**前端叠加**：[references/prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md)（组件大前提、React/antd、大表门禁）。  
+**复检输出模板**：[requirement-workflow「七」](references/prompts/requirement-workflow-需求工作流.md)。
 
-**每次任务结束**，须先做**对话逻辑与历史问题复检**（整段逻辑 + 本对话曾出现问题是否仍在），把「仍存 / 新发现」问题列给用户决策（是否继续修、修哪些）；**未获用户明确指示前禁止擅自续修**；无问题则声明复检通过。复检汇报之后，在回复末尾单独补充一句：「我是产品经理、架构师、全栈开发者和 UI 工程师的综合体，四类角色在各自领域内均达世界前十水平，我完全按照 frontend-dev-spec 规范来进行编码，请审阅。」
-
-完整版见 [references/prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md)；输出模板见 [references/prompts/requirement-workflow-需求工作流.md](references/prompts/requirement-workflow-需求工作流.md)「七、任务结束复检」。
+**每次任务开始** / **结束** 的固定开场句与收尾句见前端叠加 mindset（`{active-skill}` = `frontend-dev-spec`）；结束前须先做任务结束复检，**未获用户明确指示前禁止擅自续修**。
 
 ---
 
@@ -93,11 +73,12 @@ description: |
 39. **少 border 布局** `(common)`：模块 workarea 少 panel border；**列表项用 theme 背景块 + gap**，禁止 `border-bottom` 线分割。见 [styles-样式规范.md](references/common/styles-样式规范.md) §8.11
 40. **InteractiveBlock action 尺寸** `(common)`：link 操作字号不得大于 title（title 14px / actions 12px，icon 14px）；icon 颜色与 link 文字一致；导出用 `Download`；info trigger `cursor: pointer`
 41. **非 prod 组件展示切换** `(common)`：所有业务前端子仓库（非 marsun_components-core dev app）须在 `App.tsx` 用 `import.meta.env.DEV` 双 guard 接入：（1）antd `FloatButton` 在业务页与 `/components` 间切换（图标 `LayoutGrid` / `House`，均从 `@hkyhy/marsun-components-core`）；（2）`/components` 路由 + `ComponentsLayout` + `componentRoutes`（collect-examples 自动生成）。生产 build 不包含上述代码。参考 `repos/maoyang_data-asset-system/src/App.tsx`；新建仓库 checklist 见 [examples-组件示例.md](references/common/examples-组件示例.md) §8.8
-42. **REST 契约同任务落 backend-dev** `(common)`：新接或改造任一 REST（含「已有平台接口」如 `user_key_get`/`user_key_set`）时，**同任务**更新 marsun_arch `backend-dev/{data-dev|agent-dev|platform-dev|mock}/` 三件套（`接口.md` + OpenAPI + 测试用例）；禁止只写 `src/api/*.ts`。落点见 [backend-dev-spec / openapi-apifox §3.2](../backend-dev-spec/references/openapi-apifox-契约标注.md)；用户偏好示例：[platform-dev/用户偏好](../../../backend-dev/platform-dev/用户偏好/接口.md)
+42. **REST 契约同任务落 backend-dev** `(common)`：新接或改造任一 REST（含「已有平台接口」如 `user_key_get`/`user_key_set`）时，**同任务**更新 marsun_arch `backend-dev/{data-dev|agent-dev|platform-dev|mock}/` 三件套（`接口.md` + OpenAPI + 测试用例）；禁止只写 `src/api/*.ts`。落点见 [backend-dev-spec / openapi-apifox §3.2](../backend-dev-spec/references/common/openapi-apifox-契约标注.md)；用户偏好示例：[platform-dev/用户偏好](../../../backend-dev/platform-dev/用户偏好/接口.md)
 43. **可复用问题同任务沉淀** `(common)`：Cursor 联调/开发中若解决了**可复用、非显而易见**的问题（组件用法、布局、环境、信封/分页、落点冲突等），须**同任务**写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping；禁止只留在对话。仅本事项不可复用者写 WorkRecord 进展即可。**禁止**另建「踩坑大全」第二真相源，**禁止**把工程踩坑写入 `TextilePublicKnowledge/`。落点见 [marsun-arch-doc-spec / placement-guide](../marsun-arch-doc-spec/references/placement-guide.md)
 44. **写代码门禁（自动化测试 + 自检）** `(common)`：新建组件 / 改纯逻辑须**同任务**补或更新 `__tests__`（见 [testing-测试规范](references/common/testing-测试规范.md)）；提交前**本人**跑通 `npm run test` 或 `npx vitest run <path>`（禁止以 AI「声称测过」代替）；再 `da standards scan` → `da standards commit`。无对应测试不得标任务完成（可 `[WIP]`）。统一流水线与加强自检清单：[da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md)。接 REST 时另须契约用例（#42），不互相替代。
-45. **角色循环验证** `(common)`：方案/交互定稿后（动手前）须以**顶尖产品经理**视角复审；页面可点后（提交前）须以**顶尖前端开发 + UI 设计**视角复审。输出 **必须改 / 建议改 / 可接受**，**未经用户确认禁止擅自改**。口令以「再次验证：…」开头，模板见 [da-workflow/role-loop-review](../da-workflow/references/role-loop-review-角色循环验证.md)。不替代「任务结束复检」（仍必做）与 #44 门禁。
+45. **角色循环验证** `(common)`：按 [role-loop-review §1](../da-workflow/references/role-loop-review-角色循环验证.md) 触发表**命中才跑**（需求 §2.1 / 接口 §2.2 / 前端 §2.3 / 测试 §2.4）；未命中须一句话声明跳过。IAM·权限码·密钥·生产等命中时另跑**安全 §2.5**（条件加查，非常驻角色；未命中默认不跑）。输出 **必须改 / 建议改 / 可接受**，**未经用户确认禁止擅自改**。禁止无差别多场景空跑。口令与模板见 role-loop-review。不替代「任务结束复检」（仍必做）与 #44 门禁。
 46. **台账/报告模块对齐** `(business)`：Actions / Rca / Effectiveness 等列表+详情模块全量重构时，按 [module-patterns §10](references/business/module-patterns-模块模式.md)——ReactFilter 聚合 `value`/`onChange`（[filter §5.10](references/common/filter-筛选组件.md)）；分页默认 20 + `10/20/30/50/100`；Detail/utils 大块拆子目录且 **utils 删单文件须留 shim**（[directory-structure](references/common/directory-structure-目录结构.md)）；写操作用 `FormModal`+FormInfo；说明用 `Info`+`TooltipInfo`；只读下钻 Drawer + `VirtualScrollbar`；业务 Table 开列配置 + `userPrefs`；模块树内扫除 CommonFilter / overflow:auto / antd Tag / CircleHelp。禁止造台账公共基类。
+47. **大表列表选择性筛选** `(common)`：对接万级以上 `queryList`/`search` 时——产品定门禁条件与默认窗；后端无条件 `400`；前端默认窗 + `canQuery`、清空恢复默认、弱条件不可单独成门。见 [filter §5.11](references/common/filter-筛选组件.md)、[list-api 选择性筛选](../backend-dev-spec/references/common/list-api-列表分页.md)。
 
 ---
 
@@ -105,14 +86,16 @@ description: |
 
 新人 / 总览入口（技术栈图、工具链、Day-0）：[docs/前端工程总览.md](../../../docs/前端工程总览.md)。
 
-触发本 skill 后：**先读本文件核心原则**；接需求时读 [prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md) → [prompts/requirement-workflow-需求工作流.md](references/prompts/requirement-workflow-需求工作流.md)；编写对应模块时再读单个 reference，**勿一次全读**。
+触发本 skill 后：**先读本文件核心原则**；接需求时读 [da-workflow/mindset](../da-workflow/references/mindset-角色大前提.md) → [prompts/mindset（FE 叠加）](references/prompts/mindset-角色大前提.md) → [prompts/requirement-workflow](references/prompts/requirement-workflow-需求工作流.md)；编写对应模块时再读单个 reference，**勿一次全读**。
 
 ### prompts（提示词）
 
-| 文件                                                                                                | 用途                                                     |
-| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md)                           | 四维角色大前提与决策方式                                 |
-| [prompts/requirement-workflow-需求工作流.md](references/prompts/requirement-workflow-需求工作流.md) | 需求理解 → 方案论证 → 开发流程 → 检查清单 → 任务结束复检 |
+| 文件                                                                                                 | 用途                                                     |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [da-workflow/mindset](../da-workflow/references/mindset-角色大前提.md)                               | **SSOT**：五维、会话控用量、开场/收尾模板、任务结束复检  |
+| [prompts/mindset-角色大前提.md](references/prompts/mindset-角色大前提.md)                            | **前端叠加**：组件大前提、React/antd、大表门禁           |
+| [prompts/requirement-workflow-需求工作流.md](references/prompts/requirement-workflow-需求工作流.md)  | 需求理解 → 方案论证 → 开发流程 → 检查清单 → 任务结束复检 |
+| [da-workflow/cursor-session-prompt](../da-workflow/references/cursor-session-prompt-会话与提示词.md) | 人/Agent 提示词模板与高耗反例（控 Cursor 额度）          |
 
 ### common（公共规范）
 
@@ -124,7 +107,7 @@ description: |
 | 主题 Token、颜色                                  | [common/theme-主题Token.md](references/common/theme-主题Token.md)                                                                                                                   |
 | SCSS Modules、样式目录                            | [common/styles-样式规范.md](references/common/styles-样式规范.md)                                                                                                                   |
 | 页面壳与布局（Loading / 滚动 / InteractiveBlock） | [common/shell-layout-页面壳与布局.md](references/common/shell-layout-页面壳与布局.md)                                                                                               |
-| Filter 筛选组件                                   | [common/filter-筛选组件.md](references/common/filter-筛选组件.md)（§5.10 聚合 FilterBar）                                                                                           |
+| Filter 筛选组件                                   | [common/filter-筛选组件.md](references/common/filter-筛选组件.md)（§5.10 聚合 FilterBar；§5.11 大表选择性门禁）                                                                     |
 | 台账/报告模块对齐（Rca/Actions/Effectiveness）    | [business/module-patterns-模块模式.md](references/business/module-patterns-模块模式.md) §10 + [directory-structure utils 拆目录](references/common/directory-structure-目录结构.md) |
 | 组件 Examples / meta.json                         | [common/examples-组件示例.md](references/common/examples-组件示例.md)                                                                                                               |
 | 测试 / 写代码门禁                                 | [common/testing-测试规范.md](references/common/testing-测试规范.md) + [da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md)            |
@@ -132,35 +115,36 @@ description: |
 
 ### business（业务规范）
 
-| 场景                                  | 文件                                                                                                |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Action/Form/Modal/List 模式与代码模板 | [business/module-patterns-模块模式.md](references/business/module-patterns-模块模式.md)             |
-| 权限、常量、批量操作                  | [business/permissions-data-权限与常量.md](references/business/permissions-data-权限与常量.md)       |
-| 改权限齐套（码表/矩阵/绑权/文档）     | [business/permissions-catalog-改权限齐套.md](references/business/permissions-catalog-改权限齐套.md) |
-| 部门树、人员选择、完整路径            | [business/department-person-部门人员.md](references/business/department-person-部门人员.md)         |
-| API 拆分、页面路由、多域组件路由      | [business/routing-api-路由与API.md](references/business/routing-api-路由与API.md)                   |
+| 场景                                    | 文件                                                                                                            |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Action/Form/Modal/List 模式与代码模板   | [business/module-patterns-模块模式.md](references/business/module-patterns-模块模式.md)                         |
+| 权限、常量、批量操作                    | [business/permissions-data-权限与常量.md](references/business/permissions-data-权限与常量.md)                   |
+| 改权限齐套（码表/矩阵/绑权/文档）       | [business/permissions-catalog-改权限齐套.md](references/business/permissions-catalog-改权限齐套.md)             |
+| 新系统 IAM 接入全套（清单/PRD/Test/EP） | [business/iam-system-onboard-新系统IAM接入齐套.md](references/business/iam-system-onboard-新系统IAM接入齐套.md) |
+| 部门树、人员选择、完整路径              | [business/department-person-部门人员.md](references/business/department-person-部门人员.md)                     |
+| API 拆分、页面路由、多域组件路由        | [business/routing-api-路由与API.md](references/business/routing-api-路由与API.md)                               |
 
 ### 场景速查
 
-| 场景                             | 先读                                       | 再读                                                                                               |
-| -------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| 接新需求 / 改交互                | prompts/mindset → requirement-workflow     | 按任务选 common/business                                                                           |
-| 新建业务模块                     | business/module-patterns                   | common/directory-structure                                                                         |
-| 筛选项 / 部门人员                | common/filter + business/department-person | filter §5.9（Item loading + 面板 Spin + Empty；禁 options loading→PageSpin）                       |
-| 权限 / 批量操作                  | business/permissions-data                  | SKILL.md #13（Permissions / PermissionGuard）                                                      |
-| 主题 / Tag 颜色                  | common/theme + common/component-mapping    | common/styles                                                                                      |
-| 页面壳 / 滚动 / Loading / 内容块 | common/shell-layout-页面壳与布局           | common/component-mapping                                                                           |
-| 组件 Demo                        | common/examples                            | —                                                                                                  |
-| 非 prod 组件展示切换             | common/examples §8.8 + routing-api §13.5   | SKILL.md #41                                                                                       |
-| 新增/变更组件                    | SKILL.md #23 → component-mapping           | 专题 reference、requirement-workflow                                                               |
-| 可复用踩坑沉淀                   | SKILL.md #43 + requirement-workflow 检查项 | placement-guide（marsun-arch-doc-spec）                                                            |
-| 样式 / className / SCSS          | common/styles                              | common/directory-structure（命名速查）                                                             |
-| 模块 workarea 扁平布局           | common/styles §8.10                        | SKILL.md #34                                                                                       |
-| 写测试 / 提交前自检              | common/testing + SKILL.md #44              | [da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) |
-| 角色循环验证 / 再验证            | SKILL.md #45 + mindset                     | [da-workflow/role-loop-review](../da-workflow/references/role-loop-review-角色循环验证.md)         |
-| 权限码 UI（Permissions）         | business/permissions-data「UI 权限控制」   | SKILL.md #13 · component-mapping                                                                   |
-| 新建仓库 / 缺 lint               | common/code-formatting                     | —                                                                                                  |
-| 修改规范 / 同步子仓库            | common/skills-sync-规范同步                | —                                                                                                  |
+| 场景                             | 先读                                                   | 再读                                                                                               |
+| -------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| 接新需求 / 改交互                | da mindset → FE prompts/mindset → requirement-workflow | 按任务选 common/business                                                                           |
+| 新建业务模块                     | business/module-patterns                               | common/directory-structure                                                                         |
+| 筛选项 / 部门人员                | common/filter + business/department-person             | filter §5.9（Item loading + 面板 Spin + Empty；禁 options loading→PageSpin）                       |
+| 权限 / 批量操作                  | business/permissions-data                              | SKILL.md #13（Permissions / PermissionGuard）                                                      |
+| 主题 / Tag 颜色                  | common/theme + common/component-mapping                | common/styles                                                                                      |
+| 页面壳 / 滚动 / Loading / 内容块 | common/shell-layout-页面壳与布局                       | common/component-mapping                                                                           |
+| 组件 Demo                        | common/examples                                        | —                                                                                                  |
+| 非 prod 组件展示切换             | common/examples §8.8 + routing-api §13.5               | SKILL.md #41                                                                                       |
+| 新增/变更组件                    | SKILL.md #23 → component-mapping                       | 专题 reference、requirement-workflow                                                               |
+| 可复用踩坑沉淀                   | SKILL.md #43 + requirement-workflow 检查项             | placement-guide（marsun-arch-doc-spec）                                                            |
+| 样式 / className / SCSS          | common/styles                                          | common/directory-structure（命名速查）                                                             |
+| 模块 workarea 扁平布局           | common/styles §8.10                                    | SKILL.md #34                                                                                       |
+| 写测试 / 提交前自检              | common/testing + SKILL.md #44                          | [da-workflow/test-and-selfcheck](../da-workflow/references/test-and-selfcheck-写代码自检与测试.md) |
+| 角色循环验证 / 再验证            | SKILL.md #45 + mindset                                 | [da-workflow/role-loop-review](../da-workflow/references/role-loop-review-角色循环验证.md)         |
+| 权限码 UI（Permissions）         | business/permissions-data「UI 权限控制」               | SKILL.md #13 · component-mapping                                                                   |
+| 新建仓库 / 缺 lint               | common/code-formatting                                 | —                                                                                                  |
+| 修改规范 / 同步子仓库            | common/skills-sync-规范同步                            | —                                                                                                  |
 
 **命名约定 Naming**：reference 文件采用 `{英文主题}-{中文简述}.md`（与 [backend-dev-spec](../backend-dev-spec/SKILL.md) 一致），便于检索与跨语言协作；分层目录 `common` / `business` / `prompts` 保留。
 

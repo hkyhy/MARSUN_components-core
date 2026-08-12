@@ -7,12 +7,14 @@
 | `references/repos-commit.md` | **shared** — marsun_arch 权威源 ↔ 各 repo **双向**       |
 | `SKILL.repos.md`             | **copyAs → `SKILL.md`** — 仅 push，子仓库勿改 `SKILL.md` |
 
-配置见 `plane/skills-sync.json` 中 `marsun-arch-doc-spec`、`da-workflow` 条目。
+配置见 `plane/skills-sync.json` 中 `marsun-arch-doc-spec`、`da-workflow`、`frontend-dev-spec`、`backend-dev-spec` 条目。
+
+**规范类**：`frontend-dev-spec` / `backend-dev-spec` 为 portable `common` +（frontend）`business` local /（backend）`meta` 仅 marsun_arch；按栈选 target，见 [da-workflow/skills-sync](../../da-workflow/references/skills-sync.md) 总览表。
 
 ## 命令（marsun_arch 根目录）
 
 ```bash
-# 源 → 所有 repos（默认同步全部 skills，含 frontend-dev-spec）
+# 源 → 所有 repos（默认同步全部 skills，含 frontend / backend-dev-spec）
 node scripts/sync-skills.mjs
 
 # 仅同步 marsun-arch-doc-spec

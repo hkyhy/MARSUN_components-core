@@ -78,10 +78,12 @@ python3 ~/.cursor/skills/platform-doc-plane-sync/scripts/module_health_check.py 
 
 任务 CREATE/PATCH 须写入 Plane assignee 与起止日期。YAML 字段见 [plane-team-assignees](plane-team-assignees.md)：
 
-| 层级      | 字段                                 | sync 行为                                           |
-| --------- | ------------------------------------ | --------------------------------------------------- |
-| milestone | `owner`、`plan_date`                 | merged 时不 PATCH 钉表 Module；仅 PM 自建模块时生效 |
-| task      | `owner`、`start_date`、`target_date` | 写入 Work Item assignee + 日期                      |
+| 层级      | 字段                                            | sync 行为                                                                    |
+| --------- | ----------------------------------------------- | ---------------------------------------------------------------------------- |
+| milestone | `owner`、`plan_date`                            | merged 时不 PATCH 钉表 Module；仅 PM 自建模块时生效                          |
+| task      | `owner`、`start_date`、`target_date`            | 写入 Work Item assignee + 日期（进行中缺字段 → validate 硬拦）               |
+| task      | `parent_issue`、note `related_tasks`/`Related:` | `apply_task_relationships` → 父项 + 「添加关系」（须接线，禁止只定义不调用） |
+| task      | 台账 `id`（层级）                               | Issue.name = `{id} · {name}`（禁止 mint/塌成 `*.1`）                         |
 
 ```bash
 export PLANE_PUSH_ASSIGNEE=1    # YAML 有 owner 时写入 Plane
@@ -113,19 +115,28 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --excel --
 ## 与六步闭环的关系
 
 - **任务级 sync**（`da pm sync`）：在 commit 闭环内 CREATE/PATCH 台账状态
+- **增量任务 sync**（推荐交付闭环）：`da pm sync --tasks P6.11.46` — 只处理指定台账 id（跳过 module-issues N+1、description enrich、orphan 全量告警），避免共享项目数百 WI 的全量成本
 - **批量进度 sync**（`@da pm` pipeline）：梳理 roadmap → 写 YAML → dry-run → sync → 自检
 
 二者不可互相替代。任务完成须先 `timeline-sync` + `task done`，再 PATCH `status: 已完成`。
 
+```bash
+# 交付闭环内推荐（单任务 / 少数任务）
+PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
+```
+
+**代理**：`da` / `pm_pipeline` / `resolve_config` 会把 `plane.webinfra.cloud` 写入 `NO_PROXY`，避免本机 `HTTP(S)_PROXY=127.0.0.1:7890` 导致 Tunnel 403 / 长重试。
+
 ## 常见问题
 
-| 现象                                          | 处理                                                         |
-| --------------------------------------------- | ------------------------------------------------------------ |
-| preflight exit 3                              | 缺 API Key 或 `project_id` → HITL                            |
-| 写到错误 Plane 项目                           | 更新 `project_id` + `project_url` 后让用户确认               |
-| YAML 校验失败含 `@`                           | `note` 字段中 `@da` 等须加引号                               |
-| dry-run CREATE module > 0                     | merged milestone 未绑定钉表 → 见 plane-dingtalk-module-rules |
-| Plane 出现重复 P3.7 / P6.x / S1.3 / S3.3 模块 | middot 壳回潮 → 清壳 + `module_health_check`；禁止再 CREATE  |
-| health check 失败                             | 同代号 `-`/`·` 双份 → 见清壳 checklist，勿强行 confirm-token |
+| 现象                                          | 处理                                                                                                          |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| preflight exit 3                              | 缺 API Key 或 `project_id` → HITL                                                                             |
+| 写到错误 Plane 项目                           | 更新 `project_id` + `project_url`；**marsun_arch** 须对齐 `meta.required_plane_project_id`（P6），禁止改绑 S1 |
+| sync「卡住」数分钟                            | 优先 `--tasks <id>`；查代理是否旁路 Plane；`work-item-types` 404 无害                                         |
+| YAML 校验失败含 `@`                           | `note` 字段中 `@da` 等须加引号                                                                                |
+| dry-run CREATE module > 0                     | merged milestone 未绑定钉表 → 见 plane-dingtalk-module-rules                                                  |
+| Plane 出现重复 P3.7 / P6.x / S1.3 / S3.3 模块 | middot 壳回潮 → 清壳 + `module_health_check`；禁止再 CREATE                                                   |
+| health check 失败                             | 同代号 `-`/`·` 双份 → 见清壳 checklist，勿强行 confirm-token                                                  |
 
 完整安全规约：`~/.cursor/skills/platform-doc-plane-sync/PM-SAFETY.md`

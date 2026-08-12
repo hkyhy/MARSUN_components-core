@@ -2349,8 +2349,39 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         sourcePath: () => import('@/components/Tag/examples/SemanticTagMultiDemo/index.tsx?raw'),
         block: true,
       },
+      {
+        title: 'Tags 截断与长文案',
+        description: 'showLength=2；超出 +N；长文案 ellipsis；hover 展示全部 Tag',
+        component: React.lazy(() => import('@/components/Tag/examples/TagsShowLengthDemo')),
+        sourcePath: () => import('@/components/Tag/examples/TagsShowLengthDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
+      {
+        componentName: 'TagsProps',
+        rows: [
+          { prop: 'tags', desc: '标签文案列表', type: 'string[]' },
+          {
+            prop: 'showLength',
+            desc: '最多展示数量；超出显示 +N。有长文案时即使未超限也 ellipsis + Tooltip',
+            type: 'number',
+          },
+          {
+            prop: 'empty',
+            desc: '无标签占位；传 null 不渲染',
+            type: 'React.ReactNode',
+            defaultVal: "'-'",
+          },
+          {
+            prop: 'color',
+            desc: '语义色，默认 INFO',
+            type: 'SemanticColor | string',
+            defaultVal: 'SEMANTIC_COLORS.INFO',
+          },
+          { prop: 'className', desc: '列表容器 class', type: 'string' },
+        ],
+      },
       {
         componentName: 'SemanticTagProps',
         rows: [

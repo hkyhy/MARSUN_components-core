@@ -459,17 +459,17 @@ import { ReactForm, useField, useFormApi, GroupList } from '@hkyhy/marsun-compon
 
 必填星号等依赖主题别名 `--color-warning`（映射 `--error-color`，见 [theme-主题Token.md](theme-主题Token.md)）。
 
-| 组件                                                                         | 说明                                                    |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `Form`                                                                       | 页内表单容器（form-info）；`data` 初值、`onSubmit` 提交 |
-| `FormInfo`                                                                   | 分组布局；`column` / `list` 放置字段                    |
-| `FormModal`                                                                  | 弹窗表单；`formProps={{ data, onSubmit }}`              |
-| `FormDataSync`                                                               | Form 子节点；字段变更回写父级（配置页即时 patch）       |
-| `FormSteps` / `FormStepsModal`                                               | 多步向导（新业务替代 antd `StepForm`）                  |
-| `List` / `TableList` / `MultiField`                                          | 动态列表 / 表格行 / 多值字段                            |
-| `Input` / `TextArea` / `Select` / `InputNumber` / `Switch` / `RadioGroup` 等 | 字段组件                                                |
-| `SubmitButton` / `ResetButton` / `CancelButton`                              | 表单操作按钮                                            |
-| 字段 `rule`                                                                  | 校验字符串，如 `REQ`、`REQ TEL`、`EMAIL`、`ID_CARD`     |
+| 组件                                                                         | 说明                                                                                                                   |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `Form`                                                                       | 页内表单容器（form-info）；`data` 初值、`onSubmit` 提交                                                                |
+| `FormInfo`                                                                   | 分组布局；默认 `column={2}`；`list` 放字段。**`block` 仅** `TextArea`/上传等偏重字段独占一行，禁止给 Input/Select 乱加 |
+| `FormModal`                                                                  | 弹窗表单；`formProps={{ data, onSubmit }}`                                                                             |
+| `FormDataSync`                                                               | Form 子节点；字段变更回写父级（配置页即时 patch）                                                                      |
+| `FormSteps` / `FormStepsModal`                                               | 多步向导（新业务替代 antd `StepForm`）                                                                                 |
+| `List` / `TableList` / `MultiField`                                          | 动态列表 / 表格行 / 多值字段                                                                                           |
+| `Input` / `TextArea` / `Select` / `InputNumber` / `Switch` / `RadioGroup` 等 | 字段组件                                                                                                               |
+| `SubmitButton` / `ResetButton` / `CancelButton`                              | 表单操作按钮                                                                                                           |
+| 字段 `rule`                                                                  | 校验字符串，如 `REQ`、`REQ TEL`、`EMAIL`、`ID_CARD`                                                                    |
 
 **存量**：未迁移模块可暂留 antd `Form.useForm` + `Form.Item`；**新模块、新表单必须走 core 再导出的 FormInfo 栈**。`FetchSelect` / `FetchTreeSelect` / `PersonOptionRow` 仍为 core 字段辅助。
 
