@@ -40,6 +40,7 @@ export type SemanticColor = (typeof SEMANTIC_COLORS)[keyof typeof SEMANTIC_COLOR
 /**
  * 主题色映射：使用 CSS 变量，跟随系统主题色动态变化
  * 文字色 = --{prefix}-color，背景色 = --{prefix}-color-bg（6% 透明度）
+ * 选中态反白：背景取文字色（实色），文字反白
  */
 const THEME_COLOR_MAP: Record<string, { text: string; bg: string }> = {
   primary: { text: 'var(--primary-color)', bg: 'var(--primary-color-bg)' },
@@ -83,6 +84,8 @@ interface SemanticTagProps {
   children: React.ReactNode;
   /** 语义化颜色，优先使用 SEMANTIC_COLORS 中的值 */
   color?: SemanticColor | string;
+  /** 选中态：反白（实色背景 + 白字 + 加粗），不改 24px 高度 */
+  selected?: boolean;
   /** antd Tag 其余属性 */
   [key: string]: unknown;
 }
@@ -95,6 +98,15 @@ const TAG_BASE_STYLE: React.CSSProperties = {
   padding: '0 8px',
 };
 
+/** 选中态：反白（实色背景 + 白字 + 加粗），对比强、辨识高；不新增 border，24px 高度不变 */
+function buildSelectedStyle(solidBg: string): React.CSSProperties {
+  return {
+    backgroundColor: solidBg,
+    color: '#fff',
+    fontWeight: 600,
+  };
+}
+
 /**
  * 统一 Tag 组件
  * - 主题色（primary/success/info/warning/danger）使用 CSS 变量，跟随系统主题色动态变化
@@ -105,36 +117,30 @@ const TAG_BASE_STYLE: React.CSSProperties = {
 const SemanticTag: React.FC<SemanticTagProps> = ({
   children,
   color = SEMANTIC_COLORS.DEFAULT,
+  selected = false,
+  style: consumerStyle,
   ...rest
 }) => {
-  // 优先匹配主题色（CSS 变量）
+  // 优先匹配主题色（CSS 变量）；否则按固定色 / 自定义 hex
   const themeColor = THEME_COLOR_MAP[color];
-  if (themeColor) {
-    return (
-      <Tag
-        style={{
-          ...TAG_BASE_STYLE,
-          color: themeColor.text,
-          backgroundColor: themeColor.bg,
-        }}
-        {...rest}
-      >
-        {children}
-      </Tag>
-    );
-  }
-
-  // 固定色 / 自定义 hex
-  const hex = resolveFixedColor(color);
-  return (
-    <Tag
-      style={{
+  const hex = themeColor ? null : resolveFixedColor(color);
+  const computedStyle: React.CSSProperties = themeColor
+    ? {
         ...TAG_BASE_STYLE,
-        color: hex,
-        backgroundColor: hexToRgba(hex, 0.06),
-      }}
-      {...rest}
-    >
+        color: themeColor.text,
+        backgroundColor: themeColor.bg,
+        ...(selected ? buildSelectedStyle(themeColor.text) : null),
+      }
+    : {
+        ...TAG_BASE_STYLE,
+        color: hex as string,
+        backgroundColor: hexToRgba(hex as string, 0.06),
+        ...(selected ? buildSelectedStyle(hex as string) : null),
+      };
+
+  // 计算样式优先（color/bg/selected 不被覆盖），消费方 style 可补 cursor/margin 等
+  return (
+    <Tag style={{ ...(consumerStyle || {}), ...computedStyle }} {...rest}>
       {children}
     </Tag>
   );

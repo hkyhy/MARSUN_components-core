@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.103
+  next_task_id: P6.3.104
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1537,3 +1537,19 @@ tasks:
     Refs: P6.3
     Related: P6.3.99 · P6.11.146
     TooltipInfo type=note（标题+描述）与宽度修复；StateBarOption.info；发版 npm 0.1.50
+
+- id: P6.3.103
+  milestone: P6.3
+  name: SemanticTag selected 选中态反白 与发版 npm v0.1.51
+  status: 已完成
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-08-13"
+  target_date: "2026-08-13"
+  tags: [frontend, components, tag]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3
+    Related: P6.3.99
+    SemanticTag 新增 selected 选中态（反白：实色背景 + 白字 + 加粗，24px 不变）；修消费方 style 覆盖计算色 bug；补示例/测试；发版 npm 0.1.51

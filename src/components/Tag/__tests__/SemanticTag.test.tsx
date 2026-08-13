@@ -48,6 +48,52 @@ describe('SemanticTag', () => {
     const tag = screen.getByText('尺寸').closest('.ant-tag');
     expect(tag!.style.height).toBe('24px');
   });
+
+  it('applies selected (inverse) style for theme color', () => {
+    render(
+      <SemanticTag color={SEMANTIC_COLORS.DANGER} selected>
+        选中
+      </SemanticTag>,
+    );
+    const tag = screen.getByText('选中').closest('.ant-tag');
+    // 反白：背景取语义实色，文字反白，加粗，高度不变
+    expect(tag!.style.backgroundColor).toBe('var(--error-color)');
+    expect(tag!.style.color).toBe('#fff');
+    expect(tag!.style.fontWeight).toBe('600');
+    expect(tag!.style.height).toBe('24px');
+  });
+
+  it('applies selected (inverse) style for fixed color without layout shift', () => {
+    render(
+      <SemanticTag color={SEMANTIC_COLORS.PROCESSING} selected>
+        进行中
+      </SemanticTag>,
+    );
+    const tag = screen.getByText('进行中').closest('.ant-tag');
+    expect(tag!.style.height).toBe('24px');
+    expect(tag!.style.fontWeight).toBe('600');
+    expect(tag!.style.color).toBe('#fff');
+    expect(tag!.style.border).toMatch(/none/);
+  });
+
+  it('merges consumer style without overriding computed color', () => {
+    render(
+      <SemanticTag color={SEMANTIC_COLORS.PRIMARY} style={{ cursor: 'pointer' }}>
+        可点
+      </SemanticTag>,
+    );
+    const tag = screen.getByText('可点').closest('.ant-tag');
+    expect(tag!.style.cursor).toBe('pointer');
+    expect(tag!.style.color).toBe('var(--primary-color)');
+    expect(tag!.style.backgroundColor).toBe('var(--primary-color-bg)');
+  });
+
+  it('does not apply selected style when selected is false', () => {
+    render(<SemanticTag color={SEMANTIC_COLORS.PRIMARY}>未选</SemanticTag>);
+    const tag = screen.getByText('未选').closest('.ant-tag');
+    expect(tag!.style.backgroundColor).toBe('var(--primary-color-bg)');
+    expect(tag!.style.color).toBe('var(--primary-color)');
+  });
 });
 
 describe('SEMANTIC_COLORS', () => {

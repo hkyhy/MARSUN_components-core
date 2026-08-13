@@ -10,6 +10,13 @@
       "block": true
     },
     {
+      "title": "选中态",
+      "description": "selected 反白：实色背景 + 白字 + 加粗；点击切换，24px 高度不变",
+      "component": "@/components/Tag/examples/SemanticTagSelectedDemo",
+      "sourcePath": "@/components/Tag/examples/SemanticTagSelectedDemo/index.tsx",
+      "block": true
+    },
+    {
       "title": "审核状态场景",
       "description": "在列表页 Table、简历详情页等场景下的状态标签使用",
       "component": "@/components/Tag/examples/SemanticTagReviewDemo",
@@ -82,8 +89,14 @@
           "defaultVal": "'default'"
         },
         {
+          "prop": "selected",
+          "desc": "选中态反白：背景取语义实色、文字反白、加粗；不改 24px 高度",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
           "prop": "...Tag props",
-          "desc": "继承 antd Tag 其余属性",
+          "desc": "继承 antd Tag 其余属性（如 onClick 可作可点 Tag）",
           "type": "TagProps"
         }
       ]
