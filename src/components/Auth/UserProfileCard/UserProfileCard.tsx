@@ -8,7 +8,12 @@ import styles from './style.module.scss';
 export type UserProfileCardProps = {
   /** 主文案（姓名 / 展示名） */
   name: string;
-  /** 副文案（邮箱 / 工号等） */
+  /**
+   * 主行后缀（工号等）：与 name 同行，字号更小、颜色更浅。
+   * 与 name 相同时勿传，避免重复。
+   */
+  nameMeta?: string;
+  /** 副文案（角色） */
   sub?: string;
   /** 头像文字，默认 name 首字 */
   avatarText?: string;
@@ -33,6 +38,7 @@ export type UserProfileCardProps = {
  */
 const UserProfileCard: React.FC<UserProfileCardProps> = ({
   name,
+  nameMeta,
   sub,
   avatarText,
   collapsed = false,
@@ -42,6 +48,9 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
   className,
 }) => {
   const initial = (avatarText || name).trim().charAt(0).toUpperCase() || 'U';
+  const meta =
+    nameMeta && nameMeta.trim() && nameMeta.trim() !== name.trim() ? nameMeta.trim() : undefined;
+  const nameTitle = meta ? `${name} ${meta}` : name;
 
   const items = useMemo<MenuProps['items']>(() => {
     if (menuItems) return menuItems;
@@ -71,8 +80,9 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
       </Avatar>
       {!collapsed ? (
         <div className={styles['user-profile-meta']}>
-          <div className={styles['user-profile-name']} title={name}>
-            {name}
+          <div className={styles['user-profile-name']} title={nameTitle}>
+            <span className={styles['user-profile-name-text']}>{name}</span>
+            {meta ? <span className={styles['user-profile-name-meta']}>{meta}</span> : null}
           </div>
           {sub ? (
             <div className={styles['user-profile-sub']} title={sub}>

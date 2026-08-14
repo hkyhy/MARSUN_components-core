@@ -1,7 +1,10 @@
 import { Popover } from 'antd';
+import classNames from 'classnames';
 import React, { useState } from 'react';
+import { useFilterLayout } from '../FilterLayoutContext';
 import FilterPanel from '../FilterPanel';
 import FilterTrigger from '../FilterTrigger';
+import styles from './style.module.scss';
 
 interface FilterPopoverProps {
   /** 筛选项标签 */
@@ -38,6 +41,7 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({
   onConfirm,
   onReset,
 }) => {
+  const { isMobile } = useFilterLayout();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen ?? internalOpen;
 
@@ -57,31 +61,66 @@ const FilterPopover: React.FC<FilterPopoverProps> = ({
     setOpen(false);
   };
 
+  const panelWidth = isMobile ? undefined : width || 300;
+
   return (
-    <Popover
-      open={open}
-      onOpenChange={setOpen}
-      trigger="click"
-      placement="bottomLeft"
-      destroyOnHidden
-      classNames={{ root: 'filter-popover-panel' }}
-      styles={{ content: { maxWidth: width || 300, padding: 0 } }}
-      getPopupContainer={() => document.body}
-      content={
-        <FilterPanel
-          onConfirm={onConfirm ? handleConfirm : undefined}
-          onReset={onReset ? handleReset : undefined}
-          confirmText={confirmText}
-          width={width || 300}
-        >
-          {children}
-        </FilterPanel>
-      }
-    >
-      <span style={{ display: 'inline-flex' }}>
-        <FilterTrigger label={label} active={active} open={open} loading={loading} />
-      </span>
-    </Popover>
+    <>
+      {isMobile && open && (
+        <div
+          className={classNames('filter-popover-mask', styles['filter-popover-mask'])}
+          onClick={() => setOpen(false)}
+          aria-hidden
+        />
+      )}
+      <Popover
+        open={open}
+        onOpenChange={setOpen}
+        trigger="click"
+        placement={isMobile ? 'bottom' : 'bottomLeft'}
+        destroyOnHidden
+        arrow={!isMobile}
+        classNames={{
+          root: classNames(
+            'filter-popover-panel',
+            isMobile && ['filter-popover-panel-mobile', styles['filter-popover-panel-mobile']],
+          ),
+        }}
+        styles={{
+          content: isMobile
+            ? {
+                boxSizing: 'border-box',
+                width: 'min(100vw, 100%)',
+                maxWidth: '100vw',
+                maxHeight: 'min(70vh, 520px)',
+                padding: 12,
+                overflow: 'auto',
+              }
+            : { maxWidth: panelWidth, padding: 0 },
+        }}
+        getPopupContainer={() => document.body}
+        content={
+          <FilterPanel
+            onConfirm={onConfirm ? handleConfirm : undefined}
+            onReset={onReset ? handleReset : undefined}
+            confirmText={confirmText}
+            width={isMobile ? undefined : width || 300}
+            mobile={isMobile}
+          >
+            {children}
+          </FilterPanel>
+        }
+      >
+        <span style={{ display: 'inline-flex' }}>
+          <FilterTrigger
+            label={label}
+            active={active}
+            open={open}
+            loading={loading}
+            pill={isMobile}
+          />
+        </span>
+      </Popover>
+    </>
   );
 };
 

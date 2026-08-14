@@ -1,0 +1,37 @@
+.filter-type-date-range-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-type-date-range-compact {
+  width: 100%;
+}
+
+.filter-type-date-range-picker {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-type-date-range-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-type-date-range-shortcut {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: var(--font-size-small);
+
+  &:hover {
+    background-color: var(--primary-color-bg);
+  }
+}
+
+.filter-type-date-range-shortcut-active {
+  background-color: var(--primary-color);
+  color: var(--bg-color-white);
+  font-weight: 500;
+}

@@ -89,11 +89,10 @@ export const MultiField = KneMultiField as FC<MultiFieldProps>;
 export const Input = KneInput as ComponentType<FieldProps>;
 export const TextArea = KneTextArea as ComponentType<FieldProps>;
 export const Select = KneSelect as ComponentType<FieldProps>;
+export const TreeSelect = KneTreeSelect as ComponentType<FieldProps>;
 export const InputNumber = KneInputNumber as ComponentType<FieldProps>;
 export const Switch = KneSwitch as ComponentType<FieldProps>;
 export const RadioGroup = KneRadioGroup as ComponentType<FieldProps>;
-/** 与 Input/Select 同源再导出，避免业务直连 @kne/react-form-antd 导致双 Context */
-export const TreeSelect = KneTreeSelect as ComponentType<FieldProps>;
 export const SubmitButton = KneSubmitButton as ComponentType<ButtonProps>;
 export const ResetButton = KneResetButton as ComponentType<ButtonProps>;
 export const CancelButton = KneCancelButton as ComponentType<ButtonProps>;

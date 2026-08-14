@@ -32,7 +32,8 @@ const AgentAppShellDemo: React.FC = () => {
           <UserProfileCard
             collapsed={collapsed}
             name="Demo User"
-            sub="demo@marsun.local"
+            nameMeta="100001"
+            sub="系统管理员"
             onLogout={() => setLog('logout')}
           />
         }

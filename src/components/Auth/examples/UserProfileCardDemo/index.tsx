@@ -32,8 +32,9 @@ const UserProfileCardDemo: React.FC = () => {
         <div className={styles['user-profile-card-demo-menu']}>菜单区域</div>
         <UserProfileCard
           collapsed={collapsed}
-          name="Jhon Doe"
-          sub="hello.jhon@mail.com"
+          name="黄金芳"
+          nameMeta="100001"
+          sub="系统管理员"
           onLogout={() => setLog('已触发退出登录')}
           extra={
             showInbox ? (

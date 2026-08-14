@@ -10,6 +10,8 @@ interface FilterPanelProps {
   onReset?: () => void;
   confirmText?: string;
   width?: number;
+  /** 移动端：按钮默认尺寸、面板全宽 */
+  mobile?: boolean;
 }
 
 const FilterPanel: React.FC<FilterPanelProps> = ({
@@ -18,18 +20,21 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   onReset,
   confirmText = '确定',
   width = 360,
+  mobile = false,
 }) => (
-  <div style={{ maxWidth: width, minWidth: '200px' }}>
+  <div
+    style={mobile ? { width: '100%', maxWidth: '100%' } : { maxWidth: width, minWidth: '200px' }}
+  >
     <div className={classNames('filter-panel-body', styles['filter-panel-body'])}>{children}</div>
     {(onConfirm || onReset) && (
       <div className={classNames('filter-panel-actions', styles['filter-panel-actions'])}>
         {onReset && (
-          <Button size="small" onClick={onReset}>
+          <Button size={mobile ? 'middle' : 'small'} onClick={onReset}>
             取消
           </Button>
         )}
         {onConfirm && (
-          <Button size="small" type="primary" onClick={onConfirm}>
+          <Button size={mobile ? 'middle' : 'small'} type="primary" onClick={onConfirm}>
             {confirmText}
           </Button>
         )}

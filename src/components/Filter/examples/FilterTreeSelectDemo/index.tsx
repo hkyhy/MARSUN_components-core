@@ -1,9 +1,10 @@
 import { CommonFilter, FilterTreeSelect } from '@/components';
 import type { TreeFilterNode } from '@/components/Filter/FilterTreeSelect';
 import treeDataRaw from '@/components/Filter/doc/tree-filter.mock.json';
-import React, { useState } from 'react';
-import styles from './style.module.scss';
 import classNames from 'classnames';
+import React, { useState } from 'react';
+import FilterLayoutPreview from '../FilterLayoutPreview';
+import styles from './style.module.scss';
 
 const MOCK_ORG: TreeFilterNode[] = treeDataRaw as TreeFilterNode[];
 
@@ -39,80 +40,89 @@ const FilterTreeSelectDemo: React.FC = () => {
   const [compare, setCompare] = useState<string[]>([]);
 
   return (
-    <div
-      className={classNames('filter-tree-select-demo-root', styles['filter-tree-select-demo-root'])}
-    >
-      <p className={styles['filter-tree-select-demo-hint']}>
-        分厂→品种级联（leafOnly）：父节点只展开，只能选品种叶子；主对标单选 / 对比多选。
-      </p>
-      <CommonFilter label="筛选">
-        <FilterTreeSelect
-          label="主对标分厂×品种"
-          filterKey="primary-plant"
-          treeData={MOCK_FACTORY_VARIETY}
-          value={primary}
-          onChange={(v) => setPrimary(typeof v === 'string' ? v : undefined)}
-          showSearch
-          leafOnly
-          getNodeLabel={(n) => {
-            if (n.id.startsWith('factory::')) return n.name;
-            const factory = MOCK_FACTORY_VARIETY.find((f) =>
-              f.children?.some((c) => c.id === n.id),
-            );
-            return factory ? `${factory.name} · ${n.name}` : n.name;
-          }}
-        />
-        <FilterTreeSelect
-          label="对比分厂×品种"
-          filterKey="compare-plants"
-          treeData={MOCK_FACTORY_VARIETY}
-          value={compare}
-          onChange={(v) => setCompare(Array.isArray(v) ? v : [])}
-          showSearch
-          multiple
-          leafOnly
-        />
-      </CommonFilter>
+    <FilterLayoutPreview provideLayout={false}>
+      {(layout) => (
+        <div
+          className={classNames(
+            'filter-tree-select-demo-root',
+            styles['filter-tree-select-demo-root'],
+          )}
+        >
+          <p className={styles['filter-tree-select-demo-hint']}>
+            分厂→品种级联（leafOnly）：父节点只展开，只能选品种叶子；主对标单选 / 对比多选。
+          </p>
+          <CommonFilter label="筛选" layoutMode={layout}>
+            <FilterTreeSelect
+              label="主对标分厂×品种"
+              filterKey="primary-plant"
+              treeData={MOCK_FACTORY_VARIETY}
+              value={primary}
+              onChange={(v) => setPrimary(typeof v === 'string' ? v : undefined)}
+              showSearch
+              leafOnly
+              getNodeLabel={(n) => {
+                if (n.id.startsWith('factory::')) return n.name;
+                const factory = MOCK_FACTORY_VARIETY.find((f) =>
+                  f.children?.some((c) => c.id === n.id),
+                );
+                return factory ? `${factory.name} · ${n.name}` : n.name;
+              }}
+            />
+            <FilterTreeSelect
+              label="对比分厂×品种"
+              filterKey="compare-plants"
+              treeData={MOCK_FACTORY_VARIETY}
+              value={compare}
+              onChange={(v) => setCompare(Array.isArray(v) ? v : [])}
+              showSearch
+              multiple
+              leafOnly
+            />
+          </CommonFilter>
 
-      <p className={styles['filter-tree-select-demo-hint']}>
-        loading：Item 右侧 Loader2 spin；面板内 Spin。空态：Empty iconType=simple。
-      </p>
-      <CommonFilter label="筛选">
-        <FilterTreeSelect
-          label="主对标（loading）"
-          filterKey="primary-loading"
-          treeData={[]}
-          loading
-          showSearch
-          leafOnly
-        />
-        <FilterTreeSelect
-          label="对比（空态）"
-          filterKey="compare-empty"
-          treeData={[]}
-          showSearch
-          multiple
-          leafOnly
-        />
-      </CommonFilter>
+          <p className={styles['filter-tree-select-demo-hint']}>
+            loading：Item 右侧 Loader2 spin；面板内 Spin。空态：Empty iconType=simple。
+          </p>
+          <CommonFilter label="筛选" layoutMode={layout}>
+            <FilterTreeSelect
+              label="主对标（loading）"
+              filterKey="primary-loading"
+              treeData={[]}
+              loading
+              showSearch
+              leafOnly
+            />
+            <FilterTreeSelect
+              label="对比（空态）"
+              filterKey="compare-empty"
+              treeData={[]}
+              showSearch
+              multiple
+              leafOnly
+            />
+          </CommonFilter>
 
-      <p className={styles['filter-tree-select-demo-hint']}>组织树（普通树选，可选任意节点）</p>
-      <FilterTreeSelect
-        label="组织"
-        filterKey="org"
-        value={org}
-        onChange={(v) => setOrg(typeof v === 'string' ? v : undefined)}
-        treeData={MOCK_ORG}
-      />
-      <FilterTreeSelect
-        label="组织(搜索)"
-        filterKey="org-search"
-        value={org}
-        onChange={(v) => setOrg(typeof v === 'string' ? v : undefined)}
-        treeData={MOCK_ORG}
-        showSearch
-      />
-    </div>
+          <p className={styles['filter-tree-select-demo-hint']}>组织树（普通树选，可选任意节点）</p>
+          <CommonFilter label="筛选" layoutMode={layout}>
+            <FilterTreeSelect
+              label="组织"
+              filterKey="org"
+              value={org}
+              onChange={(v) => setOrg(typeof v === 'string' ? v : undefined)}
+              treeData={MOCK_ORG}
+            />
+            <FilterTreeSelect
+              label="组织(搜索)"
+              filterKey="org-search"
+              value={org}
+              onChange={(v) => setOrg(typeof v === 'string' ? v : undefined)}
+              treeData={MOCK_ORG}
+              showSearch
+            />
+          </CommonFilter>
+        </div>
+      )}
+    </FilterLayoutPreview>
   );
 };
 

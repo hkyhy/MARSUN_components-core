@@ -9,6 +9,8 @@ interface FilterTriggerProps extends Omit<BaseFilterProps, 'filterKey'> {
   open?: boolean;
   /** 选项加载中：右侧用 Loader2 spin 替换 chevron */
   loading?: boolean;
+  /** 移动端 pill 外形 */
+  pill?: boolean;
   className?: string;
   children?: React.ReactNode;
 }
@@ -17,6 +19,7 @@ interface FilterTriggerProps extends Omit<BaseFilterProps, 'filterKey'> {
  * 筛选触发按钮
  * 未选中：灰色文字 + 下箭头
  * 已选：主题色文字 + 浅底 + 上箭头
+ * 打开（open）：visited 实心主色 + 白字（对齐 ReactFilter）
  * loading：右侧 Loader2 spin（替换 chevron）
  */
 const FilterTrigger: React.FC<FilterTriggerProps> = ({
@@ -25,6 +28,7 @@ const FilterTrigger: React.FC<FilterTriggerProps> = ({
   onClick,
   open,
   loading = false,
+  pill = false,
   className = '',
   children,
 }) => {
@@ -57,6 +61,8 @@ const FilterTrigger: React.FC<FilterTriggerProps> = ({
         active
           ? ['filter-trigger-active', styles['filter-trigger-active']]
           : ['filter-trigger-inactive', styles['filter-trigger-inactive']],
+        open && ['filter-trigger-visited', styles['filter-trigger-visited']],
+        pill && ['filter-trigger-pill', styles['filter-trigger-pill']],
         loading && 'filter-trigger-loading',
         className,
       )}

@@ -1,8 +1,9 @@
 import { FilterSelect, type FilterSelectValue } from '@/components';
+import classNames from 'classnames';
 import React, { useState } from 'react';
+import FilterLayoutPreview from '../FilterLayoutPreview';
 import { MULTI_SELECT_OPTIONS, SEARCHABLE_OPTIONS, SINGLE_SELECT_OPTIONS } from '../mock';
 import styles from './style.module.scss';
-import classNames from 'classnames';
 
 const FilterSelectDemo: React.FC = () => {
   const [value, setValue] = useState<FilterSelectValue>(undefined);
@@ -12,36 +13,38 @@ const FilterSelectDemo: React.FC = () => {
   );
 
   return (
-    <div className={classNames('filter-select-demo-root', styles['filter-select-demo-root'])}>
-      <FilterSelect
-        label="单选"
-        filterKey="singleSelect"
-        options={SINGLE_SELECT_OPTIONS}
-        value={value}
-        onChange={setValue}
-      />
-      <FilterSelect
-        label="可搜索"
-        filterKey="searchable"
-        searchable
-        options={SEARCHABLE_OPTIONS}
-        value={searchValue}
-        onChange={setSearchValue}
-      />
-      <FilterSelect
-        label="多选分厂"
-        filterKey="multiSelect"
-        multiple
-        minSelection={1}
-        searchable
-        options={MULTI_SELECT_OPTIONS}
-        value={multiValue}
-        defaultValues={MULTI_SELECT_OPTIONS.map((o) => o.value)}
-        onChange={setMultiValue}
-      />
-      <FilterSelect label="加载中" filterKey="loadingSelect" options={[]} loading />
-      <FilterSelect label="空态" filterKey="emptySelect" options={[]} />
-    </div>
+    <FilterLayoutPreview>
+      <div className={classNames('filter-select-demo-root', styles['filter-select-demo-root'])}>
+        <FilterSelect
+          label="单选"
+          filterKey="singleSelect"
+          options={SINGLE_SELECT_OPTIONS}
+          value={value}
+          onChange={setValue}
+        />
+        <FilterSelect
+          label="可搜索"
+          filterKey="searchable"
+          searchable
+          options={SEARCHABLE_OPTIONS}
+          value={searchValue}
+          onChange={setSearchValue}
+        />
+        <FilterSelect
+          label="多选分厂"
+          filterKey="multiSelect"
+          multiple
+          minSelection={1}
+          searchable
+          options={MULTI_SELECT_OPTIONS}
+          value={multiValue}
+          defaultValues={MULTI_SELECT_OPTIONS.map((o) => o.value)}
+          onChange={setMultiValue}
+        />
+        <FilterSelect label="加载中" filterKey="loadingSelect" options={[]} loading />
+        <FilterSelect label="空态" filterKey="emptySelect" options={[]} />
+      </div>
+    </FilterLayoutPreview>
   );
 };
 

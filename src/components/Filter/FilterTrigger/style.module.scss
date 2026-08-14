@@ -5,7 +5,7 @@
   cursor: pointer;
   border-radius: 4px;
   padding: 2px 6px;
-  font-size: 12px;
+  font-size: var(--font-size-small, 12px);
   transition:
     color 0.2s ease,
     background-color 0.2s ease;
@@ -18,12 +18,35 @@
 }
 
 .filter-trigger-inactive {
-  color: #374151;
+  color: var(--font-color, #374151);
 
   &:hover {
     color: var(--primary-color);
     background-color: var(--primary-color-bg);
   }
+}
+
+/* 打开态：对齐 ReactFilter is-visited */
+.filter-trigger-visited {
+  color: #fff !important;
+  background-color: var(--primary-color) !important;
+  font-weight: 500;
+
+  .filter-trigger-chevron,
+  .filter-trigger-loader {
+    color: #fff;
+  }
+}
+
+.filter-trigger-pill {
+  border-radius: 999px;
+  min-height: 28px;
+  padding: 4px 12px;
+  background-color: var(--bg-color-grey-1, #f5f5f5);
+}
+
+.filter-trigger-pill.filter-trigger-active:not(.filter-trigger-visited) {
+  background-color: var(--primary-color-1, var(--primary-color-bg));
 }
 
 .filter-trigger-chevron {

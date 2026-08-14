@@ -1,1 +1,26 @@
-/* FilterPopover 暂无自定义样式 */
+.filter-popover-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.filter-popover-panel-mobile {
+  z-index: 1050 !important;
+  max-width: 100vw;
+
+  :global(.ant-popover-content) {
+    box-sizing: border-box;
+  }
+
+  :global(.ant-popover-inner) {
+    border-radius: var(--radius-large, 8px);
+    max-height: min(70vh, 520px);
+    overflow: auto;
+    box-sizing: border-box;
+  }
+
+  :global(.ant-popover-inner-content) {
+    padding: 0;
+  }
+}

@@ -3,6 +3,7 @@ import type { TreeFilterNode } from '@/components';
 import { Select, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
 import React, { useCallback, useState } from 'react';
+import FilterLayoutPreview from './FilterLayoutPreview';
 
 const MONTH_TREES: Record<string, TreeFilterNode[]> = {
   [dayjs().format('YYYY-MM')]: [
@@ -68,61 +69,65 @@ const FilterDependsDemo: React.FC = () => {
   }, [spinningMethod]);
 
   return (
-    <CommonFilter label="筛选">
-      <FilterDatePicker
-        filterKey="month"
-        label="月份"
-        picker="month"
-        value={month}
-        onChange={(v) => setMonth(v ?? defaultMonth)}
-        showDefaultAsSelected
-      />
-      <FilterTreeSelect
-        filterKey="primary"
-        label={({ values }) =>
-          values.month ? `主对标分厂×品种（参考 ${String(values.month)}）` : '主对标分厂×品种'
-        }
-        dependsOn={['month']}
-        loadData={loadPrimary}
-        value={primary}
-        onChange={(v) => setPrimary(typeof v === 'string' ? v : undefined)}
-        leafOnly
-        showSearch
-        panelExtra={
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-            参考月份：{month}（由顶栏「月份」驱动本树选项）
-          </Typography.Text>
-        }
-      />
-      <FilterTreeSelect
-        filterKey="compare"
-        label="对比分厂×品种"
-        loadData={loadCompare}
-        value={compare}
-        onChange={(v) => setCompare(Array.isArray(v) ? v : [])}
-        multiple
-        leafOnly
-        showSearch
-        panelExtra={
-          <Space wrap size={[8, 8]}>
-            <span style={{ fontSize: 12, color: 'var(--font-color-grey-1)' }}>筛选条件</span>
-            <Select
-              allowClear
-              placeholder="纺纱方法"
-              style={{ minWidth: 120 }}
-              size="small"
-              options={ATTR_OPTIONS}
-              value={spinningMethod}
-              onChange={(v) => {
-                setSpinningMethod(v);
-                setCompare([]);
-              }}
-              getPopupContainer={(node) => node.parentElement || document.body}
-            />
-          </Space>
-        }
-      />
-    </CommonFilter>
+    <FilterLayoutPreview provideLayout={false}>
+      {(layout) => (
+        <CommonFilter label="筛选" layoutMode={layout}>
+          <FilterDatePicker
+            filterKey="month"
+            label="月份"
+            picker="month"
+            value={month}
+            onChange={(v) => setMonth(v ?? defaultMonth)}
+            showDefaultAsSelected
+          />
+          <FilterTreeSelect
+            filterKey="primary"
+            label={({ values }) =>
+              values.month ? `主对标分厂×品种（参考 ${String(values.month)}）` : '主对标分厂×品种'
+            }
+            dependsOn={['month']}
+            loadData={loadPrimary}
+            value={primary}
+            onChange={(v) => setPrimary(typeof v === 'string' ? v : undefined)}
+            leafOnly
+            showSearch
+            panelExtra={
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                参考月份：{month}（由顶栏「月份」驱动本树选项）
+              </Typography.Text>
+            }
+          />
+          <FilterTreeSelect
+            filterKey="compare"
+            label="对比分厂×品种"
+            loadData={loadCompare}
+            value={compare}
+            onChange={(v) => setCompare(Array.isArray(v) ? v : [])}
+            multiple
+            leafOnly
+            showSearch
+            panelExtra={
+              <Space wrap size={[8, 8]}>
+                <span style={{ fontSize: 12, color: 'var(--font-color-grey-1)' }}>筛选条件</span>
+                <Select
+                  allowClear
+                  placeholder="纺纱方法"
+                  style={{ minWidth: 120 }}
+                  size="small"
+                  options={ATTR_OPTIONS}
+                  value={spinningMethod}
+                  onChange={(v) => {
+                    setSpinningMethod(v);
+                    setCompare([]);
+                  }}
+                  getPopupContainer={(node) => node.parentElement || document.body}
+                />
+              </Space>
+            }
+          />
+        </CommonFilter>
+      )}
+    </FilterLayoutPreview>
   );
 };
 

@@ -9,7 +9,7 @@ import {
 } from '@/utils/pickerDate';
 import FilterPopover from '../FilterPopover';
 import type { BaseFilterProps } from '../types';
-import { resolveHidden } from '../types';
+import { resolveFilterVisible } from '../types';
 import { useFilterFieldBridge, useFilterRegister } from '../useFilterState';
 import styles from './style.module.scss';
 import classNames from 'classnames';
@@ -114,6 +114,7 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   disabledDate,
   active,
   hidden,
+  display,
   dependsOn,
   clearOnDepsChange = true,
 }) => {
@@ -136,6 +137,7 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
   });
 
   const registerFn = useFilterRegister();
+  const visible = resolveFilterVisible({ display, hidden });
   const opts = useMemo(
     () =>
       quickOptions ??
@@ -183,7 +185,7 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
 
   useEffect(() => {
     if (!registerFn) return;
-    if (resolveHidden(hidden)) {
+    if (!visible) {
       registerFn.unregister(filterKey);
       return;
     }
@@ -197,9 +199,9 @@ const FilterDateRange: React.FC<FilterDateRangeProps> = ({
       registerFn.unregister(filterKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valueLabel, filterKey, resolvedLabel, hidden]);
+  }, [valueLabel, filterKey, resolvedLabel, visible]);
 
-  if (resolveHidden(hidden)) return null;
+  if (!visible) return null;
 
   const handleConfirm = () => {
     if (dates?.[0] && dates?.[1]) {

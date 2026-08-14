@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import FilterPopover from '../FilterPopover';
 import { useFilterFieldBridge, useFilterRegister } from '../useFilterState';
 import type { BaseFilterProps } from '../types';
-import { resolveHidden } from '../types';
+import { resolveFilterVisible } from '../types';
 import styles from './style.module.scss';
 import classNames from 'classnames';
 
@@ -48,6 +48,7 @@ const FilterNumberRange: React.FC<FilterNumberRangeProps> = ({
   step,
   active,
   hidden,
+  display,
   dependsOn,
   clearOnDepsChange = true,
 }) => {
@@ -71,6 +72,7 @@ const FilterNumberRange: React.FC<FilterNumberRangeProps> = ({
 
   // ── 自动注册到 CommonFilter ──
   const registerFn = useFilterRegister();
+  const visible = resolveFilterVisible({ display, hidden });
 
   // 同步外部 value 到内部 minVal/maxVal
   useEffect(() => {
@@ -88,7 +90,7 @@ const FilterNumberRange: React.FC<FilterNumberRangeProps> = ({
 
   useEffect(() => {
     if (!registerFn) return;
-    if (resolveHidden(hidden)) {
+    if (!visible) {
       registerFn.unregister(filterKey);
       return;
     }
@@ -102,10 +104,10 @@ const FilterNumberRange: React.FC<FilterNumberRangeProps> = ({
       registerFn.unregister(filterKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valueLabel, filterKey, resolvedLabel, hidden]);
+  }, [valueLabel, filterKey, resolvedLabel, visible]);
 
-  // hidden 处理 - 必须在所有 hooks 之后
-  if (resolveHidden(hidden)) return null;
+  // hidden / display 处理 - 必须在所有 hooks 之后
+  if (!visible) return null;
 
   const handleConfirm = (): boolean | void => {
     if (minVal !== undefined && maxVal !== undefined && minVal > maxVal) {

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import FilterPopover from '../FilterPopover';
 import { useFilterFieldBridge, useFilterRegister } from '../useFilterState';
 import type { BaseFilterProps } from '../types';
-import { resolveHidden } from '../types';
+import { resolveFilterVisible } from '../types';
 
 interface FilterInputProps extends BaseFilterProps {
   value?: string;
@@ -19,6 +19,7 @@ const FilterInput: React.FC<FilterInputProps> = ({
   placeholder,
   active,
   hidden,
+  display,
   dependsOn,
   clearOnDepsChange = true,
 }) => {
@@ -37,6 +38,7 @@ const FilterInput: React.FC<FilterInputProps> = ({
   });
 
   const registerFn = useFilterRegister();
+  const visible = resolveFilterVisible({ display, hidden });
 
   useEffect(() => {
     setInputValue(value ?? '');
@@ -44,7 +46,7 @@ const FilterInput: React.FC<FilterInputProps> = ({
 
   useEffect(() => {
     if (!registerFn) return;
-    if (resolveHidden(hidden)) {
+    if (!visible) {
       registerFn.unregister(filterKey);
       return;
     }
@@ -58,9 +60,9 @@ const FilterInput: React.FC<FilterInputProps> = ({
       registerFn.unregister(filterKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, filterKey, resolvedLabel, hidden]);
+  }, [value, filterKey, resolvedLabel, visible]);
 
-  if (resolveHidden(hidden)) return null;
+  if (!visible) return null;
 
   const handleConfirm = () => {
     onChange?.(inputValue || undefined);

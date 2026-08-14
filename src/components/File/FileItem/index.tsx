@@ -94,10 +94,15 @@ const FileItem: React.FC<FileItemProps> = ({
             </span>
             <div className={classNames('file-item-header', styles['file-item-header'])}>
               <div className={classNames('file-item-body', styles['file-item-body'])}>
-                <span className={classNames('file-item-footer', styles['file-item-footer'])} title={resolvedFile.name}>
+                <span
+                  className={classNames('file-item-footer', styles['file-item-footer'])}
+                  title={resolvedFile.name}
+                >
                   {resolvedFile.name}
                 </span>
-                <span className={classNames('file-item-row', styles['file-item-row'])}>{typeName}</span>
+                <span className={classNames('file-item-row', styles['file-item-row'])}>
+                  {typeName}
+                </span>
                 {resolvedFile.size != null && (
                   <span className={classNames('file-item-row', styles['file-item-row'])}>
                     {formatFileSize(resolvedFile.size)}
@@ -105,13 +110,20 @@ const FileItem: React.FC<FileItemProps> = ({
                 )}
               </div>
               {resolvedFile.tags && resolvedFile.tags.length > 0 && (
-                <FileTags tags={resolvedFile.tags} className={classNames('file-item-col', styles['file-item-col'])} />
+                <FileTags
+                  tags={resolvedFile.tags}
+                  className={classNames('file-item-col', styles['file-item-col'])}
+                />
               )}
             </div>
           </div>
 
           <div className={classNames('file-item-wrap', styles['file-item-wrap'])}>
-            {status && <span className={classNames('file-item-panel', styles['file-item-panel'])}>{status}</span>}
+            {status && (
+              <span className={classNames('file-item-panel', styles['file-item-panel'])}>
+                {status}
+              </span>
+            )}
             <div className={classNames('file-item-action-group', styles['file-item-action-group'])}>
               {allActions.map((action) => (
                 <Tooltip key={action.key} title={action.tooltip}>
@@ -121,7 +133,7 @@ const FileItem: React.FC<FileItemProps> = ({
                     icon={action.icon}
                     onClick={(e) => {
                       e.stopPropagation();
-                      action.onClick(file);
+                      action.onClick(resolvedFile);
                     }}
                   />
                 </Tooltip>
@@ -130,7 +142,13 @@ const FileItem: React.FC<FileItemProps> = ({
           </div>
         </div>
       </div>
-      <FilePreviewModal open={previewOpen} file={resolvedFile} onClose={() => setPreviewOpen(false)} />
+      <FilePreviewModal
+        open={previewOpen}
+        file={resolvedFile}
+        url={resolvedFile.url}
+        downloadUrl={resolvedFile.url}
+        onClose={() => setPreviewOpen(false)}
+      />
     </>
   );
 };

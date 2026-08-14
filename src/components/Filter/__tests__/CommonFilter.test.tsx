@@ -7,7 +7,7 @@ import FilterInput from '../FilterInput';
 describe('CommonFilter', () => {
   it('renders label and children', () => {
     render(
-      <CommonFilter label="筛选条件">
+      <CommonFilter label="筛选条件" layoutMode="desktop">
         <span>Filter1</span>
         <span>Filter2</span>
       </CommonFilter>,
@@ -57,12 +57,7 @@ describe('CommonFilter', () => {
     const longValue = '这是一段非常长的筛选值用于测试截断展示效果';
     render(
       <CommonFilter label="筛选" selectedTagMaxLength={10}>
-        <FilterInput
-          filterKey="keyword"
-          label="关键词"
-          value={longValue}
-          onChange={() => {}}
-        />
+        <FilterInput filterKey="keyword" label="关键词" value={longValue} onChange={() => {}} />
       </CommonFilter>,
     );
     expect(screen.getByText(`${longValue.slice(0, 10)}...`)).toBeInTheDocument();
@@ -73,12 +68,7 @@ describe('CommonFilter', () => {
     const onKeywordChange = vi.fn();
     render(
       <CommonFilter label="筛选">
-        <FilterInput
-          filterKey="keyword"
-          label="关键词"
-          value="测试"
-          onChange={onKeywordChange}
-        />
+        <FilterInput filterKey="keyword" label="关键词" value="测试" onChange={onKeywordChange} />
       </CommonFilter>,
     );
     expect(screen.getByText('测试')).toBeInTheDocument();
@@ -90,5 +80,86 @@ describe('CommonFilter', () => {
     expect(closeIcon).toBeTruthy();
     fireEvent.click(closeIcon!);
     expect(onKeywordChange).toHaveBeenCalledWith(undefined);
+  });
+
+  it('layoutMode mobile hides label', () => {
+    const { container } = render(
+      <CommonFilter layoutMode="mobile" label="筛选条件">
+        <FilterInput filterKey="q" label="指标" value="x" onChange={() => {}} />
+      </CommonFilter>,
+    );
+    expect(container.querySelector('[data-layout="mobile"]')).toBeTruthy();
+    expect(container.querySelector('.common-filter-label')).toBeNull();
+  });
+
+  it('displayLine collapses overflow behind 更多', () => {
+    render(
+      <CommonFilter
+        label="筛选"
+        layoutMode="desktop"
+        displayLine={1}
+        list={[
+          <FilterSelect
+            key="a"
+            filterKey="a"
+            label="状态A"
+            options={[{ label: '1', value: '1' }]}
+            value={undefined}
+            onChange={() => {}}
+          />,
+          <FilterSelect
+            key="b"
+            filterKey="b"
+            label="状态B"
+            options={[{ label: '2', value: '2' }]}
+            value={undefined}
+            onChange={() => {}}
+          />,
+        ]}
+      />,
+    );
+    expect(screen.getByText('状态A')).toBeInTheDocument();
+    expect(screen.queryByText('状态B')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /更多/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /更多/ }));
+    expect(screen.getByText('状态B')).toBeInTheDocument();
+  });
+
+  it('skips list items when hidden=true or display=false', () => {
+    render(
+      <CommonFilter
+        label="筛选"
+        list={[
+          <FilterSelect
+            key="status"
+            filterKey="status"
+            label="任务状态"
+            options={[{ label: '进行中', value: 'running' }]}
+            value={undefined}
+            onChange={() => {}}
+          />,
+          <FilterSelect
+            key="level"
+            filterKey="level"
+            label="质量等级"
+            options={[{ label: 'A', value: 'A' }]}
+            value={undefined}
+            onChange={() => {}}
+            hidden
+          />,
+          <FilterInput
+            key="keyword"
+            filterKey="keyword"
+            label="文件名"
+            value={undefined}
+            onChange={() => {}}
+            display={false}
+          />,
+        ]}
+      />,
+    );
+    expect(screen.getByText('任务状态')).toBeInTheDocument();
+    expect(screen.queryByText('质量等级')).not.toBeInTheDocument();
+    expect(screen.queryByText('文件名')).not.toBeInTheDocument();
   });
 });

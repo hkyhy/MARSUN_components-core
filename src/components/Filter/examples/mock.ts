@@ -8,6 +8,12 @@ export const STATUS_OPTIONS: FilterOption[] = [
   { label: '已驳回', value: 'rejected' },
 ];
 
+/** 任务分类（list 可见性 Demo） */
+export const CATEGORY_OPTIONS: FilterOption[] = [
+  { label: 'AI 质检', value: 'ai' },
+  { label: '存储同步', value: 'storage' },
+];
+
 /** 部门选项 */
 export const DEPT_OPTIONS: FilterOption[] = [
   { label: '技术部', value: 'tech' },
