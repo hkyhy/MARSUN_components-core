@@ -68,14 +68,13 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  border-top: 1px solid #eee;
-  padding: 16px 20px 0;
+  border-bottom: 1px solid #eee;
+  padding: 16px 20px 12px;
 }
 
 .example-page-link {
   flex: 1;
   min-width: 0;
-  padding-bottom: 12px;
 }
 
 .example-page-label {

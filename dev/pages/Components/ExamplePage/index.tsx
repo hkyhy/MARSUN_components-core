@@ -34,62 +34,81 @@ function segmentExamples(examples: ComponentExample[]): ExampleSegment[] {
   return segments;
 }
 
-const CodeBlock: React.FC<{ code: string }> = ({ code }) => (
-  <div className={styles['example-page-root']}>
-    <div className={styles['example-page-container']}>
-      <span className={styles['example-page-wrapper']}>TSX</span>
-      <Text copyable={{ text: code, tooltips: ['复制代码', '已复制'] }} />
+const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
+  const text = typeof code === 'string' ? code : String(code ?? '');
+  return (
+    <div className={styles['example-page-root']}>
+      <div className={styles['example-page-container']}>
+        <span className={styles['example-page-wrapper']}>TSX</span>
+        <Text copyable={{ text: text, tooltips: ['复制代码', '已复制'] }} />
+      </div>
+      <div className={styles['example-page-header']}>
+        <Highlight theme={themes.github} code={text.trim() || ' '} language="tsx">
+          {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            <pre
+              className={className}
+              style={{ ...style, fontSize: 13, lineHeight: 1.7, margin: 0 }}
+            >
+              <code className={styles['example-page-body']}>
+                {tokens.map((line, i) => (
+                  <div key={i} {...getLineProps({ line, key: i })}>
+                    <span className={styles['example-page-footer']}>{i + 1}</span>
+                    <span>
+                      {line.map((token, key) => (
+                        <span key={key} {...getTokenProps({ token, key })} />
+                      ))}
+                    </span>
+                  </div>
+                ))}
+              </code>
+            </pre>
+          )}
+        </Highlight>
+      </div>
     </div>
-    <div className={styles['example-page-header']}>
-      <Highlight theme={themes.github} code={code.trim()} language="tsx">
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre className={className} style={{ ...style, fontSize: 13, lineHeight: 1.7, margin: 0 }}>
-            <code className={styles['example-page-body']}>
-              {tokens.map((line, i) => (
-                <div key={i} {...getLineProps({ line, key: i })}>
-                  <span className={styles['example-page-footer']}>{i + 1}</span>
-                  <span>
-                    {line.map((token, key) => (
-                      <span key={key} {...getTokenProps({ token, key })} />
-                    ))}
-                  </span>
-                </div>
-              ))}
-            </code>
-          </pre>
-        )}
-      </Highlight>
-    </div>
-  </div>
-);
+  );
+};
+
+function resolveRawSource(mod: unknown): string {
+  if (typeof mod === 'string') return mod;
+  if (mod && typeof mod === 'object') {
+    const d = (mod as { default?: unknown }).default;
+    if (typeof d === 'string') return d;
+  }
+  return '';
+}
 
 const ExampleCard: React.FC<{ example: ComponentExample }> = ({ example }) => {
   const [expanded, setExpanded] = useState(false);
   const [sourceCode, setSourceCode] = useState('');
   const [loadingCode, setLoadingCode] = useState(false);
+  const [loadError, setLoadError] = useState('');
 
   const handleExpand = useCallback(async () => {
-    if (!expanded && !sourceCode) {
+    if (!expanded && !sourceCode && !loadError) {
       setLoadingCode(true);
+      setLoadError('');
       try {
         const mod = await example.sourcePath();
-        setSourceCode(mod.default);
+        const text = resolveRawSource(mod);
+        if (!text) {
+          setLoadError('源码为空：?raw 未返回字符串，请检查 sourcePath');
+        } else {
+          setSourceCode(text);
+        }
+      } catch (err) {
+        setLoadError(err instanceof Error ? err.message : '加载源码失败');
       } finally {
         setLoadingCode(false);
       }
     }
     setExpanded(!expanded);
-  }, [expanded, sourceCode, example]);
+  }, [expanded, sourceCode, loadError, example]);
 
   const Demo = example.component;
 
   return (
     <div className={styles['example-page-row']}>
-      <div className={styles['example-page-col']} style={{ minHeight: 80 }}>
-        <React.Suspense fallback={<div className={styles['example-page-wrap']}>加载中...</div>}>
-          <Demo />
-        </React.Suspense>
-      </div>
       <div className={styles['example-page-item']}>
         <div className={styles['example-page-link']}>
           <h4 className={styles['example-page-label']}>{example.title}</h4>
@@ -103,9 +122,16 @@ const ExampleCard: React.FC<{ example: ComponentExample }> = ({ example }) => {
       {expanded &&
         (loadingCode ? (
           <div className={styles['example-page-icon']}>加载源码...</div>
+        ) : loadError ? (
+          <div className={styles['example-page-icon']}>无法展开代码：{loadError}</div>
         ) : (
           <CodeBlock code={sourceCode} />
         ))}
+      <div className={styles['example-page-col']} style={{ minHeight: 80 }}>
+        <React.Suspense fallback={<div className={styles['example-page-wrap']}>加载中...</div>}>
+          <Demo />
+        </React.Suspense>
+      </div>
     </div>
   );
 };
@@ -208,9 +234,7 @@ const ExamplePage: React.FC = () => {
         {useMasonry ? (
           <ExampleSegments examples={group.examples} />
         ) : (
-          group.examples.map((example, idx) => (
-            <ExampleCard key={idx} example={example} />
-          ))
+          group.examples.map((example, idx) => <ExampleCard key={idx} example={example} />)
         )}
       </div>
 
