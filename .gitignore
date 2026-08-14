@@ -12,3 +12,4 @@ src/assets/secret-key*
 
 # local npm pack artifacts
 *.tgz
+tsconfig.tsbuildinfo
