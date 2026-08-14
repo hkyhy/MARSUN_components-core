@@ -45,7 +45,11 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         loadPaths: [resolve(ROOT, 'src/styles')],
-        additionalData: `@use "mixins" as *;\n`,
+        additionalData: (content: string, filename: string) => {
+          const normalized = filename.replace(/\\/g, '/');
+          if (normalized.includes('/ReactFilter/')) return content;
+          return `@use "mixins" as *;\n${content}`;
+        },
       },
     },
   },
