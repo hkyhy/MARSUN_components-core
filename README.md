@@ -46,22 +46,29 @@ applyThemeToCssVariables(primaryColor);
   themeConfig={generateTheme(primaryColor)}
 >
   <SemanticTag color="primary">标签</SemanticTag>
-  <ChatPanel
-    messages={[]}
-    inputValue=""
-    onInputChange={() => {}}
-    onSend={() => {}}
-  />
-</MarsunCoreProvider>
+  <ChatPanel messages={[]} inputValue="" onInputChange={() => {}} onSend={() => {}} />
+</MarsunCoreProvider>;
 ```
 
 ### 主题与 Token
 
-| 导入路径 | 用途 |
-| --- | --- |
-| `@hkyhy/marsun-components-core/tokens` | 静态 CSS 变量默认值（布局、灰阶、标签色等） |
-| `@hkyhy/marsun-components-core/theme` | `generateTheme`, `applyThemeToCssVariables`, `PALETTE`, `LAYOUT_TOKENS` |
-| `@hkyhy/marsun-components-core/styles` | 组件库打包样式 |
+| 导入路径                               | 用途                                                                    |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| `@hkyhy/marsun-components-core/tokens` | 静态 CSS 变量默认值（布局、灰阶、标签色等）                             |
+| `@hkyhy/marsun-components-core/theme`  | `generateTheme`, `applyThemeToCssVariables`, `PALETTE`, `LAYOUT_TOKENS` |
+| `@hkyhy/marsun-components-core/styles` | 组件库打包样式                                                          |
+
+### L2 产品域（v0.1.53+）
+
+AgentHub / File 预览 / Llm 走子路径，避免无相关产品首包拖入重依赖：
+
+| 导入路径                                  | 用途                                      |
+| ----------------------------------------- | ----------------------------------------- |
+| `@hkyhy/marsun-components-core/agent-hub` | Chat、Knowledge、Citation、AgentHub Guard |
+| `@hkyhy/marsun-components-core/file`      | FilePreview、FileItem、FileLink 等        |
+| `@hkyhy/marsun-components-core/llm`       | LlmFormattedText                          |
+
+包根仍 re-export L2（迁移期 `@deprecated`）；新代码请用子路径。
 
 项目可在 `src/styles/tokens.css` 扩展领域变量，详见 showcase 内 `frontend-dev-spec` → `theme.md`。
 
@@ -108,11 +115,12 @@ npm run typecheck
 包名为 **`@hkyhy/marsun-components-core`**（npm scope 与 GitHub 发布账号 `hkyhy` 对齐）。
 
 1. 在 GitHub 仓库 **Settings → Secrets → Actions** 配置 `HKYHY_PACKAGE_PUBLISH`（npm Automation Token，对 `@hkyhy` 有 publish 权限）
-2. **推送 `main` 即自动发布**：`.github/workflows/release.yml` 会 patch 版本号、提交 `chore(release): v* `、打 tag 并 `npm publish`（`chore(release)` 提交本身不会再次触发，避免循环）
-3. 日常只需正常开发提交并 push：
+2. **发版**：先将 `package.json` version 升到待发布号，再提交并 push 首行形如 `chore(release): vX.Y.Z …` 的 commit；`release.yml` 校验版本 → 打 tag → `npm publish`（仅该消息前缀触发，feat push 不发版）
+3. 示例：
 
 ```bash
-git push origin main
+# version 已为 0.1.53 时
+git push origin main   # 含 chore(release): v0.1.53 …
 ```
 
 也可在 Actions 中手动运行 **Publish npm**，填写已有 tag 重新发布。
