@@ -1,6 +1,7 @@
 # 钉钉层级命名与 Plane 双轨 ID
 
 > 与 [task-naming](task-naming.md)、[task-relationships](task-relationships.md)、[pm-sync](pm-sync.md) 配套。  
+> **给人听的通俗版 + 取号示意图**：[dingtalk-hierarchy-取号通俗说明.md](dingtalk-hierarchy-取号通俗说明.md)  
 > 实现详文：`repos/my-plane/apps/api/plane/tos/services/dingtalk_sync/README.md`
 
 ## 层级契约

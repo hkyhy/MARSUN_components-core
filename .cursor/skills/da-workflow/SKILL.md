@@ -28,6 +28,7 @@ description: |
 - Commit 格式：[references/commit-format.md](references/commit-format.md)
 - Task ID 与台账登记：[references/task-naming.md](references/task-naming.md)
 - 钉钉层级命名：[references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md)
+- 钉表取号通俗说明（示意图）：[references/dingtalk-hierarchy-取号通俗说明.md](references/dingtalk-hierarchy-取号通俗说明.md)
 - 钉表 Module 写保护：[references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md)
 - Plane 负责人映射：[references/plane-team-assignees.md](references/plane-team-assignees.md)
 - Plane 六步闭环：[references/plane-timeline.md](references/plane-timeline.md)
@@ -183,6 +184,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 | [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md)                              | repos 子仓库 commit 前 `repo-commit-context.mjs` |
 | [task-naming](references/task-naming.md)                                                                             | Task ID 编码与 sync_manifest 登记                |
 | [dingtalk-hierarchy-naming](references/dingtalk-hierarchy-naming.md)                                                 | 钉表层级契约、双轨 ID、仓库 milestone 速查       |
+| [dingtalk-hierarchy-取号通俗说明](references/dingtalk-hierarchy-取号通俗说明.md)                                     | 自然语言 + 取号示意图（培训/对齐用）             |
 | [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)                                             | merged 模块写保护、dry-run 0 CREATE module       |
 | [plane-team-assignees](references/plane-team-assignees.md)                                                           | owner → Plane assignee 映射                      |
 | [frontend-dev-spec/requirement-workflow](../frontend-dev-spec/references/prompts/requirement-workflow-需求工作流.md) | 需求完成前 commit 闭环检查项                     |
@@ -225,6 +227,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [references/commit-format.md](references/commit-format.md) — Conventional Commits + Task 行
 - [references/task-naming.md](references/task-naming.md) — Task ID、台账字段与登记 checklist
 - [references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md) — 钉表层级与双轨 ID
+- [references/dingtalk-hierarchy-取号通俗说明.md](references/dingtalk-hierarchy-取号通俗说明.md) — 自然语言 + 取号示意图
 - [references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md) — 钉表 Module SSOT 与写保护
 - [references/plane-team-assignees.md](references/plane-team-assignees.md) — 负责人 Plane 邮箱映射
 - [references/plane-timeline.md](references/plane-timeline.md) — 六步交付闭环详文

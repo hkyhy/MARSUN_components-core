@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>dingtalk-hierarchy-取号通俗说明.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> or <div class="page"></div> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="钉表--plane-取号--通俗说明">钉表 / Plane 取号 —— 通俗说明</h1>
+<blockquote>
+<p>给人听、给人看。契约细则见 <a href="dingtalk-hierarchy-naming.md">dingtalk-hierarchy-naming.md</a>。<br>
+实现：<code>repos/my-plane/.../dingtalk_sync/README.md</code></p>
+</blockquote>
+<p>一句话：<strong>钉表管「看得见的计划号 1～1000」，研发细拆从 1001 起；里程碑每模块最多 10 个，满了就新开模块。</strong></p>
+<hr>
+<h2 id="取号示意图一张树">取号示意图（一张树）</h2>
+<p>从上往下只分叉一次：模块下 <strong>左轨钉表 / 右轨研发</strong>。用 Markdown 预览打开即可看到图（勿用纯文本代码块画树）。</p>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart TB
+  root["大项目 S3"]
+  root --> mod["模块 S3.3-功能开发"]
+
+  mod --> trackA["轨A：1～1000 钉表规划"]
+  mod --> trackB["轨B：≥1001 研发细拆"]
+
+  trackA --> s1["段1：MS3.3.1 → 任务 .2～.100"]
+  trackA --> s2["段2：MS3.3.101 → 任务 .102～.200"]
+  trackA --> sDots["…"]
+  trackA --> s10["段10：MS3.3.901 → 任务 .902～.1000"]
+  s10 --> overflow["满 10 段 → 新开 S3.10"]
+
+  trackB --> fine["S3.3.1001 / 1002 / …"]
+</div></code></pre>
+<p>Plane 新建怎么进哪一轨：</p>
+<table>
+<thead>
+<tr>
+<th>你怎么建</th>
+<th>进哪</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>勾选「里程碑」</td>
+<td>轨A，占下一个空里程碑槽（.1 / .101 / …）</td>
+</tr>
+<tr>
+<td>关联某个里程碑</td>
+<td>轨A，该段内任务号 max+1</td>
+</tr>
+<tr>
+<td>都不选</td>
+<td>轨B，≥1001</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1-楼层怎么排">1. 楼层怎么排</h2>
+<p>钉表和 Plane 用同一套「带点号」的编码对齐：</p>
+<table>
+<thead>
+<tr>
+<th>楼层</th>
+<th>例子</th>
+<th>是什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>大项目</td>
+<td><code>S3</code> / <code>P6</code> / <code>P3</code></td>
+<td>Plane 项目</td>
+</tr>
+<tr>
+<td>子项目 / 模块</td>
+<td><code>S3.3</code> / <code>P6.11</code></td>
+<td>Plane Module</td>
+</tr>
+<tr>
+<td>具体任务</td>
+<td><code>S3.3.15</code></td>
+<td>Plane Issue</td>
+</tr>
+</tbody>
+</table>
+<p>名字写法：</p>
+<ul>
+<li>模块：<code>S3.3-功能开发</code>（短横线）</li>
+<li>任务：<code>S3.3.15 · 某某对接</code>（中点）</li>
+</ul>
+<p>别混着写，否则 Plane 里容易长出两个同名模块。</p>
+<hr>
+<h2 id="2-号码分两拨最重要">2. 号码分两拨（最重要）</h2>
+<p>每个<strong>模块</strong>下面，号码分成两轨：</p>
+<table>
+<thead>
+<tr>
+<th>轨</th>
+<th>号码</th>
+<th>给谁用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>钉表 / 正式规划</td>
+<td><strong>1～1000</strong></td>
+<td>华茂钉表上的里程碑和钉表任务；Plane 里勾选/关联里程碑时也走这段</td>
+</tr>
+<tr>
+<td>研发细拆</td>
+<td><strong>≥1001</strong></td>
+<td>Plane / <code>da pm</code> 里临时拆的细任务，默认不往钉表塞</td>
+</tr>
+</tbody>
+</table>
+<p>可以想成：前 1000 个号是「表上看得见的计划」；1001 往后是「开发自己开的工单号」。</p>
+<p>日常台账新建细任务：从 <strong>1001</strong> 起往后加。取号前看一眼 Plane 上已有最大号；<strong>不要</strong>死盯本地 <code>meta.next_task_id</code>。</p>
+<hr>
+<h2 id="3-11000-里怎么排里程碑10--99">3. 1～1000 里怎么排里程碑（10 × 99）</h2>
+<p>把 1～1000 切成 <strong>10 段</strong>，每段约 100 个号：</p>
+<ul>
+<li>每段<strong>开头</strong>那个号（1、101、201 … 901）是<strong>里程碑</strong>（名字常带 <code>M</code>，如 <code>MS3.3.1</code>）</li>
+<li>同一段后面最多 <strong>99 个任务</strong>跟着这个里程碑</li>
+<li>一个模块最多 <strong>10 个钉表里程碑</strong>；要开第 11 个 → <strong>新开模块</strong>（如 <code>S3.10</code>），并跟表格维护方说一声</li>
+</ul>
+<hr>
+<h2 id="4-plane-上新建注意">4. Plane 上新建注意</h2>
+<p>「关联里程碑」只是告诉系统<strong>落在哪一段号里</strong>，不是 Plane 里父子任务那种 parent。</p>
+<hr>
+<h2 id="5-三条红线">5. 三条红线</h2>
+<ol>
+<li><strong>钉表说了算</strong>：表上已有的模块/大任务，别在 Plane 再造一套同名壳。</li>
+<li><strong>钉表任务别超过 .1000</strong>：同一模块写满就拆模块；<code>.1001+</code> 留给 Plane / 研发。</li>
+<li><strong>细任务从 1001 起</strong>：别跟钉表大颗粒抢号。</li>
+</ol>
+<hr>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li>契约全文：<a href="dingtalk-hierarchy-naming.md">dingtalk-hierarchy-naming.md</a></li>
+<li>台账登记：<a href="task-naming.md">task-naming.md</a></li>
+<li>父子 / 取号 floor：<a href="task-relationships.md">task-relationships.md</a></li>
+</ul>
+
+</body>
+</html>
