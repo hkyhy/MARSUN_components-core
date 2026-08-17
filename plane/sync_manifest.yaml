@@ -1638,7 +1638,7 @@ tasks:
 - id: P6.3.109
   milestone: P6.3
   name: L2 子路径 exports 与 Icons 可摇发布 v0.1.53
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: feat
   owner: 黄金芳
