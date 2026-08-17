@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.108
+  next_task_id: P6.3.110
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1618,3 +1618,36 @@ tasks:
     Refs: P6.3
     Related: P6.3.106
     ComponentsLayout CSS module classNames TS2464；发版 npm 0.1.56
+
+- id: P6.3.108
+  milestone: P6.3
+  name: PermissionBindPanel 勾选性能与发版 0.1.57
+  status: 已完成
+  priority: P0
+  kind: perf
+  owner: 黄金芳
+  start_date: "2026-08-17"
+  target_date: "2026-08-17"
+  tags: [frontend, components, iam, release]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3
+    Related: P6.3.107 · S3.3.361 · P3.17.43
+    selectedSet/memo/startTransition；发版 npm 0.1.57
+
+- id: P6.3.109
+  milestone: P6.3
+  name: L2 子路径 exports 与 Icons 可摇发布 v0.1.53
+  status: 进行中
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-08-17"
+  target_date: "2026-08-17"
+  tags: [frontend, components, engineering, release]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3 · Related: P6.11.1005 · S3.3.363 · P3.7.103
+    归并原 ephemeral（已 Cancelled）：P6-1419 · 1422
+    Commits: 51ef877 · 4f98780
+    package.json exports L2；Icons tree-shake；chore(release) v0.1.53
