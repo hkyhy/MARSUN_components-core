@@ -70,6 +70,7 @@ export const alertsRoutes = (
 - **目标态**：根 `src/index.ts` **不再** export AgentHub / File 预览 / Llm。
 - Icons：业务仍禁止直连 `lucide-react`（SKILL #20）；core 内 **一图标一模块** + barrel 具名 re-export；`ICON_REGISTRY` 仅 showcase/按名查找（会拉齐全部）。禁止「用一个 icon 拉齐全部已登记 lucide」。
 - 类型（如 `Citation`）：优先 `import type`，入口走 `/agent-hub`（目标态），避免类型入口绑回根 barrel。
+- **ESLint（业务仓）**：对包根 `@hkyhy/marsun-components-core` 配置 `no-restricted-imports` 的 `importNames`（AgentHub / File 预览 / Llm 具名），message 指向本文件与子路径；子路径 `/agent-hub` `/file` `/llm` 不限制。
 
 细则与映射表见 [component-mapping-组件映射.md](./component-mapping-组件映射.md)。
 
