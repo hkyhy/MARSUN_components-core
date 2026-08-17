@@ -1614,7 +1614,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         title: 'Icon Playground',
         description: '切换图标、尺寸、颜色、旋转',
         component: React.lazy(() => import('@/components/Icons/examples/IconPlaygroundDemo')),
-        sourcePath: () => import('@/components/Icons/index.tsx?raw'),
+        sourcePath: () => import('@/components/Icons/index.ts?raw'),
         block: true,
       },
     ],

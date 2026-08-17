@@ -6,7 +6,7 @@
       "title": "Icon Playground",
       "description": "切换图标、尺寸、颜色、旋转",
       "component": "@/components/Icons/examples/IconPlaygroundDemo",
-      "sourcePath": "@/components/Icons/index.tsx",
+      "sourcePath": "@/components/Icons/index.ts",
       "block": true
     }
   ],
