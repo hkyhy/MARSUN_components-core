@@ -123,7 +123,6 @@ export type { PersonOptionDto, ReviewerOptionDto, PersonSelectOption } from './u
 export * from './components/Auth';
 export * from './components/Descriptions';
 export * from './components/Empty';
-export * from './components/File';
 export * from './components/Filter';
 // ReactFilter (@kne/react-filter port). FilterProvider aliased to avoid clash with Common FilterProvider.
 export {
@@ -190,9 +189,13 @@ export type {
 export * from './components/VirtualScrollbar';
 export * from './components/Icons';
 export * from './components/Sparkline';
+/** @deprecated 迁移期：请改从 `@hkyhy/marsun-components-core/llm` import */
 export * from './components/LlmFormattedText';
 
-// AgentHub
+/** @deprecated 迁移期：请改从 `@hkyhy/marsun-components-core/file` import（含 FilePreview 等） */
+export * from './components/File';
+
+// AgentHub — @deprecated 迁移期：请改从 `@hkyhy/marsun-components-core/agent-hub` import
 export { default as AgentHubAccessGuard } from './components/AgentHub/AgentHubAccessGuard';
 export { default as AgentHubIndexRedirect } from './components/AgentHub/AgentHubIndexRedirect';
 export { default as AgentHubSessionAccessGuard } from './components/AgentHub/ChatSessionAccessGuard';

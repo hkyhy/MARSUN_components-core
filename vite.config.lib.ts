@@ -76,6 +76,9 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
         'theme/index': resolve(__dirname, 'src/theme/index.ts'),
+        'agent-hub': resolve(__dirname, 'src/agent-hub.ts'),
+        file: resolve(__dirname, 'src/file.ts'),
+        llm: resolve(__dirname, 'src/llm.ts'),
       },
       formats: ['es'],
     },

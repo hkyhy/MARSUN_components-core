@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.52",
+  "version": "0.1.53",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -28,15 +28,25 @@
       "types": "./dist/theme/index.d.ts"
     },
     "./styles": "./dist/styles/global.css",
-    "./tokens": "./dist/theme/tokens.css"
+    "./tokens": "./dist/theme/tokens.css",
+    "./agent-hub": {
+      "import": "./dist/agent-hub.js",
+      "types": "./dist/agent-hub.d.ts"
+    },
+    "./file": {
+      "import": "./dist/file.js",
+      "types": "./dist/file.d.ts"
+    },
+    "./llm": {
+      "import": "./dist/llm.js",
+      "types": "./dist/llm.d.ts"
+    }
   },
   "sideEffects": [
     "**/*.css",
     "**/*.scss",
     "./src/utils/ensureDayjsZhCn.ts",
-    "./dist/utils/ensureDayjsZhCn.js",
-    "./src/index.ts",
-    "./dist/index.js"
+    "./dist/utils/ensureDayjsZhCn.js"
   ],
   "files": [
     "dist"
