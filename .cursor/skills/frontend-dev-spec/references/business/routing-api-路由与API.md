@@ -64,6 +64,7 @@ src/api/
 
 - 页面路由放 `src/pages/{Module}/routes.tsx`
 - `App.tsx` 通过 `{xxxRoutes}` 引用各模块路由，不在 App.tsx 中内联路由定义
+- **硬约束（拆包）**：`routes.tsx` 内页面组件必须 `React.lazy(() => import(...))` + `Suspense`（fallback：core `PageSpin` 或壳等价 loading）。允许同步：`Navigate`、薄 Guard、权限常量、常驻 Layout。**禁止** `import XxxPage from './index'`（非 `import type`）。`App.tsx` 禁止顶层静态 import 多个业务页。细则与示例：[bundle-tree-shaking-拆包与摇树.md](../common/bundle-tree-shaking-拆包与摇树.md) §2；总原则 SKILL #15 / #49
 
 ## 组件展示路由
 

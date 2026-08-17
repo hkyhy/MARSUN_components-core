@@ -380,6 +380,27 @@ Table 列内 CRUD 仍遵循 [module-patterns-模块模式.md](../business/module
 
 `InteractiveBlock`、`ContentCard`、`FormDataSync` 已从 `@hkyhy/marsun-components-core` 导出；业务禁止再维护同名本地副本。
 
+### 页面/Tab 级提示：Alert vs Info+TooltipInfo
+
+页面顶部/Tab 切换处的「说明性文案」**禁止默认用 antd `<Alert type="info" showIcon>`**——整条 banner 占位大、视觉重，挤占主内容。按信息是否需要**常驻可见**二选一：
+
+| 场景                                                                                                   | 用法                                                                                                                 | 说明                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **隐性说明**（视图来源、只读声明、字段口径、Tab/子视图释义等静态描述）                                 | 标题/Tab 文字旁 `Info` icon（16px）+ `TooltipInfo`，hover 展示                                                       | 默认形态。`Info` 来自 core；`cursor: pointer`、`--font-color-grey-1`、hover `--primary-color`；`placement` 朝下、`overlayStyle.maxWidth: 320`。`TooltipInfo` 按 `type` 选形态：`descriptions`（默认，`DescriptionItem[]` 多 label/value）/ `note`（`note={{title,description}}` 标题+描述分层，core ≥ 0.1.50）。禁止 `CircleHelp` |
+| **显性提示**（必须让用户**当下**看到并可能操作：废弃页跳转、权限不足引导、数据不可逆、强校验失败汇总） | antd `<Alert>`，`type` 按语义（`warning`/`error`），`showIcon`，**非** `banner`，紧凑 `style={{ marginBottom: 12 }}` | 仅当「不显示会丢关键上下文」时才用；文案 ≤ 2 行，含可操作链接/按钮才上 `description`                                                                                                                                                                                                                                              |
+
+**判定顺序**：先问「用户不 hover 会不会丢关键信息？」→ 否则一律走 `Info`+`TooltipInfo`。`<Alert type="info">` 仅留给「显性提示」场景，不得作为默认说明样式。
+
+**Tab/子视图说明**：多子视图（如 `SegmentedRadio`/`StateBar`/`Tabs` 切换）的释义，把 `Info` icon 放在**对应选项 `label`/`tab` 文字右侧**（与文字同属一个按钮，归属清晰）。`StateBar` 直接用选项 `info: DescriptionItem[]`（core 内部渲染 `Info` + `TooltipInfo`，≥ 0.1.50）；`SegmentedRadio` 的 `label` 是 `ReactNode`，写法 `<span class={option}>{文字}<TooltipInfo ...><span class={info}><Info size={14} /></span></TooltipInfo></span>`。按内容形态选 `TooltipInfo` 的 `type`：**单行短说明**用 antd `Tooltip` + 文本 `title`（`<div>` 包一层给 `min/max-width`，如 `min-width: 200px; max-width: 320px`，`overlayStyle={{ maxWidth: 360 }}`）；**标题+描述分层**（一句粗体标题 + 一段次级色说明，如只读声明/视图来源）用 core `TooltipInfo type="note"` + `note={{ title, description }}`（core ≥ 0.1.50，气泡内自带 `min/max-width` 与层级样式，勿再手写 `option-tip` 类）；**结构化详情**（多 label/value）才用 `TooltipInfo`（默认 `type="descriptions"`）+ `DescriptionItem[]`。`Tooltip`/`TooltipInfo` 默认 `getPopupContainer` 为 `document.body`，气泡不塌陷；点击 icon 会选中其所属选项（属预期，**不要** `stopPropagation`）。仅当说明**对所有选项统一**且不属任一按钮时，才把单个 `Info` 放切换器**右侧 toolbar 行**并随视图切 `content`/`note`。参考 `repos/Agent_QualityAnalysis/frontend` 的 `Config/Form/InternalControlPack`（「考核对照 G-JZ」按钮内嵌只读声明 icon）。
+
+> **跨仓发版**：`TooltipInfo type="note"` 为 core 0.1.50 新增 API。业务仓引用须在 core `chore(release): v0.1.50` 发 npm 后，**升 `^0.1.50` + lockfile 与业务 diff 同 commit**（见 [component-mapping · Core 版本管理](component-mapping-组件映射.md)）；未发布前业务仓用 antd `Tooltip` + 自定义 `title` 兜底。
+
+**禁止**：
+
+- 用 `<Alert type="info" banner>` 当「页面说明条」常驻顶部
+- 把可操作提示压进 tooltip（hover 才见的不能是「必须当下操作」的引导）
+- 同一页面同时挂 `<Alert>` 说明 + `Info`+tooltip 说明（二选一，避免重复真相源）
+
 ---
 
 ## 相关

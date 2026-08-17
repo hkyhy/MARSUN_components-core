@@ -12,16 +12,18 @@
 - [ ] **新系统 IAM / RBAC / 功能权限点 / Wave 接线 /「对齐 Assets 权限」**：先读 [iam-system-onboard-新系统IAM接入齐套.md](../business/iam-system-onboard-新系统IAM接入齐套.md) 全套检查表，再改代码；禁止只改菜单或 `hasPermission≡true`
 - [ ] **大表列表 / queryList**：预估行量或曾慢查时，方案须含「选择性筛选门禁 + 默认窗」（产品定条件集；后端 400；前端 `canQuery` + 默认当月/首厂等）。见 [filter §5.11](../common/filter-筛选组件.md)、[list-api 选择性筛选](../../../backend-dev-spec/references/common/list-api-列表分页.md)
 - [ ] **增减/重命名权限码**：同任务齐套（码表/矩阵/bindCatalog/清单/PRD/Test/七问），见 [permissions-catalog-改权限齐套.md](../business/permissions-catalog-改权限齐套.md)
+- [ ] **改 IAM 任命/权限弹层 UX**（业务系统切换、角色/组→预览联动等）：同任务更新 Products PRD + Test 用例/清单；实现用 FormDataSync + useFormApi，禁 Modal epoch remount（检查项 39 · [module-patterns §9.3.1](../business/module-patterns-模块模式.md)）
 - [ ] 需求歧义时列出假设，标注待确认项
 - [ ] **WorkRecord**：先判**事项类型**（接口对接 / 页面改版 / 工程化）再匹配文档；涉及 API → 枚举接口清单；**禁止**把 Husky、布局重构写入「*接口对接」；新建前 AskQuestion
 - [ ] **core utils**：新建 `src/utils/` 前先查 component-mapping npm Utils 表；core 已有则包根 import，禁止复制同名文件
+- [ ] **拆包**：新页面/重图表/预览/AgentHub → 方案须含路由 lazy 与（若 core）L2 子路径；见 [bundle-tree-shaking](../common/bundle-tree-shaking-拆包与摇树.md)
 
 ## 二、方案论证（五方交叉）
 
 | 维度 | 论证要点                                                                                                                                                                                                                                                                         |
 | ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 产品 | 交互路径是否最短？边界是否覆盖？大表列表是否声明选择性门禁与默认窗？                                                                                                                                                                                                             |
-| 架构 | 目录结构、handlers 抽离、单一数据来源是否合规？组件变更是否同步更新规范文档与提示词？                                                                                                                                                                                            |
+| 架构 | 目录结构、handlers 抽离、单一数据来源是否合规？组件变更是否同步更新规范文档与提示词？**新路由是否 lazy？重依赖是否避开壳？core L2 是否走子路径？**（[bundle-tree-shaking](../common/bundle-tree-shaking-拆包与摇树.md)）                                                         |
 | 开发 | 纯 UI 优先 `@hkyhy/marsun-components-core`？业务 wrapper 留本地 Common？最小 diff？可测试？本轮 scope 是否可在单会话验收（过大则拆轮/新窗，见 [cursor-session-prompt](../../../da-workflow/references/cursor-session-prompt-会话与提示词.md)）？                                 |
 | UI   | PageHeaderLayout、ButtonGroup、主题色、信息层级是否一致？滚动区是否用 VirtualScrollbar（不占位）？数据加载是否用 PageShellProvider + ModulePageShell/PageHeaderLayout spinning（禁止局部 loading 文案）？主 workarea 是否扁平（无冗余 breadcrumb、无双层 card border/padding）？ |
 | 测试 | 验收标准能否当场检验？主路径/边界/空错态/权限否证是否可测？同任务单测或契约用例是否可规划齐全？不可测或漏测风险是否已标注？                                                                                                                                                      |
@@ -44,7 +46,7 @@
 10. 编写自定义 Hook（放 `hooks/` 目录，封装页面状态与业务逻辑，供页面组件解构使用）
 11. 编写各子目录及模块级 `index.ts` barrel export
 12. 为新组件编写测试（见 [../common/testing-测试规范.md](../common/testing-测试规范.md)）
-13. **注册组件路由和菜单**：组件展示路由、菜单已由 `scripts/collect-examples.mjs` 自动生成（`{Domain}/routes.tsx`、`components/routes.tsx`、`layouts/menu-config.ts`），开发者只需维护各子模块的 `examples/meta.json`，新建组件时创建 `meta.json` 即可自动注册路由和菜单，**禁止手动修改自动生成的文件**。多子模块业务域须将示例放在 `src/components/{Domain}/{Module}/examples/`，脚本会自动生成域级父菜单与子 menu。其他业务页面路由仍需在 `src/pages/{Module}/routes.tsx` 中手动添加
+13. **注册组件路由和菜单**：组件展示路由、菜单已由 `scripts/collect-examples.mjs` 自动生成（`{Domain}/routes.tsx`、`components/routes.tsx`、`layouts/menu-config.ts`），开发者只需维护各子模块的 `examples/meta.json`，新建组件时创建 `meta.json` 即可自动注册路由和菜单，**禁止手动修改自动生成的文件**。多子模块业务域须将示例放在 `src/components/{Domain}/{Module}/examples/`，脚本会自动生成域级父菜单与子 menu。其他业务页面路由仍需在 `src/pages/{Module}/routes.tsx` 中手动添加，**页组件必须 `React.lazy`**（见 [bundle-tree-shaking](../common/bundle-tree-shaking-拆包与摇树.md)）
 14. 编写页面组件（Manage + Detail，必须使用 `PageHeaderLayout`，标题放 `title`，操作按钮放 `actions`，页面说明放 `description`（可选），内容放 `children`；列表/详情 loading 用 `spinning={pageLoading}` 或子组件 `usePageShellLoading`；App 根 Layout 须包 `PageShellProvider`，见 [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)；禁止使用 `<div><h2>` 或 `<Card>` 包裹页面，禁止在 `children` 内手写说明提示横幅或「加载中…」）
 15. 检查：所有组件是否按目录结构规范拆分（Form/ 不含提交逻辑，Modal/ 不含字段渲染，Action/ 每个按钮一个文件，handlers.ts 抽离业务逻辑）
 16. 检查：ButtonGroup listArray 使用对象形式，不使用 `() => <Component />`
@@ -70,6 +72,8 @@
 36. 检查：**可复用问题沉淀**——本任务若解决了可复用、非显而易见的问题，是否已写入对应 skill reference / `component-mapping` / `backend-dev` 契约或 mapping（禁止只留在 Cursor 对话）；仅本事项不可复用者写 WorkRecord 即可（见 SKILL.md 核心原则 #43）
 37. 检查：**权限 UI**——按钮/区域权限码三态用 core `Permissions`（`auth.permissions` 已注入）；角色/单权限 + fallback 用 `PermissionGuard`；列表项用 `hidden`；禁止手写平行权限包裹 / kne Global（见 [permissions-data](../business/permissions-data-权限与常量.md)、SKILL #13）
 38. 检查：**权限齐套 / IAM 接线**——若本任务改码或接 EP/PEP：清单+PRD+Test+证据是否同任务更新；Bridge 是否注入真实 permissions；是否全仓搜旧 DEMO/废码；独立 authz env 是否登记（见 [iam-system-onboard](../business/iam-system-onboard-新系统IAM接入齐套.md)、[permissions-catalog](../business/permissions-catalog-改权限齐套.md)）
+39. 检查：**IAM 任命 / 权限弹层 UX**——若本任务改用户「权限管理」弹层、业务系统切换联动、角色/共享组→权限点预览、或同类任命 UI：须**同任务**更新 `Modules/Platform/Products/...` PRD 与 `Modules/Platform/Test/...` 用例/清单/冒烟（SSO 见 USR-14/15）；**禁止**只改 `repos/`；实现须 FormInfo「业务系统」+ `FormDataSync` + `useFormApi` 回填，**禁止** `open` 期间用 Modal `key`+epoch remount 刷表（见 [module-patterns §9.3.1](../business/module-patterns-模块模式.md)、[iam-system-onboard](../business/iam-system-onboard-新系统IAM接入齐套.md)）
+40. 检查：**拆包**——本任务 `pages/**/routes.tsx` 页组件均为 `React.lazy`；未在 `App.tsx`/layout 静态引入 plotly/charts/xlsx/AgentHub；core L2 用子路径（迁移期除外须标注）；见 [bundle-tree-shaking](../common/bundle-tree-shaking-拆包与摇树.md)
 
 ## 四、按需阅读规范
 
@@ -83,7 +87,9 @@
 | 部门 / 人员               | [../common/filter-筛选组件.md](../common/filter-筛选组件.md) + [../business/department-person-部门人员.md](../business/department-person-部门人员.md) | —                                                                                                                  |
 | 权限 / 批量操作           | [../business/permissions-data-权限与常量.md](../business/permissions-data-权限与常量.md)                                                              | SKILL #13 · Permissions / PermissionGuard 分工                                                                     |
 | 新系统 IAM / 改权限齐套   | [../business/iam-system-onboard-新系统IAM接入齐套.md](../business/iam-system-onboard-新系统IAM接入齐套.md)                                            | [permissions-catalog-改权限齐套.md](../business/permissions-catalog-改权限齐套.md) · 清单/PRD/Test/证据            |
-| 路由 / API                | [../business/routing-api-路由与API.md](../business/routing-api-路由与API.md)                                                                          | —                                                                                                                  |
+| IAM 权限弹层 / 任命联动   | [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md) §9.3.1 + iam-system-onboard                                        | 同任务回写 PRD/Test（检查项 39）；禁 Modal epoch remount                                                           |
+| 路由 / API                | [../business/routing-api-路由与API.md](../business/routing-api-路由与API.md)                                                                          | [../common/bundle-tree-shaking-拆包与摇树.md](../common/bundle-tree-shaking-拆包与摇树.md)（页面须 lazy）          |
+| 拆包 / lazy / core 子路径 | [../common/bundle-tree-shaking-拆包与摇树.md](../common/bundle-tree-shaking-拆包与摇树.md)                                                            | routing-api · component-mapping 导入约定                                                                           |
 | 主题 / Tag 颜色           | [../common/theme-主题Token.md](../common/theme-主题Token.md) + [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)     | [../common/styles-样式规范.md](../common/styles-样式规范.md)                                                       |
 | 滚动区 / Loading / 内容块 | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)                                 |
 | 组件 Demo                 | [../common/examples-组件示例.md](../common/examples-组件示例.md)                                                                                      | SKILL.md #23、component-mapping                                                                                    |
@@ -102,9 +108,10 @@
 - [ ] 技术栈为 **React 19 + antd 6**（`react`/`react-dom` `^19`，`antd` `^6`；与 core peer 一致；禁止 antd 5 / React 18 作为默认路径）
 - [ ] 目录结构符合 `common/directory-structure-目录结构.md`
 - [ ] Form/Modal/Action 分离，handlers 抽离
-- [ ] ButtonGroup listArray 对象形式；CRUD 操作无 icon；Header 刷新用 `refreshAction` + `RefreshCw`
+- [ ] ButtonGroup listArray 对象形式；CRUD 操作无 icon；**页面默认不放刷新按钮**（数据由筛选/分页/写操作回调自动重载；仅缓存型重载才单独提供，用 `refreshAction` + `RefreshCw`）
 - [ ] 图标均从 `@hkyhy/marsun-components-core` 导入，业务代码无 `lucide-react`
 - [ ] 权限/常量/API 符合 `business/permissions-data-权限与常量.md` 与 `business/routing-api-路由与API.md`；权限码三态用 `Permissions`，角色/单权限用 `PermissionGuard`，列表项用 `hidden`（SKILL #13）
+- [ ] **拆包**：本任务 `pages/**/routes.tsx` 页组件均为 `React.lazy`；未在壳层静态引入 plotly/charts/xlsx/AgentHub；core L2 走子路径（见 [bundle-tree-shaking](../common/bundle-tree-shaking-拆包与摇树.md) · SKILL #49）
 - [ ] 筛选 state 接入 API，Filter label 语义化（禁止「关键词」抽象 label）；部门/人员符合 `business/department-person-部门人员.md`
 - [ ] 筛选项加载态与失败：`metaLoading` 时筛选栏仍占位（禁 `return null`）；选项 loading 传 Filter* `loading`（Filter Item `Loader2 spin` + 面板 Spin，禁 loading 时「暂无数据」）；落定空态用 `Empty iconType="simple"`；失败仅 `message.error`（禁内联错误区 / HTTP raw）；筛选挂 `toolbar`；**选项 loading 禁止并入 `pageLoading`**；默认分厂来自 meta 首项，禁止硬编码 `1001`（见 [filter-筛选组件.md](../common/filter-筛选组件.md) §5.9、[shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)）
 - [ ] **大表列表门禁**：对接万级+ `queryList` 时——默认窗（年月/厂等）+ `canQuery` 不发无筛选请求；清空恢复默认；弱条件不可单独成门；契约/后端 400 对齐（见 filter §5.11、[list-api](../../../backend-dev-spec/references/common/list-api-列表分页.md)）
@@ -133,11 +140,11 @@
   2. 扫描 snapshot 名称 `S3.3.(\d+)`，候选 id = `max+1`（**禁止**盲信 `meta.next_task_id`；大颗粒号段如 73–88 勿占用，见 [task-naming](../../../da-workflow/references/task-naming.md)）
   3. `parent_issue` 挂模块 V0.2 大颗粒父（预警前端 `8ab0a122-…` / 分析前端 `95d788aa-…` 等，见 [task-relationships](../../../da-workflow/references/task-relationships.md)）；`note` 写 `Refs: S3.3.26`（钉表代号，勿当 `Task:`）
   4. 查 [task-naming 仓库映射表](../../../da-workflow/references/task-naming.md#仓库--钉钉编码映射) 选定 `milestone`；**禁止** marsun_arch / core / QA / assets 新增 `M001-*`；`data-dev/` → `milestone: P6.11`
-  5. `sync_manifest.yaml` 登记 `status: 进行中`、**`owner` + `start_date` + `target_date`** → `da pm dry-run`（**CREATE module = 0**）→ `da pm sync` CREATE（禁止首次就写 `已完成`）
+  5. `sync_manifest.yaml` 登记 `status: 进行中`、**`owner` + `start_date` + `target_date`** → CREATE 用 `da standards commit --confirm-plane`（禁止首次就写 `已完成`；禁止无范围 `da pm sync`）
 - [ ] **commit 按功能/模块切分并与钉表对齐**：一钉表 depth-2 Issue → 业务仓一台账任务 → 一组原子 commit；禁止多模块/多钉表事项混一个 commit；**台账登记/status 与业务同包**（见 [da-workflow/commit-format](../../../da-workflow/references/commit-format.md)）
 - [ ] **Plane Module 只挂既有 keeper（全项目）**：任务 `milestone` 为钉表 depth-1（`P*.*` / `S*.*` 等，见仓库映射表）；**禁止**新建 Module、**禁止** `milestone: M*`（`my-plane` 除外）；见空 `M*` / middot 壳只 Archive（不 CREATE）。交叉：[da-workflow/plane-dingtalk-module-rules](../../../da-workflow/references/plane-dingtalk-module-rules.md)
 - [ ] **Module/Issue 分隔符**：Module（钉表 depth-1）用 **短横线 `-`**（`S3.3-功能开发`）；Issue（任务）用 **中点 `·`**（`S3.3.15 · 预警页筛选对接`）。**禁止** pm sync / 手工再建 `S3.3·功能开发` 等同代号 Module（与钉表并成重复）；见 [plane-dingtalk-module-rules](../../../da-workflow/references/plane-dingtalk-module-rules.md)
-- [ ] **commit 闭环**（plane_ready 仓库）：完成任务时 **YAML 已先改 `已完成` 并与业务同 commit** → `da task timeline-sync` → `da task done --confirm` → **WorkRecord 进展追加** → `da pm sync` PATCH（**勿再单独 commit 台账**；见 [da-workflow/plane-timeline](../../../da-workflow/references/plane-timeline.md) · [work-record/SKILL.md](../../../work-record/SKILL.md)）
+- [ ] **commit 闭环**（plane_ready 仓库）：完成任务时 **YAML 已先改 `已完成` 并与业务同 commit** → `da task timeline-sync` → `da task done --confirm` → **WorkRecord 进展追加**（**勿**为关单跑无范围 `da pm sync`；见 [da-workflow/plane-timeline](../../../da-workflow/references/plane-timeline.md) · [work-record/SKILL.md](../../../work-record/SKILL.md)）
 - [ ] WorkRecord 已写入**正确类型**的大事文档（接口对接 / 页面改版 / 工程化分列）；非 API 进展未混入「*接口对接」
 - [ ] 若本任务有对应 WorkRecord 大事文档，已追加「进展记录」；新增 API 须补接口行；Mock 与正式接口区分状态（Mock 勿标已完成）
 - [ ] **任务结束复检**已完成（见「七、任务结束复检」）：逻辑 + 历史问题回扫已汇报，或已声明复检通过；未擅自续修

@@ -79,10 +79,18 @@ npm view @hkyhy/marsun-components-core version --registry https://registry.npmjs
 
 **禁止** package.json 版本落后于 npm（如 npm 0.1.15 而文件仍写 0.1.13）、跳号、或 `file:` 链。升版流程见下文「Core 版本管理」。
 
-**导入约定**：npm 包内 Common 已拍平导出，优先从包根 import，业务 wrapper 仍从 `@/components/Common/...`：
+**导入约定**（分层；细则见 [bundle-tree-shaking-拆包与摇树.md](./bundle-tree-shaking-拆包与摇树.md)）：
+
+| 层        | 能力                                             | import                                                                                                                                                |
+| --------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| L0/L1     | Table、Form、Filter、Layout、Icons、Permissions… | `from '@hkyhy/marsun-components-core'`（包根）                                                                                                        |
+| L2        | AgentHub、File 预览、LlmFormattedText            | `from '@hkyhy/marsun-components-core/{agent-hub\|file\|llm}'`（**新代码必须**；包根 re-export 为迁移期 `@deprecated`，core ≥ 本能力发版后子路径可用） |
+| 样式/主题 | global CSS、tokens、theme helpers                | `/styles` `/tokens` `/theme`                                                                                                                          |
+
+业务 wrapper 仍从 `@/components/Common/...`：
 
 ```ts
-// 纯 UI — 来自 npm
+// L0/L1 纯 UI — 包根
 import {
   SemanticTag,
   TooltipInfo,
@@ -104,13 +112,20 @@ import {
   PermissionGuard,
   MarsunCoreProvider,
 } from '@hkyhy/marsun-components-core';
+
+// L2 — 子路径（目标态；子路径未发版前迁移期可暂从包根，须尽快改）
+// import { FilePreview } from '@hkyhy/marsun-components-core/file';
+// import { ChatPanel } from '@hkyhy/marsun-components-core/agent-hub';
+// import type { Citation } from '@hkyhy/marsun-components-core/agent-hub';
+// import { LlmFormattedText } from '@hkyhy/marsun-components-core/llm';
+
 // 业务域 — 留在 maoyang 本地
 import { DepartmentSelect } from '@/components/Common/Form/DepartmentSelect';
 import { MemberStatusTag } from '@/components/Common/Tag/MemberStatusTag';
 ```
 
 **权限 UI**：`Permissions`（权限码 + hidden/tooltip/error）与 `PermissionGuard`（角色/单权限 + fallback）并存；权限列表注入 `MarsunCoreProvider auth.permissions`。细则见 [business/permissions-data-权限与常量.md](../business/permissions-data-权限与常量.md)。
-**迁移原则**：包内已有的纯 UI（Filter、Tag、File、Auth 守卫、Layout 等）新代码直接从 npm 引用；含 `departmentPath`、权限常量、业务枚举的 wrapper **不得**迁入 npm，保留在 `src/components/Common/` 或 `src/components/{Domain}/`。
+**迁移原则**：包内已有的纯 UI（Filter、Tag、Auth 守卫、Layout 等）新代码直接从 npm 引用；含 `departmentPath`、权限常量、业务枚举的 wrapper **不得**迁入 npm，保留在 `src/components/Common/` 或 `src/components/{Domain}/`。L2 重能力（预览引擎、AgentHub、LLM 展示）走子路径，**禁止**假设「从包根 import 即可无关产品零成本」。
 
 ### npm Utils 导出（`@hkyhy/marsun-components-core`）
 
@@ -251,20 +266,21 @@ npm run version:check:apply                       # 写回 npm+1，准备与功�
 | `ModulePageShell`                                            | toolbar 外 + body 内置 PageSpin；`spinning` / meta 同步                                                                                                                                                                                                                                                                                                                        |
 | `VirtualScrollbar`                                           | `VirtualScrollbar`                                                                                                                                                                                                                                                                                                                                                             |
 | `Table`                                                      | 列表 Table 包装（默认分页/滚动/Empty）。业务**必须**用此组件并传稳定 `tableName`；列配置 `fetchColumnConfig`/`saveColumnConfig` → user_key（`TableColumnConfigItem[]`）；多级表头眼睛 hover 直藏列、编辑面板可折叠；`rowConfigEnabled` 行隐藏为**会话 state**（不进 user_key）；固定列不透明；**禁止**直连 antd `Table`（豁免：Form `TableList`、HTML table、showcase ApiDoc） |
-| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`                                                                                                                                                                                                                                                                                                                                            |
+| `Icons`（`RefreshCw`、`CircleAlert` 等）                     | 统一图标库；业务禁止 `lucide-react`；**core 内须可摇**（见 [bundle-tree-shaking](./bundle-tree-shaking-拆包与摇树.md)）                                                                                                                                                                                                                                                        |
 | `Sparkline`                                                  | 微型趋势折线（S3 质量分析等）                                                                                                                                                                                                                                                                                                                                                  |
-| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示                                                                                                                                                                                                                                                                                                                                                             |
+| `LlmFormattedText` / `parseLlmText`                          | LLM 结构化文本展示；**L2** → `@hkyhy/marsun-components-core/llm`（迁移期包根 deprecated）                                                                                                                                                                                                                                                                                      |
 | `SemanticTag` / `SEMANTIC_COLORS`                            | `Tag/SemanticTag`                                                                                                                                                                                                                                                                                                                                                              |
 | `CommonFilter` + `Filter*`                                   | `Filter/*`                                                                                                                                                                                                                                                                                                                                                                     |
 | `FetchSelect` / `FetchTreeSelect`                            | `Form/FetchSelect` 等                                                                                                                                                                                                                                                                                                                                                          |
-| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`                                                                                                                                                                                                                                                                                                                                                                       |
+| `FileItemView` / `FileLink` / `FilePreview`                  | `File/*`；预览栈 **L2** → `@hkyhy/marsun-components-core/file`（迁移期包根 deprecated）                                                                                                                                                                                                                                                                                        |
 | `MarsunCoreProvider`                                         | 新增，替代分散的 auth/fetch context；`auth.permissions` 供 Permissions 读取                                                                                                                                                                                                                                                                                                    |
 | `Permissions` / `usePermissions` / `usePermissionsPass`      | 按钮/区域级权限呈现（hidden / tooltip / error）；对照 kne-union Permissions；与 `PermissionGuard`（角色/单权限 + fallback）并存                                                                                                                                                                                                                                                |
 | `DepartmentSelect` 等                                        | **无**，保留本地业务 wrapper                                                                                                                                                                                                                                                                                                                                                   |
 
 ### AgentHub 导出（`@hkyhy/marsun-components-core`）
 
-包根 `export *` 自 `AgentHub/Chat` 与 `AgentHub/KnowledgeBase`，优先从包根 import：
+**目标态**：从子路径 `@hkyhy/marsun-components-core/agent-hub` import（见 [bundle-tree-shaking](./bundle-tree-shaking-拆包与摇树.md)）。  
+**迁移期**：包根仍可能 `export *` 自 `AgentHub/Chat` 与 `AgentHub/KnowledgeBase`，根路径视为 `@deprecated`；**新代码禁止**再从包根拿 AgentHub。
 
 ```ts
 import {
@@ -278,7 +294,9 @@ import {
   DocumentTable,
   KnowledgeCard,
   AgentHubAccessGuard,
-} from '@hkyhy/marsun-components-core';
+} from '@hkyhy/marsun-components-core/agent-hub';
+// 类型优先 import type
+import type { Citation } from '@hkyhy/marsun-components-core/agent-hub';
 ```
 
 | 子模块                           | 主要导出                                                                                                                                                                                                                    |
@@ -295,7 +313,7 @@ import {
 
 **业务仓分层（maoyang 等）**：禁止再维护 `src/components/AgentHub` fork。
 
-- **UI / FormModal / Guard 壳**：从包根 import；`ChatFormModal` / `KBFormModal` 须注入 `onSubmit`（调业务 `agentHubApi`）；路由层用 `authStore` + `agentHubAccess` 计算后传入 Guard props（见 `pages/AgentHub/guards.tsx`）。
+- **UI / FormModal / Guard 壳**：从 **`/agent-hub` 子路径** import（迁移期包根 deprecated）；`ChatFormModal` / `KBFormModal` 须注入 `onSubmit`（调业务 `agentHubApi`）；路由层用 `authStore` + `agentHubAccess` 计算后传入 Guard props（见 `pages/AgentHub/guards.tsx`）。
 - **业务 hooks**：放 `src/hooks/AgentHub/`（`useChatSessions` 含 RAGFlow 回退 / create·delete·initialize / 竞态；`useSSECompletion` 若对核心信封格式与 core 不一致则必须留业务仓）。
 - **鉴权路径**：`utils/agentHubAccess`、`constants/agentHub` 留业务仓。
 
@@ -386,7 +404,8 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | antd 组件　　　　　　  | Common 封装　　　　　　　　　　　　　　　　　　　                               | 使用方式　　　　　　　　　　　　　　　　　　　　　                                                                                                                                                                                                                                      |
 | ---------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Descriptions`　　　   | `CommonDescriptions`　　　　　　　　　　　　　　　                              | 传入 `DescriptionItem[]` 数组　　　　　　　　　　　                                                                                                                                                                                                                                     |
-| `Tooltip`（详情）　    | `TooltipInfo`　　　　　　　　　　　　　　　　　　                               | 传入 `content: DescriptionItem[]` + `children`；禁止手写 div 拼接详情                                                                                                                                                                                                                   |
+| `Tabs`（状态切换）　   | `StateBar`（core）　　　　　　　　　　　　　　　　                              | `stateOption: StateBarOption[]`（`key` + `tab`/`label` + 可选 `children` 展示面板）；`type` tab/radio/step；`isInner`；选项 `info: DescriptionItem[]` 给标题旁加 `Info` + `TooltipInfo`（对齐 Modal/InteractiveBlock）                                                                  |
+| `Tooltip`（详情）　    | `TooltipInfo`　　　　　　　　　　　　　　　　　　                               | `type="descriptions"`（默认）：`content: DescriptionItem[]`；`type="note"`：`note={{ title, description }}` 标题+描述分层（core ≥ 0.1.50）；`children` 触发；禁止手写 div 拼接详情                                                                                                      |
 | 页面头部布局　　　　   | `PageHeaderLayout`　　　　　　　　　　　　　　　　                              | `title` + `onBack` + `actions` + `description` + `spinning` + `children`                                                                                                                                                                                                                |
 | 模块页壳（AppShell）   | `ModulePageShell` + `PageShellProvider`　　　　　                               | App 根包 Provider；`spinning` 或 `usePageShellLoading`；见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md)                                                                                                                                                                 |
 | Agent 业务壳　　　　   | `AgentAppShell`　　　　　　　　　　　　　　　　　                               | 左 sider（品牌/菜单/footer 槽）+ 右顶栏；`menuItems` + `siderFooter`（如 `UserProfileCard`）+ `children`；纯 UI。**适用**：SSO Admin、质量分析（QA）、研效台（`marsun_rd_ops`）；折叠须受控并持久化（见 [shell-layout-页面壳与布局.md](shell-layout-页面壳与布局.md) AgentAppShell 节） |
@@ -418,25 +437,25 @@ const [panelFullscreen, setPanelFullscreen] = useState(false);
 | --------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
 | 页面/侧栏/列表装饰 icon                 | `import { RefreshCw, CircleAlert, LayoutGrid } from '@hkyhy/marsun-components-core'` | 业务项目 `import from 'lucide-react'`                                |
 | 加载中刷新                              | `<RefreshCw spin={loading} size={16} />`                                             | 手写 CSS 旋转或 lucide 直引                                          |
-| Header 刷新 ButtonGroup 项              | `refreshAction({ onClick, loading })` → `{ icon: <RefreshCw spin={loading} /> }`     | 无 icon 的纯文字刷新（Header 须带 icon）                             |
+| 缓存型重载 ButtonGroup 项（非默认）     | `refreshAction({ onClick, loading })` → `{ icon: <RefreshCw spin={loading} /> }`     | 在页面 Header 默认塞「刷新」按钮（数据由筛选/分页/写操作回调重载）   |
 | 结构化详情 hover（TooltipInfo trigger） | `Info`（16px）+ `TooltipInfo`；**cursor: pointer**                                   | `CircleHelp` 作详情 trigger；`cursor: help`；`<button>` 包裹 Tooltip |
 | InteractiveBlock 导出操作               | `Download`（14px），icon 与 link 文字同色                                            | `FileText` 冒充导出；icon 单独语义色                                 |
 | 路由/面包屑 icon 类型                   | `FC<IconProps>` from core                                                            | `LucideIcon` from lucide-react                                       |
 
-完整列表见 core `ICON_NAMES` / `ICON_REGISTRY`；缺图标时在 `marsun_components-core/src/components/Icons` 补导出后再业务引用。
+完整列表见 core `ICON_NAMES` / `ICON_REGISTRY`；缺图标时在 `marsun_components-core/src/components/Icons` **新增单文件**（如 `Foo.tsx`）并在 `index.ts` / `registry.ts` 登记后再业务引用。**core 实现须可摇**：每图标独立模块 + barrel 具名 re-export；`ICON_REGISTRY` 仅 showcase/按名查找使用（会拉齐全部图标）。见 [bundle-tree-shaking](./bundle-tree-shaking-拆包与摇树.md) §3。
 
 ### @kne/button-group
 
-| 场景                     | 组件                                                                                                                                              | 替代                                |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| 操作按钮组（Table）      | `ButtonGroup moreType="link"` + 对象数组                                                                                                          | `Dropdown` + `Button`               |
-| 列表表格                 | `Table`（core；必填 `tableName`；列配置 user_key → [platform-dev/用户偏好](../../../../backend-dev/platform-dev/用户偏好/接口.md)；行隐藏会话态） | 直连 antd `Table`（禁止，存量须迁） |
-| 操作按钮组（详情页）     | `ButtonGroup` + 对象数组                                                                                                                          | `Space` + 多个 `Button`             |
-| 页面头部操作             | `ButtonGroup` + 对象数组；刷新用 `refreshAction` + `RefreshCw` icon                                                                               | `Space` + `Button` + lucide-react   |
-| 确认操作（listArray 中） | 对象 `message`/`isDelete` 属性                                                                                                                    | `ConfirmLink`/`ConfirmButton` 组件  |
-| 确认操作（独立按钮）     | `ConfirmButton` / `ConfirmLink`                                                                                                                   | `Modal.confirm` / `Popconfirm`      |
-| 带加载按钮               | `LoadingButton`                                                                                                                                   | `Button` + 手动 `loading`           |
-| 请求按钮                 | `FetchButton`                                                                                                                                     | `LoadingButton` + 手动请求          |
+| 场景                     | 组件                                                                                                                                              | 替代                                                    |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| 操作按钮组（Table）      | `ButtonGroup moreType="link"` + 对象数组                                                                                                          | `Dropdown` + `Button`                                   |
+| 列表表格                 | `Table`（core；必填 `tableName`；列配置 user_key → [platform-dev/用户偏好](../../../../backend-dev/platform-dev/用户偏好/接口.md)；行隐藏会话态） | 直连 antd `Table`（禁止，存量须迁）                     |
+| 操作按钮组（详情页）     | `ButtonGroup` + 对象数组                                                                                                                          | `Space` + 多个 `Button`                                 |
+| 页面头部操作             | `ButtonGroup` + 对象数组；**默认不放刷新按钮**（数据由筛选/分页/写操作回调重载）；仅缓存型重载用 `refreshAction` + `RefreshCw` icon               | `Space` + `Button` + lucide-react；默认塞「刷新」凑操作 |
+| 确认操作（listArray 中） | 对象 `message`/`isDelete` 属性                                                                                                                    | `ConfirmLink`/`ConfirmButton` 组件                      |
+| 确认操作（独立按钮）     | `ConfirmButton` / `ConfirmLink`                                                                                                                   | `Modal.confirm` / `Popconfirm`                          |
+| 带加载按钮               | `LoadingButton`                                                                                                                                   | `Button` + 手动 `loading`                               |
+| 请求按钮                 | `FetchButton`                                                                                                                                     | `LoadingButton` + 手动请求                              |
 
 ### Form 表单（`@kne/form-info`，经 core 再导出）
 

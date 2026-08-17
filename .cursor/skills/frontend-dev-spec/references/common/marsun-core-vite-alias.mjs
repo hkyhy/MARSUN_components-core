@@ -94,6 +94,18 @@ export function marsunCoreViteAlias(configDir, options = {}) {
       find: '@hkyhy/marsun-components-core/theme',
       replacement: path.join(coreRoot, 'dist/theme/index.js'),
     },
+    {
+      find: '@hkyhy/marsun-components-core/agent-hub',
+      replacement: path.join(coreRoot, 'dist/agent-hub.js'),
+    },
+    {
+      find: '@hkyhy/marsun-components-core/file',
+      replacement: path.join(coreRoot, 'dist/file.js'),
+    },
+    {
+      find: '@hkyhy/marsun-components-core/llm',
+      replacement: path.join(coreRoot, 'dist/llm.js'),
+    },
     { find: '@hkyhy/marsun-components-core', replacement: distIndex },
   ];
 }

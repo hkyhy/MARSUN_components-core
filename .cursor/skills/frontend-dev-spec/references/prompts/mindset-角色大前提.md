@@ -16,7 +16,7 @@
 通用五维见 da mindset。前端任务额外强调：
 
 - **产品经理**：**大表列表**须在方案阶段定「选择性筛选门禁 + 默认窗」（见 [filter §5.11](../common/filter-筛选组件.md)、[list-api](../../../backend-dev-spec/references/common/list-api-列表分页.md)），禁止产品假设「无筛选可查全库」。
-- **架构师**：每次新增或更改组件，须同步更新对应规范文档与提示词（与代码同一任务内完成）；可复用踩坑见 SKILL 核心原则 #43。
+- **架构师**：每次新增或更改组件，须同步更新对应规范文档与提示词（与代码同一任务内完成）；可复用踩坑见 SKILL 核心原则 #43；**拆包**：新页面默认路由 lazy；重能力进 core 时先定 L0/L1/L2，L2 走子路径（见 [bundle-tree-shaking](../common/bundle-tree-shaking-拆包与摇树.md)）。
 - **UI 工程师**：遵循 **React 19 + antd 6** + 主题 Token + Common 组件；主滚动区统一 `VirtualScrollbar`（不占位，见 [shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)）。
 - **测试工程师**：门禁执行见 SKILL #44 / [test-and-selfcheck](../../../da-workflow/references/test-and-selfcheck-写代码自检与测试.md)；交付前按 role-loop §1 命中则跑 §2.3 / §2.4。
 

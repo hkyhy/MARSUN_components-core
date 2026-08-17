@@ -36,7 +36,7 @@
 >
 > 1. **图标来源**：业务项目统一 `import { RefreshCw, ... } from '@hkyhy/marsun-components-core'`，禁止 `lucide-react` / `@ant-design/icons`。
 > 2. **ButtonGroup CRUD 无 icon**：表格/详情页 listArray 中编辑/删除等只显示文字。
-> 3. **Header 刷新带 icon**：使用 `Action/refreshAction.tsx`，`icon: <RefreshCw spin={loading} size={16} />`。
+> 3. **页面默认不放刷新按钮**：列表/详情数据由筛选条件变更、分页、写操作（新增/编辑/删除/审核）回调自动重载，配合 `ModulePageShell` 的 `spinning` / `usePageShellLoading` 全局 loading 即可；**禁止**为「凑操作」在 Header/工具栏默认塞 `刷新`。仅当存在**无对应触发源的缓存型重载**（如后端定时任务产出、`refreshData` 类同步接口、预览需手动重生成）时，才在该入口单独提供刷新：使用 `Action/refreshAction.tsx`，`icon: <RefreshCw spin={loading} size={16} />`。
 > 4. **FilterSelect 单选选中项显示对号**：`FilterSelect` 单选模式下，选中项右侧显示 `CheckOutlined`（对号），而非 `CloseOutlined`（叉号）。取消选中通过"重置"按钮操作，不通过点击对号。
 
 ## 〇、列表项可见性：`hidden` 属性模式
@@ -839,7 +839,7 @@ export function getColumns(options: GetColumnsOptions): ColumnsType<FileItem> {
 ```tsx
 <PageHeaderLayout
   title="任务管理"
-  actions={<ManageActionButtons onCreate={...} onRefresh={...} />}
+  actions={<ManageActionButtons onCreate={...} />}
   description={
     <>
       管理 AI 质量评估任务。文件提交审核后将自动创建评估任务。
@@ -1486,6 +1486,8 @@ export const STATUS_MAP: Record<string, { label: string; color: string }> = {
 | 字段说明       | 需要时用 kne **`labelTips=`**（非 antd `tooltip`）；**禁止**弹层顶栏/灰字堆产品史、迁移话术、内部票号（如 SET-02）；必填靠 `rule`/`*`，能力边界用 disabled 态表达即可                                   |
 | FormInfo 列    | 默认 **`column={2}`**（与 FormInfoBaseDemo 一致）。**`block` 仅用于偏重、需独占一行的字段**：`TextArea`（备注/说明/Description）、上传区等；**禁止**给 Input / Select（含多选角色、共享组）乱加 `block` |
 | 上下文切换字段 | 如「业务系统」也进 FormInfo `Select`（禁手写 Typography+antd Select）；用 `FormDataSync` 驱动外部 reload                                                                                                |
+| 上下文切换回填 | reload 后用表单内 `useFormApi().openApi.setField` / `setFormData` 写任命字段；**禁止**在 `open` 期间给 `FormModal`/`Modal` 加 `key`+epoch **整窗 remount** 刷表（会掐断进场动画、闪关重开）             |
+| 文档回写       | 改 IAM 任命/权限弹层联动（含业务系统切换、角色/组→预览）须同任务更新 Products PRD + Test 用例/清单（见 [requirement-workflow](../prompts/requirement-workflow-需求工作流.md) 检查项 39）                |
 
 ```tsx
 import { Tags, SEMANTIC_COLORS } from '@hkyhy/marsun-components-core';

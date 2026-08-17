@@ -46,7 +46,10 @@
       + 菜单/动作门禁 + 退 DEMO；null 时 hold 壳 loading
       + 用户「权限管理」壳：EP 用 PermissionBindPanel readOnly（对齐角色绑权布局；禁止手写扁平 checkbox 列表）
       + 预览须随角色/共享组勾选实时草稿合并（非仅打开时拉一次已保存 EP）
+      + 多 App Admin（如 SSO）：「业务系统」进 FormInfo Select；`FormDataSync` 驱动按 App reload；回填用 `useFormApi` setField/setFormData；**禁止** open 期间 Modal key+epoch remount
+      + 切换业务系统须重载本 App 角色/共享组/任命与预览目录；改角色/组→预览即时变
       + 任命字段用 core FormModal/FormInfo（`column={2}`；禁手写 Typography label）；字段 tip 勿堆产品史/SET-02；角色用 Tags showLength=2 / Select maxTagCount=2
+      + 改弹层联动 UX 须同任务回写 Products PRD + Test 用例/清单（SSO：USR-14/15；见 requirement-workflow 检查项 39）
 □ 12 全仓搜旧 DEMO key / 恒真门禁 / 废码；清零或隔离
 □ 13 回链：七问扫查、Wave 立项、使用指南、Products README、仓库环境登记
 □ 14 Plane 台账 + WorkRecord（对接人、试点账号、证据）
@@ -127,10 +130,11 @@
 
 ## 6. 修订
 
-| 版本 | 日期       | 说明                                                          |
-| ---- | ---------- | ------------------------------------------------------------- |
-| v1   | 2026-08-10 | 自 Assets→S3 对比沉淀；通用检查表                             |
-| v1.1 | 2026-08-11 | 用户壳 EP 预览统一 PermissionBindPanel readOnly               |
-| v1.2 | 2026-08-11 | 权限弹层 FormInfo；角色展示优先 name                          |
-| v1.3 | 2026-08-11 | Tags showLength=2 + Form tooltip；禁 Alert 堆字段说明         |
-| v1.4 | 2026-08-11 | FormInfo `column={2}` + kne `labelTips`；Tags 长文案 ellipsis |
+| 版本 | 日期       | 说明                                                                           |
+| ---- | ---------- | ------------------------------------------------------------------------------ |
+| v1   | 2026-08-10 | 自 Assets→S3 对比沉淀；通用检查表                                              |
+| v1.1 | 2026-08-11 | 用户壳 EP 预览统一 PermissionBindPanel readOnly                                |
+| v1.2 | 2026-08-11 | 权限弹层 FormInfo；角色展示优先 name                                           |
+| v1.3 | 2026-08-11 | Tags showLength=2 + Form tooltip；禁 Alert 堆字段说明                          |
+| v1.4 | 2026-08-11 | FormInfo `column={2}` + kne `labelTips`；Tags 长文案 ellipsis                  |
+| v1.5 | 2026-08-11 | 多 App 业务系统切换 + FormDataSync/useFormApi；禁 remount；PRD/Test 同任务回写 |
