@@ -1,6 +1,6 @@
-import { PanelLeftClose, PanelLeftOpen } from '../../Icons';
+import { ChevronLeft, ChevronRight } from '../../Icons';
 import { VirtualScrollbar } from '../../VirtualScrollbar';
-import { Button, Layout, Menu } from 'antd';
+import { Layout, Menu } from 'antd';
 import classNames from 'classnames';
 import React from 'react';
 import styles from './style.module.scss';
@@ -71,21 +71,31 @@ const AgentAppShell: React.FC<AgentAppShellProps> = ({
   mainClassName,
 }) => {
   const mark = brandMark.trim().charAt(0).toUpperCase() || 'A';
+  const siderCollapsedWidth = 80;
+  const siderActualWidth = collapsed ? siderCollapsedWidth : siderWidth;
 
   return (
     <div className={classNames('agent-app-shell', styles['agent-app-shell'], className)}>
-      <div className={classNames('agent-app-frame', styles['agent-app-frame'], frameClassName)}>
+      <div
+        className={classNames('agent-app-frame', styles['agent-app-frame'], frameClassName)}
+        style={{ '--agent-sider-width': `${siderActualWidth}px` } as React.CSSProperties}
+      >
         <Sider
           trigger={null}
           collapsible
           collapsed={collapsed}
+          collapsedWidth={siderCollapsedWidth}
           width={siderWidth}
           className={classNames('agent-app-sider', styles['agent-app-sider'], siderClassName)}
         >
           <VirtualScrollbar
             wrapperClassName={classNames('agent-sider-scroll', styles['agent-sider-scroll'])}
           >
-            <div className={classNames('agent-sider-brand', styles['agent-sider-brand'])}>
+            <div
+              className={classNames('agent-sider-brand', styles['agent-sider-brand'], {
+                [styles['agent-sider-brand--collapsed']]: collapsed,
+              })}
+            >
               {brandLogo ?? <span className={styles['agent-sider-logo']}>{mark}</span>}
               {!collapsed ? <h1 className={styles['agent-sider-title']}>{brandTitle}</h1> : null}
             </div>
@@ -101,6 +111,20 @@ const AgentAppShell: React.FC<AgentAppShellProps> = ({
           {siderFooter}
         </Sider>
 
+        {onToggleCollapsed ? (
+          <button
+            type="button"
+            className={classNames(styles['agent-sider-toggle'], {
+              [styles['agent-sider-toggle--collapsed']]: collapsed,
+            })}
+            onClick={onToggleCollapsed}
+            aria-label={collapsed ? '展开侧栏' : '收起侧栏'}
+            aria-expanded={!collapsed}
+          >
+            {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          </button>
+        ) : null}
+
         <div className={classNames('agent-app-main', styles['agent-app-main'], mainClassName)}>
           <Header
             className={classNames(
@@ -110,15 +134,6 @@ const AgentAppShell: React.FC<AgentAppShellProps> = ({
             )}
           >
             <div className={styles['agent-page-topbar-leading']}>
-              {onToggleCollapsed ? (
-                <Button
-                  type="text"
-                  className={styles['agent-sider-toggle-btn']}
-                  icon={collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
-                  onClick={onToggleCollapsed}
-                  aria-label={collapsed ? '展开侧栏' : '收起侧栏'}
-                />
-              ) : null}
               {headerTitle ? (
                 <div className={styles['agent-page-topbar-meta']}>
                   <h1 className={styles['agent-page-topbar-title']}>{headerTitle}</h1>
