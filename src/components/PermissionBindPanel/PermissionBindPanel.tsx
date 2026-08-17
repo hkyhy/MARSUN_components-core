@@ -1,5 +1,13 @@
 import { Checkbox, Col, Empty, Row, Typography } from 'antd';
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import {
+  memo,
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from 'react';
 import type { PermissionBindCatalog, PermissionBindItem } from './types';
 
 export type PermissionBindPanelProps = {
@@ -192,23 +200,30 @@ export default function PermissionBindPanel({
 
   const lockedIdSet = useMemo(() => new Set(lockedIds), [lockedIds]);
 
+  /** O(1) 勾选判定；避免左侧 N 模块 × includes 线性扫描 */
+  const selectedSet = useMemo(() => new Set(value), [value]);
+
   const systemEntryOpen = useMemo(() => {
     if (readOnly) return true;
     if (!systemEntryCodes.length) return true;
     const entryIds = bindable.filter((p) => systemEntryCodes.includes(p.code)).map((p) => p.id);
     if (!entryIds.length) return true;
-    return entryIds.some((id) => value.includes(id));
-  }, [readOnly, systemEntryCodes, bindable, value]);
+    return entryIds.some((id) => selectedSet.has(id));
+  }, [readOnly, systemEntryCodes, bindable, selectedSet]);
 
   /** SYSTEM 入口打开时才强制基线；关掉入口时允许 strip 业务码 */
-  const mergeLocked = (ids: string[]) =>
-    systemEntryOpen ? [...new Set([...ids, ...lockedIds])] : ids;
+  const mergeLocked = useCallback(
+    (ids: string[]) => (systemEntryOpen ? [...new Set([...ids, ...lockedIds])] : ids),
+    [systemEntryOpen, lockedIds],
+  );
 
   useEffect(() => {
     if (readOnly) return;
     if (!systemEntryOpen || !lockedIds.length) return;
-    const missing = lockedIds.filter((id) => !value.includes(id));
-    if (missing.length) onChange(mergeLocked(value));
+    const missing = lockedIds.filter((id) => !selectedSet.has(id));
+    if (missing.length) {
+      startTransition(() => onChange(mergeLocked(value)));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lockedIds.join('|'), systemEntryOpen, readOnly]);
 
@@ -229,33 +244,46 @@ export default function PermissionBindPanel({
   const moduleLocked = (mod: ResolvedModule | undefined) =>
     Boolean(mod?.requiresSystemEntry && !systemEntryOpen);
 
-  const setIds = (next: string[]) => {
-    if (readOnly) return;
-    onChange(mergeLocked(next));
-  };
+  const setIds = useCallback(
+    (next: string[]) => {
+      if (readOnly) return;
+      const merged = mergeLocked(next);
+      startTransition(() => onChange(merged));
+    },
+    [readOnly, mergeLocked, onChange],
+  );
 
-  const toggleId = (id: string, on: boolean) => {
-    if (readOnly) return;
-    if (systemEntryOpen && lockedIdSet.has(id)) return;
-    if (on) setIds([...value, id]);
-    else setIds(value.filter((x) => x !== id));
-  };
+  const toggleId = useCallback(
+    (id: string, on: boolean) => {
+      if (readOnly) return;
+      if (systemEntryOpen && lockedIdSet.has(id)) return;
+      if (on) setIds([...value, id]);
+      else setIds(value.filter((x) => x !== id));
+    },
+    [readOnly, systemEntryOpen, lockedIdSet, setIds, value],
+  );
 
-  const toggleAllInModule = (mod: ResolvedModule, on: boolean) => {
-    if (readOnly) return;
-    const optionalIds = mod.perms.filter((p) => !lockedIdSet.has(p.id)).map((p) => p.id);
-    if (on) setIds([...value, ...optionalIds]);
-    else {
-      const drop = new Set(optionalIds);
-      setIds(value.filter((id) => !drop.has(id)));
-    }
-  };
+  const toggleAllInModule = useCallback(
+    (mod: ResolvedModule, on: boolean) => {
+      if (readOnly) return;
+      const optionalIds = mod.perms.filter((p) => !lockedIdSet.has(p.id)).map((p) => p.id);
+      if (on) setIds([...value, ...optionalIds]);
+      else {
+        const drop = new Set(optionalIds);
+        setIds(value.filter((id) => !drop.has(id)));
+      }
+    },
+    [readOnly, lockedIdSet, setIds, value],
+  );
 
   if (!modules.length) {
     return <Empty description="暂无权限点" className={className} style={style} />;
   }
 
   const locked = moduleLocked(active);
+  const activeAllChecked =
+    !!active && active.perms.length > 0 && active.perms.every((p) => selectedSet.has(p.id));
+  const activeSomeChecked = !!active && active.perms.some((p) => selectedSet.has(p.id));
 
   return (
     <Row
@@ -279,7 +307,10 @@ export default function PermissionBindPanel({
         }}
       >
         {modules.map((m) => {
-          const selected = m.perms.filter((p) => value.includes(p.id)).length;
+          let selected = 0;
+          for (const p of m.perms) {
+            if (selectedSet.has(p.id)) selected += 1;
+          }
           const total = m.perms.length;
           const isActive = m.key === (active?.key || '');
           return (
@@ -325,13 +356,8 @@ export default function PermissionBindPanel({
               {readOnly ? null : (
                 <Checkbox
                   disabled={locked || active.perms.every((p) => lockedIdSet.has(p.id))}
-                  checked={
-                    active.perms.length > 0 && active.perms.every((p) => value.includes(p.id))
-                  }
-                  indeterminate={
-                    active.perms.some((p) => value.includes(p.id)) &&
-                    !active.perms.every((p) => value.includes(p.id))
-                  }
+                  checked={activeAllChecked}
+                  indeterminate={activeSomeChecked && !activeAllChecked}
                   onChange={(e) => toggleAllInModule(active, e.target.checked)}
                 >
                   全选本模块
@@ -343,7 +369,7 @@ export default function PermissionBindPanel({
               <CategoryBlock
                 key={cat.key}
                 category={cat}
-                value={value}
+                selectedSet={selectedSet}
                 moduleDisabled={locked}
                 lockedIdSet={lockedIdSet}
                 readOnly={readOnly}
@@ -363,16 +389,16 @@ export default function PermissionBindPanel({
   );
 }
 
-function CategoryBlock({
+const CategoryBlock = memo(function CategoryBlock({
   category,
-  value,
+  selectedSet,
   moduleDisabled,
   lockedIdSet,
   readOnly,
   onToggle,
 }: {
   category: ResolvedCategory;
-  value: string[];
+  selectedSet: Set<string>;
   moduleDisabled: boolean;
   lockedIdSet: Set<string>;
   readOnly: boolean;
@@ -410,7 +436,7 @@ function CategoryBlock({
             <Checkbox
               key={perm.id}
               disabled={readOnly || isBaseline || moduleDisabled}
-              checked={value.includes(perm.id)}
+              checked={selectedSet.has(perm.id)}
               onChange={(e) => onToggle(perm.id, e.target.checked)}
             >
               {leaf.label || perm.name}
@@ -424,4 +450,4 @@ function CategoryBlock({
       </div>
     </div>
   );
-}
+});
