@@ -48,9 +48,10 @@ const ComponentsLayout: React.FC = () => {
       </Sider>
       <button
         type="button"
-        className={classNames(styles['components-layout-toggle'], {
-          [styles['components-layout-toggle--collapsed']]: collapsed,
-        })}
+        className={classNames(
+          styles['components-layout-toggle'],
+          collapsed && styles['components-layout-toggle--collapsed'],
+        )}
         onClick={() => setCollapsed((prev) => !prev)}
         aria-label={collapsed ? '展开侧边栏' : '折叠侧边栏'}
         aria-expanded={!collapsed}
