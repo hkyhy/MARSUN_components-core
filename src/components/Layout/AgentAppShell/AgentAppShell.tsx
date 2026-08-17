@@ -92,9 +92,11 @@ const AgentAppShell: React.FC<AgentAppShellProps> = ({
             wrapperClassName={classNames('agent-sider-scroll', styles['agent-sider-scroll'])}
           >
             <div
-              className={classNames('agent-sider-brand', styles['agent-sider-brand'], {
-                [styles['agent-sider-brand--collapsed']]: collapsed,
-              })}
+              className={classNames(
+                'agent-sider-brand',
+                styles['agent-sider-brand'],
+                collapsed && styles['agent-sider-brand--collapsed'],
+              )}
             >
               {brandLogo ?? <span className={styles['agent-sider-logo']}>{mark}</span>}
               {!collapsed ? <h1 className={styles['agent-sider-title']}>{brandTitle}</h1> : null}
@@ -114,9 +116,10 @@ const AgentAppShell: React.FC<AgentAppShellProps> = ({
         {onToggleCollapsed ? (
           <button
             type="button"
-            className={classNames(styles['agent-sider-toggle'], {
-              [styles['agent-sider-toggle--collapsed']]: collapsed,
-            })}
+            className={classNames(
+              styles['agent-sider-toggle'],
+              collapsed && styles['agent-sider-toggle--collapsed'],
+            )}
             onClick={onToggleCollapsed}
             aria-label={collapsed ? '展开侧栏' : '收起侧栏'}
             aria-expanded={!collapsed}
