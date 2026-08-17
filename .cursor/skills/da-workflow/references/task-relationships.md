@@ -53,8 +53,9 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --step pla
 
 # 3. 判定关系（见下方决策树）→ 写入 sync_manifest 新条目
 
-# 4. dry-run 审 preview → CREATE
-PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"
+# 4. 仅「整理 Plane / 登记关系」时 dry-run → CREATE；修 bug 关单勿跑
+#    CREATE 优先 da standards commit --confirm-plane
+# PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"   # 仅全量/专门整理
 ```
 
 ### 决策树
@@ -117,7 +118,7 @@ PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO"
 跨仓同主题（SSO / Assets / QA 各建本仓细粒度）：各仓独立 id，`note` 互指 `Refs: P3.17.4` 与 sibling 任务号；**禁止**三仓都挂同一父 Task 行而不登记本仓 id。
 
 **分配新 id 前**：`plane_pull` → 扫描 snapshot 名称 `{module}.(\d+)` →  
-`next = max_n + 1`（父 Module 码下直接子；无 1000 封顶）。**勿**盲信 `meta.next_task_id`。号段详文：[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)。
+`next = max(1000, max_n) + 1`（**钉表 Module** 预留 1–1000，内含 **10×99 里程碑段**；非钉表自建从 **1001** 起；纯 Plane Module 仍 `max_n+1`）。**勿**盲信 `meta.next_task_id`。号段详文：[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)。
 
 ### sync_manifest 新任务模板（含关联）
 
@@ -191,7 +192,7 @@ CREATE/UPDATE 后若详情仍为「无模块」、父项空、或「添加关系
 
 > **注意**：`Refs:` 须与父 Issue **Plane 标题前缀**一致（如挂 `95d788aa-…` 则写 `Refs: S3.3.26`），勿按过时映射表误改成 S3.3.27。取号前再 `plane_pull` 核对实名。
 
-> **取号**：父码下 `next = max_n+1`（空则 `.1`）；支持四级；**禁止**盲信本地 `meta.next_task_id`。分配前再 `plane_pull`。详文：[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)。
+> **取号（2026-07 起）**：钉表 Module 下，未关联里程碑的非段内自建从 **≥1001** 起（`next = max(1000, max(S3.3.N))+1`）；1～1000 供钉表与 Plane「里程碑 / 关联里程碑」段内取号（**≤10 里程碑 × 99 任务**；满则新 Module）。若已有 `S3.3.1005` 等 ≥1001 号，则继续 `max+1`。分配前必须再 `plane_pull`；**禁止**盲信本地 `meta.next_task_id`。详文：[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)。
 
 ### 历史产品域父 Issue（仍可用）
 
@@ -244,4 +245,4 @@ CREATE/UPDATE 后若详情仍为「无模块」、父项空、或「添加关系
 - 新任务使用与 `milestone` 不一致的 id 前缀（如 `milestone: S3.3` 却写 `id: S3-50`）
 - **把细粒度交付写进钉表大颗粒 `note`（「纳入本任务」）并用父 id 作 `Task:`** — 必须新建子任务 + `parent_issue`
 - 因 dry-run 误报「CREATE 已有 `plane_issue_id` 的钉表任务」就改把子工作并进父 note（应硬停止，只 CREATE 无 `plane_issue_id` 的新 id）
-- CREATE 后 Plane 显示名若变成 `S3.3.1 …` 而台账 id 是 `S3.3.93`：属 ensure 误用 nextChild；须立刻 PATCH 为 `{catalogId} {name}`（DA `resolveCatalogIssueTitle` 已优先用 catalogId；Agent 仍须核对）
+- CREATE 后 Plane 显示名若变成 `S3.3.1 …` 而台账 id 是 `S3.3.93`：属历史 ensure 误用 nextChild；须立刻 PATCH 为 `{catalogId} {name}`（`resolveCatalogIssueTitle` 已强制标题头 = catalogId；Agent 仍须核对）

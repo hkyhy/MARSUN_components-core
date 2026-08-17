@@ -1,7 +1,8 @@
-# `@da pm` 进度同步
+# `@da pm` 进度同步（仅全量对账）
 
-> 用户入口：**`@da pm`**。本文件供 Agent 加载流程；脚本在 `~/.cursor/skills/project-pm-sync/`。  
-> 勿对用户宣传 `@project-pm-sync` — 那是内部子 skill。
+> **闸门**：修 bug / 提交 / 关单 **禁止**跑本节 pipeline。关单走 [plane-timeline.md](plane-timeline.md)。  
+> 仅用户明确「整理 Plane / 全量对账 / @da pm 全量」才执行。  
+> 脚本在 `~/.cursor/skills/project-pm-sync/`。勿对用户宣传 `@project-pm-sync`。
 
 ## 前置
 
@@ -114,15 +115,18 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --excel --
 
 ## 与六步闭环的关系
 
-- **任务级 sync**（`da pm sync`）：在 commit 闭环内 CREATE/PATCH 台账状态
-- **增量任务 sync**（推荐交付闭环）：`da pm sync --tasks P6.11.46` — 只处理指定台账 id（跳过 module-issues N+1、description enrich、orphan 全量告警），避免共享项目数百 WI 的全量成本
-- **批量进度 sync**（`@da pm` pipeline）：梳理 roadmap → 写 YAML → dry-run → sync → 自检
+| 场景                     | 命令                                                                                     | 何时                                                |
+| ------------------------ | ---------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| **关单 / 修 bug / 提交** | `timeline-sync` + `task done --confirm`；CREATE 用 `da standards commit --confirm-plane` | **默认**。禁止无范围 `da pm sync`                   |
+| **增量 pm sync**         | `da pm sync --repo . --tasks <ID>`                                                       | 仅当 `da pm sync --help` **已列出** `--tasks`       |
+| **全量对账**             | `pm_pipeline --step plane-dry-run` → 用户确认 → `plane-sync`                             | 仅用户明确说「整理 Plane / 全量对账 / @da pm 全量」 |
 
-二者不可互相替代。任务完成须先 `timeline-sync` + `task done`，再 PATCH `status: 已完成`。
+关单不替代不了全量对账；**全量对账也不得拿来关一条筛选 bug**。`da pm --help` 无 `--tasks` 时视为未实现，**禁止退回全量**。
 
 ```bash
-# 交付闭环内推荐（单任务 / 少数任务）
-PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
+# 关单（默认）
+da task timeline-sync "$TASK" --repo "$REPO"
+da task done "$TASK" --confirm --repo "$REPO"
 ```
 
 **代理**：`da` / `pm_pipeline` / `resolve_config` 会把 `plane.webinfra.cloud` 写入 `NO_PROXY`，避免本机 `HTTP(S)_PROXY=127.0.0.1:7890` 导致 Tunnel 403 / 长重试。
@@ -133,7 +137,7 @@ PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | preflight exit 3                              | 缺 API Key 或 `project_id` → HITL                                                                             |
 | 写到错误 Plane 项目                           | 更新 `project_id` + `project_url`；**marsun_arch** 须对齐 `meta.required_plane_project_id`（P6），禁止改绑 S1 |
-| sync「卡住」数分钟                            | 优先 `--tasks <id>`；查代理是否旁路 Plane；`work-item-types` 404 无害                                         |
+| sync「卡住」数分钟                            | **先停全量**；关单改 timeline-sync + task done；查代理是否旁路 Plane；`work-item-types` 404 无害              |
 | YAML 校验失败含 `@`                           | `note` 字段中 `@da` 等须加引号                                                                                |
 | dry-run CREATE module > 0                     | merged milestone 未绑定钉表 → 见 plane-dingtalk-module-rules                                                  |
 | Plane 出现重复 P3.7 / P6.x / S1.3 / S3.3 模块 | middot 壳回潮 → 清壳 + `module_health_check`；禁止再 CREATE                                                   |

@@ -40,7 +40,7 @@ da standards scan
 da standards commit --yes --subject "type(scope): 描述" --task <ID>
 da task timeline-sync <ID> --repo .
 da task done <ID> --confirm --repo .
-# WorkRecord（有大事文档时）→ da pm sync PATCH（plane_ready）
+# WorkRecord（有大事文档时）；关单勿 da pm sync（全量仅「整理 Plane」）
 da day close --confirm
 # 用户若要求日报 → work-record「当日日报」→ WorkRecord/{月}/{owner}/日报-{YYYY-MM-DD}.md
 ```
@@ -87,7 +87,7 @@ plane_ready 闭环细则：[plane-timeline.md](plane-timeline.md)。关联细则
 
 1. **禁止裸 `git commit -m` / `--no-verify`** — 唯一入口 `da standards commit`
 2. **Commit 正文必须有 `Task: <ID>`** — 禁止用分支名冒充
-3. **关单必须两步** — `timeline-sync` + `done --confirm`；只改状态不算完成
+3. **关单必须两步** — `timeline-sync` + `done --confirm`；只改状态不算完成。**禁止**为关单跑无范围全量 `da pm sync`（仅用户明确「整理 Plane」才全量）
 4. **Plane 卡片完整** — 新/进行中台账须有 `milestone`+`owner`+日期；层级增量须 `parent_issue` + note `Refs:`/`related_tasks:`；sync 后详情禁止「无模块」、标题禁止塌成 `*.1`、有关联时「添加关系」须可见（见 [task-relationships](task-relationships.md)；`validate_manifest` 硬拦）
 
 ---

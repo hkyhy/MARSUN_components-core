@@ -113,13 +113,13 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
 
 ### 序号号段（钉表 Module）
 
-钉表 / Plane 层级：父码下 **max+1（最小空洞从 1）**；支持四级（`S3.3.1.1`）；不限制里程碑/任务数量。详文：[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)。
+钉表绑定 Module 下：**1～1000** 供钉表行与 Plane 创建弹窗「里程碑 / 关联里程碑」段内取号（**≤10 里程碑 × 每段 99 任务**；满则新开 Module）；**未关联里程碑的 Plane 新建与 `da pm` 从 1001 起**（`next = max(1000, max_n)+1`）。存量非规划号不回迁。详文：[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)。
 
 ### 各仓库新任务起始
 
 ```yaml
-# Agent_QualityAnalysis — 先 plane_pull；父码下 max+1（空则 .1）
-# 禁止盲信 meta.next_task_id
+# Agent_QualityAnalysis — 先 plane_pull；钉表 Module 下细粒度 ≥1001
+# next = max(1000, max(S3.3.N))+1；禁止盲信 meta.next_task_id
 - id: S3.3.1001
   milestone: S3.3
   parent_issue: 8ab0a122-4bcd-4133-9c14-fe0dbf014aec # 预警前端 V0.2
@@ -132,28 +132,28 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
     Refs: S3.3.26
     简要说明
 
-# marsun_components-core — 钉表 Module 下父码取号（例）
-- id: P6.3.1
+# marsun_components-core — 钉表 Module 下从 max(1000,max_n)+1 起
+- id: P6.3.1001
   milestone: P6.3
   name: 示例任务
   status: 进行中
 
-# marsun_arch — P6.11 钉表 Module（**禁止**新增 M001-*）
-- id: P6.11.1
+# marsun_arch — P6.11 钉表 Module；新任务 ≥1001（**禁止**新增 M001-*）
+- id: P6.11.1001
   milestone: P6.11
   name: S3 质量预警 data-service 接口文档
   status: 进行中
   tags: [data-dev, docs, S3]
   note: data-dev/S3智能体接口.md 等元仓库接口/规范文档
 
-# maoyang assets — 钉表 Module 下父码取号
-- id: P3.7.1
+# maoyang assets — 钉表 Module 下 ≥1001
+- id: P3.7.1001
   milestone: P3.7
   name: FilterTreeSelect 改用 fetchUrl
   status: 进行中
 
-# AgentHub（assets agent 项目）— 钉表 Module 下父码取号
-- id: S1.3.1
+# AgentHub（assets agent 项目）— 钉表 Module 下 ≥1001
+- id: S1.3.1001
   milestone: S1.3
   name: Agent 列表页对接
   status: 进行中
@@ -173,7 +173,7 @@ AI-Assisted: true
 
 **取号与大颗粒**：
 
-1. `plane_pull` 后扫描 work_items 名称中的 `S3.3.(\d+)`，`id = max+1`
+1. `plane_pull` 后扫描 work_items 名称中的 `S3.3.(\d+)`，`id = max(1000, max)+1`（≥1001）
 2. **勿**盲信 `meta.next_task_id`（可落后于钉表大颗粒）
 3. 钉表大颗粒号段（如 `S3.3.73`–`S3.3.88`，以当日 Plane 为准）**预留给** `S3.3.N-质量管理-…V0.2`；细粒度勿占用
 4. 细粒度挂 `parent_issue` 到大颗粒 UUID；`note` 写 `Refs: S3.3.26`（等钉表代号），见 [task-relationships](task-relationships.md)
@@ -224,7 +224,7 @@ AI-Assisted: true
 
 1. `sync_manifest.yaml` 已有对应 `Task:` id（无则先登记，**与首次业务 diff 同 commit**）。
 2. 该 commit **完成**任务 → 台账 `status: 已完成` **写入同一 commit**；**未完成** → `[WIP]` 且 status 保持进行中。
-3. commit 后：**`@da pm dry-run`** 审 preview → **`@da pm sync`** PATCH（或 CREATE）；`timeline-sync` + `task done` 见 [plane-timeline](plane-timeline.md)。
+3. commit 后：`timeline-sync` + `task done` 见 [plane-timeline](plane-timeline.md)。**禁止**为关单跑无范围 `@da pm sync`（全量仅用户明确「整理 Plane」）。
 4. **禁止**为日常 status/登记另开仅改 `plane/` 的 commit；无业务 diff 的纯台账治理除外（见 [commit-format](commit-format.md#台账与业务同-commit强制)）。
 
 plane_ready 仓库完成任务时，还须 `da task timeline-sync` + `da task done --confirm`。
@@ -237,4 +237,4 @@ plane_ready 仓库完成任务时，还须 `da task timeline-sync` + `da task do
 2. 梳理 `parent_issue` / `related_tasks`（见 [task-relationships](task-relationships.md)）。
 3. 在 `sync_manifest.yaml` 新增条目：`id` + `milestone` + `name` + `status: 进行中`。
 4. commit 前确认 `Task:` 与本次 diff 对应 id。
-5. `@da pm dry-run` → 审 preview → sync。
+5. commit 后 `timeline-sync` + `task done`（完成时）。**禁止**为关单跑 `@da pm dry-run` → 全量 sync。

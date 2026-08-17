@@ -1,7 +1,7 @@
 ---
 name: da-workflow
 description: |
-  DA 总控：提交/commit/push、同步 Plane、@da pm、开工/收工/day start、AI Native、六步交付闭环、Task 与 AI 归因。细则见 references/（plane-timeline、ai-native-daily、cursor-session-prompt）；事项进展用 work-record，周报用 weekly-report。
+  DA 总控：提交/commit/push、关单（timeline-sync + task done）、开工/收工。全量 @da pm / da pm sync 仅用户明确「整理 Plane」。细则见 references/（plane-timeline、ai-native-daily、cursor-session-prompt）。
 ---
 
 # DA 开发工作流（marsun_arch 权威源）
@@ -12,12 +12,12 @@ description: |
 
 与 [work-record](../work-record/SKILL.md)、[weekly-report](../weekly-report/SKILL.md) 关系：
 
-| 技能                                                                                    | 职责                                      |
-| --------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **本技能**                                                                              | 提交格式、scan、六步 Plane 闭环、`@da pm` |
-| [work-record](../work-record/SKILL.md)                                                  | 事项级 WorkRecord 进展（commit 后步骤 5） |
-| [weekly-report](../weekly-report/SKILL.md)                                              | 周期周报汇总                              |
-| [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md) | repos 子仓库原子 commit 与检测脚本        |
+| 技能                                                                                    | 职责                                                                                  |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **本技能**                                                                              | 提交格式、scan、关单闭环（timeline-sync + task done）；全量 `@da pm` 仅「整理 Plane」 |
+| [work-record](../work-record/SKILL.md)                                                  | 事项级 WorkRecord 进展（commit 后步骤 5）                                             |
+| [weekly-report](../weekly-report/SKILL.md)                                              | 周期周报汇总                                                                          |
+| [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md) | repos 子仓库原子 commit 与检测脚本                                                    |
 
 权威细则：
 
@@ -84,7 +84,7 @@ Task Progress:
 - [ ] git diff --stat — 原子性，无无关文件
 - [ ] **按功能/模块切分** — 对照钉表 depth-2 Issue；一事项一台账任务一组 commit（见 references/commit-format.md）
 - [ ] **台账同包** — `sync_manifest` 登记/status 与业务 diff 同一 commit；禁止事后单独 chore(pm) 只改台账（见 commit-format「台账与业务同 commit」）
-- [ ] **plane_pull 取号** — 扫描 `{module}.(\d+)`；`id = max+1`（空则 `.1`；见 dingtalk-hierarchy-naming）；勿盲信 `meta.next_task_id`；挂 `parent_issue`
+- [ ] **plane_pull 取号** — 扫描 `{module}.(\d+)`；钉表 Module：`id = max(1000,max)+1`（≥1001）；钉表侧遵守 10×99 段（见 dingtalk-hierarchy-naming）；纯 Plane Module：`max+1`；勿盲信 `meta.next_task_id`；挂 `parent_issue`
 - [ ] 钉表已有独立事项 → 业务仓已登记对应 id，note 含 Refs: <钉表代号>
 - [ ] **钉表大颗粒下的增量** → 新建细粒度 id + `parent_issue`；**禁止**写进父 note「纳入本任务」后用父 id 作 `Task:`（见 task-relationships 硬规则）
 - [ ] dry-run 若 CREATE 已有 `plane_issue_id` 的钉表任务 → **硬停止**，勿改并父 note 规避
@@ -107,18 +107,17 @@ Task Progress:
 REPO=<git 根>
 TASK=<Task 行 ID>
 
-# 新任务先 CREATE（YAML 进行中已与业务同批改动）
-PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
-
-git commit ...   # Task: $TASK（含台账 YAML；完成时不带 [WIP]，且 status 已为已完成）
+# CREATE：commit --confirm-plane（勿无范围 da pm sync）
+da standards commit --yes --confirm-plane --task "$TASK" --type … --scope … --subject "…"
+# 完成时 YAML 已为已完成且不带 [WIP]
 
 da task timeline-sync "$TASK" --repo "$REPO"
 da task done "$TASK" --confirm --repo "$REPO"
 # WorkRecord 进展（见 work-record/SKILL.md）
-
-# PATCH 对齐 Plane（勿再单独 git commit 改台账）
-PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
+# 关单到此；禁止再跑无 --tasks 的 da pm sync
 ```
+
+**全量 sync 禁用于关单**：无范围 `da pm sync` / `pm_pipeline --step plane-sync` 会扫全仓 WI。仅用户明确「整理 Plane / 全量对账」才跑。`da pm --help` 无 `--tasks` → **禁止退回全量**。
 
 | 操作                     | 活动区效果                    |
 | ------------------------ | ----------------------------- |
@@ -126,7 +125,7 @@ PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
 | `da task timeline-sync`  | 补「关联 commit」             |
 | `da task done --confirm` | 补「📦 任务交付时间线」完成块 |
 
-**禁止**：仅用 `pm sync` 标 Done 代替 timeline-sync + task done。`project_id` 须裸 UUID。
+**禁止**：仅用 `pm sync` 标 Done 代替 timeline-sync + task done；关单跑全量 `da pm sync`。`project_id` 须裸 UUID。
 
 **marsun_arch Plane 归属硬规则**：`plane/project.yaml` 的 `project_id` **必须**等于 `meta.required_plane_project_id`（P6 `f7ed0394-…`）。knowledge-qa / 其它仓文档合入 **禁止**改绑到 S1（`934b5818-…`）或其它项目；`da pm` preflight / `da doctor` 会硬拦。
 
@@ -134,9 +133,11 @@ PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
 
 ---
 
-## 四、PM 进度同步（`@da pm`）
+## 四、PM 进度同步（仅「整理 Plane」）
 
-团队统一入口：**`@da pm`**（勿对用户宣传 `@project-pm-sync`）。
+**闸门**：提交 / 关单 / 修 bug / 裸 `@da pm` **不要**进本节 pipeline。关单走第三节。仅当用户明确说「整理 Plane / 全量对账 / @da pm 全量」才跑 `pm_pipeline`。
+
+团队统一入口（全量场景）：**`@da pm 全量`**（勿对用户宣传 `@project-pm-sync`）。
 
 ### 钉表 SSOT（开场必检 · 全项目 · 非仅 S3）
 
@@ -148,7 +149,7 @@ PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
 | `P6.11-开发规范`           | `P6.11 · 开发规范` / `M*`      |
 | `S1.3-…` / `S3.3-功能开发` | `S1.3 · …` / `S3.3 · 功能开发` |
 
-**PM Sync 铁律（当前操作的任意仓库 · 每次必做）**：
+**PM Sync 铁律（仅全量对账 · 当前操作的任意仓库）**：
 
 1. **先拉** — `plane-pull` / pipeline 内 `plane_pull`（禁止凭旧 snapshot 写入）
 2. **dry-run** — `CREATE module = 0`；merged 只 **link** DT keeper
@@ -203,9 +204,8 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [ ] 完成任务时 **台账 `status: 已完成` 已与业务同 commit**（禁止事后单独改台账）
 - [ ] plane_ready 仓库已执行 timeline-sync + task done（完成任务时；关单两步齐）
 - [ ] WorkRecord 进展已按事项类型追加（有对应文档时）
-- [ ] sync_manifest status 与 commit 语义一致后再 pm sync PATCH（不再另开 git）
-- [ ] 对**当前操作的任意仓库**（非仅 QA/S3）：`da pm dry-run` 对 merged milestone **CREATE module = 0**
-- [ ] 该仓 sync **之后** `module_health_check` 通过（无同代号 `-`/`·` 双份）
+- [ ] 关单已 timeline-sync + task done；**未**为修 bug 跑无范围全量 `da pm sync`
+- [ ] 仅当用户明确「整理 Plane」时才全量 dry-run/sync；此时 merged **CREATE module = 0** 且 sync 后 `module_health_check` 通过
 - [ ] 该仓 Plane Modules **无** 同代号 `-`/`·` 双份；误建壳已 `(重复·待删)` Archive
 - [ ] 新任务台账含 `owner`、`start_date`、`target_date`、`milestone`；层级增量另含 `parent_issue` + note `Refs:`/`related_tasks:`（`validate_manifest` 硬拦缺字段；见 task-relationships / plane-team-assignees）
 - [ ] Module 名跟钉表 `{id}-{name}`（P3/P6/S1/S3 同规）；Issue 才用 `{id} · {name}`（**禁止**标题塌成父级 `.1`）
@@ -228,7 +228,7 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md) — 钉表 Module SSOT 与写保护
 - [references/plane-team-assignees.md](references/plane-team-assignees.md) — 负责人 Plane 邮箱映射
 - [references/plane-timeline.md](references/plane-timeline.md) — 六步交付闭环详文
-- [references/pm-sync.md](references/pm-sync.md) — `@da pm` Agent 流程
+- [references/pm-sync.md](references/pm-sync.md) — 仅「整理 Plane / @da pm 全量」时的 pipeline
 - [references/commit-lifecycle.md](references/commit-lifecycle.md) — `DA_COMMIT_LIFECYCLE=1` 自动建关
 - [references/vibe-guard.md](references/vibe-guard.md) — scan 与安全清单
 - [references/skills-sync.md](references/skills-sync.md) — 镜像同步到 repos

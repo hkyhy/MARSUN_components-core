@@ -70,7 +70,7 @@ AgentHub / File 预览 / Llm 走子路径，避免无相关产品首包拖入重
 
 包根仍 re-export L2（迁移期 `@deprecated`）；新代码请用子路径。
 
-### Layout（v0.1.54+）
+### Layout（v0.1.55+）
 
 `AgentAppShell` 侧栏折叠改为边缘竖条 tab（主题色）；`UserProfileCard` / brand 折叠态水平居中。
 

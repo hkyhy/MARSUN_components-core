@@ -12,30 +12,27 @@
 
 ## 六步顺序（plane_ready 仓库）
 
-1. **新任务**：`plane/sync_manifest.yaml` 登记 `status: 进行中`（**与首次业务 diff 同 commit**）→ `da pm sync` **CREATE**（可在 commit 前，只写 Plane；禁止首次就写 `已完成`）
+1. **新任务**：`plane/sync_manifest.yaml` 登记 `status: 进行中`（**与首次业务 diff 同 commit**）→ CREATE 走 `da standards commit --confirm-plane`（禁止首次就写 `已完成`）
 2. **`git commit`**：业务（或文档）diff **与台账 YAML 同包**；`Task: <ID>`；本 commit 完成任务时 YAML 已为 `已完成` 且**不带** `[WIP]`
 3. **`da task timeline-sync <ID>`** — 补「关联 commit」到活动区
-4. **`da task done <ID> --confirm`** — 写「📦 任务交付时间线」完成块（**必须在最终 pm sync 标 Done 之前**）
+4. **`da task done <ID> --confirm`** — 写「📦 任务交付时间线」完成块（关单到此即可）
 5. **WorkRecord**（有对应大事文档时）：追加进展记录
-6. **`da pm sync` PATCH** — 将已写入 commit 的 `status: 已完成` 对齐 Plane（**禁止**为此再开仅改台账的 git commit）
+6. **禁止**为关单再跑无范围 `da pm sync`（会扫全仓 WI）
 
 ```bash
 REPO=<git 根目录>
 TASK=<Task 行 ID>
 
-# 新任务：YAML 进行中已进工作区后 CREATE（可与业务同批改动；--tasks 避免全量 WI）
-PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"
-
-# 完成时：先把 sync_manifest 改已完成，再与业务一起 commit
-git commit ...   # Task: $TASK（含台账 YAML；完成时不带 [WIP]）
+da standards commit --yes --confirm-plane --task "$TASK" --type … --scope … --subject "…"
+# 完成时 YAML 已为已完成且不带 [WIP]
 
 da task timeline-sync "$TASK" --repo "$REPO"
 da task done "$TASK" --confirm --repo "$REPO"
 # 若 YAML 已是「已完成」但仍缺完成块：da task done "$TASK" --confirm --repost-timeline --repo "$REPO"
 # WorkRecord 进展（见 work-record/SKILL.md）
-
-PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"   # PATCH only
 ```
+
+**何时全量 sync**：仅用户明确「整理 Plane / 全量对账 / @da pm 全量」。修 bug、提交、push、关单 **禁止**。`da pm --help` 无 `--tasks` → 视为未实现，**禁止退回全量**。
 
 **台账同包**：见 [commit-format · 台账与业务同 commit](commit-format.md#台账与业务同-commit强制)。
 **代理**：`da` / Plane sync 会把 Plane 主机写入 `NO_PROXY`（旁路本机 7890 代理）。
@@ -50,6 +47,7 @@ PLANE_CI=1 PLANE_CONFIRM_SYNC=1 da pm sync --repo "$REPO" --tasks "$TASK"   # PA
 
 ## 禁止
 
+- 关单/修 bug 时跑无 `--tasks` 的 `da pm sync` 或 `pm_pipeline --step plane-sync`（CLI 不认 `--tasks` 时同样禁止退回全量）
 - 仅用 `pm sync` 把 `status: 已完成` 写入 YAML 并 sync，跳过步骤 3–4
 - 业务 commit 后再单独 `chore(pm)` / `docs(pm)` 只改 `sync_manifest` status（须在步骤 2 同包）
 - `plane/project.yaml` 的 `project_id` 用 YAML 单引号包裹（须裸 UUID）

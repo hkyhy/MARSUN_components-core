@@ -66,19 +66,19 @@ AI-Assisted: true           ← Agent 编辑时必填（hook 自动追加）
 
 `sync_manifest.yaml` / `milestones.yaml` 的**任务登记、status、note、parent_issue** 等变更，**须与对应业务（或文档）diff 同一 commit**，禁止拆成「先业务 commit、再单独台账 commit」。
 
-| 场景               | 做法                                                                                                                                                      |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 新任务首次落地     | YAML `status: 进行中` + 业务改动 **同包**；`da pm sync` CREATE 可在 commit **前**执行（只写 Plane，不另开 git）                                           |
-| 本 commit 完成任务 | YAML 先改 `status: 已完成`，**再** `git commit`（与业务同包）；commit 后 `timeline-sync` → `task done` → `pm sync` PATCH（PATCH **不**再产生 git commit） |
-| 未完成             | YAML 保持 `进行中`；`Task: <ID> [WIP]`；勿为「标一下台账」单独提交                                                                                        |
-| 例外               | **无业务 diff** 的纯台账治理（批量对齐、Archive 壳清理、一次性格对齐）允许独立 `chore(pm)` / `docs(pm)`                                                   |
+| 场景               | 做法                                                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 新任务首次落地     | YAML `status: 进行中` + 业务改动 **同包**；CREATE 用 `da standards commit --confirm-plane`（勿无范围 `da pm sync`）                  |
+| 本 commit 完成任务 | YAML 先改 `status: 已完成`，**再** `git commit`（与业务同包）；commit 后 `timeline-sync` → `task done`（**勿**再跑无范围 `pm sync`） |
+| 未完成             | YAML 保持 `进行中`；`Task: <ID> [WIP]`；勿为「标一下台账」单独提交                                                                   |
+| 例外               | **无业务 diff** 的纯台账治理（批量对齐、Archive 壳清理、一次性格对齐）允许独立 `chore(pm)` / `docs(pm)`                              |
 
 ```
 ✗ feat(alerts): … Task: P6.11.35
   再单独 chore(pm): sync_manifest 标已完成
 
 ✓ feat(alerts): …（含 sync_manifest status: 已完成）  Task: P6.11.35
-  → timeline-sync → task done → pm sync PATCH
+  → timeline-sync → task done
 ```
 
 ## 禁止
