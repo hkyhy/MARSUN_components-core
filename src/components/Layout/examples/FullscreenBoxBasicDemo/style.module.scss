@@ -1,0 +1,32 @@
+.fullscreen-box-basic-demo {
+  min-height: 180px;
+  padding: 12px 14px;
+  background: var(--bg-color-white, #fff);
+  border: 1px solid var(--font-color-grey-3, #e5e7eb);
+  border-radius: 8px;
+}
+
+.fullscreen-box-basic-demo-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fullscreen-box-basic-demo-eyebrow {
+  display: block;
+  font-size: 11px;
+  color: var(--font-color-grey, #64748b);
+}
+
+.fullscreen-box-basic-demo-title {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fullscreen-box-basic-demo-body {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--font-color-grey, #64748b);
+}

@@ -10,3 +10,5 @@ export { AgentAppShell } from './AgentAppShell';
 export type { AgentAppShellProps } from './AgentAppShell';
 export { default as ContentCard } from './ContentCard';
 export type { ContentCardProps } from './ContentCard';
+export { default as FullscreenBox, FullscreenToggle, useFullscreen } from './FullscreenBox';
+export type { FullscreenBoxProps, FullscreenToggleProps } from './FullscreenBox';

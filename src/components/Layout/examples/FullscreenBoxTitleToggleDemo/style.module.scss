@@ -1,0 +1,17 @@
+.fullscreen-box-title-demo {
+  min-height: 160px;
+  padding: 12px;
+  background: var(--bg-color-white, #fff);
+  border: 1px solid var(--font-color-grey-3, #e5e7eb);
+  border-radius: 8px;
+}
+
+.fullscreen-box-title-demo--open {
+  padding: 16px 20px 20px;
+}
+
+.fullscreen-box-title-demo-sub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--font-color-grey, #64748b);
+}

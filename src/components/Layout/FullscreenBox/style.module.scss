@@ -1,0 +1,46 @@
+.marsun-fullscreen-box {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.marsun-fullscreen-box--open {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  flex: none;
+  height: 100vh;
+  max-height: 100vh;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  background: var(--bg-color-white, #fff);
+}
+
+.marsun-fullscreen-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: auto;
+  padding: 2px 6px 2px 4px;
+  color: inherit;
+
+  &:hover {
+    color: inherit;
+    background: rgba(15, 23, 42, 0.04);
+  }
+
+  svg {
+    flex-shrink: 0;
+    color: var(--font-color-grey, #64748b);
+  }
+}
+
+.marsun-fullscreen-toggle-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: inherit;
+}

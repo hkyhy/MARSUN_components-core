@@ -1,6 +1,6 @@
 {
   "title": "Layout 页面布局",
-  "description": "AgentAppShell 业务壳；PageHeaderLayout、ModulePageShell 与 PageSpin；App 根节点须包裹 PageShellProvider。",
+  "description": "AgentAppShell 业务壳；PageHeaderLayout、ModulePageShell、PageSpin、ContentCard、FullscreenBox；App 根须包裹 PageShellProvider。",
   "examples": [
     {
       "title": "AgentAppShell",
@@ -28,6 +28,20 @@
       "description": "主内容卡片；模块 workarea 用 flat / noPadding",
       "component": "@/components/Layout/examples/ContentCardBasicDemo",
       "sourcePath": "@/components/Layout/examples/ContentCardBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "FullscreenBox 图标开关",
+      "description": "操作区图标铺满视口（预警详情）；Esc 退出",
+      "component": "@/components/Layout/examples/FullscreenBoxBasicDemo",
+      "sourcePath": "@/components/Layout/examples/FullscreenBoxBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "FullscreenBox 标题开关",
+      "description": "标题+图标同一按钮（对比矩阵）",
+      "component": "@/components/Layout/examples/FullscreenBoxTitleToggleDemo",
+      "sourcePath": "@/components/Layout/examples/FullscreenBoxTitleToggleDemo/index.tsx",
       "block": true
     }
   ],
@@ -116,6 +130,42 @@
           "desc": "无 border/shadow/radius，用于模块 workarea",
           "type": "boolean"
         }
+      ]
+    },
+    {
+      "componentName": "FullscreenBoxProps",
+      "rows": [
+        { "prop": "children", "desc": "面板内容", "type": "React.ReactNode", "required": true },
+        { "prop": "className", "desc": "附加类名", "type": "string" },
+        { "prop": "fullscreenClassName", "desc": "仅全屏时附加类名", "type": "string" },
+        {
+          "prop": "fullscreen",
+          "desc": "是否铺满视口（受控）",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "prop": "onFullscreenChange",
+          "desc": "全屏变化（Esc 退出时回调 false）",
+          "type": "(open: boolean) => void"
+        },
+        { "prop": "exitOnEsc", "desc": "Esc 退出，默认 true", "type": "boolean" },
+        { "prop": "lockScroll", "desc": "全屏时锁定 body 滚动，默认 true", "type": "boolean" }
+      ]
+    },
+    {
+      "componentName": "FullscreenToggleProps",
+      "rows": [
+        { "prop": "fullscreen", "desc": "当前是否全屏", "type": "boolean", "required": true },
+        { "prop": "onToggle", "desc": "点击切换", "type": "() => void", "required": true },
+        { "prop": "className", "desc": "附加类名", "type": "string" },
+        { "prop": "children", "desc": "图标旁标题；不传则为纯图标按钮", "type": "React.ReactNode" }
+      ]
+    },
+    {
+      "componentName": "useFullscreen",
+      "rows": [
+        { "prop": "defaultFullscreen", "desc": "初始是否全屏，默认 false", "type": "boolean" }
       ]
     },
     {

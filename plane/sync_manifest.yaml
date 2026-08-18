@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.112
+  next_task_id: P6.3.113
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1686,3 +1686,19 @@ tasks:
     isMarsunEnvelope：数字 code 且成功码/含 data|message/仅信封键；{code:200,results} 扁平透传
     实例不写死 application/json；FormData 去掉 Content-Type 以便 boundary
     导出 isMarsunEnvelope；单测补信封误判 / isPublicUrl / FormData / abort；bump 0.1.60
+
+- id: P6.3.112
+  milestone: P6.3
+  name: FullscreenBox 铺满视口容器并发布 v0.1.61
+  status: 已完成
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-08-18"
+  target_date: "2026-08-18"
+  tags: [frontend, components, layout, release]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3 · Related: S3.3.1007
+    FullscreenBox + FullscreenToggle + useFullscreen；Esc 退出；z-index 1100
+    examples 图标/标题开关；单测；chore(release) v0.1.61
