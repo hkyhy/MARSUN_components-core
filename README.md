@@ -76,6 +76,10 @@ AgentHub / File 预览 / Llm 走子路径，避免无相关产品首包拖入重
 
 > 0.1.54/0.1.55 因 typecheck 未发布；0.1.56 修 showcase；**0.1.57** PermissionBindPanel 勾选性能。
 
+### HTTP（v0.1.58+）
+
+`createMarsunRequest`：Marsun 信封 / 扁平 JSON 透传 / blob；`getResponseError`；`passThroughEnvelopeError`。**0.1.60** `isMarsunEnvelope`（拒绝 `{code:200,results}` 误判）+ FormData 不写死 JSON Content-Type。
+
 项目可在 `src/styles/tokens.css` 扩展领域变量，详见 showcase 内 `frontend-dev-spec` → `theme.md`。
 
 ## 设计原则
