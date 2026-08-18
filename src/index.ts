@@ -67,7 +67,7 @@ export {
   getStoredUserPermissions,
   getStoredPermissionMap,
 } from './utils/permissionStorage';
-export { createMarsunRequest } from './utils/createMarsunRequest';
+export { createMarsunRequest, isMarsunEnvelope } from './utils/createMarsunRequest';
 export type {
   MarsunApiResponse,
   CreateMarsunRequestOptions,

@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.111
+  next_task_id: P6.3.112
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1669,3 +1669,20 @@ tasks:
     新增 14 测试用例（axios-mock-adapter）；导出 MarsunRequestErrorResponse；
     0.1.58：信封/扁平/blob/getResponseError；0.1.59：passThroughEnvelopeError（供 QA 复用既有 unwrap 逻辑）；
     为 Agent_QualityAnalysis 迁移到 core 客户端铺路
+
+- id: P6.3.111
+  milestone: P6.3
+  name: createMarsunRequest isMarsunEnvelope 与 FormData Content-Type 收口
+  status: 已完成
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-08-18"
+  target_date: "2026-08-18"
+  tags: [frontend, components, http]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3.110 · Related: S3.3.1003
+    isMarsunEnvelope：数字 code 且成功码/含 data|message/仅信封键；{code:200,results} 扁平透传
+    实例不写死 application/json；FormData 去掉 Content-Type 以便 boundary
+    导出 isMarsunEnvelope；单测补信封误判 / isPublicUrl / FormData / abort；bump 0.1.60

@@ -41,9 +41,38 @@ export interface MarsunRequestClient {
 }
 
 const SKIP_ERROR_HEADER = 'X-Skip-Error-Handler';
+const ENVELOPE_KEYS = new Set(['code', 'message', 'data']);
 
 function getSkipHandler(headers: unknown): boolean {
   return Boolean((headers as Record<string, string> | undefined)?.[SKIP_ERROR_HEADER]);
+}
+
+/** Marsun 信封：数字 code，且成功码 / 含 data|message / 仅信封键。避免 { code:200, results } 被当信封误判。 */
+export function isMarsunEnvelope(data: unknown, successCode = 0): data is MarsunApiResponse {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+  const obj = data as Record<string, unknown>;
+  if (typeof obj.code !== 'number') return false;
+  if (obj.code === successCode) return true;
+  if ('data' in obj || 'message' in obj) return true;
+  const keys = Object.keys(obj);
+  return keys.length > 0 && keys.every((k) => ENVELOPE_KEYS.has(k));
+}
+
+function isFormDataBody(data: unknown): boolean {
+  return typeof FormData !== 'undefined' && data instanceof FormData;
+}
+
+function stripContentType(headers: unknown): void {
+  if (!headers) return;
+  const h = headers as { delete?: (key: string) => void };
+  if (typeof h.delete === 'function') {
+    h.delete('Content-Type');
+    h.delete('content-type');
+    return;
+  }
+  const rec = headers as Record<string, unknown>;
+  delete rec['Content-Type'];
+  delete rec['content-type'];
 }
 
 /** 创建带鉴权、统一错误处理的 axios 实例 */
@@ -72,9 +101,7 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
     baseURL,
     timeout,
     withCredentials,
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    // 不写死 Content-Type：普通对象由 axios 自动加 JSON；FormData 需带 boundary
   });
 
   request.interceptors.request.use(
@@ -82,6 +109,9 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
       const token = getToken?.();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+      if (isFormDataBody(config.data)) {
+        stripContentType(config.headers);
       }
       return config;
     },
@@ -95,8 +125,7 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
         return response.data;
       }
       const data = response.data;
-      const isEnvelope = data && typeof data === 'object' && 'code' in data;
-      if (!isEnvelope) {
+      if (!isMarsunEnvelope(data, successCode)) {
         return data;
       }
       const envelope = data as MarsunApiResponse;

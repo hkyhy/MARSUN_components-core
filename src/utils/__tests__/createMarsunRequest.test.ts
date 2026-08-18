@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import MockAdapter from 'axios-mock-adapter';
-import { createMarsunRequest } from '../createMarsunRequest';
+import { createMarsunRequest, isMarsunEnvelope } from '../createMarsunRequest';
 
 /**
  * createMarsunRequest 拦截器行为单测。
@@ -26,6 +26,19 @@ function setup(options: Parameters<typeof createMarsunRequest>[0] = {}): {
   const mock = new MockAdapter(client as any);
   return { client, mock, showError, onUnauthorized };
 }
+
+describe('isMarsunEnvelope', () => {
+  it('识别成功信封与仅 code 错误信封', () => {
+    expect(isMarsunEnvelope({ code: 0, data: 1 })).toBe(true);
+    expect(isMarsunEnvelope({ code: 500 })).toBe(true);
+  });
+
+  it('拒绝 kne 风格 { code:200, results } 与非数字 code', () => {
+    expect(isMarsunEnvelope({ code: 200, results: [] })).toBe(false);
+    expect(isMarsunEnvelope({ code: '0', data: 1 })).toBe(false);
+    expect(isMarsunEnvelope({ summary: 'ok' })).toBe(false);
+  });
+});
 
 describe('createMarsunRequest', () => {
   let originalLocation: typeof window.location;
@@ -173,6 +186,58 @@ describe('createMarsunRequest', () => {
     mock.onGet('/export').reply(200, blob, { 'content-type': 'text/plain' });
     const out = await client.request({ url: '/export', responseType: 'blob' });
     expect(out).toBeInstanceOf(Blob);
+    mock.restore();
+  });
+
+  it('{ code: 200, results } 视为扁平透传，不当信封误判', async () => {
+    const { client, mock, showError } = setup();
+    mock.onGet('/kne-like').reply(200, { code: 200, results: [1] });
+    const res = await client.get('/kne-like');
+    expect(res).toEqual({ code: 200, results: [1] });
+    expect(showError).not.toHaveBeenCalled();
+    mock.restore();
+  });
+
+  it('仅 { code: 500 } 仍当信封 reject', async () => {
+    const { client, mock, showError } = setup();
+    mock.onGet('/x').reply(200, { code: 500 });
+    await expect(client.get('/x')).rejects.toThrow('请求失败');
+    expect(showError).toHaveBeenCalled();
+    mock.restore();
+  });
+
+  it('isPublicUrl：401 不触发 onUnauthorized', async () => {
+    const { client, mock, onUnauthorized } = setup({
+      isPublicUrl: (url) => url.includes('/auth/'),
+    });
+    mock.onGet('/api/auth/session').reply(401, { message: '未登录' });
+    await expect(client.get('/api/auth/session')).rejects.toThrow();
+    expect(onUnauthorized).not.toHaveBeenCalled();
+    mock.restore();
+  });
+
+  it('FormData 不强制 application/json', async () => {
+    const { client, mock } = setup();
+    let contentType: unknown;
+    mock.onPost('/upload').reply((config) => {
+      const headers = config.headers as Record<string, string> | undefined;
+      contentType = headers?.['Content-Type'] ?? headers?.['content-type'];
+      return [200, { code: 0, data: true }];
+    });
+    const fd = new FormData();
+    fd.append('f', '1');
+    await client.post('/upload', fd);
+    expect(String(contentType ?? '')).not.toContain('application/json');
+    mock.restore();
+  });
+
+  it('AbortSignal：abort 后 reject', async () => {
+    const { client, mock } = setup();
+    mock.onGet('/slow').reply(() => new Promise(() => undefined));
+    const ac = new AbortController();
+    const pending = client.get('/slow', { signal: ac.signal });
+    ac.abort();
+    await expect(pending).rejects.toThrow();
     mock.restore();
   });
 });
