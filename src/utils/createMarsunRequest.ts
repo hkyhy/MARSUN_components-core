@@ -7,6 +7,12 @@ export interface MarsunApiResponse<T = unknown> {
   data?: T;
 }
 
+export interface MarsunRequestErrorResponse {
+  data?: unknown;
+  status?: number;
+  config?: unknown;
+}
+
 export interface CreateMarsunRequestOptions {
   baseURL?: string;
   timeout?: number;
@@ -18,6 +24,8 @@ export interface CreateMarsunRequestOptions {
   isPublicUrl?: (url: string) => boolean;
   isOnLoginPage?: () => boolean;
   showError?: (msg: string) => void;
+  /** 自定义错误信息提取；默认按 message/detail/msg 顺序兜底 */
+  getResponseError?: (response: MarsunRequestErrorResponse | undefined) => string;
 }
 
 /** 与 axios 实例兼容的请求客户端（避免对外暴露 axios 类型，消除多副本 axios 的类型冲突） */
@@ -48,7 +56,14 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
     isPublicUrl = () => false,
     isOnLoginPage = () => false,
     showError = (msg) => message.error(msg),
+    getResponseError,
   } = options;
+
+  const extractError = (response: MarsunRequestErrorResponse | undefined): string => {
+    if (getResponseError) return getResponseError(response);
+    const data = response?.data as { message?: string; detail?: string; msg?: string } | undefined;
+    return data?.message || data?.detail || data?.msg || '请求失败';
+  };
 
   const request = axios.create({
     baseURL,
@@ -72,14 +87,23 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
 
   request.interceptors.response.use(
     (response) => {
-      const data = response.data as MarsunApiResponse;
-      if (data.code !== successCode) {
-        if (!getSkipHandler(response.config.headers)) {
-          showError(data.message || '请求失败');
-        }
-        return Promise.reject(new Error(data.message || '请求失败'));
+      const responseType = (response.config as { responseType?: string } | undefined)?.responseType;
+      if (responseType === 'blob' || responseType === 'arraybuffer') {
+        return response.data;
       }
-      return response.data;
+      const data = response.data;
+      const isEnvelope = data && typeof data === 'object' && 'code' in data;
+      if (!isEnvelope) {
+        return data;
+      }
+      const envelope = data as MarsunApiResponse;
+      if (envelope.code !== successCode) {
+        if (!getSkipHandler(response.config.headers)) {
+          showError(envelope.message || '请求失败');
+        }
+        return Promise.reject(new Error(envelope.message || '请求失败'));
+      }
+      return data;
     },
     (error) => {
       const url = error.config?.url ?? '';
@@ -90,11 +114,9 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
           onUnauthorized?.();
         }
       } else if (!skipHandler) {
-        const msg = error.response?.data?.message || error.message || '请求失败';
-        showError(msg);
+        showError(extractError(error.response));
       }
-      const msg = error.response?.data?.message || error.message || '请求失败';
-      return Promise.reject(new Error(msg));
+      return Promise.reject(new Error(extractError(error.response)));
     },
   );
 

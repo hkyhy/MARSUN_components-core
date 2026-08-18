@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.110
+  next_task_id: P6.3.111
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1651,3 +1651,20 @@ tasks:
     归并原 ephemeral（已 Cancelled）：P6-1419 · 1422
     Commits: 51ef877 · 4f98780
     package.json exports L2；Icons tree-shake；chore(release) v0.1.53
+
+- id: P6.3.110
+  milestone: P6.3
+  name: createMarsunRequest HTTP 层统一（信封/扁平/blob/getResponseError）与发版 0.1.58
+  status: 进行中
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-08-18"
+  target_date: "2026-08-18"
+  tags: [frontend, components, http, release]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3 · Related: S3.3.前端工程化 · Agent_QualityAnalysis
+    createMarsunRequest 增强：信封检测 + 扁平 JSON 透传 + blob/arraybuffer 透传 + getResponseError；
+    新增 12 测试用例（axios-mock-adapter）；导出 MarsunRequestErrorResponse；
+    为 Agent_QualityAnalysis 迁移到 core 客户端铺路；发版 npm 0.1.58

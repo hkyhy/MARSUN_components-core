@@ -72,6 +72,7 @@ export type {
   MarsunApiResponse,
   CreateMarsunRequestOptions,
   MarsunRequestClient,
+  MarsunRequestErrorResponse,
 } from './utils/createMarsunRequest';
 export type {
   UserRolePermissions,

@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.57",
+  "version": "0.1.58",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -117,6 +117,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "antd": "^6.0.0",
     "axios": "^1.7.7",
+    "axios-mock-adapter": "^2.1.0",
     "dayjs": "^1.11.13",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^9.1.2",
