@@ -26,6 +26,8 @@ export interface CreateMarsunRequestOptions {
   showError?: (msg: string) => void;
   /** 自定义错误信息提取；默认按 message/detail/msg 顺序兜底 */
   getResponseError?: (response: MarsunRequestErrorResponse | undefined) => string;
+  /** 信封 code != successCode 时不 reject、不 showError，原样返回信封由调用方自判（用于复用既有 unwrap 逻辑的接入方） */
+  passThroughEnvelopeError?: boolean;
 }
 
 /** 与 axios 实例兼容的请求客户端（避免对外暴露 axios 类型，消除多副本 axios 的类型冲突） */
@@ -57,6 +59,7 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
     isOnLoginPage = () => false,
     showError = (msg) => message.error(msg),
     getResponseError,
+    passThroughEnvelopeError = false,
   } = options;
 
   const extractError = (response: MarsunRequestErrorResponse | undefined): string => {
@@ -98,6 +101,9 @@ export function createMarsunRequest(options: CreateMarsunRequestOptions = {}): M
       }
       const envelope = data as MarsunApiResponse;
       if (envelope.code !== successCode) {
+        if (passThroughEnvelopeError) {
+          return data;
+        }
         if (!getSkipHandler(response.config.headers)) {
           showError(envelope.message || '请求失败');
         }

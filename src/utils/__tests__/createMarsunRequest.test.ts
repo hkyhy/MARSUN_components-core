@@ -154,4 +154,25 @@ describe('createMarsunRequest', () => {
     expect(showError).not.toHaveBeenCalled();
     mock.restore();
   });
+
+  it('passThroughEnvelopeError：code != 0 时不 reject 不 showError，原样返回信封', async () => {
+    const { client, mock, showError } = setup({ passThroughEnvelopeError: true });
+    mock.onGet('/x').reply(200, { code: 500, message: '业务错误', data: null });
+    const res = await client.get('/x');
+    expect(res).toEqual({ code: 500, message: '业务错误', data: null });
+    expect(showError).not.toHaveBeenCalled();
+    mock.restore();
+  });
+
+  it('passThroughEnvelopeError 不影响 blob 透传与扁平透传', async () => {
+    const { client, mock } = setup({ passThroughEnvelopeError: true });
+    mock.onGet('/flat').reply(200, { ok: 1 });
+    const flat = await client.get('/flat');
+    expect(flat).toEqual({ ok: 1 });
+    const blob = new Blob(['b'], { type: 'text/plain' });
+    mock.onGet('/export').reply(200, blob, { 'content-type': 'text/plain' });
+    const out = await client.request({ url: '/export', responseType: 'blob' });
+    expect(out).toBeInstanceOf(Blob);
+    mock.restore();
+  });
 });
