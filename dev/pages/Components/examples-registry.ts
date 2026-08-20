@@ -1682,7 +1682,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   '/components/layout': {
     title: 'Layout 页面布局',
     description:
-      'AgentAppShell 业务壳；PageHeaderLayout、ModulePageShell 与 PageSpin；App 根节点须包裹 PageShellProvider。',
+      'AgentAppShell 业务壳；PageHeaderLayout、ModulePageShell、PageSpin、ContentCard、FullscreenBox；App 根须包裹 PageShellProvider。',
     examples: [
       {
         title: 'AgentAppShell',
@@ -1710,6 +1710,24 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: '主内容卡片；模块 workarea 用 flat / noPadding',
         component: React.lazy(() => import('@/components/Layout/examples/ContentCardBasicDemo')),
         sourcePath: () => import('@/components/Layout/examples/ContentCardBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'FullscreenBox 图标开关',
+        description: '操作区图标铺满视口（预警详情）；Esc 退出',
+        component: React.lazy(() => import('@/components/Layout/examples/FullscreenBoxBasicDemo')),
+        sourcePath: () =>
+          import('@/components/Layout/examples/FullscreenBoxBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'FullscreenBox 标题开关',
+        description: '标题+图标同一按钮（对比矩阵）',
+        component: React.lazy(
+          () => import('@/components/Layout/examples/FullscreenBoxTitleToggleDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Layout/examples/FullscreenBoxTitleToggleDemo/index.tsx?raw'),
         block: true,
       },
     ],
@@ -1787,6 +1805,35 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'noPadding', desc: '去掉内边距', type: 'boolean' },
           { prop: 'flat', desc: '无 border/shadow/radius，用于模块 workarea', type: 'boolean' },
         ],
+      },
+      {
+        componentName: 'FullscreenBoxProps',
+        rows: [
+          { prop: 'children', desc: '面板内容', type: 'React.ReactNode', required: true },
+          { prop: 'className', desc: '附加类名', type: 'string' },
+          { prop: 'fullscreenClassName', desc: '仅全屏时附加类名', type: 'string' },
+          { prop: 'fullscreen', desc: '是否铺满视口（受控）', type: 'boolean', required: true },
+          {
+            prop: 'onFullscreenChange',
+            desc: '全屏变化（Esc 退出时回调 false）',
+            type: '(open: boolean) => void',
+          },
+          { prop: 'exitOnEsc', desc: 'Esc 退出，默认 true', type: 'boolean' },
+          { prop: 'lockScroll', desc: '全屏时锁定 body 滚动，默认 true', type: 'boolean' },
+        ],
+      },
+      {
+        componentName: 'FullscreenToggleProps',
+        rows: [
+          { prop: 'fullscreen', desc: '当前是否全屏', type: 'boolean', required: true },
+          { prop: 'onToggle', desc: '点击切换', type: '() => void', required: true },
+          { prop: 'className', desc: '附加类名', type: 'string' },
+          { prop: 'children', desc: '图标旁标题；不传则为纯图标按钮', type: 'React.ReactNode' },
+        ],
+      },
+      {
+        componentName: 'useFullscreen',
+        rows: [{ prop: 'defaultFullscreen', desc: '初始是否全屏，默认 false', type: 'boolean' }],
       },
       {
         componentName: 'usePageShellLoading',
@@ -2540,7 +2587,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
     examples: [
       {
         title: '基础用法',
-        description: 'hover 触发元素展示 DescriptionItem 详情；第三个为 note 形态（标题+描述）',
+        description: 'hover 触发元素展示 DescriptionItem 详情；含 note 形态与 bordered 表格形态',
         component: React.lazy(() => import('@/components/TooltipInfo/examples/TooltipInfoDemo')),
         sourcePath: () => import('@/components/TooltipInfo/examples/TooltipInfoDemo/index.tsx?raw'),
         block: true,
@@ -2577,6 +2624,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             desc: 'CommonDescriptions 列数（仅 descriptions 形态）',
             type: 'number',
             defaultVal: '1',
+          },
+          {
+            prop: 'bordered',
+            desc: 'descriptions 是否灰底表格；默认 false（气泡内 dl）；true 对齐页面 CommonDescriptions',
+            type: 'boolean',
+            defaultVal: 'false',
           },
           {
             prop: 'hidden',
