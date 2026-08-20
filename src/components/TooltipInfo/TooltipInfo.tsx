@@ -27,6 +27,12 @@ export interface TooltipInfoProps extends Pick<
   children: React.ReactNode;
   /** CommonDescriptions 列数，默认 1（仅 descriptions 形态） */
   column?: number;
+  /**
+   * descriptions 是否带边框表格样式。
+   * 默认 false（气泡内用 dl，避免 table 在 Tooltip 里宽度塌陷）；
+   * 需要 CommonDescriptions 默认「灰底标签格子」时传 true，并建议设 minWidth/maxWidth。
+   */
+  bordered?: boolean;
   /** 为 true 时不展示 Tooltip；descriptions 形态下 content 为空也不展示 */
   hidden?: boolean;
   /** 气泡最小宽度，默认 descriptions 220 / note 240 */
@@ -46,6 +52,7 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
   note,
   children,
   column = 1,
+  bordered = false,
   hidden = false,
   minWidth,
   maxWidth,
@@ -70,9 +77,9 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
       <div className="tooltip-info-note-desc">{note!.description}</div>
     </div>
   ) : (
-    // bordered=false：antd Descriptions 改用 dl 布局而非 table，避免 table-layout:fixed
-    // 在 max-content 气泡根下循环宽度塌陷，长文才能在 maxWidth 处正常换行
-    <CommonDescriptions content={content!} column={column} size="small" bordered={false} />
+    // 默认 bordered=false：dl 布局，避免 table-layout:fixed 在气泡内宽度塌陷。
+    // 显式 bordered 时用表格灰底标签（对齐页面内 CommonDescriptions 默认观感）。
+    <CommonDescriptions content={content!} column={column} size="small" bordered={bordered} />
   );
 
   return (

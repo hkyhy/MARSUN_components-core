@@ -35,6 +35,22 @@ const TooltipInfoDemo: React.FC = () => (
         考核对照 G-JZ ⓘ
       </span>
     </TooltipInfo>
+    <TooltipInfo
+      bordered
+      minWidth={280}
+      maxWidth={380}
+      content={[
+        { label: '说明', value: '同指标跨分厂或跨时期对比' },
+        { label: '工具名', value: '跨厂品种对比' },
+        { label: '工具英文名', value: 'compare_varieties' },
+      ]}
+    >
+      <span
+        className={classNames('tooltip-info-demo-container', styles['tooltip-info-demo-container'])}
+      >
+        bordered 表格 ⓘ
+      </span>
+    </TooltipInfo>
   </div>
 );
 

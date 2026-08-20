@@ -49,4 +49,23 @@ describe('TooltipInfo', () => {
     expect(screen.getByText('考核对照 G-JZ（只读）')).toBeInTheDocument();
     expect(screen.getByText('data-service 考核标准六表')).toBeInTheDocument();
   });
+
+  it('bordered descriptions 使用表格布局', () => {
+    render(
+      <TooltipInfo
+        open
+        bordered
+        minWidth={280}
+        maxWidth={380}
+        content={[{ label: '工具名', value: '跨厂品种对比' }]}
+      >
+        <span>触发</span>
+      </TooltipInfo>,
+    );
+    expect(screen.getByText('工具名')).toBeInTheDocument();
+    expect(screen.getByText('跨厂品种对比')).toBeInTheDocument();
+    const root = document.body.querySelector('.ant-descriptions');
+    expect(root).toBeTruthy();
+    expect(root?.className).toContain('ant-descriptions-bordered');
+  });
 });

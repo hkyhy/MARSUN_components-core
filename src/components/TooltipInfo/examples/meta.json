@@ -4,7 +4,7 @@
   "examples": [
     {
       "title": "基础用法",
-      "description": "hover 触发元素展示 DescriptionItem 详情；第三个为 note 形态（标题+描述）",
+      "description": "hover 触发元素展示 DescriptionItem 详情；含 note 形态与 bordered 表格形态",
       "component": "@/components/TooltipInfo/examples/TooltipInfoDemo",
       "sourcePath": "@/components/TooltipInfo/examples/TooltipInfoDemo/index.tsx",
       "block": true
@@ -41,6 +41,12 @@
           "desc": "CommonDescriptions 列数（仅 descriptions 形态）",
           "type": "number",
           "defaultVal": "1"
+        },
+        {
+          "prop": "bordered",
+          "desc": "descriptions 是否灰底表格；默认 false（气泡内 dl）；true 对齐页面 CommonDescriptions",
+          "type": "boolean",
+          "defaultVal": "false"
         },
         {
           "prop": "hidden",
