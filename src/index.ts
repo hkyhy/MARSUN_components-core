@@ -100,6 +100,8 @@ export {
 } from './utils/department/departmentScope';
 export type { DepartmentTreeNode, FlatDepartment } from './utils/department/types';
 export {
+  EMPLOYEE_ID_MAX_LENGTH,
+  EMPLOYEE_ID_PATTERN,
   EMPLOYEE_ID_SIX_DIGIT_PATTERN,
   EMPLOYEE_ID_FORMAT_MESSAGE,
   employeeIdFormatRule,

@@ -22,10 +22,17 @@ function mapPreviewError(err: unknown, kind: string): string {
   if (kind === 'excel' && /anchors/i.test(raw)) {
     return '该 Excel 含图表/绘图等对象，当前预览引擎无法解析，请下载后用本地软件打开';
   }
+  if (kind === 'word' && /ole|compound|docfile|not a valid/i.test(raw)) {
+    return '旧版 Word（.doc）暂无法排版预览，请下载后用 Word 打开';
+  }
   if (raw && !/^Cannot read properties/i.test(raw) && !/^undefined/i.test(raw)) {
     return raw;
   }
-  return kind === 'excel' ? 'Excel 预览失败，请下载后查看' : '预览加载失败';
+  return kind === 'excel'
+    ? 'Excel 预览失败，请下载后查看'
+    : kind === 'word'
+      ? 'Word 预览失败，请下载后查看'
+      : '预览加载失败';
 }
 
 /** exceljs/@js-preview 对部分含 drawing/chart 的 xlsx 会在 reconcile 时读 anchors 崩溃；去掉绘图部件后重试。 */
@@ -117,15 +124,56 @@ async function renderExcel(container: HTMLElement, data: ArrayBuffer) {
   }
 }
 
+function isZipBuffer(data: ArrayBuffer): boolean {
+  const u = new Uint8Array(data);
+  return u.length >= 2 && u[0] === 0x50 && u[1] === 0x4b; // PK
+}
+
+function isOleBuffer(data: ArrayBuffer): boolean {
+  const u = new Uint8Array(data);
+  return u.length >= 4 && u[0] === 0xd0 && u[1] === 0xcf && u[2] === 0x11 && u[3] === 0xe0;
+}
+
+/** 服务端把旧版 .doc 转成 HTML 后，预览响应不再是 OLE */
+function isLikelyHtmlBuffer(data: ArrayBuffer): boolean {
+  const u = new Uint8Array(data.byteLength > 64 ? data.slice(0, 64) : data);
+  let offset = 0;
+  if (u.length >= 3 && u[0] === 0xef && u[1] === 0xbb && u[2] === 0xbf) offset = 3;
+  const head = new TextDecoder('utf-8').decode(u.subarray(offset)).trimStart().toLowerCase();
+  return (
+    head.startsWith('<!doctype') ||
+    head.startsWith('<html') ||
+    head.startsWith('<pre') ||
+    head.startsWith('<div') ||
+    head.startsWith('<article')
+  );
+}
+
 async function renderWord(container: HTMLElement, data: ArrayBuffer) {
-  const { renderAsync } = await import('docx-preview');
-  const blob = new Blob([data]);
-  await renderAsync(blob, container, container, {
-    inWrapper: true,
-    ignoreWidth: false,
-    ignoreHeight: false,
-    breakPages: true,
-  });
+  // 误命名为 .doc 的真实 docx（ZIP）仍走 docx-preview
+  if (isZipBuffer(data)) {
+    const { renderAsync } = await import('docx-preview');
+    const blob = new Blob([data]);
+    await renderAsync(blob, container, container, {
+      inWrapper: true,
+      ignoreWidth: false,
+      ignoreHeight: false,
+      breakPages: true,
+    });
+    return;
+  }
+
+  // Assets 等对旧版 .doc 预览返回的 HTML
+  if (isLikelyHtmlBuffer(data)) {
+    container.innerHTML = new TextDecoder('utf-8').decode(data);
+    return;
+  }
+
+  if (isOleBuffer(data)) {
+    throw new Error('旧版 Word（.doc）暂无法排版预览，请下载后用 Word 打开');
+  }
+
+  throw new Error('无法识别的 Word 文件格式，请下载后查看');
 }
 
 async function renderPpt(container: HTMLElement, data: ArrayBuffer, width: number) {
