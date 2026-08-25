@@ -1722,7 +1722,8 @@ tasks:
 - id: P6.3.114
   milestone: P6.3
   name: FilePreview Word OLE/HTML 与工号格式放宽
-  status: 进行中
+  status: 已完成
+  plane_issue_id: 107c2642-62f4-41e2-8964-3963bc77b061
   priority: P0
   kind: feat
   owner: 黄金芳
