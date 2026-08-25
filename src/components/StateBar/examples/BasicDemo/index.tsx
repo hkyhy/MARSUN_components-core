@@ -13,6 +13,13 @@ const STATE_OPTIONS = [
         value: '尚未完成根因定位与处置的预警；按 SLA 倒序排列，超时置顶。',
       },
     ],
+    actions: [
+      {
+        iconType: 'Info' as const,
+        label: 'actions 示例（与 info 可并存）',
+        onClick: () => undefined,
+      },
+    ],
   },
   { key: 'done', tab: '已完成' },
 ];

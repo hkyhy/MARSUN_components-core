@@ -49,4 +49,25 @@ describe('StateBar', () => {
     );
     expect(container.querySelector('.marsun-state-bar-info')).not.toBeInTheDocument();
   });
+
+  it('renders action icons when actions provided', () => {
+    const onAction = vi.fn();
+    const { container } = render(
+      <StateBar
+        activeKey="a"
+        stateOption={[
+          { key: 'a', tab: '甲' },
+          {
+            key: 'b',
+            tab: '乙',
+            actions: [{ iconType: 'Pencil', label: '编辑', onClick: onAction }],
+          },
+        ]}
+      />,
+    );
+    const action = container.querySelector('.marsun-state-bar-action');
+    expect(action).toBeInTheDocument();
+    fireEvent.click(action!);
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
 });

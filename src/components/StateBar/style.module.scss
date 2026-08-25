@@ -28,18 +28,42 @@
   gap: 4px;
 }
 
-.state-bar-info {
+.state-bar-info,
+.state-bar-action {
   display: inline-flex;
   align-items: center;
   color: var(--font-color-grey-1, #8c8c8c);
   cursor: pointer;
+  line-height: 1;
+  transition:
+    color 0.15s ease,
+    opacity 0.15s ease;
+}
 
-  &:hover {
-    color: var(--primary-color, #1677ff);
-  }
+.state-bar-action-disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .tab-tab-control {
+  :global {
+    .ant-tabs-tab {
+      &:hover:not(.ant-tabs-tab-disabled) {
+        .marsun-state-bar-info,
+        .marsun-state-bar-action:not(.marsun-state-bar-action-disabled) {
+          color: var(--primary-color, #1677ff);
+        }
+      }
+
+      &.ant-tabs-tab-active {
+        .marsun-state-bar-info,
+        .marsun-state-bar-action {
+          color: var(--primary-color, #1677ff);
+        }
+      }
+    }
+  }
+
   &:global(.ant-tabs.ant-tabs-small > .ant-tabs-nav .ant-tabs-tab + .ant-tabs-tab) {
     margin-left: 16px;
   }
@@ -55,20 +79,26 @@
       margin: 0;
 
       &::before {
-        border-bottom: none;
+        border-bottom: none !important;
       }
 
       .ant-tabs-ink-bar {
-        display: none;
+        display: none !important;
       }
 
       .ant-tabs-nav-list {
         align-items: center;
         position: relative;
+        gap: 4px;
+        padding: 2px;
+        box-sizing: border-box;
+        background: var(--bg-color-grey-2, #f5f5f5);
+        border-radius: var(--radius-sm, 8px);
       }
 
       .ant-tabs-nav-more {
-        padding: 0 16px;
+        padding: 0 12px;
+        box-sizing: border-box;
       }
     }
 
@@ -77,22 +107,65 @@
     }
 
     .ant-tabs-tab {
-      height: 24px;
+      box-sizing: border-box;
+      height: 28px;
+      margin: 0 !important;
+      padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm, 6px);
+      background: transparent;
+      transition:
+        background 0.15s ease,
+        color 0.15s ease;
 
+      .ant-tabs-tab-btn {
+        color: var(--font-color-grey, #475569);
+      }
+
+      /* 图1 hover（未选中）：icon 跟主色 */
+      &:hover:not(.ant-tabs-tab-active):not(.ant-tabs-tab-disabled) {
+        background: var(--bg-color-white, #fff);
+
+        .marsun-state-bar-info,
+        .marsun-state-bar-action:not(.marsun-state-bar-action-disabled) {
+          color: var(--primary-color, #1677ff);
+        }
+      }
+
+      /* 图2 选中反白：文字与 icon 均为白；hover 不再抢成主色 */
       &.ant-tabs-tab-active {
-        background: var(--primary-color-1);
-        border-radius: var(--radius-default, 2px);
+        background: var(--primary-color, #1677ff);
+        border-color: var(--primary-color, #1677ff);
+        box-shadow: none;
+
+        .ant-tabs-tab-btn {
+          color: var(--bg-color-white, #fff);
+          font-weight: 500;
+        }
+
+        .marsun-state-bar-info,
+        .marsun-state-bar-action {
+          color: var(--bg-color-white, #fff);
+
+          &:hover {
+            color: var(--bg-color-white, #fff);
+            opacity: 0.9;
+          }
+        }
       }
     }
   }
 
   &:global(.ant-tabs .ant-tabs-tab) {
     padding: 0 12px;
+    box-sizing: border-box;
   }
 
   &:global(.ant-tabs.ant-tabs-small > .ant-tabs-nav .ant-tabs-tab) {
+    height: 24px;
     font-size: 12px;
     padding: 0 8px;
+    box-sizing: border-box;
   }
 }
 
@@ -172,6 +245,14 @@
         transition: none;
       }
 
+      /* hover（未选中）：icon 主色 */
+      &:hover:not(.ant-tabs-tab-active):not(.ant-tabs-tab-disabled) {
+        .marsun-state-bar-info,
+        .marsun-state-bar-action:not(.marsun-state-bar-action-disabled) {
+          color: var(--primary-color, #1677ff);
+        }
+      }
+
       &.ant-tabs-tab-active {
         background: var(--primary-color);
         border-radius: var(--radius-default, 2px);
@@ -183,6 +264,17 @@
 
         .ant-tabs-tab-btn {
           color: var(--bg-color-white);
+        }
+
+        /* 选中反白：icon 白字，hover 不再抢成主色 */
+        .marsun-state-bar-info,
+        .marsun-state-bar-action {
+          color: var(--bg-color-white, #fff);
+
+          &:hover {
+            color: var(--bg-color-white, #fff);
+            opacity: 0.9;
+          }
         }
       }
 
