@@ -40,6 +40,7 @@ export type {
   TableListProps,
   MultiFieldProps,
 } from './kneFormInfo';
+export { normalizeLabelTips, withNormalizedLabelTips } from './normalizeLabelTips';
 
 /** @kne/react-form — 引擎 API；默认组件为 ReactForm（勿与 FormInfo 的 Form 混淆） */
 export {

@@ -10,6 +10,13 @@
       "block": true
     },
     {
+      "title": "labelTips 字符串自动 Info",
+      "description": "labelTips=\"短句\" 由 core 包成 Info+TooltipInfo；自定义 ReactNode 透传；必填仍用 rule=REQ",
+      "component": "@/components/Form/examples/FormInfoLabelTipsDemo",
+      "sourcePath": "@/components/Form/examples/FormInfoLabelTipsDemo/index.tsx",
+      "block": true
+    },
+    {
       "title": "弹窗 FormModal",
       "description": "业务标准：FormModal + formProps.onSubmit，编辑场景自动关闭",
       "component": "@/components/Form/examples/FormInfoModalDemo",

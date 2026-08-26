@@ -2,6 +2,8 @@
  * 经 core 再导出 @kne/form-info（业务唯一入口）。
  * 布局组件来自 @kne/form-info；字段组件须从 @kne/react-form-antd 具名导入
  * （form-info 的 `export *` 在 Vite 下经 namespace 读取时常为 undefined）。
+ *
+ * 字段 `labelTips`：字符串由 {@link withNormalizedLabelTips} 统一包成 Info+TooltipInfo。
  */
 import '@kne/form-info/dist/index.css';
 import FormInfoBase, {
@@ -34,10 +36,13 @@ import {
   TreeSelect as KneTreeSelect,
 } from '@kne/react-form-antd';
 import type { ComponentType, FC, ReactNode } from 'react';
+import { withNormalizedLabelTips } from './normalizeLabelTips';
 
 type FieldProps = {
   name: string;
   label?: ReactNode;
+  /** 字符串自动变 Info 悬停；也可传 ReactNode / (props)=>ReactNode 自定义 */
+  labelTips?: ReactNode | ((props: FieldProps) => ReactNode);
   rule?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -86,13 +91,34 @@ export const TableList = KneTableList as FC<
 >;
 export const MultiField = KneMultiField as FC<MultiFieldProps>;
 
-export const Input = KneInput as ComponentType<FieldProps>;
-export const TextArea = KneTextArea as ComponentType<FieldProps>;
-export const Select = KneSelect as ComponentType<FieldProps>;
-export const TreeSelect = KneTreeSelect as ComponentType<FieldProps>;
-export const InputNumber = KneInputNumber as ComponentType<FieldProps>;
-export const Switch = KneSwitch as ComponentType<FieldProps>;
-export const RadioGroup = KneRadioGroup as ComponentType<FieldProps>;
+type KneInputType = ComponentType<FieldProps> & { Password: ComponentType<FieldProps> };
+const KneInputTyped = KneInput as unknown as KneInputType;
+const InputWrapped = withNormalizedLabelTips(KneInputTyped);
+export const Input = Object.assign(InputWrapped, {
+  Password: withNormalizedLabelTips(KneInputTyped.Password),
+}) as KneInputType;
+
+export const TextArea = withNormalizedLabelTips(
+  KneTextArea as ComponentType<FieldProps>,
+) as ComponentType<FieldProps>;
+export const Select = withNormalizedLabelTips(
+  KneSelect as ComponentType<FieldProps>,
+) as ComponentType<FieldProps>;
+export const TreeSelect = withNormalizedLabelTips(
+  KneTreeSelect as ComponentType<FieldProps>,
+) as ComponentType<FieldProps>;
+export const InputNumber = withNormalizedLabelTips(
+  KneInputNumber as ComponentType<FieldProps>,
+) as ComponentType<FieldProps>;
+export const Switch = withNormalizedLabelTips(
+  KneSwitch as ComponentType<FieldProps>,
+) as ComponentType<FieldProps>;
+export const RadioGroup = withNormalizedLabelTips(
+  KneRadioGroup as ComponentType<FieldProps>,
+) as ComponentType<FieldProps>;
+
 export const SubmitButton = KneSubmitButton as ComponentType<ButtonProps>;
 export const ResetButton = KneResetButton as ComponentType<ButtonProps>;
 export const CancelButton = KneCancelButton as ComponentType<ButtonProps>;
+
+export { normalizeLabelTips, withNormalizedLabelTips } from './normalizeLabelTips';

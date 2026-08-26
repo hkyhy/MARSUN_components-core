@@ -39,6 +39,7 @@ const FormInfoBaseDemo: React.FC = () => {
             label="所属部门"
             rule="REQ"
             placeholder="例如：技术研发部"
+            labelTips="请输入所属部门"
           />,
           <Input
             key="position"
