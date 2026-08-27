@@ -20,7 +20,7 @@ const INITIAL: OrgTreeNode[] = [
   },
 ];
 
-/** OrgTree：默认展开 + 节点操作 */
+/** OrgTree：默认展开一级 + 节点操作 */
 const BasicDemo: React.FC = () => {
   const [nodes] = useState(INITIAL);
 
@@ -28,6 +28,7 @@ const BasicDemo: React.FC = () => {
     <OrgTree
       nodes={nodes}
       editable
+      defaultExpandDepth={2}
       onAdd={(parentId) => message.info(`添加子节点 parent=${parentId}`)}
       onEdit={(n) => message.info(`编辑 ${n.name}`)}
       onDelete={async (n) => {

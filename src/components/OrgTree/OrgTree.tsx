@@ -20,6 +20,13 @@ export type OrgTreeProps = {
   /** 展示节点内增删改操作 */
   editable?: boolean;
   className?: string;
+  /**
+   * 初始展开深度：0=全部折叠；1=展开根（露出一级子，默认）；
+   * 传很大的数或 Infinity ≈ 全展开（仅小树建议）。
+   */
+  defaultExpandDepth?: number;
+  /** 虚拟列表可视高度（px）；节点多时默认开启 */
+  virtualHeight?: number | false;
   /** 受控选中（点选节点，如右侧岗位面板） */
   selectedKeys?: Key[];
   onSelect?: (node: { id: string; name: string; parentId: string | null } | null) => void;
@@ -34,13 +41,28 @@ export type OrgTreeProps = {
   deleteOkType?: 'primary' | 'danger';
 };
 
-function collectAllKeys(nodes: OrgTreeNode[]): string[] {
+/** 收集需展开的 key：depth=1 只展开根，露出一级子节点 */
+function collectExpandedKeys(nodes: OrgTreeNode[], depth: number): string[] {
+  if (depth <= 0 || !nodes.length) return [];
   const keys: string[] = [];
   for (const n of nodes) {
-    keys.push(n.id);
-    if (n.children?.length) keys.push(...collectAllKeys(n.children));
+    if (n.children?.length) {
+      keys.push(n.id);
+      if (depth > 1) {
+        keys.push(...collectExpandedKeys(n.children, depth - 1));
+      }
+    }
   }
   return keys;
+}
+
+function countNodes(nodes: OrgTreeNode[]): number {
+  let n = 0;
+  for (const node of nodes) {
+    n += 1;
+    if (node.children?.length) n += countNodes(node.children);
+  }
+  return n;
 }
 
 function findOrgNode(
@@ -60,14 +82,16 @@ function findOrgNode(
 }
 
 /**
- * 组织树（对齐 Assets 组织架构行为）：默认展开、节点 hover 增删改。
- * 纯 UI，无业务 API。
+ * 组织树（对齐 Assets 组织架构行为）：可配置展开深度、节点 hover 增删改。
+ * 纯 UI，无业务 API。大树勿默认全展开（会卡死 DOM）。
  */
 const OrgTree: React.FC<OrgTreeProps> = ({
   nodes,
   loading = false,
   editable = false,
   className,
+  defaultExpandDepth = 1,
+  virtualHeight,
   selectedKeys,
   onSelect,
   onAdd,
@@ -77,104 +101,112 @@ const OrgTree: React.FC<OrgTreeProps> = ({
   deleteOkText = '删除',
   deleteOkType = 'danger',
 }) => {
-  const allKeys = useMemo(() => collectAllKeys(nodes), [nodes]);
-  const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
+  const nodeCount = useMemo(() => countNodes(nodes), [nodes]);
+  const initialExpanded = useMemo(
+    () => collectExpandedKeys(nodes, defaultExpandDepth),
+    [nodes, defaultExpandDepth],
+  );
+  const [expandedKeys, setExpandedKeys] = useState<Key[]>(initialExpanded);
 
   useEffect(() => {
-    setExpandedKeys(allKeys);
-  }, [allKeys]);
+    setExpandedKeys(initialExpanded);
+  }, [initialExpanded]);
 
-  const buildTreeNodes = (list: OrgTreeNode[]): DataNode[] =>
-    list.map((node) => ({
-      key: node.id,
-      title: (
-        <div className={classNames('marsun-org-tree-row', styles['marsun-org-tree-row'])}>
-          <Tooltip
-            title={
-              node.nameExtra ? (
-                <>
-                  {node.name}
-                  {node.nameExtra}
-                </>
-              ) : (
-                node.name
-              )
-            }
-          >
-            <span className={classNames('marsun-org-tree-name', styles['marsun-org-tree-name'])}>
-              {node.name}
-              {node.nameExtra ? (
-                <span
-                  className={classNames('marsun-org-tree-extra', styles['marsun-org-tree-extra'])}
-                >
-                  {node.nameExtra}
-                </span>
-              ) : null}
-            </span>
-          </Tooltip>
-          {editable ? (
-            <Space
-              size={0}
-              className={classNames('marsun-org-tree-actions', styles['marsun-org-tree-actions'])}
+  const treeData = useMemo(() => {
+    const buildTreeNodes = (list: OrgTreeNode[]): DataNode[] =>
+      list.map((node) => ({
+        key: node.id,
+        title: (
+          <div className={classNames('marsun-org-tree-row', styles['marsun-org-tree-row'])}>
+            <Tooltip
+              title={
+                node.nameExtra ? (
+                  <>
+                    {node.name}
+                    {node.nameExtra}
+                  </>
+                ) : (
+                  node.name
+                )
+              }
             >
-              {onAdd ? (
-                <Button
-                  type="text"
-                  size="small"
-                  aria-label="添加子节点"
-                  icon={<Plus size={14} />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAdd(node.id);
-                  }}
-                />
-              ) : null}
-              {onEdit ? (
-                <Button
-                  type="text"
-                  size="small"
-                  aria-label="编辑"
-                  icon={<Pencil size={14} />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit({
-                      id: node.id,
-                      name: node.name,
-                      parentId: node.parentId ?? null,
-                    });
-                  }}
-                />
-              ) : null}
-              {onDelete ? (
-                <Popconfirm
-                  title={deleteConfirmTitle}
-                  okText={deleteOkText}
-                  okType={deleteOkType}
-                  cancelText="取消"
-                  onConfirm={(e) => {
-                    e?.stopPropagation();
-                    return onDelete({ id: node.id, name: node.name });
-                  }}
-                  onCancel={(e) => e?.stopPropagation()}
-                >
+              <span className={classNames('marsun-org-tree-name', styles['marsun-org-tree-name'])}>
+                {node.name}
+                {node.nameExtra ? (
+                  <span
+                    className={classNames('marsun-org-tree-extra', styles['marsun-org-tree-extra'])}
+                  >
+                    {node.nameExtra}
+                  </span>
+                ) : null}
+              </span>
+            </Tooltip>
+            {editable ? (
+              <Space
+                size={0}
+                className={classNames('marsun-org-tree-actions', styles['marsun-org-tree-actions'])}
+              >
+                {onAdd ? (
                   <Button
                     type="text"
                     size="small"
-                    danger
-                    aria-label={deleteOkText}
-                    icon={<Trash2 size={14} />}
-                    onClick={(e) => e.stopPropagation()}
+                    aria-label="添加子节点"
+                    icon={<Plus size={14} />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAdd(node.id);
+                    }}
                   />
-                </Popconfirm>
-              ) : null}
-            </Space>
-          ) : null}
-        </div>
-      ),
-      children: node.children?.length ? buildTreeNodes(node.children) : undefined,
-    }));
+                ) : null}
+                {onEdit ? (
+                  <Button
+                    type="text"
+                    size="small"
+                    aria-label="编辑"
+                    icon={<Pencil size={14} />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit({
+                        id: node.id,
+                        name: node.name,
+                        parentId: node.parentId ?? null,
+                      });
+                    }}
+                  />
+                ) : null}
+                {onDelete ? (
+                  <Popconfirm
+                    title={deleteConfirmTitle}
+                    okText={deleteOkText}
+                    okType={deleteOkType}
+                    cancelText="取消"
+                    onConfirm={(e) => {
+                      e?.stopPropagation();
+                      return onDelete({ id: node.id, name: node.name });
+                    }}
+                    onCancel={(e) => e?.stopPropagation()}
+                  >
+                    <Button
+                      type="text"
+                      size="small"
+                      danger
+                      aria-label={deleteOkText}
+                      icon={<Trash2 size={14} />}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </Popconfirm>
+                ) : null}
+              </Space>
+            ) : null}
+          </div>
+        ),
+        children: node.children?.length ? buildTreeNodes(node.children) : undefined,
+      }));
+    return buildTreeNodes(nodes);
+  }, [nodes, editable, onAdd, onEdit, onDelete, deleteConfirmTitle, deleteOkText, deleteOkType]);
 
-  const treeData = buildTreeNodes(nodes);
+  const resolvedVirtualHeight =
+    virtualHeight === false ? undefined : (virtualHeight ?? (nodeCount > 80 ? 520 : undefined));
 
   return (
     <Spin spinning={loading}>
@@ -191,6 +223,7 @@ const OrgTree: React.FC<OrgTreeProps> = ({
         }}
         showLine
         blockNode
+        {...(resolvedVirtualHeight ? { virtual: true, height: resolvedVirtualHeight } : {})}
       />
     </Spin>
   );

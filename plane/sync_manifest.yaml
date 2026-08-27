@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.117
+  next_task_id: P6.3.119
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1779,3 +1779,18 @@ tasks:
   note: |
     Refs: P6.3 · Related: P6.3.116
     MarsunAlert 语义色提示条；导出/Demo/单测；PageShellActionItem 支持渲染函数；准备 0.1.66
+
+- id: P6.3.118
+  milestone: P6.3
+  name: OrgTree 默认展开一级与大树 virtual
+  status: 已完成
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-08-27"
+  target_date: "2026-08-27"
+  tags: [frontend, components, OrgTree, release]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3 · Related: P6.3.117
+    defaultExpandDepth=1；节点>80 virtual；meta/单测；准备 0.1.67
