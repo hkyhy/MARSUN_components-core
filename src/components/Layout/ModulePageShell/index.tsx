@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import PageSpin from '../PageSpin';
-import { usePageShell } from '../PageShell';
+import { usePageShell, type PageShellActionItem } from '../PageShell';
 import styles from './style.module.scss';
 
 export type ModulePageShellProps = {
@@ -14,7 +14,7 @@ export type ModulePageShellProps = {
   spinning?: boolean;
   /** 是否同步 title/description/actions 到 PageShellProvider（App 顶栏），默认 true */
   syncPageMeta?: boolean;
-  actions?: Record<string, unknown>[];
+  actions?: PageShellActionItem[];
   children?: ReactNode;
   className?: string;
   bodyClassName?: string;
@@ -59,9 +59,7 @@ const ModulePageShell: React.FC<ModulePageShellProps> = ({
         </div>
       ) : null}
 
-      <div
-        className={classNames('module-page-body', styles['module-page-body'], bodyClassName)}
-      >
+      <div className={classNames('module-page-body', styles['module-page-body'], bodyClassName)}>
         <PageSpin spinning={showSpinning}>{children}</PageSpin>
       </div>
     </div>

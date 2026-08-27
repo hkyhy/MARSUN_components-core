@@ -1,10 +1,15 @@
-import type { ReactNode } from 'react';
+import type { Key, ReactNode } from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+
+/** ButtonGroup list 项：对象配置 或 自定义渲染函数（如 Dropdown 主按钮） */
+export type PageShellActionItem =
+  | Record<string, unknown>
+  | ((props: { className?: string; key?: Key }, ctx?: { isDropdown?: boolean }) => ReactNode);
 
 export type PageShellMeta = {
   title?: string;
   description?: ReactNode;
-  actionItems?: Record<string, unknown>[];
+  actionItems?: PageShellActionItem[];
 };
 
 type PageShellContextValue = {
@@ -45,11 +50,20 @@ export function PageShellProvider({ children }: PageShellProviderProps) {
   const [pageLoading, setPageLoadingState] = useState(false);
 
   const setPageMeta = useCallback((next: PageShellMeta) => {
-    setMeta(next);
+    setMeta((prev) => {
+      if (
+        prev.title === next.title &&
+        prev.description === next.description &&
+        prev.actionItems === next.actionItems
+      ) {
+        return prev;
+      }
+      return next;
+    });
   }, []);
 
   const setPageLoading = useCallback((loading: boolean) => {
-    setPageLoadingState(loading);
+    setPageLoadingState((prev) => (prev === loading ? prev : loading));
   }, []);
 
   const value = useMemo(

@@ -1,0 +1,105 @@
+.marsun-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+.marsun-alert-icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.marsun-alert-body {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.marsun-alert-message {
+  color: var(--font-color, #222);
+  font-size: var(--font-size-default, 14px);
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.marsun-alert-description {
+  margin-top: 4px;
+  color: var(--font-color-grey, #666);
+  font-size: var(--font-size-small, 12px);
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+.marsun-alert-action {
+  flex: none;
+  align-self: center;
+  box-sizing: border-box;
+}
+
+.marsun-alert-close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  color: var(--font-color-grey-1, #999);
+  cursor: pointer;
+  line-height: 1;
+  border-radius: 4px;
+  box-sizing: border-box;
+
+  &:hover {
+    color: var(--font-color, #222);
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.marsun-alert--info {
+  background: var(--info-color-bg);
+  border-color: var(--info-color-border);
+
+  .marsun-alert-icon {
+    color: var(--info-color);
+  }
+}
+
+.marsun-alert--success {
+  background: var(--success-color-bg);
+  border-color: var(--success-color-border);
+
+  .marsun-alert-icon {
+    color: var(--success-color);
+  }
+}
+
+.marsun-alert--warning {
+  background: var(--warning-color-bg);
+  border-color: var(--warning-color-border);
+
+  .marsun-alert-icon {
+    color: var(--warning-color);
+  }
+}
+
+.marsun-alert--error {
+  background: var(--error-color-bg);
+  border-color: var(--error-color-border);
+
+  .marsun-alert-icon {
+    color: var(--error-color);
+  }
+}

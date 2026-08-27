@@ -1,0 +1,64 @@
+{
+  "title": "Alert 显性提示",
+  "description": "用于必须当下可见的提示（可含操作）。静态说明请用 Info + TooltipInfo。",
+  "examples": [
+    {
+      "title": "语义色与操作",
+      "description": "info / success / warning / error；含 description、action、closable",
+      "component": "@/components/Alert/examples/AlertDemo",
+      "sourcePath": "@/components/Alert/examples/AlertDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "MarsunAlertProps",
+      "rows": [
+        {
+          "prop": "type",
+          "desc": "语义类型",
+          "type": "'info' | 'success' | 'warning' | 'error'",
+          "defaultVal": "'info'"
+        },
+        {
+          "prop": "message",
+          "desc": "主文案（建议 ≤2 行）",
+          "type": "ReactNode",
+          "required": true
+        },
+        {
+          "prop": "description",
+          "desc": "补充说明",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "showIcon",
+          "desc": "是否展示语义图标",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "icon",
+          "desc": "自定义图标",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "action",
+          "desc": "右侧操作区",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "closable",
+          "desc": "是否可关闭",
+          "type": "boolean",
+          "defaultVal": "false"
+        },
+        {
+          "prop": "onClose",
+          "desc": "关闭回调",
+          "type": "() => void"
+        }
+      ]
+    }
+  ]
+}

@@ -124,6 +124,7 @@ export type { PersonOptionDto, ReviewerOptionDto, PersonSelectOption } from './u
 
 // Components
 export * from './components/Auth';
+export * from './components/Alert';
 export * from './components/Descriptions';
 export * from './components/Empty';
 export * from './components/Filter';

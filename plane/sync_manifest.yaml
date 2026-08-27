@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.116
+  next_task_id: P6.3.117
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1764,3 +1764,18 @@ tasks:
   note: |
     Refs: P6.3 · Related: P6.3.115
     normalizeLabelTips；字段 withNormalizedLabelTips；Demo/单测；chore(release) v0.1.65
+
+- id: P6.3.117
+  milestone: P6.3
+  name: Alert 组件与 PageShellActionItem 类型
+  status: 进行中
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-08-27"
+  target_date: "2026-08-27"
+  tags: [frontend, components, Alert, release]
+  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  note: |
+    Refs: P6.3 · Related: P6.3.116
+    MarsunAlert 语义色提示条；导出/Demo/单测；PageShellActionItem 支持渲染函数；准备 0.1.66

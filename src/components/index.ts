@@ -1,4 +1,5 @@
 export * from './Auth';
+export * from './Alert';
 export * from './Descriptions';
 export * from './Empty';
 export * from './File';
