@@ -2,7 +2,7 @@ import { Pencil, Plus, Trash2 } from '../Icons';
 import { Button, Popconfirm, Space, Spin, Tooltip, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import classNames from 'classnames';
-import React, { useEffect, useMemo, useState, type Key, type ReactNode } from 'react';
+import React, { useEffect, useMemo, useRef, useState, type Key, type ReactNode } from 'react';
 import styles from './style.module.scss';
 
 export type OrgTreeNode = {
@@ -102,15 +102,29 @@ const OrgTree: React.FC<OrgTreeProps> = ({
   deleteOkType = 'danger',
 }) => {
   const nodeCount = useMemo(() => countNodes(nodes), [nodes]);
+  /** 树结构指纹：仅 id 拓扑变化时重置展开，避免父组件重渲染把滚动/展开打回默认 */
+  const nodesStructureKey = useMemo(() => {
+    const walk = (list: OrgTreeNode[]): string =>
+      list.map((n) => `${n.id}:${n.children?.length ? walk(n.children) : ''}`).join('|');
+    return walk(nodes);
+  }, [nodes]);
   const initialExpanded = useMemo(
     () => collectExpandedKeys(nodes, defaultExpandDepth),
-    [nodes, defaultExpandDepth],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 故意跟 structureKey，不跟 nodes 引用
+    [nodesStructureKey, defaultExpandDepth],
   );
   const [expandedKeys, setExpandedKeys] = useState<Key[]>(initialExpanded);
 
   useEffect(() => {
     setExpandedKeys(initialExpanded);
   }, [initialExpanded]);
+
+  /** 回调走 ref，避免树 title 重建触发 antd virtual Tree 滚回顶部 */
+  const actionRefs = useRef({ onAdd, onEdit, onDelete });
+  actionRefs.current = { onAdd, onEdit, onDelete };
+  const hasAdd = Boolean(onAdd);
+  const hasEdit = Boolean(onEdit);
+  const hasDelete = Boolean(onDelete);
 
   const treeData = useMemo(() => {
     const buildTreeNodes = (list: OrgTreeNode[]): DataNode[] =>
@@ -146,7 +160,7 @@ const OrgTree: React.FC<OrgTreeProps> = ({
                 size={0}
                 className={classNames('marsun-org-tree-actions', styles['marsun-org-tree-actions'])}
               >
-                {onAdd ? (
+                {hasAdd ? (
                   <Button
                     type="text"
                     size="small"
@@ -154,11 +168,11 @@ const OrgTree: React.FC<OrgTreeProps> = ({
                     icon={<Plus size={14} />}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onAdd(node.id);
+                      actionRefs.current.onAdd?.(node.id);
                     }}
                   />
                 ) : null}
-                {onEdit ? (
+                {hasEdit ? (
                   <Button
                     type="text"
                     size="small"
@@ -166,7 +180,7 @@ const OrgTree: React.FC<OrgTreeProps> = ({
                     icon={<Pencil size={14} />}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onEdit({
+                      actionRefs.current.onEdit?.({
                         id: node.id,
                         name: node.name,
                         parentId: node.parentId ?? null,
@@ -174,7 +188,7 @@ const OrgTree: React.FC<OrgTreeProps> = ({
                     }}
                   />
                 ) : null}
-                {onDelete ? (
+                {hasDelete ? (
                   <Popconfirm
                     title={deleteConfirmTitle}
                     okText={deleteOkText}
@@ -182,7 +196,7 @@ const OrgTree: React.FC<OrgTreeProps> = ({
                     cancelText="取消"
                     onConfirm={(e) => {
                       e?.stopPropagation();
-                      return onDelete({ id: node.id, name: node.name });
+                      return actionRefs.current.onDelete?.({ id: node.id, name: node.name });
                     }}
                     onCancel={(e) => e?.stopPropagation()}
                   >
@@ -203,7 +217,7 @@ const OrgTree: React.FC<OrgTreeProps> = ({
         children: node.children?.length ? buildTreeNodes(node.children) : undefined,
       }));
     return buildTreeNodes(nodes);
-  }, [nodes, editable, onAdd, onEdit, onDelete, deleteConfirmTitle, deleteOkText, deleteOkType]);
+  }, [nodes, editable, hasAdd, hasEdit, hasDelete, deleteConfirmTitle, deleteOkText, deleteOkType]);
 
   const resolvedVirtualHeight =
     virtualHeight === false ? undefined : (virtualHeight ?? (nodeCount > 80 ? 520 : undefined));

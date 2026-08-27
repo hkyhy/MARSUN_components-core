@@ -42,4 +42,13 @@ describe('OrgTree', () => {
     expect(screen.getByText('子')).toBeInTheDocument();
     expect(screen.queryByText('孙')).not.toBeInTheDocument();
   });
+
+  it('keeps action buttons when parent passes new callback identities', () => {
+    const { rerender } = render(
+      <OrgTree nodes={[{ id: '1', name: '根' }]} editable onEdit={() => undefined} />,
+    );
+    expect(screen.getByLabelText('编辑')).toBeInTheDocument();
+    rerender(<OrgTree nodes={[{ id: '1', name: '根' }]} editable onEdit={() => undefined} />);
+    expect(screen.getByLabelText('编辑')).toBeInTheDocument();
+  });
 });
