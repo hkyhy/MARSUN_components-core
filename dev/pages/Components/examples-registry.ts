@@ -673,6 +673,39 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/alert': {
+    title: 'Alert 显性提示',
+    description: '用于必须当下可见的提示（可含操作）。静态说明请用 Info + TooltipInfo。',
+    examples: [
+      {
+        title: '语义色与操作',
+        description: 'info / success / warning / error；含 description、action、closable',
+        component: React.lazy(() => import('@/components/Alert/examples/AlertDemo')),
+        sourcePath: () => import('@/components/Alert/examples/AlertDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'MarsunAlertProps',
+        rows: [
+          {
+            prop: 'type',
+            desc: '语义类型',
+            type: "'info' | 'success' | 'warning' | 'error'",
+            defaultVal: "'info'",
+          },
+          { prop: 'message', desc: '主文案（建议 ≤2 行）', type: 'ReactNode', required: true },
+          { prop: 'description', desc: '补充说明', type: 'ReactNode' },
+          { prop: 'showIcon', desc: '是否展示语义图标', type: 'boolean', defaultVal: 'true' },
+          { prop: 'icon', desc: '自定义图标', type: 'ReactNode' },
+          { prop: 'action', desc: '右侧操作区', type: 'ReactNode' },
+          { prop: 'closable', desc: '是否可关闭', type: 'boolean', defaultVal: 'false' },
+          { prop: 'onClose', desc: '关闭回调', type: '() => void' },
+        ],
+      },
+    ],
+  },
   '/components/auth': {
     title: 'Auth 权限控制',
     description:
@@ -1391,6 +1424,14 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           '业务标准（从 core 导入）：Form + FormInfo 多列布局、rule 校验、SubmitButton / ResetButton',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoBaseDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoBaseDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'labelTips 字符串自动 Info',
+        description:
+          'labelTips="短句" 由 core 包成 Info+TooltipInfo；自定义 ReactNode 透传；必填仍用 rule=REQ',
+        component: React.lazy(() => import('@/components/Form/examples/FormInfoLabelTipsDemo')),
+        sourcePath: () => import('@/components/Form/examples/FormInfoLabelTipsDemo/index.tsx?raw'),
         block: true,
       },
       {
