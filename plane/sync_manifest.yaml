@@ -1768,7 +1768,7 @@ tasks:
 - id: P6.3.117
   milestone: P6.3
   name: Alert 组件与 PageShellActionItem 类型
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feat
   owner: 黄金芳
