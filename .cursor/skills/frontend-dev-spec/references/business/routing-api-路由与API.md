@@ -4,12 +4,12 @@
 
 `POST …/rca/analyze/alert/stream` · `…/compare/stream`（刘军，HTTP `extra=forbid`）：
 
-| 入口          | 仅允许字段                                                                                                  | 禁止                                                            |
-| ------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| 预警根因      | `factoryCode`/`factoryName`/`varietyCode`/`varietyName`/`indicatorCode`/`indicatorName`/`date`/`sessionId?` | `werks`/`factory`/`monthlySeries`/`value`/`forceRegenerate` 等  |
-| 对比/质量分析 | `diffs`（≥1）+ `primary`/`compare`（各四字段）+ `sessionId?`                                                | `month`/`compareMode`/`cottonBatch`/`plants`/`monthlySeries` 等 |
+| 入口          | 仅允许字段                                                                                                                              | 禁止                                                            |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 预警根因      | `factoryCode`/`factoryName`/`varietyCode`/`varietyName`/`indicatorCode`/`indicatorName`/`date` + 可选 `sessionId`/`machineNo`/`alertId` | `werks`/`factory`/`monthlySeries`/`value`/`forceRegenerate` 等  |
+| 对比/质量分析 | `diffs`（≥1）+ `primary`/`compare`（各四字段）+ `sessionId?`                                                                            | `month`/`compareMode`/`cottonBatch`/`plants`/`monthlySeries` 等 |
 
-时序/证据由服务端自取。FE 组装见 `repos/Agent_QualityAnalysis/frontend/src/utils/rcaPayload.ts`；契约 SSOT：`backend-dev/agent-dev/S3/质量预警任务跟踪/根因与对比分析/`。
+时序/证据由服务端自取。点级根因传数字 `alertId`（`qa_quality_anomalies.id`）以绑定点级 `alertLevel`。FE 组装见 `repos/Agent_QualityAnalysis/frontend/src/utils/rcaPayload.ts`；契约 SSOT：`backend-dev/agent-dev/S3/质量预警任务跟踪/根因与对比分析/`。
 
 **FOCUS 矩阵**：`focus-metric-matrix` 响应常无 `diffs`；质量分析页须用 `buildCompareDiffsFromMatrixRows` 按主/对比行双侧实测值推导后再打 `compare/stream`。`diffs` 为空时禁止发 SSE。根因/对比**仅**走正式 SSE（`alert/stream` · `compare/stream`）；已删除对 `/api/agent/analyze`、`/api/sandbox/analyze` 的 JSON 回退（含 404/405/空响应/业务 400/422）。
 
@@ -32,7 +32,7 @@ Hub 列表必须走 `listItemTitle` / `listItemSubtitle` / `listItemSummaryPrevi
 
 ## 质量分析 factory-varieties（时段）
 
-`POST /api/v1/data-service/factory-varieties`：`queryType=all`（主对标）必带 `start`/`end`；**`queryType=match`（对比分厂品种）不传 `start`/`end`**（服务端补默认窗）。时段进矩阵时写在 `varietyList[]` 各项上。实现：`fetchVarietySearch` + `loadCompareForVariety`。
+`POST /api/v1/data-service/factory-varieties`：`queryType=all`（主对标）必带 `start`/`end`；**`queryType=match`（对比分厂品种）不传 `start`/`end`**（服务端**不**补默认窗，查 ADS 全量有名品种）。时段进矩阵时写在 `varietyList[]` 各项上。实现：`fetchVarietySearch` + `loadCompareForVariety`。
 
 ## API 按模块拆分
 
@@ -59,6 +59,24 @@ src/api/
 - `index.ts` 只做 `export { xxxApi } from './xxx'`，禁止直接定义 API 对象
 - 新增 API 模块时，创建独立文件并在 `index.ts` 中追加导出
 - 引用方式统一为 `import { xxxApi } from '@/api'`
+
+## HTTP 客户端（`createMarsunRequest`）
+
+业务前端子仓库 **只允许一层薄封装** 调用 `@hkyhy/marsun-components-core` 的 `createMarsunRequest`（Assets：`src/utils/request.ts`；QA：`src/api/client.ts` 对外仍导出 `request` / `requestMarsun`）。注入 token、`onUnauthorized`、`withCredentials`、`isPublicUrl`。**禁止**再写平行原生 `fetch` 客户端（第二套 `api/client.ts` 拦截器）。
+
+| 响应                                                                                | 拦截器                                                                                 |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 信封（`isMarsunEnvelope`：数字 `code`，且成功码 / 含 `data`\|`message` / 仅信封键） | `code === 0` 返回完整信封；`code !== 0` 弹 `message` 并 reject                         |
+| `{ code: 200, results }` 或无数字 `code` 的 2xx                                     | **扁平透传**，不要当成信封失败                                                         |
+| `responseType: 'blob'/'arraybuffer'`                                                | 二进制透传，不读 `code`                                                                |
+| HTTP 非 2xx                                                                         | 错误文案顺序 `message` / `detail` / `msg`；可用 `getResponseError` 覆盖                |
+| `passThroughEnvelopeError: true`                                                    | 信封 `code !== 0` 不 reject/不弹错，原样返回（QA `api/client.ts` 复用 `unwrapMarsun`） |
+
+实例不写死 `Content-Type: application/json`；`FormData` 去掉 JSON Content-Type 以便 boundary。公开接口注入 `isPublicUrl`（`/auth/`、`/departments/`），避免 401 误跳登录。
+
+**禁止第三信封适配**：不得为 `{ code, msg, success, failure }`、`{ code: 200, results }`、`errno` 等业务壳新增项目侧 unwrap、改 `successCode`、或平行 interceptor。遗留 `{ code: 200, results }` 仅靠 core 扁平透传；新对接须催 BE 改 Marsun，或契约抬头标扁平并用既有透传路径。见 [api-overview 禁止新引入的响应壳](../../../backend-dev-spec/references/common/api-overview-通用约定.md)。
+
+**豁免**（可继续原生 `fetch`）：SSE 流（如 QA `sseClient.ts`）、multipart `FormData` 旁路（如 `submitActionFeedback`）。页面拉数仍走 `xxxApi` + hooks + `PageSpin`，**禁止** `@kne/react-fetch` 的 `Fetch` / `createWithFetch`，**禁止**为 HTTP 新建独立 npm 包。细则：[component-mapping npm Utils · HTTP](../common/component-mapping-组件映射.md)、[backend-dev-spec api-overview](../../../backend-dev-spec/references/common/api-overview-通用约定.md)。
 
 ## 页面路由
 

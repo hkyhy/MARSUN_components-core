@@ -555,6 +555,7 @@ const fetchData = useCallback(async () => {
 2. **禁止**用内联错误区（如 `<p className="error">筛选加载失败：…</p>`）替换整块筛选栏。
 3. **失败后筛选栏仍须渲染**：`CommonFilter` + 各筛选项保持可见；选项列表为空（`[]`）且 `!loading` 时由 Filter* 自带 **Empty**，勿因 `!meta` / `!options` 整栏 `return null`。
 4. **默认值来自 meta/options**：分厂等选项的初始值与清空回退须取自接口返回的列表（如 `meta.factories[0]`）；无选项则为空数组。**禁止**业务常量硬编码工厂 code（如 `1001`）作为生产默认选中。
+5. **S3 分厂名口径**：选项文案须与 `GET /api/v1/data-service/factories` 的 `factoryName`（`dim_factory_base_info.factory_branch`）一致；禁止 FE 写死「潜山工厂」或用 `shortFactoryName` 充当服务端去重。见 [s3-factory-branch](../../backend-dev-spec/references/common/s3-factory-branch-分厂branch归一.md)。
 
 ```tsx
 // ❌ 禁止：内联错误区 + 拼 HTTP 状态码

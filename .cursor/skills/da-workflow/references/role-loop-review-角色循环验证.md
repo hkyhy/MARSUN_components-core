@@ -1,5 +1,6 @@
 # 角色循环验证 Role Loop Review
 
+> **给人听的说明（与角色合并一页）**：[跟AI开发-角色与会话-说明.md](跟AI开发-角色与会话-说明.md)（[可打印 html](跟AI开发-角色与会话-说明.html)）  
 > 总控：[../SKILL.md](../SKILL.md)  
 > 角色大前提 SSOT：[mindset](mindset-角色大前提.md) · 前端清单：[requirement-workflow](../../frontend-dev-spec/references/prompts/requirement-workflow-需求工作流.md) · FE 叠加：[frontend mindset](../../frontend-dev-spec/references/prompts/mindset-角色大前提.md)  
 > 后端衔接：[openapi-apifox §6](../../backend-dev-spec/references/common/openapi-apifox-契约标注.md) · 硬约束 #7  
@@ -14,13 +15,13 @@
 
 ## 1. 何时触发（必跑 / 可跳过）
 
-| 场景          | 必跑（命中任一）                                                                    | 可声明跳过（须一句话理由）                                              |
-| ------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **需求 §2.1** | 新交互主路径 / 验收标准未定 / 大表筛选门禁 / IAM·权限范围变更                       | 纯 bugfix 且验收已明确；仅改文案/样式 token；仅改规范文档无产品行为变化 |
-| **接口 §2.2** | 新接或改造 REST（字段/路径/信封/数据源任一变）                                      | 仅同步 mock 副本且权威稿无变；仅改 `接口.md` 非契约叙述                 |
-| **前端 §2.3** | 页面/组件 UI·交互·布局·空错加载态变化；components showcase 行为变                   | 纯 utils/hooks/api client 无 UI；仅改测试或契约无界面                   |
-| **测试 §2.4** | 本任务新增/改 `__tests__` 或契约测试用例；或 §2.3/§2.2 已必跑且交付含可执行验收     | 无代码/无用例变更（纯文档）；用户明确确认跳过                           |
-| **安全 §2.5** | 改权限码/矩阵/绑权/侧栏门禁；IAM Wave/退 DEMO；auth·密钥·`.env`；生产 SSH/DB/deploy | **未触及以上 → 默认不跑**（不必声明）                                   |
+| 场景          | 必跑（命中任一）                                                                                                                                  | 可声明跳过（须一句话理由）                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **需求 §2.1** | 新交互主路径 / 验收标准未定 / 大表筛选门禁 / IAM·权限范围变更                                                                                     | 纯 bugfix 且验收已明确；仅改文案/样式 token；仅改规范文档无产品行为变化 |
+| **接口 §2.2** | 新接或改造 REST（字段/路径/信封/数据源任一变）                                                                                                    | 仅同步 mock 副本且权威稿无变；仅改 `接口.md` 非契约叙述                 |
+| **前端 §2.3** | 页面/组件 UI·交互·布局·空错加载态变化；components showcase 行为变                                                                                 | 纯 utils/hooks/api client 无 UI；仅改测试或契约无界面                   |
+| **测试 §2.4** | 本任务新增/改 `__tests__` 或契约测试用例；或 §2.3/§2.2 已必跑且交付含可执行验收                                                                   | 无代码/无用例变更（纯文档）；用户明确确认跳过                           |
+| **安全 §2.5** | 改权限码/矩阵/绑权/侧栏门禁；IAM Wave/退 DEMO；auth·密钥·`.env`；生产 SSH/DB/deploy；**租户隔离（业务表/列表/榜缺 `tenantId` 过滤、跨租户可见）** | **未触及以上 → 默认不跑**（不必声明）                                   |
 
 用户说「再验证 / 循环验证 / 帮我看看有没有问题」：按**当前产物**只选命中场景；歧义则 AskQuestion。多场景命中可**一次输出多表**（每场景一张 §3 表）。
 
@@ -36,7 +37,7 @@
 
 ### 2.2 开发 / 改接口（顶尖 API 设计者）
 
-> 请以业界顶尖接口设计者的标准复审当前接口：是否对齐业务验收与 `backend-dev/mapping`？有无多余、歧义或可合并的字段与路径？信封与分页是否符合 Marsun 契约（`code/message/data` · `pageData`）？**每个接口节是否写清数据源（源表、匹配键、测值列、时间窗、聚合、与证据/Stream 是否同源）**？**湖仓正式路径是否 ADS（/DWS）为主源，ODS 仅在 ADS 字段皆空时回落（禁止 ODS 作主 FROM；DEMO/mock 与正式源表分清）**？**大表列表是否有选择性筛选门禁（无条件→400）、ORDER BY 与索引对齐、total/offset 短路？**按 **必须改 / 建议改 / 可接受** 列出，未经我确认勿改。
+> 请以业界顶尖接口设计者的标准复审当前接口：是否对齐业务验收与 `backend-dev/mapping`？有无多余、歧义或可合并的字段与路径？信封与分页是否符合 Marsun 契约（`code/message/data` · `pageData`）？**有无第三信封（`code:200/results`、`msg/success/failure`、`errno` 等）？新接口是否禁止？**（仅允许 Marsun 或契约已标扁平。）**每个接口节是否写清数据源（源表、匹配键、测值列、时间窗、聚合、与证据/Stream 是否同源）**？**湖仓正式路径是否 ADS（/DWS）为主源，ODS 仅在 ADS 字段皆空时回落（禁止 ODS 作主 FROM；DEMO/mock 与正式源表分清）**？**大表列表是否有选择性筛选门禁（无条件→400）、ORDER BY 与索引对齐、total/offset 短路？**按 **必须改 / 建议改 / 可接受** 列出，未经我确认勿改。
 
 ### 2.3 开发 / 改前端（顶尖前端工程师 + UI 设计师）
 
@@ -48,7 +49,7 @@
 
 ### 2.5 安全 / 鉴权（顶尖安全工程师 · 条件加查）
 
-> 请以业界顶尖安全工程师的标准复审当前变更：权限码/矩阵/绑权/侧栏门禁是否齐套？有无兼容旧码 OR 或 DEMO/恒真门禁残留？有无硬编码密钥、Token、把 `.env` 写入仓？生产操作是否零数据丢失、不碰同机其他服务？按 **必须改 / 建议改 / 可接受** 列出，未经我确认勿改。细则见 permissions-catalog、iam-system-onboard、vibe-security、prod-safety。
+> 请以业界顶尖安全工程师的标准复审当前变更：权限码/矩阵/绑权/侧栏门禁是否齐套？**若已改 catalog/矩阵代码：本机是否已执行 import+sync（有 JSON），或用户是否书面延期灌库？SystemApp 入库后 `sys:<app>` 是否已由 ensure 扫表生成？Admin 绑权左侧是否中文模块（英文 `sys`/`myflow` 前缀回退 → 必须改）？**有无兼容旧码 OR 或 DEMO/恒真门禁残留？有无硬编码密钥、Token、把 `.env` 写入仓？生产操作是否零数据丢失、不碰同机其他服务？**业务 App 是否租户隔离（JWT `tenantId` 强制过滤部门/用户/文件/统计；`stats:global` 是否仅租户内；是否存在他租户同名数据可见）？**按 **必须改 / 建议改 / 可接受** 列出，未经我确认勿改。细则见 permissions-catalog、iam-system-onboard §0.1、`05-tenant-isolation`、vibe-security、prod-safety、[iam-sso-onboard 阶段 2](iam-sso-onboard-全量接入/SKILL.md)。
 
 **注意**：§2.5 **不是**五维常驻角色；仅 §1 命中时跑。未命中禁止主动跑安全场景。
 
@@ -86,7 +87,8 @@
 7. **接口场景额外必查（ADS/ODS）**：正式 data-service 以 ADS/DWS 为主源；契约与实现若「ODS 主查」或「ADS 有值仍被 ODS 覆盖」→ **必须改**。细则：[api-datasource §2.1](../../backend-dev-spec/references/common/api-datasource-数据源标注.md)。
 8. **大表列表场景额外必查**：万级+ `queryList` 若无选择性门禁（无条件可查 / 无 400）、或 FE 首屏无默认窗 → **必须改**。细则：[list-api 选择性筛选](../../backend-dev-spec/references/common/list-api-列表分页.md)、[filter §5.11](../../frontend-dev-spec/references/common/filter-筛选组件.md)。
 9. **测试场景额外必查**：同任务缺 `__tests__` / 契约测试用例、或仅有成功路径无声明错误路径、或验收标准无法对照用例 → **必须改**。细则：[test-and-selfcheck](test-and-selfcheck-写代码自检与测试.md)、[testing-测试规范](../../frontend-dev-spec/references/common/testing-测试规范.md)、[openapi-apifox §4](../../backend-dev-spec/references/common/openapi-apifox-契约标注.md)。
-10. **安全场景额外必查**：权限码缺齐套、兼容旧码 OR、DEMO 恒真门禁未退、密钥进仓、生产 destructive 未确认 → **必须改**。
+10. **安全场景额外必查**：权限码缺齐套、兼容旧码 OR、DEMO 恒真门禁未退、密钥进仓、生产 destructive 未确认、**业务 App 列表/榜/人员未按 JWT `tenantId` 过滤（串租户）** → **必须改**。
+11. **IAM 阶段 2 / catalog 合入额外必查**（命中「改权限码/矩阵/绑权」时）：仅有 `<app>PermissionCatalog.ts` / RoleMatrix **代码**、无本机 `db:import-*` + `db:sync-*` 执行记录（且用户未书面延期灌库）→ **必须改**（Admin 不会出现 SystemApp/权限点；Agent 须强提醒，禁止静默跳过）。SystemApp 已在库但缺 `sys:<app>`（ensure 未跑或仍靠手写 specs 漏登记）→ **必须改**。Admin 绑权弹窗左侧出现英文 code 前缀分组（`sys`/`myflow`/`s3` 等）而无中文 `*PermissionBindCatalog` → **必须改**。细则：[iam-sso-onboard 阶段 2](iam-sso-onboard-全量接入/SKILL.md) · [06 模板](iam-sso-onboard-全量接入/references/06-new-system-todo-template-新系统逐步TODO模板.md) · [07-myflow](iam-sso-onboard-全量接入/references/07-example-myflow-walkthrough.md)。
 
 ---
 

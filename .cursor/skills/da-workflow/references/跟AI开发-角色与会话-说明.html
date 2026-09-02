@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>跟 AI 开发 —— 角色 · 循环验证 · 会话</title>
+  <style>
+    :root { --ink: #1a1a1a; --navy: #1e3a5f; --muted: #6b7280; --blue: #3b82f6; --line: #e5e7eb; --soft: #f0f9ff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); font: 9.5px/1.28 "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #e2e8f0; }
+    .sheet { width: 210mm; min-height: 297mm; margin: 10px auto; padding: 8mm 10mm; background: #fff; box-shadow: 0 1px 8px rgba(15,23,42,.12); }
+    h1 { margin: 0 0 2px; font-size: 13.5px; color: var(--navy); }
+    .sub { margin: 0 0 4px; color: var(--muted); font-size: 9px; }
+    .lead { margin: 0 0 6px; padding: 4px 6px; background: var(--soft); border-left: 3px solid var(--blue); font-size: 10px; }
+    h2 { margin: 7px 0 3px; font-size: 11px; color: var(--blue); border-bottom: 1px solid var(--line); padding-bottom: 1px; }
+    .why { margin: 0 0 3px; font-size: 9.5px; color: #334155; }
+    .trig { margin: 0 0 3px; font-size: 9.5px; }
+    .trig b { color: var(--navy); }
+    table { width: 100%; border-collapse: collapse; font-size: 9px; margin: 0 0 3px; }
+    th, td { border: 1px solid var(--line); padding: 1.5px 4px; text-align: left; vertical-align: top; }
+    th { background: var(--soft); white-space: nowrap; }
+    pre { margin: 2px 0 3px; padding: 4px 6px; background: #f8fafc; border: 1px solid var(--line); border-radius: 3px; font-size: 8.5px; white-space: pre-wrap; font-family: ui-monospace, Menlo, monospace; }
+    ol { margin: 0; padding-left: 1.15em; font-size: 9.5px; }
+    footer { margin-top: 6px; padding-top: 4px; border-top: 1px solid var(--line); color: var(--muted); font-size: 8.5px; }
+    .hint { max-width: 210mm; margin: 6px auto; text-align: center; color: var(--muted); font-size: 11px; }
+    @page { size: A4; margin: 8mm; }
+    @media print {
+      body { background: #fff; }
+      .sheet { width: auto; min-height: auto; margin: 0; padding: 0; box-shadow: none; }
+      .hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <p class="hint">打印：Cmd/Ctrl + P · A4 一页 · 取号另打「取号说明」</p>
+  <article class="sheet">
+    <h1>跟 AI 开发 —— 角色 · 循环验证 · 会话</h1>
+    <p class="sub">培训一页纸（三块合一）· 含触发词</p>
+    <p class="lead">① 五种角色怎么干活 → ② 大改时循环验证 → ③ 一事一窗怎么问。取号另见取号说明。</p>
+
+    <h2>① 角色大前提（边写边想）</h2>
+    <p class="why">开头声明说明书；做完先问你。只当码农 → 改错、验不清；没点头还接着改 → 返工更贵。</p>
+    <p class="trig"><b>触发词</b>：按角色大前提 · 五种角色先过一遍 · 任务结束复检 · 按 frontend-dev-spec / backend-dev-spec</p>
+    <table>
+      <tr><th>产品</th><td>要什么？怎样算完？</td><th>架构</th><td>放哪？破坏结构吗？</td></tr>
+      <tr><th>开发</th><td>只改哪？禁顺手重构</td><th>体验</th><td>信息清不清？（前端）</td></tr>
+      <tr><th>测试</th><td colspan="3">怎么当场验？人自己跑，别信「已经测过」</td></tr>
+      <tr><th>开头</th><td>声明 Skill；先方案再改</td><th>结尾前</th><td>复检 → 交决策 → 等你指示</td></tr>
+    </table>
+
+    <h2>② 角色循环验证（专门挑刺 · 命中才跑）</h2>
+    <p class="why">方案后/交付前换顶尖视角；输出必须改/建议改/可接受；你没点头不许擅自改。与「任务结束复检」不同：循环验证命中才跑，复检每次收尾都要。</p>
+    <p class="trig"><b>触发词</b>：角色循环验证 · 再验证 · 循环验证 · 帮我看看有没有问题 · 按顶尖产品经理/接口设计者/前端+UI/测试/安全工程师复审（安全仅改权限·密钥·生产）</p>
+    <table>
+      <tr><th>场景</th><th>必跑</th><th>可跳过</th></tr>
+      <tr><td>需求</td><td>新主路径、验收未定、大表筛选、权限范围变</td><td>纯 bug、文案/规范</td></tr>
+      <tr><td>接口</td><td>新接/改 REST</td><td>只同步 mock</td></tr>
+      <tr><td>前端</td><td>UI·交互·空错加载态变了</td><td>纯 utils、无界面</td></tr>
+      <tr><td>测试</td><td>改了用例，或上面已必跑</td><td>纯文档、你明确跳过</td></tr>
+      <tr><td>安全</td><td>权限/门禁/密钥/.env/生产</td><td>没碰 → 默认不跑</td></tr>
+    </table>
+    <p class="why">禁止：五连空跑；有「必须改」却不等确认就改代码。</p>
+
+    <h2>③ 会话与提示词（一事一窗 · 五句话方案）</h2>
+    <p class="why">一件可验收的事 ≈ 一个聊天。浪费多半来自聊太久、空转「继续」。过长时 AI 须先 ⚠️。<b>五句话方案</b> = 只做·输入·输出·约束·验收；写进聊天用【本轮】骨架。</p>
+    <p class="trig"><b>触发词</b>：一事一窗 · 按五句话方案 · 本轮只做… · 收窄本轮 · 新开聊天 · 不要只回继续 · 会话提示 · 说对说明书 · 用轻量模型答</p>
+    <table>
+      <tr><th>做</th><th>不做</th></tr>
+      <tr><td>一事一窗；验收≤5；开口贴【本轮】；换需求新开窗</td><td>同窗调研→提交→再扩；「帮我改一下」无边界</td></tr>
+      <tr><td>续做写清只改哪个文件；点名 Skill（前端 frontend / 接口 backend / 提交 da）</td><td>只回「继续/好」；「全部规范读完」；永远只念 da-workflow</td></tr>
+      <tr><td>问答用轻量；多文件再用高端；提交走规定入口</td><td>闲聊开最贵模型；自己敲 git commit；分支名当任务号</td></tr>
+    </table>
+    <pre>【本轮】只做：…  【仓/路径】…；禁止动：…  【输入】…  【输出】…
+【约束】最小 diff  【验收】1.… 2.…（≤5）  【模型】问答轻量 / 多文件 Agent  【Skill】按 frontend|backend|da
+【续】仅改 &lt;文件&gt;：…  【不要】扩 scope  【验收】…</pre>
+    <p class="why">卡住≥30 分钟且还会遇到 → 15 分钟写成草稿说明。</p>
+
+    <h2>明天就能练</h2>
+    <ol>
+      <li>看开场声明、结束前有没有问你</li>
+      <li>大改时喊一句：角色循环验证</li>
+      <li>下一句用【本轮】/五句话；点名 Skill；问答用轻量</li>
+      <li>换需求就新开窗；取号另打：dingtalk-hierarchy-取号说明</li>
+    </ol>
+    <footer>细则：mindset-角色大前提.md · role-loop-review-角色循环验证.md · cursor-session-prompt-会话与提示词.md</footer>
+  </article>
+</body>
+</html>

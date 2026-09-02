@@ -190,6 +190,7 @@ import styles from './style.module.scss';
 - [ ] 报告类 Modal：core `Modal`（居中、S/M/L、title+actions）；`ReportTemplate` Meta 四列；禁双层滚动 / 禁指标重复 / 禁报告级置信度展示（见 shell-layout「报告类 Modal」）
 - [ ] 列表 InteractiveBlock 用 `surface="inset"`，无白底套灰底
 - [ ] 模块 workarea 扁平化：无冗余 breadcrumb、无双层 card border/padding、Tabs content 100% 宽、页脚主按钮非无谓 block（见 §8.10）
+- [ ] 凡含 `padding`/`border` 的规则已写 `box-sizing: border-box`（见 §8.12）
 - [ ] 新增/变更样式规范已同步本文件与 SKILL.md
 
 ### 8.9 附录：批量归位脚本
@@ -238,3 +239,17 @@ node scripts/colocate-component-files.mjs src
 **参考**：`Agent_QualityAnalysis` → `Rca/List/ArchiveList`（块背景 + gap + 选中 `--primary-color-bg`）。
 
 **反例**：列表项 `border-bottom` 横线分割；归档列表/预览左右各一个 `var(--card-border)` 圆角盒；workarea 内三层 nested card。
+
+### 8.12 `box-sizing: border-box`（硬约束）
+
+凡声明 **`padding` 和/或 `border`（含 `border-*`）** 的选择器，**同规则必须**写 `box-sizing: border-box`（或祖先已用 `* { box-sizing: border-box }` 且本选择器不改回 `content-box`）。
+
+| 项         | 规范                                                                                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 适用范围   | `style.module.scss`、全局 partial、core 组件样式                                                                                                          |
+| 目的       | 宽高含 padding/border，避免 flex/grid 下溢出与对齐漂移                                                                                                    |
+| 反例       | `.foo { padding: 12px; border: 1px solid … }` 无 `box-sizing`                                                                                             |
+| 正例       | `.foo { box-sizing: border-box; padding: 12px; border: 1px solid … }`                                                                                     |
+| 全局 reset | 入口 `global.scss` 可 `*, *::before, *::after { box-sizing: border-box; }`；**仍**要求模块内带 padding/border 的规则显式写出（可读性 + 不被局部覆盖打穿） |
+
+完成前检查（§8.8）须勾选本条。

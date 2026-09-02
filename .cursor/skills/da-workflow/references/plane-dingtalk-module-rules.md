@@ -8,13 +8,13 @@
 
 华茂 AI 多维表格（钉钉 Notable）poll 到 Plane 的 **Module / Issue 行是 SSOT**。
 
-| 对象                      | 钉表 poll 写入                                                                    | `da pm sync` 允许                                                 |
-| ------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| depth-1 Module            | 名称 `{id}-{name}`（**短横线 `-`**）；`external_id` = `dev-aanalysis:module:DT-*` | **仅** link 子任务；**禁止** CREATE / PATCH 名称 / 改 external_id |
-| depth-2+ Issue（PM 台账） | 可选由 poll 创建 `DT-*` 行                                                        | CREATE/PATCH `{prefix}:task:{id}`；须写 owner + 起止日期          |
-| PM 里程碑 Work Item       | 钉表 Module 行即模块，**不**另建 `{id} · {name}` 里程碑 WI                        | `origin: merged` 时 **跳过** milestone WI CREATE                  |
+| 对象                      | 钉表 poll 写入                                                                                                        | `da pm sync` 允许                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| depth-1 Module            | 名称跟钉表 keeper（存量多为 `{id}-{name}`；**新写** `{id} {name}` 空格）；`external_id` = `dev-aanalysis:module:DT-*` | **仅** link 子任务；**禁止** CREATE / PATCH 名称 / 改 external_id |
+| depth-2+ Issue（PM 台账） | 可选由 poll 创建 `DT-*` 行                                                                                            | CREATE/PATCH `{prefix}:task:{id}`；须写 owner + 起止日期          |
+| PM 里程碑 Work Item       | 钉表 Module 行即模块，**不**另建同代号分隔符壳                                                                        | `origin: merged` 时 **跳过** milestone WI CREATE                  |
 
-**看见 Plane Modules 出现同代号两行（一条 `-`、一条 `·`）= 违规回潮。** 立刻停 sync，按下方清壳 checklist 合并到钉表 keeper，**禁止**再 CREATE。
+**看见 Plane Modules 出现同代号两行（`-` / `·` / 空格混用）= 违规回潮。** 立刻停 sync，按下方清壳 checklist 合并到钉表 keeper，**禁止**再 CREATE。
 
 ## milestones.yaml 登记（merged）
 
@@ -33,7 +33,7 @@
 
 - 登记 `M001` / `M002` 等历史 milestone id（会 CREATE 重复 Module）
 - `origin: merged` 但未填 `dingtalk.project_record_id`
-- 期望 sync 把 Module 名改成 `{id} · {name}`（那是 **Issue** 格式；Module 须跟钉表 `{id}-{name}`）
+- 期望 sync 把 Module 名改成另一种分隔符（须跟已有钉表 keeper；**新写**用空格 `{id} {name}`）
 
 ## sync_manifest 登记（任务）
 
@@ -59,31 +59,32 @@
 
 1. **停止 sync**，不得 `--confirm-token`
 2. 检查 `milestones.yaml` 是否误用 `M001`/`M002` 或未绑定 `dingtalk.project_record_id`
-3. 检查 Plane 是否已有钉表 Module（`dev-aanalysis:module:DT-*`，名称 `{id}-{name}`）
+3. 检查 Plane 是否已有钉表 Module（`dev-aanalysis:module:DT-*`，名称含该 `{id}` 前缀）
 4. 修复 YAML 或清理误建 Module 后再 dry-run
 
 目标：**CREATE module = 0**（merged 仓库）。
 
 ## 名称格式区分（硬规则）
 
-| 层级     | Plane 对象              | 格式            | 分隔符                   | 示例                                                 |
-| -------- | ----------------------- | --------------- | ------------------------ | ---------------------------------------------------- |
-| depth-1  | **Module**（钉表 SSOT） | `{id}-{name}`   | **短横线 `-`**           | `S3.3-功能开发`、`P3.7-企业文件上传客户端与平台开发` |
-| depth-2+ | **Issue**（PM 台账）    | `{id} · {name}` | **中点 `·`**（两侧空格） | `S3.3.15 · 预警页筛选对接`                           |
+| 层级     | Plane 对象              | 格式          | 分隔符   | 示例                                                 |
+| -------- | ----------------------- | ------------- | -------- | ---------------------------------------------------- |
+| depth-1  | **Module**（钉表 SSOT） | `{id} {name}` | **空格** | `S3.3 功能开发`、`P3.7 企业文件上传客户端与平台开发` |
+| depth-2+ | **Issue**（PM 台账）    | `{id} {name}` | **空格** | `S3.3.15 预警页筛选对接`                             |
+
+**新写一律空格。** 存量钉表 Module 多为 `{id}-{name}`、Issue 多为 `{id} · {name}`：**不批量改名**；同代号只留一份。
 
 **禁止**：
 
-- 用 `·` 写 Module 名（`S3.3·功能开发` / `S3.3 · 功能开发`）——会与钉表 `S3.3-功能开发` **并成两个 Module**
-- 用 `-` 写 Issue 名（`S3.3.15-预警页…`）——与任务台账显示不一致
+- 对已有 keeper 再建 `-` / `·` / 空格的第二种写法（会并成两个 Module）
 - `da pm sync` 对 `origin: merged` milestone **CREATE** 或 **PATCH** Module 名称
 
-历史误建（含 `·` 的空 Module）：迁任务到钉表 keeper → rename `(重复·待删) …` → Plane **Archive**（禁止 DELETE API）。
+历史误建空 Module：迁任务到钉表 keeper → rename `(重复·待删) …` → Plane **Archive**（禁止 DELETE API）。
 
 ## 误建 Module 清理（保留任务）
 
 1. `plane_pull` 刷新快照
-2. 保留钉表 Module（`external_id` 含 `dev-aanalysis:module:DT-*` **且** 名称 `{id}-{name}`）
-3. 误建 Module（常见 `{id} · {name}` / `{prefix}:module:{id}`）下 Work Item：**迁移** link 到钉表 Module UUID，**不删**任务
+2. 保留钉表 Module（`external_id` 含 `dev-aanalysis:module:DT-*` **且** 名称含该 `{id}`）
+3. 误建 Module（同代号另一分隔符 / `{prefix}:module:{id}`）下 Work Item：**迁移** link 到钉表 Module UUID，**不删**任务
 4. 重复 WI（同名且已有层级 `external_id`）：mark `(重复·待删)` → 勿 DELETE API
 5. 空 Module rename `(重复·待删) …` 后 `status=completed` → Plane UI / API **Archive**
 
@@ -103,16 +104,16 @@ S3 仓库脚本：`repos/Agent_QualityAnalysis/plane/scripts/s3_ledger_align.py 
 
 适用范围：**所有**已与钉表 merged 的 Plane 项目与 Module（`P*.*`、`S*.*`、以及后续同结构编码），**不仅** P6。仓库映射见 [task-naming](task-naming.md)。
 
-| 规则        | 说明                                                                                    |
-| ----------- | --------------------------------------------------------------------------------------- |
-| `milestone` | 必须是钉表 depth-1 编码（如 `P3.7`、`S3.3`、`P6.11`、`S1.3`）                           |
-| 新任务      | **只 link** 已有 Module UUID；**禁止** `CREATE module`、禁止 `milestone: M*`            |
-| Module 名   | 跟钉表 `{id}-{name}`（短横线）；**禁止**用 Issue 的 `·` 再建同代号 Module               |
-| 见空壳      | 活跃 `M*` / `(重复·待删) … · …` / `{id} · {name}` → **禁止再 CREATE**，迁任务 + Archive |
+| 规则        | 说明                                                                               |
+| ----------- | ---------------------------------------------------------------------------------- |
+| `milestone` | 必须是钉表 depth-1 编码（如 `P3.7`、`S3.3`、`P6.11`、`S1.3`）                      |
+| 新任务      | **只 link** 已有 Module UUID；**禁止** `CREATE module`、禁止 `milestone: M*`       |
+| Module 名   | 跟钉表 keeper（存量 `-` 可保留；**新写**空格）；**禁止**同代号再建第二种分隔符壳   |
+| 见空壳      | 活跃 `M*` / `(重复·待删) …` / 同代号分隔符壳 → **禁止再 CREATE**，迁任务 + Archive |
 
 ### 「今日回潮」禁令（任意项目）
 
-见空的活跃 `M*`、middot `{id} · {name}`、或 `(重复·待删) …` Module 时：
+见空的活跃 `M*`、同代号分隔符壳、或 `(重复·待删) …` Module 时：
 
 1. **禁止**再 `CREATE module` / 手工新建同名壳
 2. 有任务 → link 到对应钉表 keeper → unlink 壳
@@ -126,13 +127,13 @@ S3 仓库脚本：`repos/Agent_QualityAnalysis/plane/scripts/s3_ledger_align.py 
 2. 枚举 shell `module-issues`；已在 keeper → 仅 unlink；否则 link keeper 再 unlink
 3. 同名 / 同 `external_id` 重复 WI：标 `(重复·待删)` Done，**不** DELETE
 4. issue 数为 0 → Archive（须 Module `status` 为 completed/cancelled）
-5. dry-run 验收：`CREATE module = 0`；活跃 Module **仅** 钉表 `{id}-{name}` keeper
+5. dry-run 验收：`CREATE module = 0`；活跃 Module **仅** 钉表 keeper（同代号一份）
 6. **每次 sync 后必须跑** `module_health_check.py --repo .`（pipeline 已自动挂）；失败则未完成同步
 7. **禁止**只 Archive 壳、不修脚本、不同步后自检（否则下次 sync 又回潮）
 
 ### 脚本硬门槛（全仓）
 
-`sync_preview` / `sync_plane` / `module_health_check`：若计划 **CREATE module** 且 id 匹配 `^M\d+`，或 Module 名含 `·`，或同代号 `-`/`·` 双份 → **fail**，阻止 confirm-token sync。唯一例外：`my-plane` 维持 `M003-*`；**其它仓 / 项目一律禁止**。
+`sync_preview` / `sync_plane` / `module_health_check`：若计划 **CREATE module** 且 id 匹配 `^M\d+`，或同代号 `-`/`·`/空格双份 → **fail**，阻止 confirm-token sync。唯一例外：`my-plane` 维持 `M003-*`；**其它仓 / 项目一律禁止**。
 
 ## 附录：P6 技术基建上的 M→P6 对照（历史双轨）
 

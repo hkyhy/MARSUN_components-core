@@ -1,7 +1,7 @@
 # 钉钉层级命名与 Plane 双轨 ID
 
 > 与 [task-naming](task-naming.md)、[task-relationships](task-relationships.md)、[pm-sync](pm-sync.md) 配套。  
-> **给人听的通俗版 + 取号示意图**：[dingtalk-hierarchy-取号通俗说明.md](dingtalk-hierarchy-取号通俗说明.md)  
+> **给人听的说明 + 取号示意图**：[dingtalk-hierarchy-取号说明.md](dingtalk-hierarchy-取号说明.md)  
 > 实现详文：`repos/my-plane/apps/api/plane/tos/services/dingtalk_sync/README.md`
 
 ## 层级契约
@@ -9,12 +9,12 @@
 华茂 AI 表格（Notable）行名须匹配 `^[A-Z]\d+(\.\d+)*`（见 `hierarchy_format.py`）：
 
 ```
-depth-0  P3 / S3 / P6 / S1           → Plane Project
-depth-1  P3.2 / S3.3 / P6.11        → Plane Module（sync_manifest milestone）
-depth-2+ P3.2.1 / S3.3.15           → Plane Issue（sync_manifest id）
+depth-0  P3 / S3 / P6 / S1           → Plane Project（一级）
+depth-1  P3.2 / S3.3 / P6.11        → Plane Module（二级 · sync_manifest milestone）
+depth-2+ P3.2.1 / S3.3.15 / S3.3.6  → Plane Issue（**钉钉三级** · 日常父项 / Task: 或细分之父）
 ```
 
-**禁止**将 depth-1 Module 行重复写成 Issue。
+**禁止**将 depth-1 Module 行重复写成 Issue。**禁止**把 Module 当作 `parent_issue`（父项只挂 depth-2+ Issue）。
 
 New-schema 列（`智能体名称` / `阶段/子项目` / `任务名称` / `子任务名称`）与 legacy `项目名称` + `父记录` 可在同一 sheet 按行混用；分类逻辑见 my-plane `unified.py`。
 
@@ -31,26 +31,28 @@ New-schema 列（`智能体名称` / `阶段/子项目` / `任务名称` / `子�
 
 钉表绑定 Module（有 `dingtalk_project_record_id` / `:module:DT-` / `origin` ∈ `{dingtalk,merged}`）下，depth-2 序号分两段：
 
-| 轨                    | 谁用                                           | 序号                 | 取下一号                             |
-| --------------------- | ---------------------------------------------- | -------------------- | ------------------------------------ |
-| **钉表 / Plane 段内** | 钉 poll 行名；Plane 新建勾选里程碑或关联里程碑 | **1～1000**（10×99） | 见下「Plane 新建双模式」与里程碑段表 |
-| **非段内自建**        | Plane 新建未关联里程碑、`da pm` / CLI          | **≥1001**            | `next = max(1000, max_used) + 1`     |
+| 轨                    | 谁用                                                   | 序号                 | 取下一号                             |
+| --------------------- | ------------------------------------------------------ | -------------------- | ------------------------------------ |
+| **钉表 / Plane 段内** | 钉 poll 行名；Plane 新建勾选「是否为里程碑」（档末槽） | **1～1000**（10×99） | 见下「Plane 新建双模式」与里程碑段表 |
+| **非段内自建**        | Plane 新建任务（关联或不关联）、`da pm` / CLI          | **≥1001**            | `next = max(1000, max_used) + 1`     |
 
 > **best-effort**：取号无预留；创建/更新时同项目同层级码会软拒绝。`da pm` / CLI：`nextChildIssueCode` 默认 `max(1000, max_used)+1`（≥1001）。
+
+**例外（标签门控入钉表）**：≥1001 任务若打 `ding` 标签，可经 `dingtalk_export_issue` 写入钉表，逻辑上归属关联里程碑段（物理序由钉表 UI 排序决定）。关联里程碑为可选元数据（持久化到 `TosIssueMetadata.associated_milestone_code`）；不关联的 ≥1001 也可入钉表。可用 `DINGTALK_ENFORCE_MILESTONE_LINK=1` 临时开启强制校验（默认关闭）。
 
 #### Plane 新建双模式（创建弹窗）
 
 `GET /api/tos/projects/.../next-hierarchy-id/?kind=&milestone_slot=`（扫号用 `parse_hierarchy_name().code`，`MD2.2.1` 计入 `D2.2`）：
 
-| 模式                    | 标题建议           | 序号                                                                                                          |
-| ----------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
-| 勾选「里程碑」          | `M{mod}.{slot} · ` | `slot ∈ {1,101,…,901}` 下一空位；已满 10 → `suggested_overflow_module` + 提示新开 Module                      |
-| 不勾选 + 已选关联里程碑 | `{mod}.{n} · `     | `n` 在该段 `(slot+1)…(slot+99)` 取 `max+1`；段满则提示（关联=号段父槽，非 Plane parent；下拉仅 M 前缀规范槽） |
-| 不勾选 + 未选里程碑     | `{mod}.{n} · `     | 钉表 Module 仍 **≥1001**；纯 Plane Module 为 `max_used+1`                                                     |
+| 模式                    | 标题建议         | 序号                                                                                                            |
+| ----------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------- |
+| 勾选「是否为里程碑」    | `M{mod}.{slot} ` | `slot ∈ {100,200,…,1000}` 下一空位；已满 10 → `suggested_overflow_module` + 提示新开 Module                     |
+| 不勾选 + 已选关联里程碑 | `{mod}.{n} `     | 与未选相同：**≥1001**（钉表 Module）或 `max_used+1`（纯 Plane）。关联只写入 `associated_milestone_code`，不改号 |
+| 不勾选 + 未选里程碑     | `{mod}.{n} `     | 钉表 Module 仍 **≥1001**；纯 Plane Module 为 `max_used+1`                                                       |
 
 `{mod}` = Module **结构码**（`S3.3` / `D2.2`）：Module 名可带 `M`（如 `MD2.2`→`D2.2`），子 Issue 扫号一律用解析后的 `.code`。
 
-纯 Plane Module（无钉锚点）：未选里程碑时不预留 1000，`next = max_used + 1`（可从 1）；勾选里程碑 / 关联里程碑时仍按 10×99 段建议。
+纯 Plane Module（无钉锚点）：未选里程碑时不预留 1000，`next = max_used + 1`（可从 1）；勾选「是否为里程碑」时仍按 10×99 档末槽建议。关联里程碑不改号。
 
 存量已占用的 `<1001` 且非段内规划的 PM 任务**不回迁**。`da pm sync` 细粒度新建默认 **≥1001**（`nextChildIssueCode` floor 1000）。
 
@@ -59,41 +61,45 @@ New-schema 列（`智能体名称` / `阶段/子项目` / `任务名称` / `子�
 - **每个 depth-1 Module 下，钉表 depth-2 序号不得超过 1000**（即行名 `S3.3.1`～`S3.3.1000`）。
 - 超出须**拆 Module / 新建子项目行**，不得继续在同 Module 下写 `S3.3.1001+` 作为钉表行（`≥1001` 专供 Plane / PM 自建）。
 - 华茂 AI 表格（Notable）维护时按此号段规划；同步侧以标题层级码为准。
+- **例外（标签门控）**：≥1001 任务若打 `ding` 标签，可入钉表，逻辑上归属关联里程碑段（物理序由钉表 UI 排序决定）。关联里程碑为可选元数据；不关联的 ≥1001 也可入钉表（默认）。可用 `DINGTALK_ENFORCE_MILESTONE_LINK=1` 开启强制校验。
+- 关联里程碑须按任务实际情况选已有里程碑（如 `S3.3.1367` 关联 `MS3.3.1000`），不得瞎关联。
+- 关联信息持久化到 `TosIssueMetadata.associated_milestone_code`；export 前置校验读取该字段，`DINGTALK_ENFORCE_MILESTONE_LINK=1` 时缺失则 skip + log `reason=reserved_task_missing_milestone_link`。
 
 #### 钉表里程碑段（10 × 99 · 须知会表格维护方）
 
-每 Module 的 1～1000 切成 **10 段 × 100**。**每 Module 最多 10 个钉表里程碑**；每里程碑段内最多 **99 个任务**。
+每 Module 的 1～1000 切成 **10 段 × 100**。里程碑在段**末**。**每 Module 最多 10 个钉表里程碑**；每里程碑段内最多 **99 个任务**。
 
-| 段 k（1～10） | 里程碑行（名称加 `M` 前缀） | 任务行                    |
-| ------------- | --------------------------- | ------------------------- |
-| 1             | `{mod}.1` → `MS3.3.1-…`     | `{mod}.2`～`{mod}.100`    |
-| 2             | `{mod}.101` → `MS3.3.101-…` | `{mod}.102`～`{mod}.200`  |
-| …             | `{mod}.(k-1)*100+1`         | 随后连续 99 号            |
-| 10            | `{mod}.901`                 | `{mod}.902`～`{mod}.1000` |
+| 段 k（1～10） | 任务行                   | 里程碑行（名称加 `M` 前缀）   |
+| ------------- | ------------------------ | ----------------------------- |
+| 1             | `{mod}.1`～`{mod}.99`    | `{mod}.100` → `MS3.3.100 …`   |
+| 2             | `{mod}.101`～`{mod}.199` | `{mod}.200` → `MS3.3.200 …`   |
+| …             | 同段连续 99 号           | `{mod}.k*100`                 |
+| 10            | `{mod}.901`～`{mod}.999` | `{mod}.1000` → `MS3.3.1000 …` |
 
-- 里程碑槽：`slot = (k - 1) * 100 + 1`（k∈1..10）
-- 任务槽：同段 `slot+1` … `slot+99`
-- **第 11 个里程碑**：勿再写入本 Module；**新开 depth-1 Module**，代号取该 Project 下已有 Module 序号的 **max+1**（例：已有 `S3.1`…`S3.9` → `S3.10-功能开发2`）
+- 里程碑槽：`slot = k * 100`（k∈1..10）
+- 任务槽：同段 `slot-99` … `slot-1`
+- **第 11 个里程碑**：勿再写入本 Module；**新开 depth-1 Module**，代号取该 Project 下已有 Module 序号的 **max+1**（例：已有 `S3.1`…`S3.9` → `S3.10 功能开发2`）
 
 示例树：
 
 ```
-S3-质量预警｜智能体子项目
-  S3.1-…
-  S3.2-…
-  S3.3-功能开发
-    MS3.3.1-里程碑名称…
-    S3.3.2-任务名称…
+S3 质量预警｜智能体子项目
+  S3.1 …
+  S3.2 …
+  S3.3 功能开发
+    S3.3.1 任务名称…
     …
-    S3.3.99-任务名称…
-    S3.3.100-任务名称…
-    MS3.3.101-里程碑名称…
+    S3.3.99 任务名称…
+    MS3.3.100 里程碑名称…
+    S3.3.101 任务名称…
     …
-    MS3.3.901-里程碑名称…
-  S3.4-测试及验证/完善
+    MS3.3.200 里程碑名称…
+    …
+    MS3.3.1000 里程碑名称…
+  S3.4 测试及验证/完善
   …
-  S3.9-项目及产品管理
-  S3.10-功能开发2          ← S3.3 里程碑已满 10 个后新开
+  S3.9 项目及产品管理
+  S3.10 功能开发2          ← S3.3 里程碑已满 10 个后新开
 ```
 
 实现辅助：`my-plane` `plane/tos/services/milestone_slots.py`（`dingtalk_sync/milestone_slots` 为兼容 re-export）。
@@ -128,18 +134,18 @@ S3-质量预警｜智能体子项目
 
 ## 名称分隔符（Module vs Issue）
 
-| 对象               | 分隔       | 正确                       | 错误（会重复写入）                |
-| ------------------ | ---------- | -------------------------- | --------------------------------- |
-| depth-1 **Module** | 短横线 `-` | `S3.3-功能开发`            | `S3.3·功能开发`、另造同 id Module |
-| depth-2+ **Issue** | 中点 `·`   | `S3.3.15 · 预警页筛选对接` | `S3.3.15-预警页…`（非台账约定）   |
+| 对象               | 分隔 | 正确                     | 错误（会重复写入）                          |
+| ------------------ | ---- | ------------------------ | ------------------------------------------- |
+| depth-1 **Module** | 空格 | `S3.3 功能开发`          | `S3.3-功能开发` / `S3.3·功能开发` 再建同 id |
+| depth-2+ **Issue** | 空格 | `S3.3.15 预警页筛选对接` | `S3.3.15 · …` / `S3.3.15-…`（非新约定）     |
 
-钉表 poll 写入何种分隔即以钉表为准（华茂表 depth-1 统一为 **`-`**）。`da pm sync` **不得**再 CREATE 一套 `·` Module。
+**新写一律空格**。钉表/Plane 存量多为 `-`（Module）或 `·`（Issue）：**不批量改名**；同代号只留一份 keeper，禁止再造另一种分隔符壳。`da pm sync` **不得**再 CREATE 同代号第二份 Module。
 
 ## merged 模块写保护（2026-07）
 
 `origin: merged` + `dingtalk.project_record_id` 的 milestone：
 
-- **Module 名称**：钉表 `{id}-{name}`（短横线），**不是** Issue 的 `{id} · {name}`
+- **Module 名称**：跟钉表 keeper（存量多为 `{id}-{name}`；**新写** `{id} {name}` 空格），**不是**另造一套分隔符
 - **禁止** `da pm sync` CREATE Module 或 PATCH 钉表 Module 的 name / external_id
 - dry-run **CREATE module = 0** 为硬门槛
 
@@ -150,13 +156,13 @@ S3-质量预警｜智能体子项目
 1. 任何 `CREATE module`（`origin: merged` 目标为 **0**）
 2. 计划 CREATE 的 Module id 为 `M00x` 等历史轨（`my-plane` 除外）
 3. 台账出现 `milestone: M*`（应改为钉表 `P*.*` / `S*.*`）
-4. Module 名含 `·`（中点仅为 Issue 分隔符）——会与钉表 `{id}-{name}` **并成重复 Module**
-5. 同代号已有两条 Module（一条 `-`、一条 `·`）→ 先清壳再 sync（[plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)）
+4. 同代号已有两条 Module（`-` / `·` / 空格混用）→ 先清壳再 sync（[plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)）
+5. Module 名用 `·` 或对已有 keeper 再建空格/`-` 壳——会与钉表同代号 **并成重复 Module**
 6. **sync 之后** `module_health_check` 失败，或 Modules 仍同代号双份 → 未完成，禁止收工
 
 PM 顺序铁律：`plane_pull` → dry-run → sync → **post-check**（见 [pm-sync](pm-sync.md)）。
 
-见空 `M*` / middot 壳：**禁止 CREATE**，只做 link→unlink→Archive。
+见空 `M*` / 分隔符壳：**禁止 CREATE**，只做 link→unlink→Archive。
 
 详文：[plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)
 

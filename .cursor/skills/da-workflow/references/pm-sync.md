@@ -44,47 +44,49 @@ python3 ~/.cursor/skills/platform-doc-plane-sync/scripts/module_health_check.py 
 - preflight exit 3 → HITL 停下，用户补 API Key / `project_id`
 - **`origin: merged` milestone：dry-run CREATE module 须为 0**（否则停止 sync，见 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)）
 - **禁止** pm sync 私自 CREATE 与钉表同名的 Module（`M001`/`M002` 等历史 id 已废弃）
-- **全项目**：台账不得登记 `milestone: M*`（`my-plane` 除外）；只挂钉表 `P*.*` / `S*.*` keeper（名称 `{id}-{name}`）
-- **禁止**用 Issue 的中点 `·` 再建 Module（会与钉表并成重复项，如 `P3.7 · …` / `P6.11 · …` / `S1.3 · …` / `S3.3 · …` vs 对应 `{id}-…` keeper）
-- **脚本硬拦**：`sync_preview` 对 merged `CREATE module` / middot Module **fail**；`module_health_check` 对同代号双份 **fail**
+- **全项目**：台账不得登记 `milestone: M*`（`my-plane` 除外）；只挂钉表 `P*.*` / `S*.*` keeper
+- **禁止**对同代号再建第二种分隔符壳（`-` / `·` / 空格混用会并成重复 Module）
+
+## 回潮复盘（分隔符混用 · 全工程线）
+
+同代号只留一份；常见误建：
+
+| Keeper（示例）                              | 误建壳                                    |
+| ------------------------------------------- | ----------------------------------------- |
+| `P3.7-企业文件上传…` / `P3.7 企业文件上传…` | 另一分隔符的同代号 Module                 |
+| `P6.11-开发规范` / `P6.11 开发规范`         | 同上                                      |
+| `S1.3-…` / `S3.3-功能开发`                  | 同上                                      |
+| `external_id` = `{legacy}:module:DT-…`      | `{repo-prefix}:module:{code}`（分隔符壳） |
+
+- **脚本硬拦**：`sync_preview` 对 merged `CREATE module` / 同代号双份 **fail**；`module_health_check` 对同代号双份 **fail**
 - 见重复 Module → **先**按 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md) 清壳，**再** sync
+
+历史根因：lookup 只认某种分隔符名 + DT 查找未覆盖 `legacy_external_prefixes` → 误判「无 Module」→ CREATE 壳；Archive 后再 sync 又 CREATE。现已：`resolve_plane_module` + merged 禁止 CREATE + **每个 plane_ready 仓每次 sync 后 health check**。
+
+**禁止**：只 Archive 壳、不修脚本、不同步后自检；禁止以为「只 S3 要管」而跳过他仓自检。
 
 ## dry-run 门槛（merged 仓库）
 
 | 检查项                                  | 预期            | 失败处理                                                                   |
 | --------------------------------------- | --------------- | -------------------------------------------------------------------------- |
 | CREATE module                           | **0**           | 改 milestones 绑定 dingtalk；清理误建 Module                               |
-| CREATE `M*` / middot Module             | **硬失败**      | 删 YAML `M*` 行；清壳后挂对应钉表 Module                                   |
-| 同代号双 Module（`-`+`·`）              | **0 活跃壳**    | merge→`(重复·待删)`→Archive 后再 sync                                      |
+| CREATE `M*` / 同代号分隔符壳            | **硬失败**      | 删 YAML `M*` 行；清壳后挂对应钉表 Module                                   |
+| 同代号双 Module（`-`/`·`/空格）         | **0 活跃壳**    | merge→`(重复·待删)`→Archive 后再 sync                                      |
 | CREATE 任务                             | 仅新登记 id     | 先 reconcile 再登记                                                        |
 | CREATE 已有 `plane_issue_id` 的钉表任务 | **0（硬停止）** | 勿 sync；查 prefix / sync-state；**禁止**把本应 CREATE 的细粒度并进父 note |
 | PATCH 模块名                            | **0**（merged） | 检查 sync 写保护是否生效                                                   |
 | module_health_check                     | **exit 0**      | 清壳 / 修脚本后再 sync                                                     |
 
-## 回潮复盘（`-` vs `·` · 全工程线）
-
-| 正确（钉表 keeper）                    | 错误（pm sync 壳）                         |
-| -------------------------------------- | ------------------------------------------ |
-| `P3.7-企业文件上传…`                   | `P3.7 · 企业文件上传…`                     |
-| `P6.11-开发规范`                       | `P6.11 · 开发规范`                         |
-| `S1.3-…`                               | `S1.3 · …`                                 |
-| `S3.3-功能开发`                        | `S3.3 · 功能开发`                          |
-| `external_id` = `{legacy}:module:DT-…` | `{repo-prefix}:module:{code}`（middot 壳） |
-
-历史根因：lookup 只认 middot 名 + DT 查找未覆盖 `legacy_external_prefixes` → 误判「无 Module」→ CREATE 壳；Archive 后再 sync 又 CREATE。现已：`resolve_plane_module` + merged 禁止 CREATE + **每个 plane_ready 仓每次 sync 后 health check**。
-
-**禁止**：只 Archive 壳、不修脚本、不同步后自检；禁止以为「只 S3 要管」而跳过他仓自检。
-
 ## 负责人与日期
 
 任务 CREATE/PATCH 须写入 Plane assignee 与起止日期。YAML 字段见 [plane-team-assignees](plane-team-assignees.md)：
 
-| 层级      | 字段                                            | sync 行为                                                                    |
-| --------- | ----------------------------------------------- | ---------------------------------------------------------------------------- |
-| milestone | `owner`、`plan_date`                            | merged 时不 PATCH 钉表 Module；仅 PM 自建模块时生效                          |
-| task      | `owner`、`start_date`、`target_date`            | 写入 Work Item assignee + 日期（进行中缺字段 → validate 硬拦）               |
-| task      | `parent_issue`、note `related_tasks`/`Related:` | `apply_task_relationships` → 父项 + 「添加关系」（须接线，禁止只定义不调用） |
-| task      | 台账 `id`（层级）                               | Issue.name = `{id} · {name}`（禁止 mint/塌成 `*.1`）                         |
+| 层级      | 字段                                            | sync 行为                                                                                                                              |
+| --------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| milestone | `owner`、`plan_date`                            | merged 时不 PATCH 钉表 Module；仅 PM 自建模块时生效                                                                                    |
+| task      | `owner`、`start_date`、`target_date`            | 写入 Work Item assignee + 日期（进行中缺字段 → validate 硬拦）                                                                         |
+| task      | `parent_issue`、note `related_tasks`/`Related:` | **CREATE**：`applyCatalogTaskRelationships`（`--confirm-plane`）；**全量补漏**：`apply_task_relationships`（须接线，禁止只定义不调用） |
+| task      | 台账 `id`（层级）                               | Issue.name = `{id} {name}`（禁止 mint/塌成 `*.1`）                                                                                     |
 
 ```bash
 export PLANE_PUSH_ASSIGNEE=1    # YAML 有 owner 时写入 Plane

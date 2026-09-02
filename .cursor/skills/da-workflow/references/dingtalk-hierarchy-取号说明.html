@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>钉表 / Plane 取号 —— 说明</title>
+  <script src="https://unpkg.com/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root { --ink: #1a1a1a; --navy: #1e3a5f; --muted: #6b7280; --blue: #3b82f6; --line: #e5e7eb; --soft: #f0f9ff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); font: 11px/1.32 "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #e2e8f0; }
+    .sheet { width: 210mm; min-height: 297mm; margin: 12px auto; padding: 10mm 12mm; background: #fff; box-shadow: 0 1px 8px rgba(15,23,42,.12); }
+    h1 { margin: 0 0 3px; font-size: 15px; color: var(--navy); }
+    .sub { margin: 0 0 6px; color: var(--muted); font-size: 10px; }
+    .w3 { margin: 0 0 4px; font-size: 11px; }
+    .w3 b { color: var(--blue); }
+    h2 { margin: 8px 0 3px; font-size: 11.5px; color: var(--blue); border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+    table { width: 100%; border-collapse: collapse; font-size: 10px; margin: 0 0 4px; }
+    th, td { border: 1px solid var(--line); padding: 2px 5px; text-align: left; vertical-align: top; }
+    th { background: var(--soft); }
+    code { font-size: 10px; }
+    .mermaid { margin: 4px 0; display: flex; justify-content: center; }
+    footer { margin-top: 8px; padding-top: 5px; border-top: 1px solid var(--line); color: var(--muted); font-size: 9.5px; }
+    .hint { max-width: 210mm; margin: 8px auto; text-align: center; color: var(--muted); font-size: 12px; }
+    @page { size: A4; margin: 12mm; }
+    @media print { body { background: #fff; } .sheet { width: auto; min-height: auto; margin: 0; padding: 0; box-shadow: none; } .hint { display: none; } }
+  </style>
+</head>
+<body>
+  <p class="hint">打印：Cmd/Ctrl + P · A4 · 旧版 vscode 导出已替换为本可打印稿</p>
+  <article class="sheet">
+    <h1>钉表 / Plane 取号 —— 说明</h1>
+    <p class="sub">培训一页纸 · 含触发词</p>
+    <p class="w3"><b>是什么</b> 钉表 1～1000（档末里程碑）；研发自拆从 1001 起；每模块最多 10 个里程碑。</p>
+    <p class="w3"><b>为什么</b> 两张表靠同一套号对齐；号乱找不到活；造壳 → 假进度。</p>
+    <p class="w3"><b>怎么做</b> 新建看标题旁选项；补最小空洞；表上已有的别再造壳。</p>
+    <p class="w3">名字例：<code>S3.3 功能开发</code> / <code>S3.3.15 某某</code>（码和标题一个空格）</p>
+    <div class="mermaid">
+flowchart LR
+  S3[S3 项目] --> M[S3.3 模块]
+  M --> D["钉表 1～1000"]
+  M --> P["自拆 ≥1001"]
+  D --> Seg["10 段 · 档末里程碑"]
+  Seg --> Full[满 10 档 → 新模块]
+  P --> Ding{ding?}
+  Ding -->|否| Stay[只在 Plane]
+  Ding -->|是| In[进钉表]
+    </div>
+    <h2>你怎么喊 AI（触发词）</h2>
+    <table>
+      <tr><th>你说</th><th>AI 该做什么</th></tr>
+      <tr><td><b>取号</b> / 怎么取号 / 钉表编号 / Plane 编号</td><td>按控件规则解释该拿什么号</td></tr>
+      <tr><td><b>补空洞</b> / 不要 max+1 / 最小空号</td><td>段内最小空洞，禁止只会往后加</td></tr>
+      <tr><td><b>造壳</b> / 同名空任务 / 禁止再新建同名模块</td><td>对照钉表；禁止同代号空壳</td></tr>
+      <tr><td><b>进钉表</b> / 打 ding / 细号怎么进业务表</td><td>≥1001 默认不进；要进须 ding+标题带码</td></tr>
+      <tr><td><b>关联里程碑是不是父子</b></td><td>澄清：只记归属、不改号，不是父子</td></tr>
+      <tr><td><b>按取号说明</b> / 按 dingtalk-hierarchy</td><td>打开 naming / 本页执行</td></tr>
+    </table>
+    <h2>Plane 新建（标题旁选项）</h2>
+    <table>
+      <tr><th>你怎么选</th><th>拿到什么号</th></tr>
+      <tr><td>勾选「是否为里程碑」</td><td>下一个 .100 / .200 / …（钉表档末）</td></tr>
+      <tr><td>关联某个里程碑</td><td>仍 ≥1001；只记归属，不改号</td></tr>
+      <tr><td>都不选</td><td>≥1001（自拆细号）</td></tr>
+    </table>
+    <p style="margin:4px 0;font-size:10.5px;">勾选「是否为里程碑」会自动换标号；换关联不换号。手改标题且没再点该勾选 → 系统不抢改。关联里程碑 ≠ 父子任务。</p>
+    <h2>细号怎么进钉表</h2>
+    <p style="margin:0;font-size:10.5px;">默认不进。要进：模块已在钉表 + 打 <code>ding</code> + 标题带层级码。表上已有的模块/大任务，别在 Plane 再造同名空壳。</p>
+    <footer>细则：dingtalk-hierarchy-naming.md · task-naming · task-relationships</footer>
+  </article>
+  <script>mermaid.initialize({ startOnLoad: true, theme: "default" });</script>
+</body>
+</html>

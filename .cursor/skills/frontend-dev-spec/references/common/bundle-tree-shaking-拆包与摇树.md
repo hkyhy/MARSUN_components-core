@@ -111,4 +111,5 @@ export const alertsRoutes = (
 | 数据资产       | `npm run build:analyze` | `dist/stats.html` |
 
 S3 图表须经 `QualityAnalysis/Common/LazyPlot`（动态 `react-plotly.js`），禁止业务组件顶层静态 import plotly。  
+`layout` / `data` / `style` / `config` **必须 `useMemo`**（按实际数据/窗变化），`onClick` 用 `useCallback`；`style` 须同时给 `width` 与 **固定 `height`**；**禁止** `config.responsive` 与 `useResizeHandler` 同时为 true（父级 `VirtualScrollbar` 会 ResizeObserver → 新 layout 引用 → `Plotly.react` 死循环，生产表现为 Minified React error #185）。  
 数据资产 Dashboard 图表须经 `Dashboard/Analytics/Common/LazyPie` / `LazyArea`（动态 `@ant-design/charts`），禁止顶层静态 `import { Pie|Area } from '@ant-design/charts'`。

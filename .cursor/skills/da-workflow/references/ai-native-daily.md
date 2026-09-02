@@ -55,29 +55,29 @@ plane_ready 闭环细则：[plane-timeline.md](plane-timeline.md)。关联细则
 
 **Plane UI 对照**（Issue 页操作栏）：
 
-| UI               | 台账 / 动作                                                                   | 语义                     |
-| ---------------- | ----------------------------------------------------------------------------- | ------------------------ |
-| （认领已有）     | `da task use`                                                                 | 本次 = 该 Issue 本身     |
-| **添加子工作项** | YAML `parent_issue` → `da pm sync` 幂等 PATCH `parent`                        | 层级：钉表下的分解/增量  |
-| **添加关系**     | `note.related_tasks` / `Related:` → sync 幂等 `relates_to`（`blocks` 仍人工） | 非层级：依赖、并行、互指 |
+| UI               | 台账 / 动作                                                                                                 | 语义                                                        |
+| ---------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| （认领已有）     | `da task use`                                                                                               | 本次 = **钉钉三级**本身                                     |
+| **添加子工作项** | YAML `parent_issue` → **`--confirm-plane`** 幂等 PATCH（全量 sync 补漏）                                    | 父 = **钉钉三级** Issue；子 = ≥1001 细分（**不是** Module） |
+| **添加关系**     | `note.related_tasks` / `Related:`（含 `Refs: … · Related:` 同行）→ 同上幂等 `relates_to`（`blocks` 仍人工） | 非层级：依赖、并行、互指                                    |
 
 **ABC（Agent 先择优推荐 + 理由，用户确认或改选；禁止静默建单）**：
 
-| 码              | 路径                                                                                          | 何时判定                                                                |
-| --------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **A. 认领**     | `da task use <钉表/映射 id>`；`Task:` = 该 id                                                 | 交付范围 = 钉表该行（或本仓已映射同号）本身                             |
-| **B. 子工作项** | 新建细粒度；`parent_issue` = 父 UUID；`Refs:`；父仅 `related_tasks` 互指；`Task:` = **子 id** | 该钉表大颗粒下的可验收增量（子功能、部署/seed、联调、修 bug、剩余工作） |
-| **C. 添加关系** | 新建或已有；**不**误挂 `parent_issue`（或父另有所属）；`related_tasks` 互指                   | 相关/依赖/并行/阻塞，**非**隶属该钉表行                                 |
+| 码              | 路径                                                                                                | 何时判定                                                              |
+| --------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **A. 认领**     | `da task use <钉钉三级 id>`；`Task:` = 该三级 id                                                    | 交付范围 = 钉表该三级行本身                                           |
+| **B. 子工作项** | 新建细粒度；`parent_issue` = **三级** UUID；`Refs:`；父仅 `related_tasks` 互指；`Task:` = **子 id** | 该钉钉三级下的可验收增量（子功能、部署/seed、联调、修 bug、剩余工作） |
+| **C. 添加关系** | 新建或已有；**不**误挂 `parent_issue`（或父另有所属）；`related_tasks` 互指                         | 相关/依赖/并行/阻塞，**非**隶属该钉钉三级                             |
 
 **稍后绑定**：仅讨论/读代码；**提交前**必须回到已确认的 A/B/C。
 
-**择优口诀**：锚定钉表 → 是该行本身？**A** → 是其下增量？**B** → 只是相关？**C** → 拿不准则 AskQuestion 高亮推荐项，须用户确认。Module 拿不准（尤其 my-plane）按 [task-naming · P6 Module 分工](task-naming.md#p6-module-分工防乱挂) 选 P6.8/P6.9/P6.11/P6.12；**禁止**把产品/TOS 卡当杂项塞进 **P6.12**。
+**择优口诀**：锚定钉表三级 → 是该行本身？**A** → 是其下增量？**B** → 只是相关？**C** → 拿不准则 AskQuestion 高亮推荐项，须用户确认。`milestone` 只选 Module（如 `S3.3`）；**禁止**把 Module 当 `parent_issue`。Module 拿不准（尤其 my-plane）按 [task-naming · P6 Module 分工](task-naming.md#p6-module-分工防乱挂) 选 P6.8/P6.9/P6.11/P6.12；**禁止**把产品/TOS 卡当杂项塞进 **P6.12**。
 
 确认话术示例：
 
-> 建议 **B 子工作项**：本次是 `S3.3.26` 下的「筛选联调」增量，将新建细粒度并挂父。可改选 A 认领整条 / C 仅添加关系。
+> 建议 **B 子工作项**：本次是钉钉三级 `S3.3.26` 下的「筛选联调」增量，将新建细粒度并挂父。可改选 A 认领整条三级 / C 仅添加关系。
 
-**硬停止**：静默 `task new`；B 用父 id 作 `Task:` 或并父 note；`CREATE module` / `M*`；把绑定当成必须打 `ding` 标签（B1/B2 收口另判）；**静默选 Module / 乱挂 P6.12**。
+**硬停止**：静默 `task new`；B 用三级 id 作 `Task:` 或并父 note；`parent_issue` 写成 Module/`S3.3`；`CREATE module` / `M*`；把绑定当成必须打 `ding` 标签（B1/B2 收口另判）；**静默选 Module / 乱挂 P6.12**。
 
 **钉表事项 vs `ding` 标签**：前者选父/认领；后者是否 export——勿混。
 
@@ -88,7 +88,7 @@ plane_ready 闭环细则：[plane-timeline.md](plane-timeline.md)。关联细则
 1. **禁止裸 `git commit -m` / `--no-verify`** — 唯一入口 `da standards commit`
 2. **Commit 正文必须有 `Task: <ID>`** — 禁止用分支名冒充
 3. **关单必须两步** — `timeline-sync` + `done --confirm`；只改状态不算完成。**禁止**为关单跑无范围全量 `da pm sync`（仅用户明确「整理 Plane」才全量）
-4. **Plane 卡片完整** — 新/进行中台账须有 `milestone`+`owner`+日期；层级增量须 `parent_issue` + note `Refs:`/`related_tasks:`；sync 后详情禁止「无模块」、标题禁止塌成 `*.1`、有关联时「添加关系」须可见（见 [task-relationships](task-relationships.md)；`validate_manifest` 硬拦）
+4. **Plane 卡片完整** — 新/进行中台账须有 `milestone`（Module）+`owner`+日期；细分须 `parent_issue`（**钉钉三级** UUID，非 Module）+ note `Refs:`/`related_tasks:`；**`--confirm-plane` CREATE 后**详情禁止「无模块」、标题禁止塌成 `*.1`、有 `parent_issue`/`Related:` 时「父项」「添加关系」须可见（YAML 有字段但 UI 空 = 未 PATCH，禁止只改 Done；见 [task-relationships](task-relationships.md)；`validate_manifest` 硬拦）
 
 ---
 

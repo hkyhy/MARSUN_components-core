@@ -27,6 +27,9 @@ import {
   usePageShellLoading,
   ModulePageShell,
   PageHeaderLayout,
+  FullscreenBox,
+  FullscreenToggle,
+  useFullscreen,
 } from '@hkyhy/marsun-components-core';
 ```
 
@@ -37,6 +40,9 @@ import {
 | `ModulePageShell`     | toolbar/breadcrumb 在 Spin 外；body 内置 PageSpin                           |
 | `PageHeaderLayout`    | 经典页头 + body 内置 PageSpin                                               |
 | `usePageShellLoading` | 深层注册 loading，卸载自动清除                                              |
+| `FullscreenBox`       | CSS 铺满视口容器（受控 `fullscreen`）；Esc 退出、锁定 body 滚动             |
+| `FullscreenToggle`    | 全屏开关（纯图标，或 `children` 作标题）                                    |
+| `useFullscreen`       | `fullscreen` / `toggle` / `exit` 状态                                       |
 
 ### 接入模式
 
@@ -400,6 +406,32 @@ Table 列内 CRUD 仍遵循 [module-patterns-模块模式.md](../business/module
 - 用 `<Alert type="info" banner>` 当「页面说明条」常驻顶部
 - 把可操作提示压进 tooltip（hover 才见的不能是「必须当下操作」的引导）
 - 同一页面同时挂 `<Alert>` 说明 + `Info`+tooltip 说明（二选一，避免重复真相源）
+
+---
+
+## 铺满视口 FullscreenBox
+
+对比矩阵、预警详情等「当前面板铺满窗口」用 core **`FullscreenBox` + `FullscreenToggle`**（CSS `position:fixed; inset:0`，**不是**浏览器 Fullscreen API）。
+
+```tsx
+const { fullscreen, toggle, setFullscreen } = useFullscreen();
+
+<FullscreenBox fullscreen={fullscreen} onFullscreenChange={setFullscreen} className={styles.panel}>
+  <header>
+    <FullscreenToggle fullscreen={fullscreen} onToggle={toggle} />
+    {/* 或带标题：<FullscreenToggle ...>对比矩阵</FullscreenToggle> */}
+  </header>
+  {children}
+</FullscreenBox>;
+```
+
+| 约束         | 说明                                                                                                                                                            |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 受控         | `fullscreen` 必传；Esc 通过 `onFullscreenChange(false)`                                                                                                         |
+| z-index      | 全屏层 **1100**（与 QA Agent 面板同级）；`FormModal` / antd Modal 须 ≥ `zIndexPopupBase` **1200**，否则弹层会被盖住                                             |
+| 开关         | 对比矩阵与预警详情均左侧 `FullscreenToggle`：**图标+短标题同一按钮**（「对比矩阵」/「预警详情」）；关闭等操作靠右。厂·品种·指标等长业务标题放开关下方，不进按钮 |
+| 预警详情指标 | `AlertMetricSummary`：内控 / 波动 / 实测 / 趋势**同一行**；超限写进对应卡底部；**无四边/左侧 border**（色块背景区分）；月份用 `YYYY年M月` 竖排，禁止缩成 `06`   |
+| 禁止         | 业务再写一份 `position:fixed; inset:0` 全屏壳；禁止原生 `<button>` 作开关                                                                                       |
 
 ---
 

@@ -5,9 +5,9 @@
 
 ## Task ID（`sync_manifest.yaml` → `id`）
 
-Plane **Issue**（任务）显示为 **`{id} · {name}`**（中点 `·`）。`id` 须稳定、全局可检索，**与华茂钉钉多维表格层级代号一致**（`P3.2.8`、`S3.3.15` 等）。
+Plane **Issue**（任务）显示为 **`{id} {name}`**（空格）。`id` 须稳定、全局可检索，**与华茂钉钉多维表格层级代号一致**（`P3.2.8`、`S3.3.15` 等）。
 
-Plane **Module**（depth-1）显示为 **`{id}-{name}`**（短横线 `-`，跟钉表），**禁止**写成 `{id} · {name}`，否则与钉表 Module 并成重复条目（如 `S3.3-功能开发` 与 `S3.3·功能开发`）。
+Plane **Module**（depth-1）显示为 **`{id} {name}`**（空格）。存量钉表多为 `{id}-{name}`：**不批量改**；**禁止**同代号再建 `-` / `·` / 空格第二种写法。
 
 ### 推荐格式（新任务）
 
@@ -19,16 +19,16 @@ Plane **Module**（depth-1）显示为 **`{id}-{name}`**（短横线 `-`，跟�
 | ----------- | --------------------- | --------------------------------------- |
 | `milestone` | 钉表 depth-1 模块编码 | `P3.7`、`S3.3`、`P6.11`、`P6.2`、`S1.3` |
 | `id`        | depth-2+ 完整层级     | `S3.3.15`、`P3.2.8`、`P6.11.3`          |
-| Module 显示 | `{id}-{name}`         | `S3.3-功能开发`                         |
-| Issue 显示  | `{id} · {name}`       | `S3.3.15 · 预警页筛选对接`              |
+| Module 显示 | `{id} {name}`         | `S3.3 功能开发`                         |
+| Issue 显示  | `{id} {name}`         | `S3.3.15 预警页筛选对接`                |
 | commit      | `Task: S3.3.15`       | 可选 `Refs: S3.3`                       |
 
 **层级契约**（与钉表 / huamao Plane 一致）：
 
 ```
 depth-0  P3 / S3 / P6 / S1     → Plane Project
-depth-1  P3.7 / S3.3 / P6.11   → Plane Module（名称用 `-`；sync_manifest milestone）
-depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifest id）
+depth-1  P3.7 / S3.3 / P6.11   → Plane Module（名称用空格；sync_manifest milestone）
+depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用空格；sync_manifest id）
 ```
 
 ### 仓库 ↔ 钉钉编码映射
@@ -63,9 +63,9 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
 2. **禁止**只改代码、只挂在旁路任务（升 core / UI 小改）而不登记
 3. commit 按 [commit-format · 功能/模块切分](commit-format.md)：**一钉表事项 / 一功能 → 独立 Task + 独立 commit 组**
 4. 跨项目钉表（P3.17）与业务仓（S3.3）双轨并存时，两边 status 应对齐；交付时间线以**写代码的业务仓 Task** 为主
-5. **钉表大颗粒下的部署 / seed / 联调环境等增量**：在本仓（或钉表同 Module 仓）**新建细粒度 id**，`parent_issue` = 大颗粒 `plane_issue_id`，commit 用细粒度 id；**禁止**改大颗粒 `note` 写「纳入本任务」后用大颗粒 id 提交（见 [task-relationships](task-relationships.md#钉表大颗粒-vs-细粒度硬规则--2026-07-24)）
+5. **钉钉三级下的部署 / seed / 联调环境等增量**：在本仓（或同 Module 仓）**新建细粒度 id**，`parent_issue` = **该三级** `plane_issue_id`（非 Module），commit 用细粒度 id；**禁止**改三级 `note` 写「纳入本任务」后用三级 id 提交（见 [task-relationships](task-relationships.md#勿混module--父项钉钉三级)）
 
-**Agent 硬停止（全项目）**：dry-run / preview 出现 `CREATE module`，或任何 `M00x` Module / `milestone: M*`（`my-plane` 除外），或 Plane 已有同代号 middot `{id} · {name}` 与钉表 `{id}-{name}` 并存 → **停止 sync**；任务只挂钉表 `P*.*` / `S*.*` keeper，迁任务后 Archive 壳，勿再建壳。
+**Agent 硬停止（全项目）**：dry-run / preview 出现 `CREATE module`，或任何 `M00x` Module / `milestone: M*`（`my-plane` 除外），或 Plane 已有同代号分隔符双份 → **停止 sync**；任务只挂钉表 `P*.*` / `S*.*` keeper，迁任务后 Archive 壳，勿再建壳。
 
 **Agent 硬停止（钉表任务重复 CREATE）**：`origin: dingtalk` 且已有 `plane_issue_id` 的条目若仍出现在 dry-run **CREATE 任务**列表 → **停止 sync**（多为 sync-state / prefix 漂移）。只允许 CREATE **无** `plane_issue_id` 的新细粒度 id；**禁止**为规避误 CREATE 而把子工作并入父 `note`。
 
@@ -122,7 +122,7 @@ depth-2+ P3.2.1 / S3.3.15      → Plane Issue（名称用 ` · `；sync_manifes
 # next = max(1000, max(S3.3.N))+1；禁止盲信 meta.next_task_id
 - id: S3.3.1001
   milestone: S3.3
-  parent_issue: 8ab0a122-4bcd-4133-9c14-fe0dbf014aec # 预警前端 V0.2
+  parent_issue: 8ab0a122-4bcd-4133-9c14-fe0dbf014aec # 钉钉三级 S3.3.6 预警前端 V0.2（非 Module）
   name: 示例细粒度任务
   status: 进行中
   priority: P1
@@ -171,14 +171,14 @@ AI-Assisted: true
 
 台账已按名称对齐 Plane 显示编号为 `S3.1.1` / `S3.3.1`…（脚本 `plane/scripts/s3_ledger_align.py`）。**新增量**一律 `S3.3.*`；commit `Task: S3.3.{N}`。
 
-**取号与大颗粒**：
+**取号与钉钉三级**：
 
 1. `plane_pull` 后扫描 work_items 名称中的 `S3.3.(\d+)`，`id = max(1000, max)+1`（≥1001）
-2. **勿**盲信 `meta.next_task_id`（可落后于钉表大颗粒）
-3. 钉表大颗粒号段（如 `S3.3.73`–`S3.3.88`，以当日 Plane 为准）**预留给** `S3.3.N-质量管理-…V0.2`；细粒度勿占用
-4. 细粒度挂 `parent_issue` 到大颗粒 UUID；`note` 写 `Refs: S3.3.26`（等钉表代号），见 [task-relationships](task-relationships.md)
+2. **勿**盲信 `meta.next_task_id`（可落后于钉表三级）
+3. 钉表三级号段（如 `S3.3.73`–`S3.3.88`，以当日 Plane 为准）**预留给** `S3.3.N-质量管理-…V0.2`；细粒度勿占用
+4. 细粒度挂 `parent_issue` 到 **钉钉三级** UUID；`note` 写 `Refs: S3.3.26`（等钉表代号），见 [task-relationships](task-relationships.md)
 
-`·` 误建 Module（如 `S3.3 · 功能开发`）已并入钉表 `S3.3-功能开发`；空 Module 于 Plane UI Archive。
+`·` / `-` 误建 Module（如 `S3.3 · 功能开发`）已并入钉表 keeper；空 Module 于 Plane UI Archive。
 
 ### 外部项目编码（参考）
 

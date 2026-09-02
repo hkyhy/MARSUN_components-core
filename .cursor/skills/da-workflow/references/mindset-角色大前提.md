@@ -1,11 +1,19 @@
 # 角色大前提 Mindset（da-workflow SSOT）
 
+> **给人听的说明（角色+循环验证+会话，一页）**：[跟AI开发-角色与会话-说明.md](跟AI开发-角色与会话-说明.md)（[可打印 html](跟AI开发-角色与会话-说明.html)）  
 > 栈无关的五维角色、会话控用量、开场/收尾与任务结束复检。  
 > 前端 UI 叠加：[frontend-dev-spec/prompts/mindset](../../frontend-dev-spec/references/prompts/mindset-角色大前提.md)  
 > 后端契约：见 [backend-dev-spec/SKILL.md](../../backend-dev-spec/SKILL.md)「角色大前提」短节  
 > 会话详文：[cursor-session-prompt-会话与提示词.md](cursor-session-prompt-会话与提示词.md)（**§1.1 强制提示**）  
 > 分角色复审：[role-loop-review-角色循环验证.md](role-loop-review-角色循环验证.md)  
 > 写代码门禁：[test-and-selfcheck-写代码自检与测试.md](test-and-selfcheck-写代码自检与测试.md)
+
+---
+
+## 硬约束（与安全齐套并列）
+
+- **租户边界**：业务 App（Assets/S3/Agent 等）进入租户后不得见他租户数据；仅 SSO 平台管理面可跨租户。见规则 `05-tenant-isolation`、iam-system-onboard §0.1。
+- **S3 分厂展示名**：与 `GET /api/v1/data-service/factories` 同口径（`dim_factory_base_info.factory_branch` 聚合）；禁止业务侧硬编码「潜山工厂」/ substring / 平行厂名表。见 [s3-factory-branch](../../backend-dev-spec/references/common/s3-factory-branch-分厂branch归一.md)。
 
 ---
 
@@ -54,7 +62,7 @@
 
 1. 阅读对话上下文与相关 PRD/计划文档，归纳需求目标与验收标准。
 2. 从五维（产品 / 架构 / 开发 / UI·体验 / 测试）交叉论证方案，对照本轮 skill 的 references。
-3. 方案可行后再编码；需求歧义时归纳假设并标注待确认项，不静默猜测。方案定稿后、动手前：按 [role-loop-review §1](role-loop-review-角色循环验证.md) 判断是否命中**需求 §2.1**——命中则跑（顶尖产品经理；输出必须改/建议改/可接受，**未经用户确认禁止擅自改方案或开写代码**）；未命中则一句话声明跳过。
+3. 方案可行后再编码；需求歧义时归纳假设并标注待确认项，不静默猜测。方案定稿后、动手前：按 [role-loop-review §1](role-loop-review-角色循环验证.md) 判断是否命中**需求 §2.1**——命中则跑（顶尖产品经理；输出必须改/建议改/可接受，**未经用户确认禁止擅自改方案或开写代码**）；未命中则一句话声明跳过。**出 Plan / CreatePlan 时 TODO 须细拆**（见 [plan-todo-granularity](plan-todo-granularity-计划与TODO粒度.md)）。
 4. 实现完成后按本轮 skill 检查清单自检，并过写代码门禁（[test-and-selfcheck](test-and-selfcheck-写代码自检与测试.md)）；再按 role-loop §1 对命中场景跑分角色复审，未命中声明跳过；禁止无差别空跑。可复用非显而易见问题须写入对应 skill reference（禁止只留在对话）。
 5. **任务结束复检**（须在收尾句之前；含仅改提示词/规范文档；**在角色循环验证交决策之后或声明通过之后**）：
    1. **整段逻辑复检**：对照本轮需求目标与验收标准，复查刚改产物的主路径、边界、数据流、规范符合性与可测性（五维点到为止）。
@@ -69,12 +77,12 @@
 
 ## 决策优先级（通用）
 
-| 冲突类型                | 优先依据                                                                                                                                                                                                                            |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 规范 vs 个人习惯        | 本轮主 skill 的 SKILL.md 核心原则 + references                                                                                                                                                                                      |
-| 规范 vs 临时需求        | 核心原则；若必须破例须说明理由                                                                                                                                                                                                      |
-| 产品体验 vs 实现成本    | 产品主路径优先，MVP 范围内保证体验一致                                                                                                                                                                                              |
-| Plane Module 命名       | **各工程线通用**：钉表 SSOT `{id}-{name}`（短横线）；Issue 才用 `{id} · {name}`；禁止 `·` 再建 Module；禁止 `M*` / CREATE 新壳，只挂已有 `P*.*` / `S*.*` keeper（见 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)） |
-| Plane Module 归属（P6） | **P6.8** Plane PM UI · **P6.9** TOS/层级取号 · **P6.11** arch 规范 · **P6.12** 周报工具；拿不准 AskQuestion（见 [task-naming · P6 Module 分工](task-naming.md#p6-module-分工防乱挂)）                                               |
+| 冲突类型                | 优先依据                                                                                                                                                                                                               |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 规范 vs 个人习惯        | 本轮主 skill 的 SKILL.md 核心原则 + references                                                                                                                                                                         |
+| 规范 vs 临时需求        | 核心原则；若必须破例须说明理由                                                                                                                                                                                         |
+| 产品体验 vs 实现成本    | 产品主路径优先，MVP 范围内保证体验一致                                                                                                                                                                                 |
+| Plane Module 命名       | **各工程线通用**：新写 `{id} {name}`（空格）；存量 keeper 不批量改；禁止同代号分隔符双份；禁止 `M*` / CREATE 新壳，只挂已有 `P*.*` / `S*.*` keeper（见 [plane-dingtalk-module-rules](plane-dingtalk-module-rules.md)） |
+| Plane Module 归属（P6） | **P6.8** Plane PM UI · **P6.9** TOS/层级取号 · **P6.11** arch 规范 · **P6.12** 周报工具；拿不准 AskQuestion（见 [task-naming · P6 Module 分工](task-naming.md#p6-module-分工防乱挂)）                                  |
 
 栈专属冲突（如 UI 美观 vs Common 组件）见各 skill 叠加层。

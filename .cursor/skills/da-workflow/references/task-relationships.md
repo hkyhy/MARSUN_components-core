@@ -1,7 +1,7 @@
 # Plane 任务关联梳理
 
 > 与 [task-naming](task-naming.md)、[dingtalk-hierarchy-naming](dingtalk-hierarchy-naming.md)、[pm-sync](pm-sync.md)、[plane-timeline](plane-timeline.md) 配套。  
-> 新任务登记 `sync_manifest.yaml` **之前**执行；`da pm sync` CREATE **之后**核对 Plane 父子关系。
+> 新任务登记 `sync_manifest.yaml` **之前**执行；`da standards commit --confirm-plane` CREATE **之后**核对 Plane 父子与关系（全量 `da pm sync` 仅补漏）。
 
 ## 为何要做
 
@@ -11,7 +11,24 @@
 - 同一交付被拆成多个 Task 时，进度与依赖不可追踪
 - WorkRecord / 接口文档与台账 Task ID 对不上号
 
-**原则**：YAML 台账除 `milestone`（挂 Module）外，还须标明与**已有 Plane Issue** 的业务父子或前后序关系。
+**原则**：YAML 台账除 `milestone`（挂 **Plane Module**，钉表 depth-1）外，细粒度任务还须标明与**钉钉三级任务**（钉表 depth-2 Issue）的业务父子；日常 `Task:` 要么直接对应该三级，要么是其细分（≥1001）。
+
+## 勿混：Module ≠ 父项（钉钉三级）
+
+口语「模块」在产品标题里常出现（如「质量预警模块前端…」），**不是** Plane 属性里的「模块」。
+
+| 人话                   | 钉表 / Plane 层级                        | YAML                                  | Plane UI                     |
+| ---------------------- | ---------------------------------------- | ------------------------------------- | ---------------------------- |
+| 二级 · 功能开发桶      | depth-1 → **Plane Module**               | `milestone: S3.3`                     | 属性「模块」=`S3.3-功能开发` |
+| **三级 · 钉表大任务**  | depth-2 → **Plane Issue**（如 `S3.3.6`） | `parent_issue: <该 Issue UUID>`       | **父项** / 添加子工作项      |
+| 研发细分（默认 ≥1001） | 自建 Issue                               | `id: S3.3.1011` + 上挂 `parent_issue` | 子工作项                     |
+
+**日常提交只认两种**：
+
+1. **直接对钉钉三级 / Plane 三级** — `Task: S3.3.6`（整条钉表事项本身收工；`id` 即该三级）
+2. **钉钉三级下的细分** — 新建 ≥1001（如 `S3.3.1011`），`parent_issue` = 该三级 UUID，`note` 写 `Refs: S3.3.6`；`Task:` = **细分 id**
+
+**禁止**：把 `parent_issue` 写成 Module / `milestone` 码（`S3.3` 不是 UUID）；把细分交付写进三级 `note` 后仍用三级 id 作 `Task:`。
 
 ## milestone 字段语义
 
@@ -24,15 +41,15 @@
 
 ## 关系类型
 
-| 类型              | YAML 字段                                           | Plane 表现 / UI                           | 何时使用                        |
-| ----------------- | --------------------------------------------------- | ----------------------------------------- | ------------------------------- |
-| **模块父项**      | `milestone: S3.3` 等                                | Work Item 挂到 Module                     | 必填；所有任务                  |
-| **业务父 Issue**  | `parent_issue: <uuid>`                              | **子工作项**（UI：**添加子工作项**）      | 增量任务属于某条产品/模块父需求 |
-| **拆分来源**      | `note` 首行 `split_from: <id>`                      | 描述可追溯                                | 大任务完成前拆出后续子任务      |
-| **前后序 / 关联** | `note` 行 `related_tasks: [id, …]`（或 `Related:`） | 描述 + Plane **添加关系**（`relates_to`） | 依赖、并行 sibling、非隶属互指  |
-| **阻塞**          | `note` 行 `blocks: <id>` 或 WorkRecord 标 `阻塞`    | 人工判断                                  | 后端未交付、等联调环境          |
+| 类型               | YAML 字段                                                                                                              | Plane 表现 / UI                             | 何时使用                       |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------ |
+| **Module 归属**    | `milestone: S3.3` 等                                                                                                   | Work Item 挂到 Module（属性「模块」）       | 必填；所有任务                 |
+| **钉钉三级父任务** | `parent_issue: <uuid>`                                                                                                 | **子工作项**（UI：**父项** / 添加子工作项） | 细分属于某条钉表 depth-2 Issue |
+| **拆分来源**       | `note` 首行 `split_from: <id>`                                                                                         | 描述可追溯                                  | 大任务完成前拆出后续子任务     |
+| **前后序 / 关联**  | `note` 行 `related_tasks: [id, …]` 或 `Related:`（可与 `Refs:` 同行：`Refs: S3.3.6 · Related: S3.3.1010 · S3.3.1008`） | 描述 + Plane **添加关系**（`relates_to`）   | 依赖、并行 sibling、非隶属互指 |
+| **阻塞**           | `note` 行 `blocks: <id>` 或 WorkRecord 标 `阻塞`                                                                       | 人工判断                                    | 后端未交付、等联调环境         |
 
-`parent_issue` 填 **Plane Work Item UUID**（非 external_id）。从 `plane/.cache/plane_snapshot.json` 或 Plane UI Issue URL 获取。
+`parent_issue` 填 **钉钉三级（depth-2）Plane Work Item UUID**（非 external_id、非 Module id）。从 `plane/.cache/plane_snapshot.json` 或 Plane UI Issue URL 获取。产品标题里带「…模块…」的仍是 **Issue**，不是 Module。
 
 **会话 Focus 绑定**：开工无 Focus 时 Agent 按钉表择优推荐认领 / 子工作项 / 添加关系，见 [ai-native-daily §2.1](ai-native-daily.md#21-会话-focus-绑定钉表优先--agent-择优-abc)。
 
@@ -66,31 +83,31 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --step pla
 ├─ 是某已完成 Task 的「剩余工作」？
 │   └─ 是 → 新建 id；note 写 split_from: <原 id>；parent_issue 与原任务相同
 │
-├─ 是钉表大颗粒（origin:dingtalk / 已有 plane_issue_id）下的增量
+├─ 是钉钉三级 / 钉表大颗粒（origin:dingtalk / 已有 plane_issue_id）下的增量
 │   （部署、seed、联调环境、子功能、修 bug）？
-│   └─ 是 → **新建细粒度 id**；parent_issue = 大颗粒 plane_issue_id；
-│       note 写 Refs: <大颗粒 id> + related_tasks；
+│   └─ 是 → **新建细粒度 id**；parent_issue = **该三级** plane_issue_id；
+│       note 写 Refs: <三级代号如 S3.3.6> + related_tasks；
 │       父任务 note 仅 related_tasks 互指，**禁止**把增量写进父 note「纳入本任务」
 │
-├─ 是某模块页（预警/沙盘/配置…）的专属改动？
-│   └─ 是 → parent_issue 优先挂 **V0.2 钉表大颗粒**（见下方映射表）；note 写 Refs: S3.3.26 等
+├─ 是某产品页（预警/沙盘/配置…）的专属改动？
+│   └─ 是 → parent_issue 优先挂 **对应钉钉三级 V0.2**（见下方映射表）；note 写 Refs: S3.3.26 等
 │
-├─ 是跨模块布局/工程化/智能体基础设施？
-│   └─ 是 → parent_issue 挂「UI 设计 / 工程化」类父 Issue（b0a51d21-… / S3-125）
+├─ 是跨 Module 布局/工程化/智能体基础设施？
+│   └─ 是 → parent_issue 挂「UI 设计 / 工程化」类 **Issue**（b0a51d21-… / S3-125），不是 Module
 │
-├─ 仅依赖里程碑、无更细父 Issue？
-│   └─ 只写 milestone；note 写 related_tasks
+├─ 仅挂 Module、无更贴切的钉钉三级？
+│   └─ 只写 milestone；note 写 related_tasks（父项可空）
 │
 └─ 与多个已完成项都有关？
-    └─ parent_issue 选**最贴近产品域**的一个；note 列全 related_tasks
+    └─ parent_issue 选**最贴近的钉钉三级**一个；note 列全 related_tasks
 ```
 
-### 钉表大颗粒 vs 细粒度（硬规则 · 2026-07-24）
+### 钉钉三级（大颗粒）vs 细粒度（硬规则 · 2026-07-24）
 
-| 角色                                       | 台账表现                                                             | commit `Task:`                |
-| ------------------------------------------ | -------------------------------------------------------------------- | ----------------------------- |
-| 钉表大颗粒（如 `P3.17.4` UAT）             | `origin: dingtalk` + `plane_issue_id`；**不因一次环境部署改 status** | 仅当整条钉表事项本身收工      |
-| 细粒度增量（如 `P3.17.5` 办公室 105 部署） | 新 id；`parent_issue` = 大颗粒 UUID；`Refs:` / `related_tasks`       | **本 commit 必须用细粒度 id** |
+| 角色                                                | 台账表现                                                             | commit `Task:`                |
+| --------------------------------------------------- | -------------------------------------------------------------------- | ----------------------------- |
+| 钉钉三级 / 钉表大颗粒（如 `P3.17.4` UAT、`S3.3.6`） | `origin: dingtalk` + `plane_issue_id`；**不因一次环境部署改 status** | 仅当整条钉表三级本身收工      |
+| 细粒度增量（如 `P3.17.5`、`S3.3.1011`）             | 新 id；`parent_issue` = **三级** UUID；`Refs:` / `related_tasks`     | **本 commit 必须用细粒度 id** |
 
 **反例（禁止再犯）**：
 
@@ -143,9 +160,11 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --step pla
 - 第二行可选 `related_tasks: [id1, id2]`（YAML 数组或逗号分隔）
 - 第三行起写业务说明（接口序号、文件路径、验收点）
 
-## CREATE 后核对（硬门禁 · 2026-08-08）
+## CREATE 后核对（硬门禁 · 2026-08-18）
 
-`da pm sync`（`sync_plane.py`）在挂 Module 之外会**幂等**写入（`apply_task_relationships` **必须被调用**；仅定义不调用 = 回归缺陷）：
+**主路径**（日常建单，禁止为此跑全量 `da pm sync`）：`da standards commit --confirm-plane` → `ensureCatalogTaskOnPlane` → **`applyCatalogTaskRelationships`**（须调用；只写 YAML 不 PATCH = 回归缺陷）。
+
+**补漏路径**（仅「整理 Plane」）：`sync_plane.py` `sync_tasks` 在挂 Module 之外**幂等**调用 `apply_task_relationships`（**必须被调用**；仅定义不调用 = 回归缺陷）。
 
 | YAML                                    | Plane API                                | UI                                    |
 | --------------------------------------- | ---------------------------------------- | ------------------------------------- |
@@ -153,21 +172,21 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo . --step pla
 | `parent_issue`                          | `PATCH work-items/{id}/` `{"parent": …}` | **添加子工作项** / 父项               |
 | `note` 中 `related_tasks:` / `Related:` | `POST …/relations/` `relates_to`         | **添加关系**                          |
 | `owner` + `start_date`/`target_date`    | assignees + dates                        | 负责人 / 起止日期                     |
-| 台账 `id`（层级码）                     | Issue.name = `{id} · {name}`             | **禁止**标题塌成 `P6.11.1` / `S3.3.1` |
+| 台账 `id`（层级码）                     | Issue.name = `{id} {name}`               | **禁止**标题塌成 `P6.11.1` / `S3.3.1` |
 
-YAML **未写** `parent_issue` 时不清理 Plane 上已有 parent；`related_tasks` 只**补缺失**关系，不删除多余关系。解析失败打 WARN，不阻断整次 sync。
+YAML **未写** `parent_issue` 时不清理 Plane 上已有 parent；`related_tasks` 只**补缺失**关系，不删除多余关系。解析失败打 WARN，不阻断 commit / sync。`Related:` 可与 `Refs:` 同行（`Refs: S3.3.6 · Related: S3.3.1010 · S3.3.1008`）。
 
 **`validate_manifest` 硬拦截**（缺则 `da pm sync` 前失败）：
 
 - 非 dingtalk、非已完成任务：必须有 `milestone` / `owner` / `start_date` / `target_date`
-- `name` 禁止再带台账 id 前缀（sync 负责拼 `{id} · {name}`）
+- `name` 禁止再带台账 id 前缀（sync 负责拼 `{id} {name}`）
 - 层级 id（`P6.11.99` 等）进行中任务无 `parent_issue` → **WARN**；note 无 `Refs:`/`related_tasks:`/`Related:` → **WARN**
 
-CREATE/UPDATE 后若详情仍为「无模块」、父项空、或「添加关系」下无卡片：先看 sync 日志 WARN → 核对 YAML → **禁止**只改 Done 状态交差。
+CREATE/UPDATE 后若详情仍为「无模块」、父项空、或「添加关系」下无卡片：先看 commit/sync 日志 WARN → 核对 YAML → **禁止**只改 Done 状态交差。
 
 核对清单：
 
-- [ ] Plane 新 Issue 名称 = `{id} · {name}`（external_id 台账 id 与标题前缀一致）
+- [ ] Plane 新 Issue 名称 = `{id} {name}`（external_id 台账 id 与标题前缀一致）
 - [ ] Module = `milestone` 对应模块（如 `S3.3` / `P6.11`），**不是**「无模块」
 - [ ] 若 YAML 有 `parent_issue`：父 Issue 下可见子工作项；详情「父项」非空
 - [ ] 若 note 有 `related_tasks` / `Related:`：详情「添加关系」可见对应项（对照图：正常卡有「关系 N」）
@@ -179,9 +198,9 @@ CREATE/UPDATE 后若详情仍为「无模块」、父项空、或「添加关系
 
 项目：`plane/project.yaml` → `module_id: 09a31e8b-…`（S3-质量预警｜智能体子项目）
 
-### V0.2 钉表大颗粒父 Issue（优先挂载）
+### V0.2 钉钉三级父 Issue（优先挂载）
 
-钉表 depth-2 大颗粒在 Plane 上名称形如 `S3.3.N-质量管理-…V0.2`。**细粒度增量任务**须挂为子工作项（`parent_issue` = 下表 UUID），`note` 写 `Refs: S3.3.N`（钉表代号），**禁止**把大颗粒代号当作细粒度 `Task:` / 台账 `id`。
+钉表 depth-2（**钉钉三级**）在 Plane 上名称形如 `S3.3.N-质量管理-…V0.2`（标题里的「…模块…」是产品域，**不是** Plane Module）。**细粒度增量**须挂为子工作项（`parent_issue` = 下表 UUID），`note` 写 `Refs: S3.3.N`（钉表代号），**禁止**把三级代号当作细粒度 `Task:` / 台账 `id`。
 
 | 钉表代号（以 Plane 实名为准） | parent_issue UUID                      | Plane 名称（snapshot）                | 适用细粒度增量                 |
 | ----------------------------- | -------------------------------------- | ------------------------------------- | ------------------------------ |
@@ -227,22 +246,23 @@ CREATE/UPDATE 后若详情仍为「无模块」、父项空、或「添加关系
 
 ## 与六步闭环的衔接
 
-| 步骤         | 关联梳理要求                                     |
-| ------------ | ------------------------------------------------ |
-| 0（本文件）  | CREATE 前完成 parent_issue / note 关联           |
-| 1 CREATE     | `status: 进行中`；禁首次 `已完成`                |
-| 2 commit     | `Task:` 与新建 id 一致                           |
-| 3–4 timeline | 完成时活动区可提及 `split_from` / 关联父项       |
-| 5 WorkRecord | 进展记录写清关联 Task 与接口序号                 |
-| 6 PATCH      | 仅改 status，**不删** `parent_issue` / 关联 note |
+| 步骤         | 关联梳理要求                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------------- |
+| 0（本文件）  | CREATE 前完成 parent_issue / note 关联                                                            |
+| 1 CREATE     | `status: 进行中`；`--confirm-plane` 须 PATCH `parent_issue` + `Related:`                          |
+| 2 commit     | `Task:` 与新建 id 一致                                                                            |
+| 3–4 timeline | 完成时活动区可提及 `split_from` / 关联父项                                                        |
+| 5 WorkRecord | 进展记录写清关联 Task 与接口序号                                                                  |
+| 6 PATCH      | 仅改 status，**不删** `parent_issue` / 关联 note；已有 Issue 下次 `--confirm-plane` 仍补父项/关系 |
 
 ## 禁止
 
 - 不查台账与快照就 CREATE 孤立 Task
 - 为同一交付重复建 id（应 PATCH 原项或写 `split_from`）
-- 把 `parent_issue` 写成 milestone id（`S3.3` 不是 UUID）
-- 仅 pm sync 标 Done 却未在 Plane 建立与父需求的可见关联（子工作项或描述中的 related_tasks）
+- 把 `parent_issue` 写成 milestone / Module 码（`S3.3` 不是 UUID；父项必须是钉钉三级 Issue）
+- 仅 pm sync 标 Done 却未在 Plane 建立与父需求的可见关联（子工作项或「添加关系」）
+- **YAML 已写 `parent_issue` / `Related:` 但 CREATE 后父项仍为「添加父工作项」** — 须走 `--confirm-plane` 的 `applyCatalogTaskRelationships`，禁止当「写了 YAML 就算同步」
 - 新任务使用与 `milestone` 不一致的 id 前缀（如 `milestone: S3.3` 却写 `id: S3-50`）
-- **把细粒度交付写进钉表大颗粒 `note`（「纳入本任务」）并用父 id 作 `Task:`** — 必须新建子任务 + `parent_issue`
+- **把细粒度交付写进钉钉三级 `note`（「纳入本任务」）并用三级 id 作 `Task:`** — 必须新建子任务 + `parent_issue`
 - 因 dry-run 误报「CREATE 已有 `plane_issue_id` 的钉表任务」就改把子工作并进父 note（应硬停止，只 CREATE 无 `plane_issue_id` 的新 id）
 - CREATE 后 Plane 显示名若变成 `S3.3.1 …` 而台账 id 是 `S3.3.93`：属历史 ensure 误用 nextChild；须立刻 PATCH 为 `{catalogId} {name}`（`resolveCatalogIssueTitle` 已强制标题头 = catalogId；Agent 仍须核对）

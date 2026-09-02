@@ -43,8 +43,8 @@ AI-Assisted: true           ← Agent 编辑时必填（hook 自动追加）
 | **一功能一任务**       | 前端 SSO、后端 JWT、升 core、UserProfileCard、预警字段兼容等 **分列登记**；禁止只挂在「升依赖」或「UI 小改」上                                                                                                                                         |
 | **一 commit 一 scope** | `type(scope)` 对应该次 diff 的模块（`auth` / `alerts` / `shell` / `deps`）；无关模块拆开                                                                                                                                                               |
 | **跨仓同功能**         | 钉表一项若跨 core + 业务仓：core **功能 + version 同 commit** → CI publish → 业务仓 **功能 + 升 `^` 同 commit**，**各用本仓 Task id**，note 互指钉表代号；禁止独立 `chore(release)` / 为本功能拆 `chore(deps)`（纯跟版除外）                           |
-| **禁止**               | 钉表有独立 Issue 却不登记业务仓任务；多模块混一个 commit；用 WIP 旁路任务长期吞并钉表事项；**把细粒度部署/seed 并进钉表大颗粒 note 后用父 id 提交**；**为台账 status/登记单独开 chore(pm)/docs(pm) commit**（须随业务同包，见「台账与业务同 commit」） |
-| **大颗粒下增量**       | 新建子任务 + `parent_issue`；`Task:` = 子 id（如 `P3.17.5`），父（`P3.17.4`）仅 `related_tasks` 互指                                                                                                                                                   |
+| **禁止**               | 钉表有独立 Issue 却不登记业务仓任务；多模块混一个 commit；用 WIP 旁路任务长期吞并钉表事项；**把细粒度部署/seed 并进钉钉三级 note 后用三级 id 提交**；**为台账 status/登记单独开 chore(pm)/docs(pm) commit**（须随业务同包，见「台账与业务同 commit」） |
+| **钉钉三级下增量**     | 新建子任务 + `parent_issue`（三级 UUID，非 Module）；`Task:` = 子 id（如 `P3.17.5`），父（`P3.17.4`）仅 `related_tasks` 互指                                                                                                                           |
 
 示例（错误 → 正确）：
 

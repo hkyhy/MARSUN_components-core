@@ -15,15 +15,31 @@
 
 ## 0. 红线
 
-| 禁止                                                 | 原因                                  |
-| ---------------------------------------------------- | ------------------------------------- |
-| DEMO localStorage / 恒真 `hasPermission` 当任命 SSOT | 正式任命在 SSO Admin                  |
-| 只改 FE 或只改 BE 一侧                               | 码表、清单、PEP、门禁必须同任务齐套   |
-| 兼容旧码 OR 拖延迁移                                 | 见 permissions-catalog                |
-| 与另一系统共用同一 `IAM_AUTHZ_MODE` 操作单           | 独立 env 名或独立仓配置               |
-| 未接线却宣称 G1                                      | G1 叙事仅属已立项并通过证据链条的系统 |
+| 禁止                                                              | 原因                                           |
+| ----------------------------------------------------------------- | ---------------------------------------------- |
+| DEMO localStorage / 恒真 `hasPermission` 当任命 SSOT              | 正式任命在 SSO Admin                           |
+| 只改 FE 或只改 BE 一侧                                            | 码表、清单、PEP、门禁必须同任务齐套            |
+| 兼容旧码 OR 拖延迁移                                              | 见 permissions-catalog                         |
+| 与另一系统共用同一 `IAM_AUTHZ_MODE` 操作单                        | 独立 env 名或独立仓配置                        |
+| 未接线却宣称 G1                                                   | G1 叙事仅属已立项并通过证据链条的系统          |
+| **业务 App 串租户**（JWT 有 `tenantId` 仍返回他租户列表/榜/人员） | 租户边界红线；仅 SSO 平台 Admin 可跨租户管理面 |
 
 ---
+
+## 0.1 租户隔离 Gate（业务 App 必做 · SSO 管理面除外）
+
+进入租户后，**Assets / S3 / Agent / 知识问答等业务系统**只能见本租户数据。SSO Admin「进入租户」锁定上下文后，业务侧同样不得漏出他租户。
+
+```
+□ T1 JWT 读入 tenantId；生产 TENANT_ID_STRICT=true（缺则 401）
+□ T2 业务表（部门/用户影子/主业务行）有 tenantId 或等价库级隔离；写入打标
+□ T3 列表/详情/统计/导出/人员下拉：服务端 where 强制本租户
+□ T4 stats:global / COMPANY / 本地 SYSTEM_ADMIN = 租户内全局（非跨租户）
+□ T5 验收：两租户同名部门/用户；租户 A token 调榜单与部门树，结果集 id 全部 ∈ A
+□ T6 公开接口（如 public-tree）无租户参数 → 空列表，禁止全库
+```
+
+详文：仓库规则 `05-tenant-isolation.mdc`；Assets 样例 `repos/maoyang_data-asset-system/docs/租户行级隔离-设计与验收.md`。
 
 ## 1. 全套检查表（按序）
 
@@ -42,6 +58,7 @@
 □ 9 FE：PERMISSIONS 常量 + bindCatalog（与 catalog 同 diff）+ defaultGranted
 □ 10 BE：独立 authz env（默认 dual）+ EP 客户端 + requirePermission
       + dual 观测日志 + 写/读挂码 + 非 DEMO 禁旁路 + OpenAPI/接口 403 信封
+      + **租户隔离 Gate T1–T6**（§0.1）
 □ 11 FE：EP snapshot（userId 分桶）+ Bridge auth.permissions
       + 菜单/动作门禁 + 退 DEMO；null 时 hold 壳 loading
       + 用户「权限管理」壳：EP 用 PermissionBindPanel readOnly（对齐角色绑权布局；禁止手写扁平 checkbox 列表）

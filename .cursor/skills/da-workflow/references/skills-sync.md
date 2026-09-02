@@ -2,14 +2,17 @@
 
 ## 规范类 skill 总览
 
-| Skill                    | 类型      | shared                                            | 不同步                              | target 原则              |
-| ------------------------ | --------- | ------------------------------------------------- | ----------------------------------- | ------------------------ |
-| `frontend-dev-spec`      | 规范类    | `SKILL.md` + `references/common` + `prompts`      | `references/business`（local）      | React/antd 业务仓        |
-| `backend-dev-spec`       | 规范类    | `SKILL.md` + `references/common` + skills-sync 文 | `references/meta`（仅 marsun_arch） | 写 REST/BFF/OpenAPI 的仓 |
-| `da-workflow`            | 工作流    | 整树                                              | —                                   | 多数 plane_ready 仓      |
-| meta 报表/PPT/WorkRecord | meta 交付 | —                                                 | 整树不 sync                         | 仅 marsun_arch           |
+| Skill                | 类型      | shared                                            | 不同步                              | target 原则                                                     |
+| -------------------- | --------- | ------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------- |
+| `frontend-dev-spec`  | 规范类    | `SKILL.md` + `references/common` + `prompts`      | `references/business`（local）      | React/antd 业务仓                                               |
+| `backend-dev-spec`   | 规范类    | `SKILL.md` + `references/common` + skills-sync 文 | `references/meta`（仅 marsun_arch） | 写 REST/BFF/OpenAPI 的仓                                        |
+| `da-workflow`        | 工作流    | 整树                                              | —                                   | 多数 plane_ready 仓                                             |
+| meta 报表/WorkRecord | meta 交付 | —                                                 | 整树不 sync                         | 仅 marsun_arch                                                  |
+| PPT（ppt-gen）       | 办公合集  | —                                                 | 不 sync 业务仓                      | SSOT = `repos/MARSUN_Office/ppt/`；总控 `@office`；arch 仅 stub |
 
 **禁止**把 frontend/backend 规范默认装进 CLI 仓（如 `devAanalysis`）。细则见各 skill 的 skills-sync 文。
+
+**例外**：`devAanalysis` 作为 da-workflow 源仓，为支持 `iam-sso-onboard-全量接入` skill 自包含（skill 内跨 skill 链接 `../../../frontend-dev-spec/...` / `../../../backend-dev-spec/...` 需仓内可解析），例外同步 frontend-dev-spec（含 `references/business`，走 localPaths 单向 merge）+ backend-dev-spec；同时补 `05-tenant-isolation.mdc` / `04-no-api-mock.mdc` 到仓内 `.cursor/rules/`（不进 team-sync/rules，不发布给客户端）。其他 CLI 仓仍禁。
 
 ## 分层（da-workflow）
 

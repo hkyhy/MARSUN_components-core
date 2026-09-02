@@ -719,6 +719,8 @@ export default ModuleFormModal;
 > - Modal 组件使用 `FormModal`，提交走 `formProps.onSubmit`；初值走 `formProps.data`
 > - 校验用字段 `rule` 字符串（如 `REQ`、`REQ TEL`、`EMAIL`）
 > - 默认 `column={2}`；**`block` 仅给偏重字段**（`TextArea` 备注/说明/Description、上传区等）独占一行；**禁止**给 Input / Select（含多选）加 `block`
+> - 动态行列用 FormInfo **`TableList` / `List`**（`addText`/`removeText`）；禁止 Form 内手写 antd `Select` + 外置 `draftRef` 旁路表单值
+> - **TableList 行内级联**（如分厂 → 物料）：子字段 `useGroup` 读当前行，`openApi.setFieldValue({ name, groupName, groupIndex }, '')` 清空下游；编辑回填用 `setFormData`，**禁止** `open` 期间 FormModal remount
 > - 页内非弹窗表单：外层包 `Form` + `SubmitButton` / `ResetButton`
 > - 多步：`FormSteps` / `FormStepsModal`（见 core Form showcase）
 > - 样式由 core 再导出模块侧载，业务无需单独引入 `@kne/form-info` CSS
@@ -1478,16 +1480,16 @@ export const STATUS_MAP: Record<string, { label: string; color: string }> = {
 
 > **SSOT**：`Tags` / `FileTags`（`@hkyhy/marsun-components-core`）。列表单元格、详情 Descriptions、只读预览**统一**用 `Tags`，禁止竖排纯文本或手写多个 `SemanticTag` 无截断。
 
-| 规则           | 说明                                                                                                                                                                                                    |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 截断           | **`showLength={2}`**（与 Assets 文件标签一致）；超出显示 `+N`；**长文案**即使未超限也 ellipsis，**hover** Tooltip 展示全部 Tag                                                                          |
-| 颜色           | 角色类用 `SEMANTIC_COLORS.INFO`；文件标签用 `FileTags`                                                                                                                                                  |
-| 表单多选       | Select `mode="multiple"` 须 `maxTagCount={2}` + `maxTagPlaceholder` + `tagRender` 用 `SemanticTag`（防输入框内重叠）                                                                                    |
-| 字段说明       | 需要时用 kne **`labelTips=`**（非 antd `tooltip`）；**禁止**弹层顶栏/灰字堆产品史、迁移话术、内部票号（如 SET-02）；必填靠 `rule`/`*`，能力边界用 disabled 态表达即可                                   |
-| FormInfo 列    | 默认 **`column={2}`**（与 FormInfoBaseDemo 一致）。**`block` 仅用于偏重、需独占一行的字段**：`TextArea`（备注/说明/Description）、上传区等；**禁止**给 Input / Select（含多选角色、共享组）乱加 `block` |
-| 上下文切换字段 | 如「业务系统」也进 FormInfo `Select`（禁手写 Typography+antd Select）；用 `FormDataSync` 驱动外部 reload                                                                                                |
-| 上下文切换回填 | reload 后用表单内 `useFormApi().openApi.setField` / `setFormData` 写任命字段；**禁止**在 `open` 期间给 `FormModal`/`Modal` 加 `key`+epoch **整窗 remount** 刷表（会掐断进场动画、闪关重开）             |
-| 文档回写       | 改 IAM 任命/权限弹层联动（含业务系统切换、角色/组→预览）须同任务更新 Products PRD + Test 用例/清单（见 [requirement-workflow](../prompts/requirement-workflow-需求工作流.md) 检查项 39）                |
+| 规则           | 说明                                                                                                                                                                                                                                                |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 截断           | **`showLength={2}`**（与 Assets 文件标签一致）；超出显示 `+N`；**长文案**即使未超限也 ellipsis，**hover** Tooltip 展示全部 Tag                                                                                                                      |
+| 颜色           | 角色类用 `SEMANTIC_COLORS.INFO`；文件标签用 `FileTags`                                                                                                                                                                                              |
+| 表单多选       | Select `mode="multiple"` 须 `maxTagCount={2}` + `maxTagPlaceholder` + `tagRender` 用 `SemanticTag`（防输入框内重叠）                                                                                                                                |
+| 字段说明       | 需要时用 kne **`labelTips="短句"`**（经 core 再导出字段会自动包成 Info+TooltipInfo 悬停；也可传 ReactNode 自定义）。**禁止** antd Form `tooltip`；**禁止** tip 里写必填/选填/产品史/票号；必填靠 `rule="REQ"` / `*`，能力边界用 disabled 态表达即可 |
+| FormInfo 列    | 默认 **`column={2}`**（与 FormInfoBaseDemo 一致）。**`block` 仅用于偏重、需独占一行的字段**：`TextArea`（备注/说明/Description）、上传区等；**禁止**给 Input / Select（含多选角色、共享组）乱加 `block`                                             |
+| 上下文切换字段 | 如「业务系统」也进 FormInfo `Select`（禁手写 Typography+antd Select）；用 `FormDataSync` 驱动外部 reload                                                                                                                                            |
+| 上下文切换回填 | reload 后用表单内 `useFormApi().openApi.setField` / `setFormData` 写任命字段；**禁止**在 `open` 期间给 `FormModal`/`Modal` 加 `key`+epoch **整窗 remount** 刷表（会掐断进场动画、闪关重开）                                                         |
+| 文档回写       | 改 IAM 任命/权限弹层联动（含业务系统切换、角色/组→预览）须同任务更新 Products PRD + Test 用例/清单（见 [requirement-workflow](../prompts/requirement-workflow-需求工作流.md) 检查项 39）                                                            |
 
 ```tsx
 import { Tags, SEMANTIC_COLORS } from '@hkyhy/marsun-components-core';

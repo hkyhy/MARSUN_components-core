@@ -39,11 +39,12 @@ da task done "$TASK" --confirm --repo "$REPO"
 
 ## 活动区效果对照
 
-| 操作                     | 活动区效果                    |
-| ------------------------ | ----------------------------- |
-| `da pm sync`             | 仅 CREATE/PATCH 任务状态      |
-| `da task timeline-sync`  | 补「关联 commit」评论         |
-| `da task done --confirm` | 写「📦 任务交付时间线」完成块 |
+| 操作                                  | 活动区效果                                                      |
+| ------------------------------------- | --------------------------------------------------------------- |
+| `da pm sync`                          | 仅 CREATE/PATCH 任务状态；接线后也会补父项/关系（日常勿用全量） |
+| `da standards commit --confirm-plane` | CREATE Issue + Module + **父项 / 添加关系**                     |
+| `da task timeline-sync`               | 补「关联 commit」评论                                           |
+| `da task done --confirm`              | 写「📦 任务交付时间线」完成块                                   |
 
 ## 禁止
 

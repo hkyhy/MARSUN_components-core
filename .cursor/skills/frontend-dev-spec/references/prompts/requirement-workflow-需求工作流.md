@@ -16,6 +16,7 @@
 - [ ] 需求歧义时列出假设，标注待确认项
 - [ ] **WorkRecord**：先判**事项类型**（接口对接 / 页面改版 / 工程化）再匹配文档；涉及 API → 枚举接口清单；**禁止**把 Husky、布局重构写入「*接口对接」；新建前 AskQuestion
 - [ ] **core utils**：新建 `src/utils/` 前先查 component-mapping npm Utils 表；core 已有则包根 import，禁止复制同名文件
+- [ ] **HTTP 客户端**：业务仓用 `createMarsunRequest` 薄封装（`request.ts` / `api/client.ts`）；禁止平行原生 `fetch` 客户端；SSE / blob 下载可豁免。禁止 `@kne/axios-fetch` / `@kne/react-fetch` 做页面拉数。**禁止为第三信封加项目侧 unwrap**。见 [routing-api HTTP 客户端](../business/routing-api-路由与API.md)
 - [ ] **拆包**：新页面/重图表/预览/AgentHub → 方案须含路由 lazy 与（若 core）L2 子路径；见 [bundle-tree-shaking](../common/bundle-tree-shaking-拆包与摇树.md)
 
 ## 二、方案论证（五方交叉）
@@ -29,6 +30,9 @@
 | 测试 | 验收标准能否当场检验？主路径/边界/空错态/权限否证是否可测？同任务单测或契约用例是否可规划齐全？不可测或漏测风险是否已标注？                                                                                                                                                      |
 
 方案论证结束后、动手编码前：按 [role-loop-review §1](../../../da-workflow/references/role-loop-review-角色循环验证.md) 判断是否命中**需求 §2.1**——命中则跑（顶尖产品经理视角），未命中声明跳过；交决策后再进入「三、开发流程」。
+
+- [ ] **Plan TODO 粒度**：若本轮走 CreatePlan / Plan 定稿 → todos 须细拆（单文件/单职责可勾选；角色循环已接受项映入 todos）。见 [plan-todo-granularity](../../../da-workflow/references/plan-todo-granularity-计划与TODO粒度.md)
+- [ ] **S3 分厂名**：若本轮涉及分厂下拉/候选/矩阵列 → 展示名须与 `/api/v1/data-service/factories`（dim `factory_branch`）一致，禁硬编码潜山映射。见 [s3-factory-branch](../../../backend-dev-spec/references/common/s3-factory-branch-分厂branch归一.md)
 
 ## 三、开发流程
 
@@ -53,7 +57,7 @@
 17. 检查：antd 重复配置是否已提取为 Common 组件
 18. 检查：组件使用优先级 Common > Module > @kne/button-group > antd
 19. 检查：表单从 `@hkyhy/marsun-components-core` 导入（`Form`/`FormInfo`/`FormModal` + 字段 `rule`），未直连 `@kne/form-info`；操作按钮统一使用 `@kne/button-group`（包括页面头部和详情页，不使用 `Space` + `Button`）
-20. 检查：Modal 使用 core 的 `FormModal` + `formProps.onSubmit`（或 `FormStepsModal`），取消走 `onCancel`
+20. 检查：Modal 使用 core 的 `FormModal` + `formProps.onSubmit`（或 `FormStepsModal`），取消走 `onCancel`；动态行列用 `TableList`/`List` 进表单值（禁 draftRef）；行内级联 `useGroup` + `setFieldValue`，编辑回填 `setFormData` 禁 remount
 21. 检查：新组件是否已创建 `examples/meta.json`（路由和菜单由脚本自动生成，无需手动注册）
 22. 检查：**core/组件能力变更**是否已补齐对应 `examples` Demo 并写入 `meta.json`（能力点与 Demo 一一对应，如 Table 单表头/多表头/列配置；禁止只改实现不补示例，见 [../common/examples-组件示例.md](../common/examples-组件示例.md) §8.2）
 23. 检查：业务列表是否均用 core `Table` 且有稳定 `tableName`；列配置按需 `columnConfigEnabled` + fetch/save（QA：`userPrefs` → [backend-dev/platform-dev/用户偏好](../../../../backend-dev/platform-dev/用户偏好/接口.md)）；禁止直连 antd `Table`（豁免 Form `TableList` / HTML table / showcase ApiDoc）
@@ -74,6 +78,7 @@
 38. 检查：**权限齐套 / IAM 接线**——若本任务改码或接 EP/PEP：清单+PRD+Test+证据是否同任务更新；Bridge 是否注入真实 permissions；是否全仓搜旧 DEMO/废码；独立 authz env 是否登记（见 [iam-system-onboard](../business/iam-system-onboard-新系统IAM接入齐套.md)、[permissions-catalog](../business/permissions-catalog-改权限齐套.md)）
 39. 检查：**IAM 任命 / 权限弹层 UX**——若本任务改用户「权限管理」弹层、业务系统切换联动、角色/共享组→权限点预览、或同类任命 UI：须**同任务**更新 `Modules/Platform/Products/...` PRD 与 `Modules/Platform/Test/...` 用例/清单/冒烟（SSO 见 USR-14/15）；**禁止**只改 `repos/`；实现须 FormInfo「业务系统」+ `FormDataSync` + `useFormApi` 回填，**禁止** `open` 期间用 Modal `key`+epoch remount 刷表（见 [module-patterns §9.3.1](../business/module-patterns-模块模式.md)、[iam-system-onboard](../business/iam-system-onboard-新系统IAM接入齐套.md)）
 40. 检查：**拆包**——本任务 `pages/**/routes.tsx` 页组件均为 `React.lazy`；未在 `App.tsx`/layout 静态引入 plotly/charts/xlsx/AgentHub；core L2 用子路径（迁移期除外须标注）；见 [bundle-tree-shaking](../common/bundle-tree-shaking-拆包与摇树.md)
+41. 检查：**HTTP 客户端**——是否仅一层 `createMarsunRequest` 薄封装；无平行原生 `fetch` 拦截器（SSE / `downloadBlob` 豁免）；页面未用 `@kne/react-fetch` 的 Fetch/HOC；**无第三信封适配**；见 [routing-api HTTP 客户端](../business/routing-api-路由与API.md)
 
 ## 四、按需阅读规范
 
@@ -89,6 +94,7 @@
 | 新系统 IAM / 改权限齐套   | [../business/iam-system-onboard-新系统IAM接入齐套.md](../business/iam-system-onboard-新系统IAM接入齐套.md)                                            | [permissions-catalog-改权限齐套.md](../business/permissions-catalog-改权限齐套.md) · 清单/PRD/Test/证据            |
 | IAM 权限弹层 / 任命联动   | [../business/module-patterns-模块模式.md](../business/module-patterns-模块模式.md) §9.3.1 + iam-system-onboard                                        | 同任务回写 PRD/Test（检查项 39）；禁 Modal epoch remount                                                           |
 | 路由 / API                | [../business/routing-api-路由与API.md](../business/routing-api-路由与API.md)                                                                          | [../common/bundle-tree-shaking-拆包与摇树.md](../common/bundle-tree-shaking-拆包与摇树.md)（页面须 lazy）          |
+| HTTP 客户端 / 信封        | [../business/routing-api-路由与API.md](../business/routing-api-路由与API.md)「HTTP 客户端」                                                           | [api-overview](../../../backend-dev-spec/references/common/api-overview-通用约定.md) · SKILL #35                   |
 | 拆包 / lazy / core 子路径 | [../common/bundle-tree-shaking-拆包与摇树.md](../common/bundle-tree-shaking-拆包与摇树.md)                                                            | routing-api · component-mapping 导入约定                                                                           |
 | 主题 / Tag 颜色           | [../common/theme-主题Token.md](../common/theme-主题Token.md) + [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)     | [../common/styles-样式规范.md](../common/styles-样式规范.md)                                                       |
 | 滚动区 / Loading / 内容块 | [../common/shell-layout-页面壳与布局.md](../common/shell-layout-页面壳与布局.md)                                                                      | [../common/component-mapping-组件映射.md](../common/component-mapping-组件映射.md)                                 |
@@ -137,11 +143,11 @@
 - [ ] **角色循环验证**已完成（SKILL #45）：按 [role-loop-review §1](../../../da-workflow/references/role-loop-review-角色循环验证.md) 触发表——适用场景已跑或已声明跳过（含一句话理由）；安全 §2.5 仅在命中时跑；模板见 role-loop-review
 - [ ] **新任务台账**：
   1. `plane_pull`（或 `pm_pipeline --step plane-pull`）
-  2. 扫描 snapshot 名称 `S3.3.(\d+)`，候选 id = `max+1`（**禁止**盲信 `meta.next_task_id`；大颗粒号段如 73–88 勿占用，见 [task-naming](../../../da-workflow/references/task-naming.md)）
-  3. `parent_issue` 挂模块 V0.2 大颗粒父（预警前端 `8ab0a122-…` / 分析前端 `95d788aa-…` 等，见 [task-relationships](../../../da-workflow/references/task-relationships.md)）；`note` 写 `Refs: S3.3.26`（钉表代号，勿当 `Task:`）
-  4. 查 [task-naming 仓库映射表](../../../da-workflow/references/task-naming.md#仓库--钉钉编码映射) 选定 `milestone`；**禁止** marsun_arch / core / QA / assets 新增 `M001-*`；`data-dev/` → `milestone: P6.11`
-  5. `sync_manifest.yaml` 登记 `status: 进行中`、**`owner` + `start_date` + `target_date`** → CREATE 用 `da standards commit --confirm-plane`（禁止首次就写 `已完成`；禁止无范围 `da pm sync`）
-- [ ] **commit 按功能/模块切分并与钉表对齐**：一钉表 depth-2 Issue → 业务仓一台账任务 → 一组原子 commit；禁止多模块/多钉表事项混一个 commit；**台账登记/status 与业务同包**（见 [da-workflow/commit-format](../../../da-workflow/references/commit-format.md)）
+  2. 扫描 snapshot 名称 `S3.3.(\d+)`，候选 id = `max(1000, max)+1`（≥1001；**禁止**盲信 `meta.next_task_id`；钉钉三级号段如 73–88 勿占用，见 [task-naming](../../../da-workflow/references/task-naming.md)）
+  3. `parent_issue` 挂 **钉钉三级** V0.2（预警 `S3.3.6`→`8ab0a122-…` / 分析 `S3.3.26`→`95d788aa-…` 等，见 [task-relationships](../../../da-workflow/references/task-relationships.md)）；**禁止**挂 Module/`S3.3`；`note` 写 `Refs: S3.3.26`（钉表代号，勿当 `Task:`），sibling 用 `Related: S3.3.x · P6.11.x`
+  4. 查 [task-naming 仓库映射表](../../../da-workflow/references/task-naming.md#仓库--钉钉编码映射) 选定 `milestone`（Module）；**禁止** marsun_arch / core / QA / assets 新增 `M001-*`；`data-dev/` → `milestone: P6.11`
+  5. `sync_manifest.yaml` 登记 `status: 进行中`、**`owner` + `start_date` + `target_date`** → CREATE 用 `da standards commit --confirm-plane`（会 PATCH 父项 + 关系；禁止首次就写 `已完成`；禁止无范围 `da pm sync`）。CREATE 后核对 Plane「父项」= 钉钉三级、「添加关系」非空
+- [ ] **commit 按功能切分并与钉钉三级对齐**：一钉表 depth-2 三级 → 业务仓一台账任务 → 一组原子 commit；禁止多三级/多 Module 事项混一个 commit；**台账登记/status 与业务同包**（见 [da-workflow/commit-format](../../../da-workflow/references/commit-format.md)）
 - [ ] **Plane Module 只挂既有 keeper（全项目）**：任务 `milestone` 为钉表 depth-1（`P*.*` / `S*.*` 等，见仓库映射表）；**禁止**新建 Module、**禁止** `milestone: M*`（`my-plane` 除外）；见空 `M*` / middot 壳只 Archive（不 CREATE）。交叉：[da-workflow/plane-dingtalk-module-rules](../../../da-workflow/references/plane-dingtalk-module-rules.md)
 - [ ] **Module/Issue 分隔符**：Module（钉表 depth-1）用 **短横线 `-`**（`S3.3-功能开发`）；Issue（任务）用 **中点 `·`**（`S3.3.15 · 预警页筛选对接`）。**禁止** pm sync / 手工再建 `S3.3·功能开发` 等同代号 Module（与钉表并成重复）；见 [plane-dingtalk-module-rules](../../../da-workflow/references/plane-dingtalk-module-rules.md)
 - [ ] **commit 闭环**（plane_ready 仓库）：完成任务时 **YAML 已先改 `已完成` 并与业务同 commit** → `da task timeline-sync` → `da task done --confirm` → **WorkRecord 进展追加**（**勿**为关单跑无范围 `da pm sync`；见 [da-workflow/plane-timeline](../../../da-workflow/references/plane-timeline.md) · [work-record/SKILL.md](../../../work-record/SKILL.md)）

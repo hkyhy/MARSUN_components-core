@@ -24,11 +24,12 @@ description: |
 - AI Native 日常 / 三条红线 / Vibe 四步 / **会话 Focus 绑定**：[references/ai-native-daily.md](references/ai-native-daily.md)
 - **Cursor 会话与提示词（控用量）**：[references/cursor-session-prompt-会话与提示词.md](references/cursor-session-prompt-会话与提示词.md)
 - **角色大前提（五维 / 开场收尾 / 复检 SSOT）**：[references/mindset-角色大前提.md](references/mindset-角色大前提.md)
+- **培训一页纸（角色+循环验证+会话，打印一张）**：[references/跟AI开发-角色与会话-说明.md](references/跟AI开发-角色与会话-说明.md)
 - Task 父子与关系：[references/task-relationships.md](references/task-relationships.md)
 - Commit 格式：[references/commit-format.md](references/commit-format.md)
 - Task ID 与台账登记：[references/task-naming.md](references/task-naming.md)
 - 钉钉层级命名：[references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md)
-- 钉表取号通俗说明（示意图）：[references/dingtalk-hierarchy-取号通俗说明.md](references/dingtalk-hierarchy-取号通俗说明.md)
+- 钉表取号说明（示意图）：[references/dingtalk-hierarchy-取号说明.md](references/dingtalk-hierarchy-取号说明.md)
 - 钉表 Module 写保护：[references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md)
 - Plane 负责人映射：[references/plane-team-assignees.md](references/plane-team-assignees.md)
 - Plane 六步闭环：[references/plane-timeline.md](references/plane-timeline.md)
@@ -36,8 +37,10 @@ description: |
 - 可选自动建关 Issue：[references/commit-lifecycle.md](references/commit-lifecycle.md)
 - 安全清单：[references/vibe-guard.md](references/vibe-guard.md)
 - **写代码自检与自动化测试门禁**：[references/test-and-selfcheck-写代码自检与测试.md](references/test-and-selfcheck-写代码自检与测试.md)
-- **角色循环验证**（按触发表命中才跑：需求/接口/前端/测试；安全条件加查）：[references/role-loop-review-角色循环验证.md](references/role-loop-review-角色循环验证.md)
+- **角色循环验证**（按触发表命中才跑：需求/接口/前端/测试；安全条件加查）：[references/role-loop-review-角色循环验证.md](references/role-loop-review-角色循环验证.md)（人读一页纸见上「跟AI开发-角色与会话-说明」）
+- **Plan / TODO 粒度**（CreatePlan 必细拆）：[references/plan-todo-granularity-计划与TODO粒度.md](references/plan-todo-granularity-计划与TODO粒度.md)
 - **会议会前/会中/会后**：[references/meeting-会议会前会中会后.md](references/meeting-会议会前会中会后.md)
+- **IAM SSO 全量接入**（业务系统接 marsun_sso：登录+EP/PEP+dataScope+租户）：[references/iam-sso-onboard-全量接入/SKILL.md](references/iam-sso-onboard-全量接入/SKILL.md)
 
 ---
 
@@ -83,11 +86,11 @@ da day close --confirm
 ```
 Task Progress:
 - [ ] git diff --stat — 原子性，无无关文件
-- [ ] **按功能/模块切分** — 对照钉表 depth-2 Issue；一事项一台账任务一组 commit（见 references/commit-format.md）
+- [ ] **按功能/模块切分** — 对照钉表 **depth-2 三级** Issue；一事项一台账任务一组 commit（见 references/commit-format.md）
 - [ ] **台账同包** — `sync_manifest` 登记/status 与业务 diff 同一 commit；禁止事后单独 chore(pm) 只改台账（见 commit-format「台账与业务同 commit」）
-- [ ] **plane_pull 取号** — 扫描 `{module}.(\d+)`；钉表 Module：`id = max(1000,max)+1`（≥1001）；钉表侧遵守 10×99 段（见 dingtalk-hierarchy-naming）；纯 Plane Module：`max+1`；勿盲信 `meta.next_task_id`；挂 `parent_issue`
-- [ ] 钉表已有独立事项 → 业务仓已登记对应 id，note 含 Refs: <钉表代号>
-- [ ] **钉表大颗粒下的增量** → 新建细粒度 id + `parent_issue`；**禁止**写进父 note「纳入本任务」后用父 id 作 `Task:`（见 task-relationships 硬规则）
+- [ ] **plane_pull 取号** — 扫描 `{module}.(\d+)`；钉表 Module：`id = max(1000,max)+1`（≥1001）；钉表侧遵守 10×99 段（见 dingtalk-hierarchy-naming）；纯 Plane Module：`max+1`；勿盲信 `meta.next_task_id`；细分挂 `parent_issue`（钉钉三级 UUID）
+- [ ] 钉表已有独立三级事项 → 业务仓已登记对应 id，note 含 Refs: <钉表代号>
+- [ ] **钉钉三级下的增量** → 新建细粒度 id + `parent_issue`（非 Module）；**禁止**写进父 note「纳入本任务」后用三级 id 作 `Task:`（见 task-relationships 硬规则）
 - [ ] dry-run 若 CREATE 已有 `plane_issue_id` 的钉表任务 → **硬停止**，勿改并父 note 规避
 - [ ] **测试门禁** — 前端相关 vitest / 后端契约用例本人已跑通（见 [test-and-selfcheck](references/test-and-selfcheck-写代码自检与测试.md)）
 - [ ] da standards scan — .env 硬拦；密钥/反模式
@@ -142,13 +145,13 @@ da task done "$TASK" --confirm --repo "$REPO"
 
 ### 钉表 SSOT（开场必检 · 全项目 · 非仅 S3）
 
-华茂钉钉多维表是 Module 真相源。**Module 名必须跟钉表 `{id}-{name}`（短横线）**；Issue 才用 `{id} · {name}`（中点）。适用于 **每个** plane_ready 仓（P3 / P6 / S1 / S3 等；`my-plane` 除外）。
+华茂钉钉多维表是 Module 真相源。**Module / Issue 新写一律 `{id} {name}`（空格）**；存量 keeper 多为 `{id}-{name}` 或 `{id} · {name}`，不批量改、禁止同代号再建壳。适用于 **每个** plane_ready 仓（P3 / P6 / S1 / S3 等；`my-plane` 除外）。
 
-| 正确（钉表 keeper）        | 错误（会制造重复 Module）      |
-| -------------------------- | ------------------------------ |
-| `P3.7-企业文件上传…`       | `P3.7 · …` / `M*`              |
-| `P6.11-开发规范`           | `P6.11 · 开发规范` / `M*`      |
-| `S1.3-…` / `S3.3-功能开发` | `S1.3 · …` / `S3.3 · 功能开发` |
+| 钉表 keeper（示例）                          | 禁止再建                |
+| -------------------------------------------- | ----------------------- |
+| `P3.7-企业文件上传…` 或 `P3.7 企业文件上传…` | 同代号另一分隔符 / `M*` |
+| `P6.11-开发规范` 或 `P6.11 开发规范`         | 同代号另一分隔符 / `M*` |
+| `S1.3-…` / `S3.3-功能开发` 或空格写法        | 同代号另一分隔符 / `M*` |
 
 **PM Sync 铁律（仅全量对账 · 当前操作的任意仓库）**：
 
@@ -184,7 +187,8 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 | [marsun-arch-doc-spec/repos-commit](../marsun-arch-doc-spec/references/repos-commit.md)                              | repos 子仓库 commit 前 `repo-commit-context.mjs` |
 | [task-naming](references/task-naming.md)                                                                             | Task ID 编码与 sync_manifest 登记                |
 | [dingtalk-hierarchy-naming](references/dingtalk-hierarchy-naming.md)                                                 | 钉表层级契约、双轨 ID、仓库 milestone 速查       |
-| [dingtalk-hierarchy-取号通俗说明](references/dingtalk-hierarchy-取号通俗说明.md)                                     | 自然语言 + 取号示意图（培训/对齐用）             |
+| [dingtalk-hierarchy-取号说明](references/dingtalk-hierarchy-取号说明.md)                                             | 取号培训一页纸（单独打印）                       |
+| [跟AI开发-角色与会话-说明](references/跟AI开发-角色与会话-说明.md)                                                   | 角色+循环验证+会话（培训一页纸，三块合一）       |
 | [plane-dingtalk-module-rules](references/plane-dingtalk-module-rules.md)                                             | merged 模块写保护、dry-run 0 CREATE module       |
 | [plane-team-assignees](references/plane-team-assignees.md)                                                           | owner → Plane assignee 映射                      |
 | [frontend-dev-spec/requirement-workflow](../frontend-dev-spec/references/prompts/requirement-workflow-需求工作流.md) | 需求完成前 commit 闭环检查项                     |
@@ -209,9 +213,9 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [ ] 关单已 timeline-sync + task done；**未**为修 bug 跑无范围全量 `da pm sync`
 - [ ] 仅当用户明确「整理 Plane」时才全量 dry-run/sync；此时 merged **CREATE module = 0** 且 sync 后 `module_health_check` 通过
 - [ ] 该仓 Plane Modules **无** 同代号 `-`/`·` 双份；误建壳已 `(重复·待删)` Archive
-- [ ] 新任务台账含 `owner`、`start_date`、`target_date`、`milestone`；层级增量另含 `parent_issue` + note `Refs:`/`related_tasks:`（`validate_manifest` 硬拦缺字段；见 task-relationships / plane-team-assignees）
-- [ ] Module 名跟钉表 `{id}-{name}`（P3/P6/S1/S3 同规）；Issue 才用 `{id} · {name}`（**禁止**标题塌成父级 `.1`）
-- [ ] Plane 详情：非「无模块」；有父项/关系时 UI「父项」「添加关系」可见（对照 task-relationships 核对清单）
+- [ ] 新任务台账含 `owner`、`start_date`、`target_date`、`milestone`（Module）；细分另含 `parent_issue`（**钉钉三级** UUID）+ note `Refs:`/`related_tasks:`（`validate_manifest` 硬拦缺字段；见 task-relationships / plane-team-assignees）
+- [ ] Module / Issue 名跟约定空格（或存量 keeper）；**禁止**同代号分隔符双份、标题塌成父级 `.1`
+- [ ] Plane 详情：非「无模块」；YAML 有 `parent_issue`/`Related:` 时 UI「父项」「添加关系」可见（父项须是钉钉三级，不是 Module；空则未 PATCH）
 - [ ] 无 `.env` / 密钥进暂存区；未向 AI 喂密钥/真实用户/未公开经营数据
 - [ ] Agent 编辑含 `AI-Assisted: true`
 - [ ] 卡壳 ≥30min 且可复用：已写 `.skills/draft/` 或对应 skill reference（见 ai-native-daily）
@@ -223,11 +227,12 @@ bash ~/.cursor/skills/project-pm-sync/scripts/pm_pipeline.sh --repo "$REPO" --st
 - [references/ai-native-daily.md](references/ai-native-daily.md) — 每日动作、红线、Vibe 四步
 - [references/test-and-selfcheck-写代码自检与测试.md](references/test-and-selfcheck-写代码自检与测试.md) — 前后端测试门禁 + 加强自检
 - [references/role-loop-review-角色循环验证.md](references/role-loop-review-角色循环验证.md) — 角色循环验证（§1 触发表 + 安全 §2.5 条件加查）
+- [references/跟AI开发-角色与会话-说明.md](references/跟AI开发-角色与会话-说明.md) — 角色+循环验证+会话培训一页纸
 - [references/meeting-会议会前会中会后.md](references/meeting-会议会前会中会后.md) — 会议三段规范
 - [references/commit-format.md](references/commit-format.md) — Conventional Commits + Task 行
 - [references/task-naming.md](references/task-naming.md) — Task ID、台账字段与登记 checklist
 - [references/dingtalk-hierarchy-naming.md](references/dingtalk-hierarchy-naming.md) — 钉表层级与双轨 ID
-- [references/dingtalk-hierarchy-取号通俗说明.md](references/dingtalk-hierarchy-取号通俗说明.md) — 自然语言 + 取号示意图
+- [references/dingtalk-hierarchy-取号说明.md](references/dingtalk-hierarchy-取号说明.md) — 取号培训一页纸
 - [references/plane-dingtalk-module-rules.md](references/plane-dingtalk-module-rules.md) — 钉表 Module SSOT 与写保护
 - [references/plane-team-assignees.md](references/plane-team-assignees.md) — 负责人 Plane 邮箱映射
 - [references/plane-timeline.md](references/plane-timeline.md) — 六步交付闭环详文
