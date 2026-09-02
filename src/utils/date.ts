@@ -13,11 +13,27 @@ export function toDateTimeRange(range: [string, string] | null): [string, string
 }
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+const MONTH_ONLY = /^\d{4}-\d{2}$/;
 
-/** UI 日期 → API start/end（带时分秒） */
+/** YYYY-MM → 月初/月末日；其余取前 10 位（YYYY-MM-DD 或已带时分秒） */
+function toDayBound(value: string, bound: 'start' | 'end'): string {
+  const raw = String(value || '').trim();
+  if (MONTH_ONLY.test(raw)) {
+    const month = dayjs(`${raw}-01`);
+    return bound === 'start'
+      ? month.startOf('month').format('YYYY-MM-DD')
+      : month.endOf('month').format('YYYY-MM-DD');
+  }
+  return raw.slice(0, 10);
+}
+
+/**
+ * UI 日期 → API start/end（`YYYY-MM-DD HH:mm:ss` 日界）。
+ * `YYYY-MM` 展开为该月 1 日 00:00:00 / 月末 23:59:59（预警月、timeDuration 常用）。
+ */
 export function toApiStartEnd(start: string, end: string): { start: string; end: string } {
-  const startDay = start.slice(0, 10);
-  const endDay = end.slice(0, 10);
+  const startDay = toDayBound(start, 'start');
+  const endDay = toDayBound(end, 'end');
   const range = toDateTimeRange([startDay, endDay]);
   if (!range) return { start, end };
   return {

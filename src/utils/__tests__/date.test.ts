@@ -51,6 +51,17 @@ describe('date utils', () => {
     });
   });
 
+  it('toApiStartEnd expands YYYY-MM to month start/end datetimes', () => {
+    expect(toApiStartEnd('2026-07', '2026-07')).toEqual({
+      start: '2026-07-01 00:00:00',
+      end: '2026-07-31 23:59:59',
+    });
+    expect(toApiStartEnd('2026-02', '2026-02')).toEqual({
+      start: '2026-02-01 00:00:00',
+      end: '2026-02-28 23:59:59',
+    });
+  });
+
   it('toApiStartEnd passes through values that already include time', () => {
     const input = {
       start: '2026-04-08 00:00:00',

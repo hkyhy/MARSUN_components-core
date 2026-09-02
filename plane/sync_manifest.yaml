@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.120
+  next_task_id: P6.3.121
 tasks:
 - id: P6.1.26
   milestone: P6.1
@@ -1811,3 +1811,18 @@ tasks:
   note: |
     Refs: P6.3 · Related: P6.3.118
     OrgTree 回调 ref 避免 treeData 重建；VirtualScrollbar preserveScroll；发版 0.1.68
+
+- id: P6.3.120
+  milestone: P6.3
+  name: toApiStartEnd 支持 YYYY-MM 月界并同步 skills
+  status: 进行中
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-02"
+  target_date: "2026-09-02"
+  tags: [frontend, date, skills]
+  note: |
+    Refs: P6.3 · Related: P6.3.119
+    date.toApiStartEnd 展开 YYYY-MM；da-workflow/frontend-dev-spec skills 同步
+
