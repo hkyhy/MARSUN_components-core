@@ -2027,11 +2027,11 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/orgtree': {
     title: 'OrgTree 组织树',
-    description: '对齐 Assets 组织架构：默认展开、节点 hover 增删改；纯 UI，业务自行接 API。',
+    description: '组织树：默认展开深度 1、大树 virtual；节点 hover 增删改；纯 UI，业务自行接 API。',
     examples: [
       {
         title: '基础用法',
-        description: '可编辑树与节点操作回调',
+        description: '可编辑树与节点操作回调（示例展开深度 2）',
         component: React.lazy(() => import('@/components/OrgTree/examples/BasicDemo')),
         sourcePath: () => import('@/components/OrgTree/examples/BasicDemo/index.tsx?raw'),
         block: true,
@@ -2044,6 +2044,17 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'nodes', desc: '树数据（id/name/parentId/children）', type: 'OrgTreeNode[]' },
           { prop: 'loading', desc: '加载态', type: 'boolean', defaultVal: 'false' },
           { prop: 'editable', desc: '是否展示节点操作区', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'defaultExpandDepth',
+            desc: '初始展开深度：0=全折叠；1=展开根露出一级子（默认）；大数≈全展开',
+            type: 'number',
+            defaultVal: '1',
+          },
+          {
+            prop: 'virtualHeight',
+            desc: '虚拟列表高度(px)；false 关闭；默认节点>80 时用 520',
+            type: 'number | false',
+          },
           { prop: 'onAdd', desc: '添加子节点', type: '(parentId: string) => void' },
           { prop: 'onEdit', desc: '编辑节点', type: '(node) => void' },
           { prop: 'onDelete', desc: '确认删除后回调', type: '(node) => void | Promise<void>' },
