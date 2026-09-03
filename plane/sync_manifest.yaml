@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.125
+  next_task_id: P6.3.126
 tasks:
+- id: P6.3.125
+  milestone: P6.3
+  name: 发版 marsun-components-core v0.1.69
+  status: 已完成
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: "2026-09-03"
+  target_date: "2026-09-03"
+  tags: [frontend, release, form-info]
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
+  note: |
+    Refs: P6.1.50 · Related: P6.3.122 · P6.3.123 · P6.3.124
+    FormInfo/InfoPage/ReactModal/FlexBox 新栈合入后发版；改挂 KPI 父项
+
 - id: P6.3.124
   milestone: P6.3
   name: FlexBox Demo 状态改用 SemanticTag
@@ -12,9 +27,9 @@ tasks:
   start_date: "2026-09-03"
   target_date: "2026-09-03"
   tags: [frontend, flexbox, semantic-tag]
-  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
   note: |
-    Refs: P6.3 · Related: P6.3.123
+    Refs: P6.1.50 · Related: P6.3.123
     FlexBox 示例去掉 antd Tag success 绿块，改用 SemanticTag + SEMANTIC_COLORS
 
 - id: P6.3.123
@@ -27,9 +42,9 @@ tasks:
   start_date: "2026-09-03"
   target_date: "2026-09-09"
   tags: [frontend, info-page, form-info, react-modal, flexbox]
-  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
   note: |
-    Refs: P6.3 · Related: P6.3.122
+    Refs: P6.1.50 · Related: P6.3.122
     vendor 上收 InfoPage/ReactModal/FormInfoV2/FlexBox；form-info 子路径；showcase/skills；发版依赖
 
 - id: P6.3.122
@@ -42,9 +57,9 @@ tasks:
   start_date: "2026-09-03"
   target_date: "2026-09-09"
   tags: [frontend, form, input-range, form-data-sync]
-  parent_issue: 7dd5f6bd-0514-4665-afa5-587663846c2c
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
   note: |
-    Refs: P6.3 · Related: P6.3.116
+    Refs: P6.1.50 · Related: P6.3.116
     InputRange + RANGE_ASC/inputRangeRules；FormDataSync 兼容 fbemitter addListener；Demo/单测
 
 - id: P6.1.26
