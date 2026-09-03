@@ -1,12 +1,19 @@
 {
-  "title": "Form 表单组件",
-  "description": "业务表单经 @hkyhy/marsun-components-core 再导出：日常用 FormInfo 栈；引擎用 ReactForm / useField / useFormApi / GroupList 等。禁止业务直连 @kne/form-info、@kne/react-form。FetchSelect、FetchTreeSelect、StepForm 为字段辅助或存量能力。",
+  "title": "Form（存量兼容）",
+  "description": "包根 kne 再导出（@kne/form-info 薄封装）：存量模块继续从包根导入 FormInfo / FormModal 等。新模块请改走 @hkyhy/marsun-components-core/form-info（showcase「FormInfo（新）」）。禁止业务直连 @kne/form-info、@kne/react-form。",
   "examples": [
     {
       "title": "基础表单 FormInfo",
       "description": "业务标准（从 core 导入）：Form + FormInfo 多列布局、rule 校验、SubmitButton / ResetButton",
       "component": "@/components/Form/examples/FormInfoBaseDemo",
       "sourcePath": "@/components/Form/examples/FormInfoBaseDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "InputRange 数字区间",
+      "description": "FormInfo 字段：纱支/数值分档；值 [min,max]|null；rule=REQ / RANGE_ASC（formProps.rules 展开 inputRangeRules）；双侧有值须上限≥下限",
+      "component": "@/components/Form/examples/FormInfoInputRangeDemo",
+      "sourcePath": "@/components/Form/examples/FormInfoInputRangeDemo/index.tsx",
       "block": true
     },
     {
@@ -119,9 +126,30 @@
         { "prop": "gap", "desc": "字段间距", "type": "number", "default": "24" },
         {
           "prop": "list",
-          "desc": "表单项列表（Input/TextArea/Select/InputNumber/Switch 等）",
+          "desc": "表单项列表（Input/TextArea/Select/InputNumber/InputRange/Switch 等）",
           "type": "ReactNode[]"
         }
+      ]
+    },
+    {
+      "componentName": "InputRange",
+      "rows": [
+        { "prop": "name", "desc": "字段名", "type": "string", "required": true },
+        { "prop": "label", "desc": "标签", "type": "ReactNode" },
+        { "prop": "rule", "desc": "校验（如 REQ）", "type": "string" },
+        {
+          "prop": "value（表单）",
+          "desc": "[min, max] | null；单侧可空",
+          "type": "[number|null, number|null] | null"
+        },
+        { "prop": "unit", "desc": "单位文案（如 Ne）", "type": "string" },
+        {
+          "prop": "min / max / precision / step",
+          "desc": "传给两侧 InputNumber",
+          "type": "number"
+        },
+        { "prop": "minPlaceholder / maxPlaceholder", "desc": "占位", "type": "string" },
+        { "prop": "disabled", "desc": "禁用", "type": "boolean" }
       ]
     },
     {

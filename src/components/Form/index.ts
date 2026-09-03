@@ -9,6 +9,11 @@ export type { PersonOptionRowProps } from './PersonOptionRow';
 export { default as FormDataSync } from './FormDataSync';
 export type { FormDataSyncProps } from './FormDataSync';
 
+export { InputRange } from './InputRange';
+export type { InputRangeProps, InputRangeValue } from './InputRange';
+export { inputRangeRules, validateRangeAsc, RANGE_ASC_RULE_NAME } from './inputRangeRules';
+export type { KneRuleResult } from './inputRangeRules';
+
 /** @kne/form-info — 业务从包根导入，勿直连 @kne/form-info */
 export {
   FormInfo,

@@ -1,0 +1,35 @@
+.marsun-form-input-range {
+  display: flex;
+  width: 100%;
+  min-height: var(--control-height, 32px);
+  box-sizing: border-box;
+  align-items: center;
+
+  /* 与同列 Select / InputNumber 单行控件对齐；两端均分剩余宽度 */
+  :global(.ant-space-item) {
+    display: flex;
+    align-items: center;
+  }
+
+  :global(.ant-space-item:has(.ant-input-number)) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+.marsun-form-input-range-input {
+  width: 100% !important;
+  min-height: var(--control-height, 32px);
+  box-sizing: border-box;
+
+  :global(.ant-input-number-input) {
+    height: var(--control-height, 32px);
+    box-sizing: border-box;
+  }
+}
+
+.marsun-form-input-range-unit {
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: var(--control-height, 32px);
+}
