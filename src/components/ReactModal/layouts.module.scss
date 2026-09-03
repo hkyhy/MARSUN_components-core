@@ -1,0 +1,206 @@
+/* Ported from https://github.com/kne-union/react-modal/blob/master/src/layouts.module.scss */
+.modal-tabs-layout:global(.ant-tabs) {
+  height: var(--kne-modal-content-height);
+  max-height: var(--kne-modal-content-height);
+  flex: 1 1 0%;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  > :global(.ant-tabs-nav) {
+    flex: none;
+    height: var(--kne-modal-close-align-height, 48px);
+    margin: 0;
+    padding: 0 86px 0 24px;
+    align-items: center;
+
+    &::before {
+      border-bottom-color: #f0f0f0;
+    }
+
+    :global(.ant-tabs-nav-wrap) {
+      align-self: stretch;
+    }
+
+    :global(.ant-tabs-tab) {
+      margin: 0 28px 0 0;
+      padding: 0;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+
+      :global(.ant-tabs-tab-btn) {
+        padding: 0;
+        line-height: var(--kne-modal-close-align-height, 48px);
+      }
+    }
+  }
+
+  > :global(.ant-tabs-body-holder) {
+    flex: 1 1 0% !important;
+    height: 0 !important;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  :global(.ant-tabs-body) {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  :global(.ant-tabs-content) {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    outline: none;
+  }
+
+  :global(.ant-tabs-content-hidden) {
+    display: none;
+  }
+}
+
+.modal-columns-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.modal-columns-layout__col {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &:not(:first-child) {
+    border-left: 1px solid #f0f0f0;
+  }
+}
+
+.modal-columns-layout__col:first-child :global(.modal-scroll-region) {
+  background: #fafafa;
+
+  :global(.simplebar-content) {
+    background: #fafafa;
+  }
+
+  :global(.modal-scroll-region-sticky) {
+    background: #fafafa;
+  }
+}
+
+.modal-columns-layout__col:last-child :global(.modal-scroll-region) {
+  background: #fff;
+
+  :global(.simplebar-content) {
+    background: #fff;
+  }
+}
+
+.modal-columns-layout__col:only-child :global(.modal-scroll-region) {
+  background: #fff;
+
+  :global(.simplebar-content) {
+    background: #fff;
+  }
+}
+
+.modal-scroll-region {
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+
+  :global(.simplebar-wrapper),
+  :global(.simplebar-mask),
+  :global(.simplebar-offset) {
+    height: 100%;
+    min-height: 0;
+  }
+
+  :global(.simplebar-content-wrapper) {
+    height: 100%;
+    min-height: 0;
+  }
+}
+
+.modal-scroll-region-inner {
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
+.modal-scroll-region.is-inset .modal-scroll-region-inner {
+  padding: 16px 20px;
+}
+
+:global(.modal-scroll-region-sticky) {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 12px 16px 10px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+:global(.react-modal-splitter.ant-splitter) {
+  height: 100% !important;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  :global(.ant-splitter-panel) {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  :global(.ant-splitter-panel:first-child) :global(.modal-scroll-region) {
+    background: #fafafa;
+
+    :global(.simplebar-content) {
+      background: #fafafa;
+    }
+
+    :global(.modal-scroll-region-sticky) {
+      background: #fafafa;
+    }
+  }
+
+  :global(.ant-splitter-panel:last-child) :global(.modal-scroll-region) {
+    background: #fff;
+
+    :global(.simplebar-content) {
+      background: #fff;
+    }
+  }
+}
+
+:global(.react-modal-steps-form) {
+  :global(.modal-body-inner) {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  :global(.simplebar-content-wrapper),
+  :global(.simplebar-content) {
+    overflow-x: hidden !important;
+  }
+
+  :global(.kne-form-steps.ant-steps-horizontal) {
+    padding-inline: 0 !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}

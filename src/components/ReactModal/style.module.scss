@@ -1,0 +1,411 @@
+/* Ported from https://github.com/kne-union/react-modal/blob/master/src/style.module.scss */
+@use '@kne/responsive-utils/scss' as resp;
+
+.modal {
+  --kne-modal-viewport-height: var(--kne-viewport-height, 100vh);
+  --kne-modal-viewport-width: var(--kne-viewport-width, 100vw);
+  --kne-modal-title-height: 48px;
+  --kne-modal-footer-height: 58px;
+  --kne-modal-viewport-gutter: 120px;
+  --kne-modal-body-padding-vertical: 48px;
+  --kne-modal-body-padding-horizontal: 48px;
+  --kne-modal-body-min-height: 394px;
+  --kne-modal-body-height: calc(
+    var(--kne-modal-viewport-height) - var(--kne-modal-title-height) - var(
+        --kne-modal-footer-height
+      ) - var(--kne-modal-viewport-gutter)
+  );
+  --kne-modal-body-max-height: var(--kne-modal-body-height);
+  --kne-modal-content-height: calc(
+    var(--kne-modal-body-height) - var(--kne-modal-body-padding-vertical)
+  );
+  --kne-modal-content-min-height: calc(
+    var(--kne-modal-body-min-height) - var(--kne-modal-body-padding-vertical)
+  );
+  --kne-modal-content-width: calc(100% - var(--kne-modal-body-padding-horizontal));
+
+  &.small {
+    --kne-modal-body-min-height: 252px;
+  }
+
+  &.large {
+    .modal-body-inner {
+      min-width: 1000px;
+    }
+  }
+
+  &.is-mobile {
+    --kne-modal-viewport-gutter: 0px;
+    --kne-modal-body-padding-vertical: 24px;
+    --kne-modal-body-padding-horizontal: 24px;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    top: 0 !important;
+    padding-bottom: 0 !important;
+
+    &.large {
+      .modal-body-inner {
+        min-width: 0;
+      }
+    }
+  }
+
+  .modal-container {
+    padding: 0;
+    border-radius: 8px;
+    /* 无 footer 时 body 贴底，需裁切子层直角才能露出底部圆角 */
+    overflow: hidden;
+
+    &.is-mobile {
+      border-radius: 0 !important;
+      height: 100% !important;
+      max-height: 100% !important;
+      overflow: hidden !important;
+      box-sizing: border-box;
+      padding: 0 !important;
+    }
+  }
+}
+
+.modal-antd-header,
+.modal-antd-footer {
+  display: none;
+}
+
+.modal-antd-body {
+  padding: 0;
+
+  &.is-mobile {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+}
+
+.modal-outer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  &.no-title {
+    --kne-modal-title-height: 0px;
+    /* 无 title 时关闭按钮仍按标题栏高度垂直居中（如 Tabs 顶栏） */
+    --kne-modal-close-align-height: 48px;
+  }
+
+  &.no-footer {
+    --kne-modal-footer-height: 0px;
+  }
+
+  &.no-padding {
+    --kne-modal-body-padding-vertical: 0px;
+    --kne-modal-body-padding-horizontal: 0px;
+  }
+
+  &.is-mobile {
+    width: 100%;
+    height: var(--kne-modal-viewport-height);
+    max-height: var(--kne-modal-viewport-height);
+    min-height: var(--kne-modal-viewport-height);
+    overflow: hidden;
+
+    .modal-title {
+      flex: none;
+    }
+
+    .modal-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: auto !important;
+      max-height: none !important;
+    }
+
+    .modal-footer {
+      flex: none;
+      margin-top: auto;
+    }
+  }
+}
+
+.modal-title {
+  flex: none;
+  height: var(--kne-modal-title-height);
+  display: flex;
+  align-items: center;
+  color: var(--font-color, rgba(0, 0, 0, 0.88));
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 0 48px 0 24px;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+.modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-height: var(--kne-modal-body-min-height);
+  max-height: var(--kne-modal-body-max-height);
+  height: var(--kne-modal-body-height);
+  box-sizing: border-box;
+
+  &.body-scroll-off {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    // 自管滚动：内容高度相对本 body 实高，避免继续用视口 calc 与真实 body 不一致
+    --kne-modal-content-height: 100%;
+    --kne-modal-content-min-height: 0px;
+
+    .modal-body-inner {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+  }
+}
+
+.modal-body-inner {
+  padding: calc(var(--kne-modal-body-padding-vertical) / 2)
+    calc(var(--kne-modal-body-padding-horizontal) / 2);
+  min-height: var(--kne-modal-content-height);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  &.no-padding {
+    padding: 0;
+  }
+}
+
+.modal-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px 24px;
+  box-sizing: border-box;
+
+  &.is-mobile {
+    justify-content: center;
+    border-top: 1px solid var(--bg-color-grey-3, #f0f0f0);
+  }
+
+  /* footerButtons=[] + 宿主 footer（如 FormModal Submit/Cancel） */
+  &.is-mobile.is-embedded-footer {
+    .modal-footer-extra {
+      flex: 1 1 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+
+      /* form-info ModalFooter：外层 Flex space-between → 移动端居中 */
+      > :global(.ant-flex) {
+        width: auto;
+        max-width: 100%;
+        justify-content: center !important;
+
+        > :global(div:first-child:empty) {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.modal-footer-extra {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.modal-footer-actions {
+  flex: none;
+  min-width: 0;
+}
+
+.modal-close {
+  position: absolute;
+  top: calc((var(--kne-modal-close-align-height, var(--kne-modal-title-height, 48px)) - 22px) / 2);
+  inset-inline-end: 17px;
+  z-index: 1010;
+  padding: 0;
+  color: var(--font-color-grey, rgba(0, 0, 0, 0.45));
+  flex-shrink: 0;
+
+  &:global(.ant-btn.ant-btn-icon-only.ant-btn-text) {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.modal-host {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.modal-form-host {
+  :global(.ant-modal-body) {
+    :global(.react-form--inner) {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+    }
+
+    :global(.react-form--inner) > :global(.ant-flex) {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+    }
+  }
+
+  .modal-outer {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+:global(.ant-modal-root) .modal-wrap:global(.ant-modal-wrap) {
+  overflow: hidden;
+
+  /* useModal 走 modal.info()，antd 会给内容包 .ant-modal-confirm-paragraph 并扣 12px 宽 */
+  :global(.ant-modal-confirm-paragraph) {
+    max-width: 100% !important;
+  }
+}
+
+/* 测试用：明显压低 body 可用高度，便于验证滚动与居中 */
+.modal:global(.kne-modal-height-limited) {
+  --kne-modal-viewport-gutter: 360px;
+  --kne-modal-body-max-height: 420px;
+  --kne-modal-body-height: min(
+    420px,
+    calc(
+      var(--kne-modal-viewport-height) - var(--kne-modal-title-height) - var(
+          --kne-modal-footer-height
+        ) - var(--kne-modal-viewport-gutter)
+    )
+  );
+  --kne-modal-content-height: calc(
+    var(--kne-modal-body-height) - var(--kne-modal-body-padding-vertical)
+  );
+}
+
+.modal-wrap-centered:global(.ant-modal-wrap) {
+  display: flex;
+  align-items: center !important;
+  justify-content: center;
+  min-height: var(--kne-viewport-height, 100vh);
+  max-height: var(--kne-viewport-height, 100vh);
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  &::before {
+    display: none !important;
+  }
+
+  :global(.ant-modal) {
+    top: auto !important;
+    display: block;
+    padding-bottom: 0 !important;
+    margin: 0 auto;
+    vertical-align: initial;
+  }
+
+  &:global(.kne-is-boundary) {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+  }
+
+  &:global(.kne-is-viewport) {
+    position: fixed !important;
+  }
+}
+
+.modal-wrap-fullscreen:global(.ant-modal-wrap) {
+  display: block;
+  inset: 0 !important;
+  width: var(--kne-viewport-width, 100vw) !important;
+  height: var(--kne-viewport-height, 100vh) !important;
+  max-height: var(--kne-viewport-height, 100vh) !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  touch-action: none;
+  text-align: start;
+
+  &::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  :global(.ant-modal) {
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+    vertical-align: initial;
+    touch-action: auto;
+  }
+
+  &:global(.kne-is-boundary) {
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+  }
+
+  &:global(.kne-is-viewport) {
+    position: fixed !important;
+  }
+}
+
+.modal-mask-fullscreen {
+  &:global(.kne-is-boundary) {
+    position: absolute !important;
+    inset: 0 !important;
+  }
+
+  &:global(.kne-is-viewport) {
+    position: fixed !important;
+  }
+}
+
+@include resp.mobile-container {
+  .modal-body-inner:not(.no-padding) {
+    --kne-modal-body-padding-vertical: 24px;
+    --kne-modal-body-padding-horizontal: 24px;
+  }
+
+  .modal-title {
+    padding: 0 40px 0 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px 16px;
+    border-top: 1px solid var(--bg-color-grey-3, #f0f0f0);
+  }
+}

@@ -1,0 +1,92 @@
+/* Ported from https://github.com/kne-union/info-page/blob/master/src/CentralContent/style.module.scss */
+.table-view-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.table-view {
+  border-bottom: 1px solid #eeeeee;
+  border-right: 1px solid #eeeeee;
+  line-height: 20px;
+  box-sizing: border-box;
+  // 按列数与 label/content 最小宽度计算整行最小宽度，窄屏横向滚动而不挤压变形
+  min-width: max(
+    100%,
+    calc(var(--layout-col, 2) * (var(--label-min-width, 100px) + var(--content-min-width, 100px)))
+  );
+  /*  &:not(:last-child) {
+      border-bottom: none;
+    }*/
+  &.compact {
+    border: none;
+    min-width: 0;
+
+    .table-view-label {
+      flex: none;
+      background: unset;
+      font-weight: bolder;
+      margin-bottom: 8px;
+      white-space: nowrap;
+    }
+
+    .table-view-item {
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .table-view-content,
+    .table-view-label {
+      border: none;
+      padding: 0 8px 0 0;
+    }
+  }
+}
+
+.table-view-col {
+  flex: 0 0 var(--col-width);
+  max-width: var(--col-width);
+  box-sizing: border-box;
+}
+
+.table-view-item {
+  height: 100%;
+  flex-wrap: nowrap;
+}
+
+.table-view-label,
+.table-view-content {
+  font-size: var(--font-size-default);
+  padding: 8px 16px;
+  border-top: 1px solid #eeeeee;
+  border-left: 1px solid #eeeeee;
+  line-height: 20px;
+  word-break: break-all;
+  box-sizing: border-box;
+}
+
+.table-view-label {
+  background: var(--bg-color-grey-1);
+  color: var(--font-color-grey);
+  flex: 0 0 var(--col-label-width);
+  max-width: var(--col-label-width);
+  min-width: var(--label-min-width, 100px);
+  white-space: nowrap;
+  word-break: normal;
+
+  &.allow-wrap {
+    flex: 0 1 auto;
+    width: auto;
+    white-space: normal;
+    word-break: break-word;
+    max-width: var(--label-max-width);
+  }
+}
+
+.table-view-content {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+  flex: 1 1 auto;
+  min-width: var(--content-min-width, 100px);
+}

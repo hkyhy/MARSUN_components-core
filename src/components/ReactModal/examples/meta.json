@@ -1,0 +1,147 @@
+{
+  "title": "ReactModal 命令式弹层",
+  "description": "命令式 Modal/Drawer（useModal/useDrawer/useConfirmModal）。业务默认非表单弹窗仍用 Marsun Modal（S/M/L）。FormModal / FormStepsModal + renderModal 示例已落地（M2）。",
+  "examples": [
+    {
+      "title": "基础弹层",
+      "description": "Modal / Drawer 切换：受控打开与异步 onConfirm",
+      "component": "@/components/ReactModal/examples/ReactModalBasicDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "footerButtons 与尺寸",
+      "description": "size / footerButtons / 左侧 footer / noPadding",
+      "component": "@/components/ReactModal/examples/ReactModalFooterSizeDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalFooterSizeDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "命令式打开（useModal / useDrawer）",
+      "description": "useModal / useDrawer 命令式快览，children 函数可 close()",
+      "component": "@/components/ReactModal/examples/ReactModalImperativeDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalImperativeDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "useConfirmModal 确认框",
+      "description": "confirm / info / success / warning / error 命令式确认",
+      "component": "@/components/ReactModal/examples/ReactModalConfirmDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalConfirmDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "长内容滚动",
+      "description": "SimpleBar 与 bodyScroll=false 自管滚动对比",
+      "component": "@/components/ReactModal/examples/ReactModalScrollDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalScrollDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "高度 CSS 变量",
+      "description": "content-height 色块绑定与变量探针",
+      "component": "@/components/ReactModal/examples/ReactModalCssVarsDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalCssVarsDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "title / footer / noPadding 高度探针",
+      "description": "title、footer、noPadding、bodyScroll 组合实测高度变量",
+      "component": "@/components/ReactModal/examples/ReactModalHeightProbeDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalHeightProbeDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "高度受限 · 居中弹窗",
+      "description": "高度受限样式压低 body；声明式 / useModal 对比",
+      "component": "@/components/ReactModal/examples/ReactModalHeightLimitedDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalHeightLimitedDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "批量候选人评估（Tabs + 分栏）",
+      "description": "TabsLayout + ColumnsLayout + ScrollRegion",
+      "component": "@/components/ReactModal/examples/ReactModalTabsColumnsDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalTabsColumnsDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "嵌套弹层",
+      "description": "外层命令式 Modal/Drawer + 内层声明式 Modal",
+      "component": "@/components/ReactModal/examples/ReactModalNestedDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalNestedDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "FormModal + renderModal",
+      "description": "createModalRender / createDrawerRender + FormInfo 新栈 FormModal（已落地）",
+      "component": "@/components/ReactModal/examples/ReactModalFormModalDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalFormModalDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "FormStepsModal + renderModal",
+      "description": "createModalRender / createDrawerRender + FormStepsModal（已落地）",
+      "component": "@/components/ReactModal/examples/ReactModalFormStepsModalDemo",
+      "sourcePath": "@/components/ReactModal/examples/ReactModalFormStepsModalDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "ReactModal",
+      "rows": [
+        {
+          "prop": "open",
+          "desc": "是否打开",
+          "type": "boolean"
+        },
+        {
+          "prop": "title",
+          "desc": "标题",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "onClose",
+          "desc": "关闭回调（映射 antd onCancel）",
+          "type": "() => void"
+        },
+        {
+          "prop": "onConfirm",
+          "desc": "确认回调",
+          "type": "() => void | Promise<void>"
+        },
+        {
+          "prop": "size",
+          "desc": "尺寸",
+          "type": "'small' | 'default' | 'large'"
+        },
+        {
+          "prop": "footerButtons",
+          "desc": "底部按钮配置（可替代默认确认/取消）",
+          "type": "FooterButton[]"
+        },
+        {
+          "prop": "noPadding",
+          "desc": "内容区无内边距",
+          "type": "boolean"
+        },
+        {
+          "prop": "bodyScroll",
+          "desc": "是否使用内置 SimpleBar（false 时自管滚动）",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "componentName": "useConfirmModal",
+      "rows": [
+        {
+          "prop": "(options)",
+          "desc": "打开确认弹层；返回关闭函数",
+          "type": "(opts: ConfirmOptions) => () => void"
+        }
+      ]
+    }
+  ]
+}

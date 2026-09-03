@@ -1,0 +1,279 @@
+/* Ported from https://github.com/kne-union/react-modal/blob/master/src/confirmModal.module.scss */
+@use '@kne/responsive-utils/scss' as resp;
+
+.confirm-modal-wrap {
+  :global {
+    .ant-modal-confirm
+      .ant-modal-confirm-body
+      .ant-modal-confirm-title
+      + .ant-modal-confirm-content {
+      max-width: 100% !important;
+    }
+
+    .ant-modal-confirm-body-wrapper {
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ant-modal-content {
+      border-radius: 8px;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    .ant-modal-confirm-btns {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      flex: 1;
+      gap: 8px;
+    }
+  }
+
+  &.is-mobile {
+    --kne-confirm-modal-mobile-max-width: 400px;
+
+    :global {
+      .ant-modal-content {
+        width: min(
+          var(--kne-confirm-modal-mobile-max-width),
+          calc(var(--kne-viewport-width, 100vw) - 32px)
+        );
+        max-width: min(
+          var(--kne-confirm-modal-mobile-max-width),
+          calc(var(--kne-viewport-width, 100vw) - 32px)
+        );
+      }
+
+      .ant-modal-confirm-body {
+        padding: 20px 20px 12px;
+      }
+
+      .ant-modal-confirm-title {
+        margin-bottom: 16px;
+      }
+
+      .ant-modal-confirm-btns {
+        flex-direction: row;
+        justify-content: stretch;
+        align-items: stretch;
+        width: 100%;
+        margin-top: 16px;
+        gap: 12px;
+
+        .ant-btn {
+          flex: 1;
+          width: auto;
+          margin-inline-start: 0 !important;
+          height: 40px;
+        }
+      }
+    }
+  }
+
+  &.is-danger {
+    --color-warning: #d14343;
+
+    :global {
+      .ant-popover-buttons .ant-btn-primary,
+      .ant-modal-confirm-btns .ant-btn-primary {
+        background: var(--color-warning);
+        border-color: var(--color-warning);
+      }
+    }
+
+    .title-icon {
+      color: var(--color-warning);
+    }
+  }
+}
+
+.titleRow,
+.contentRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.titleIcon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 0;
+  line-height: 1;
+}
+
+.title-icon {
+  font-size: 16px;
+
+  &-confirm {
+    color: #1677ff;
+  }
+
+  &-info {
+    color: #1677ff;
+  }
+
+  &-success {
+    color: #52c41a;
+  }
+
+  &-warning {
+    color: #faad14;
+  }
+
+  &-error {
+    color: #ff4d4f;
+  }
+}
+
+.titleText {
+  flex: 1;
+  min-width: 0;
+  color: #222222;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.contentText {
+  flex: 1;
+  min-width: 0;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.contentRow.has-title.has-icon .contentText {
+  padding-left: 26px;
+}
+
+.is-mobile-block.contentRow.has-title.has-icon .contentText {
+  padding-left: 32px;
+}
+
+.is-mobile-block {
+  &.titleRow {
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 8px;
+  }
+
+  &.contentRow {
+    gap: 8px;
+  }
+
+  &.contentRow.has-title .contentText {
+    text-align: center;
+  }
+
+  &.contentRow.has-title.has-icon .contentText {
+    padding-left: 0;
+  }
+
+  .titleText {
+    flex: 0 1 auto;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+  }
+
+  .titleIcon {
+    width: 24px;
+    height: 24px;
+    margin-top: 0;
+  }
+
+  .title-icon {
+    font-size: 24px;
+  }
+
+  .contentText {
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+
+@include resp.mobile-container {
+  .titleRow,
+  .contentRow {
+    gap: 8px;
+  }
+
+  .confirm-modal-wrap {
+    --kne-confirm-modal-mobile-max-width: 400px;
+
+    :global {
+      .ant-modal-content {
+        width: min(
+          var(--kne-confirm-modal-mobile-max-width),
+          calc(var(--kne-viewport-width, 100vw) - 32px)
+        );
+        max-width: min(
+          var(--kne-confirm-modal-mobile-max-width),
+          calc(var(--kne-viewport-width, 100vw) - 32px)
+        );
+      }
+
+      .ant-modal-confirm-body {
+        padding: 20px 20px 12px;
+      }
+
+      .ant-modal-confirm-title {
+        margin-bottom: 16px;
+      }
+
+      .ant-modal-confirm-btns {
+        flex-direction: row;
+        justify-content: stretch;
+        align-items: stretch;
+        width: 100%;
+        margin-top: 16px;
+        gap: 12px;
+
+        .ant-btn {
+          flex: 1;
+          width: auto;
+          margin-inline-start: 0 !important;
+          height: 40px;
+        }
+      }
+    }
+  }
+
+  .titleRow {
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .contentRow.has-title .contentText {
+    text-align: center;
+  }
+
+  .contentRow.has-title.has-icon .contentText {
+    padding-left: 0;
+  }
+
+  .titleText {
+    flex: 0 1 auto;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+  }
+
+  .titleIcon {
+    width: 24px;
+    height: 24px;
+    margin-top: 0;
+  }
+
+  .title-icon {
+    font-size: 24px;
+  }
+}

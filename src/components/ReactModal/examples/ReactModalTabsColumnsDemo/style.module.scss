@@ -1,0 +1,114 @@
+.react-modal-tabs-columns-demo {
+  box-sizing: border-box;
+  padding: 8px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.listItem {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.15s ease;
+
+  &:hover:not(.isActive) {
+    background: #fafafa;
+  }
+}
+
+.isActive {
+  background: #e6f4ff;
+  box-shadow: inset 3px 0 0 #1677ff;
+}
+
+.listMain {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.listBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.listTitle {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.88);
+  line-height: 1.4;
+}
+
+.listMeta {
+  margin-top: 2px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.detailHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.avg {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+  margin-bottom: 20px;
+}
+
+.scoreLabel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.note {
+  padding: 12px 14px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  margin-bottom: 12px;
+}
+
+.noteTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.statCard {
+  padding: 12px 14px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.statValue {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.statLabel {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}

@@ -1,0 +1,283 @@
+/* Ported from https://github.com/kne-union/info-page/blob/master/src/InfoPage/style.module.scss */
+@use '@kne/responsive-utils/scss' as resp;
+
+.part {
+  //border: none;
+  //width: 100%;
+  background-color: transparent;
+  white-space: pre-wrap;
+
+  &:global(.ant-card) {
+    background-color: transparent;
+  }
+
+  &.bordered {
+    border: 1px solid #eeeeee;
+    padding: 24px 24px 24px 0;
+    background-color: rgba(255, 255, 255, 0.7);
+
+    &:global(.ant-card) {
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    > :global(.ant-card-head) {
+      .part-title:before {
+        margin-right: 20px;
+        border-radius: 0 4px 4px 0;
+      }
+
+      .part-title-sub {
+        padding-left: 24px;
+      }
+    }
+
+    > :global(.ant-card-body) {
+      padding: 16px 0 0 24px;
+    }
+
+    // 外层已有边框：内层 Part / 信息表不再叠边框与底色，标题仍用二级标签样式
+    .part {
+      background-color: transparent;
+
+      &:global(.ant-card) {
+        background-color: transparent;
+      }
+
+      &.bordered {
+        border: none;
+        padding: 0;
+        background-color: transparent;
+
+        &:global(.ant-card) {
+          background-color: transparent;
+        }
+
+        > :global(.ant-card-head) {
+          .part-title:before {
+            margin-right: 8px;
+            border-radius: 2px;
+          }
+
+          .part-title-sub {
+            padding-left: 0;
+          }
+        }
+
+        > :global(.ant-card-body) {
+          padding: 8px 0 0;
+        }
+      }
+    }
+
+    :global {
+      .table-view {
+        border: none;
+
+        .table-view-label {
+          background: unset;
+        }
+
+        .table-view-label,
+        .table-view-content {
+          border: none;
+        }
+      }
+
+      .descriptions {
+        border: none;
+
+        .col-label {
+          background: unset;
+        }
+
+        .col-label,
+        .col-content {
+          border: none;
+        }
+      }
+    }
+
+    @include resp.mobile-container {
+      padding: 12px 12px 12px 0;
+
+      > :global(.ant-card-head) {
+        .part-title:before {
+          margin-right: 10px;
+        }
+
+        .part-title-sub {
+          padding-left: 12px;
+        }
+      }
+
+      > :global(.ant-card-body) {
+        padding: 8px 0 0 12px;
+      }
+    }
+  }
+
+  &.no-title {
+    > :global(.ant-card-body) {
+      padding-top: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  }
+
+  &:global(.ant-card:not(.ant-card-bordered)) {
+    box-shadow: none;
+  }
+
+  // 仅作用 Part 自身 Card，避免影响内部普通 antd Card
+  > :global(.ant-card-head) {
+    border: none;
+    padding: 0;
+    min-height: auto;
+    background-color: transparent;
+
+    :global(.ant-card-extra) {
+      padding: 0;
+    }
+  }
+
+  > :global(.ant-card-body) {
+    padding: 16px 0 0 0;
+    background-color: transparent;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .part {
+    > :global(.ant-card-head) {
+      padding-left: 0;
+      padding-right: 0;
+
+      :global(.ant-card-head-title) > .part-title {
+        display: inline-block;
+        border-radius: 12px;
+        background: var(--primary-color-06);
+        color: var(--primary-color);
+        font-size: var(--font-size-small);
+        line-height: 16px;
+        padding: 4px 8px;
+        flex: none;
+        white-space: pre-wrap;
+
+        &:before {
+          content: normal;
+        }
+      }
+
+      :global(.ant-card-extra) {
+        padding: 0;
+      }
+    }
+
+    > :global(.ant-card-body) {
+      padding: 8px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  }
+}
+
+:global(.ant-modal-body) .part:not(:global(.bordered)),
+:global(.ant-drawer-body) .part:not(:global(.bordered)) {
+  &:global {
+    & > .ant-card-body,
+    & > .ant-card-head {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  }
+}
+
+.collapse {
+  &:global(.ant-collapse) {
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+
+  border: 1px solid #eeeeee;
+  background-color: rgba(255, 255, 255, 0.7);
+
+  > :global(.ant-collapse-item) {
+    border-bottom: 1px solid #eeeeee;
+    background-color: transparent;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    > :global(.ant-collapse-header) {
+      padding: 8px 16px;
+      line-height: 20px;
+      color: var(--font-color);
+      background-color: transparent;
+      white-space: pre-wrap;
+      word-break: break-word;
+
+      :global(.ant-collapse-arrow) {
+        transform: scale(0.6);
+
+        &:before {
+          transition: transform 300ms;
+        }
+      }
+
+      :global(.ant-collapse-expand-icon) {
+        padding-inline-end: 6px;
+      }
+    }
+
+    // antd5: content/content-box；antd6: panel/body
+    > :global(.ant-collapse-content),
+    > :global(.ant-collapse-panel) {
+      border-top: 1px solid #eeeeee;
+      border-bottom: 1px solid #eeeeee;
+      background-color: rgba(255, 255, 255, 0.7);
+      white-space: pre-wrap;
+      word-break: break-word;
+
+      > :global(.ant-collapse-content-box),
+      > :global(.ant-collapse-body) {
+        padding: 16px 30px;
+        background-color: transparent;
+
+        :global {
+          .ant-tabs {
+            margin-top: -16px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.part-title {
+  font-size: var(--font-size-default);
+  color: var(--font-color);
+  font-weight: 600;
+  line-height: 20px;
+  padding: 0;
+  white-space: pre-wrap;
+
+  &:before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    background: var(--primary-color);
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 8px;
+    transform: translateY(-2px);
+  }
+}
+
+.part-title-sub {
+  font-size: 12px;
+  color: var(--font-color-grey-1);
+  font-weight: normal;
+  margin-top: 4px;
+  white-space: pre-wrap;
+}

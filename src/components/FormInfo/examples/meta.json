@@ -1,0 +1,158 @@
+{
+  "title": "FormInfo（新）",
+  "description": "自研 FormInfo 壳层：请从 @hkyhy/marsun-components-core/form-info 一站式导入（壳+字段+引擎 hooks+helpers）。包根 FormInfo 仍为存量 kne 再导出。选择器族/金额/电话/薪资/AdvanceSelect/SelectInner 未移植故无对应示例。",
+  "examples": [
+    {
+      "title": "基础表单示例",
+      "description": "一个简单表单示例：Form + FormInfo 多列布局；InfoPage.Part 扁平外壳",
+      "component": "@/components/FormInfo/examples/NewFormInfoBaseDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoBaseDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "多行",
+      "description": "多个 TextArea / block 字段；选择器族/金额/电话/薪资等未移植故无对应示例",
+      "component": "@/components/FormInfo/examples/NewFormInfoMultilineDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoMultilineDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "边框模式示例",
+      "description": "FormInfo bordered 多段卡片",
+      "component": "@/components/FormInfo/examples/NewFormInfoBorderedDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoBorderedDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "labelTips 字符串 → Info",
+      "description": "withNormalizedLabelTips：短字符串变 Info+TooltipInfo",
+      "component": "@/components/FormInfo/examples/NewFormInfoLabelTipsDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoLabelTipsDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "模态框表单示例",
+      "description": "FormModal + useFormModal；受控与命令式；destroyOnHidden",
+      "component": "@/components/FormInfo/examples/NewFormInfoModalDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoModalDemo/index.tsx"
+    },
+    {
+      "title": "Drawer Form 抽屉弹窗",
+      "description": "FormDrawer + useFormDrawer；受控与命令式；placement 默认 right",
+      "component": "@/components/FormInfo/examples/NewFormInfoDrawerDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoDrawerDemo/index.tsx"
+    },
+    {
+      "title": "ErrorTip",
+      "description": "校验失败悬停；ahooks useClickAway 外点关闭",
+      "component": "@/components/FormInfo/examples/NewFormInfoErrorTipDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoErrorTipDemo/index.tsx"
+    },
+    {
+      "title": "FormApiButton",
+      "description": "antd Button+loading；onClick(formContext, e)",
+      "component": "@/components/FormInfo/examples/NewFormInfoApiButtonDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoApiButtonDemo/index.tsx"
+    },
+    {
+      "title": "FormItem",
+      "description": "children({...openApi, formData})",
+      "component": "@/components/FormInfo/examples/NewFormInfoFormItemDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoFormItemDemo/index.tsx"
+    },
+    {
+      "title": "一个含有多段列表的表单示例",
+      "description": "List + MultiField + TableList；空态 core Empty",
+      "component": "@/components/FormInfo/examples/NewFormInfoListDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoListDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "TableList",
+      "description": "表格行增删；空态 Empty（能力点专项）",
+      "component": "@/components/FormInfo/examples/NewFormInfoTableListDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoTableListDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "Steps 内嵌",
+      "description": "嵌入父 Form；validateFieldsByName",
+      "component": "@/components/FormInfo/examples/NewFormInfoStepsEmbedDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoStepsEmbedDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "步骤表单示例",
+      "description": "FormSteps 独立多 Form 向导",
+      "component": "@/components/FormInfo/examples/NewFormInfoStepsDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoStepsDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "模态框步骤表单示例",
+      "description": "FormStepsModal + useFormStepModal；destroyOnHidden",
+      "component": "@/components/FormInfo/examples/NewFormInfoStepsModalDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoStepsModalDemo/index.tsx"
+    },
+    {
+      "title": "新旧栈对照",
+      "description": "同数据：./form-info 与包根 kne FormInfo 并排",
+      "component": "@/components/FormInfo/examples/NewFormInfoCompareDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoCompareDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "Form / FormInfo（新栈）",
+      "rows": [
+        { "prop": "Form.type", "desc": "默认 inner", "type": "string", "default": "inner" },
+        {
+          "prop": "FormInfo.column",
+          "desc": "列数；对象/数组断点时走 useFlexBox",
+          "type": "number | FlexBoxColumn[]",
+          "default": "2"
+        },
+        { "prop": "FormInfo.gap", "desc": "字段间距", "type": "number", "default": "24" },
+        { "prop": "FormInfo.list", "desc": "字段列表", "type": "ReactNode[]" },
+        { "prop": "FormInfo.block", "desc": "仅重字段独占一行", "type": "boolean" },
+        { "prop": "FormInfo.bordered", "desc": "边框模式（InfoPage.Part）", "type": "boolean" }
+      ]
+    },
+    {
+      "componentName": "FormModal / FormDrawer / hooks",
+      "rows": [
+        { "prop": "formProps", "desc": "data / onSubmit 等", "type": "object | fn" },
+        { "prop": "autoClose", "desc": "提交成功后关闭", "type": "boolean", "default": "true" },
+        {
+          "prop": "renderModal",
+          "desc": "宿主：createModalRender / createDrawerRender",
+          "type": "(hostProps) => ReactNode"
+        },
+        { "prop": "useFormModal / useFormDrawer", "desc": "命令式打开", "type": "Hook" },
+        {
+          "prop": "destroyOnHidden",
+          "desc": "antd6 关闭销毁",
+          "type": "boolean",
+          "default": "true"
+        }
+      ]
+    },
+    {
+      "componentName": "引擎 hooks（./form-info 再导出）",
+      "rows": [
+        { "prop": "useFormApi / useFormContext / useField", "desc": "表单引擎", "type": "Hook" },
+        {
+          "prop": "useSubmit / useReset / GroupList / RULES",
+          "desc": "提交重置与规则",
+          "type": "Hook / FC / object"
+        },
+        {
+          "prop": "FormDataSync / FetchSelect / FetchTreeSelect / PersonOptionRow",
+          "desc": "helpers（实现在 Form/）",
+          "type": "FC"
+        }
+      ]
+    }
+  ]
+}

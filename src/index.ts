@@ -172,6 +172,51 @@ export * from './components/Form';
 export * from './components/InteractiveBlock';
 export * from './components/Layout';
 export * from './components/Modal';
+// InfoPage（@kne/info-page vendor）；Descriptions 为 InfoPage 详情分区，异于 CommonDescriptions
+export {
+  default as InfoPage,
+  Content as InfoPageContent,
+  InfoList,
+  Descriptions as InfoPageDescriptions,
+  DetailList,
+  CentralContent,
+  FieldView,
+  TableView,
+  formatView,
+  defaultFormat,
+  computeColumnsValue,
+  computeDisplay,
+  computeColumnsDisplay,
+  SplitLine,
+  Flow,
+  Report,
+  Score,
+} from './components/InfoPage';
+// FlexBox（@kne/flex-box vendor）；供 FormInfo 响应式列布局
+export {
+  FlexBox,
+  FlexBoxFetch,
+  useFlexBox,
+  defaultColumns as flexBoxDefaultColumns,
+  FlexBoxView,
+  FlexBoxViewItem,
+  getItemKey as flexBoxGetItemKey,
+} from './components/FlexBox';
+// ReactModal（@kne/react-modal vendor）；禁止 as Modal，保留 Marsun Modal 壳
+export {
+  ReactModal,
+  ReactDrawer,
+  useModal,
+  useDrawer,
+  useConfirmModal,
+  DrawerContextHolder,
+  ScrollRegion,
+  TabsLayout,
+  ColumnsLayout,
+  createModalRender,
+  createDrawerRender,
+  modalClassNames,
+} from './components/ReactModal';
 export * from './components/Permissions';
 export * from './components/PermissionBindPanel';
 export * from './components/OrgTree';

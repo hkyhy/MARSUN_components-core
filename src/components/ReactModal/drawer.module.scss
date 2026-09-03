@@ -1,0 +1,407 @@
+/* Ported from https://github.com/kne-union/react-modal/blob/master/src/drawer.module.scss */
+@use '@kne/responsive-utils/scss' as resp;
+
+.drawer {
+  :global(.ant-drawer-body) {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+    height: 100%;
+  }
+
+  --kne-drawer-viewport-height: var(--kne-viewport-height, 100vh);
+  --kne-drawer-viewport-width: var(--kne-viewport-width, 100vw);
+  --kne-drawer-title-height: 48px;
+  /* 12 top + ~32 btn + 24 bottom + 1 border-top；须与真实 footer 一致，避免 SimpleBar calc 顶裁底部 padding */
+  --kne-drawer-footer-height: 69px;
+  --kne-drawer-viewport-gutter: 0px;
+  --kne-drawer-body-padding-vertical: 48px;
+  --kne-drawer-body-padding-horizontal: 48px;
+  --kne-drawer-body-min-height: 200px;
+  --kne-drawer-body-height: calc(
+    var(--kne-drawer-viewport-height) - var(--kne-drawer-title-height) - var(
+        --kne-drawer-footer-height
+      ) - var(--kne-drawer-viewport-gutter)
+  );
+  --kne-drawer-body-max-height: var(--kne-drawer-body-height);
+  --kne-drawer-content-height: calc(
+    var(--kne-drawer-body-height) - var(--kne-drawer-body-padding-vertical)
+  );
+  --kne-drawer-content-min-height: calc(
+    var(--kne-drawer-body-min-height) - var(--kne-drawer-body-padding-vertical)
+  );
+  --kne-drawer-content-width: calc(100% - var(--kne-drawer-body-padding-horizontal));
+
+  &.small {
+    --kne-drawer-body-min-height: 180px;
+  }
+
+  &.is-mobile {
+    --kne-drawer-viewport-gutter: 0px;
+    --kne-drawer-body-padding-vertical: 24px;
+    --kne-drawer-body-padding-horizontal: 24px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    &.large {
+      .drawer-body-inner {
+        min-width: 0;
+      }
+    }
+  }
+
+  &.large {
+    .drawer-body-inner {
+      min-width: 0;
+    }
+  }
+
+  &:global(.ant-drawer-left),
+  &:global(.ant-drawer-right) {
+    :global(.ant-drawer-content-wrapper) {
+      height: 100%;
+      top: 0;
+      bottom: 0;
+    }
+
+    :global(.ant-drawer-content) {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+.drawer-antd-header,
+.drawer-antd-footer {
+  display: none;
+}
+
+.drawer-antd-body {
+  padding: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &.is-mobile {
+    height: 100%;
+    max-height: 100%;
+  }
+}
+
+.drawer-outer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+
+  --kne-modal-content-height: var(--kne-drawer-content-height);
+  --kne-modal-content-min-height: var(--kne-drawer-content-min-height);
+  --kne-modal-close-align-height: var(--kne-drawer-close-align-height, 48px);
+
+  :global(.modal-footer) {
+    flex: none;
+  }
+
+  &.no-title {
+    --kne-drawer-title-height: 0px;
+    --kne-drawer-close-align-height: 48px;
+  }
+
+  &.no-footer {
+    --kne-drawer-footer-height: 0px;
+  }
+
+  &.no-padding {
+    --kne-drawer-body-padding-vertical: 0px;
+    --kne-drawer-body-padding-horizontal: 0px;
+  }
+
+  &.is-mobile {
+    width: 100%;
+    height: var(--kne-drawer-viewport-height);
+    max-height: var(--kne-drawer-viewport-height);
+    min-height: var(--kne-drawer-viewport-height);
+    overflow: hidden;
+
+    .drawer-title {
+      flex: none;
+    }
+
+    .drawer-body {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    :global(.modal-footer) {
+      flex: none;
+    }
+  }
+}
+
+.drawer-title {
+  flex: none;
+  height: var(--kne-drawer-title-height);
+  display: flex;
+  align-items: center;
+  color: var(--font-color, rgba(0, 0, 0, 0.88));
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 0 48px 0 24px;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--bg-color-grey-3, #f0f0f0);
+}
+
+.drawer-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-height: var(--kne-drawer-body-min-height);
+  max-height: var(--kne-drawer-body-max-height);
+  height: var(--kne-drawer-body-height);
+  box-sizing: border-box;
+
+  &.body-scroll-off {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    --kne-drawer-content-height: 100%;
+    --kne-drawer-content-min-height: 0px;
+    --kne-modal-content-height: 100%;
+    --kne-modal-content-min-height: 0px;
+
+    .drawer-body-inner {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+  }
+}
+
+.drawer-body-inner {
+  padding: calc(var(--kne-drawer-body-padding-vertical) / 2)
+    calc(var(--kne-drawer-body-padding-horizontal) / 2);
+  min-height: var(--kne-drawer-content-height);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  &.no-padding {
+    padding: 0;
+  }
+}
+
+.drawer-outer :global(.modal-footer) {
+  border-top: 1px solid var(--bg-color-grey-3, #f0f0f0);
+}
+
+.drawer-outer.is-mobile :global(.modal-footer.is-mobile.is-embedded-footer) {
+  .modal-footer-extra {
+    flex: 1 1 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    > :global(.ant-flex) {
+      width: auto;
+      max-width: 100%;
+      justify-content: center !important;
+
+      > :global(div:first-child:empty) {
+        display: none;
+      }
+    }
+  }
+}
+
+.drawer-close {
+  position: absolute;
+  top: calc(
+    (var(--kne-drawer-close-align-height, var(--kne-drawer-title-height, 48px)) - 22px) / 2
+  );
+  inset-inline-end: 17px;
+  z-index: 1010;
+  padding: 0;
+  color: var(--font-color-grey, rgba(0, 0, 0, 0.45));
+  flex-shrink: 0;
+
+  &:global(.ant-btn.ant-btn-icon-only.ant-btn-text) {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.drawer-host {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+// 显式 drawerRender（非 FormModal modalRender）包 panel 外时补高度链
+.drawer-host-render {
+  :global(.ant-drawer-content-wrapper) {
+    :global(.react-form),
+    :global(.react-form--inner) {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      width: 100%;
+    }
+
+    :global(.info-page) {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      height: 100%;
+    }
+  }
+}
+
+// FormModal modalRender：Form 包住 panel-host（对齐 Modal container/body），chrome 含 footer
+.drawer-panel-host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.drawer-panel-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.drawer-form-host {
+  :global(.ant-drawer-body) {
+    :global(.react-form--inner) {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+    }
+
+    :global(.react-form--inner) > :global(.ant-flex) {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+    }
+  }
+
+  .drawer-panel-host,
+  .drawer-panel-body,
+  .drawer-outer {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.drawer-wrapper-mobile:global(.ant-drawer-content-wrapper) {
+  width: var(--kne-viewport-width, 100vw) !important;
+  max-width: 100%;
+}
+
+.drawer-wrapper-mobile-vertical:global(.ant-drawer-content-wrapper) {
+  height: var(--kne-viewport-height, 100vh) !important;
+  max-height: 100%;
+}
+
+.drawer-root-mobile:global(.ant-drawer) {
+  // 对齐 Modal .modal-wrap-fullscreen：全屏层挡住背后滚动
+  display: block;
+  inset: 0 !important;
+  width: var(--kne-viewport-width, 100vw) !important;
+  height: var(--kne-viewport-height, 100vh) !important;
+  max-height: var(--kne-viewport-height, 100vh) !important;
+  box-sizing: border-box;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  touch-action: none;
+
+  :global(.ant-drawer-content-wrapper),
+  :global(.ant-drawer-content) {
+    touch-action: auto;
+  }
+
+  :global(.ant-drawer-content) {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &:global(.kne-is-boundary) {
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+  }
+
+  &:global(.kne-is-viewport) {
+    position: fixed !important;
+  }
+}
+
+:global(.ant-drawer-mask.kne-is-boundary) {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+:global(.ant-drawer-mask.kne-is-viewport) {
+  position: fixed !important;
+  inset: 0 !important;
+}
+
+@include resp.mobile-container {
+  .drawer {
+    /* 移动端 footer: 12 + ~32 + 16 + 1 border */
+    --kne-drawer-footer-height: 61px;
+  }
+
+  .drawer-body-inner:not(.no-padding) {
+    --kne-drawer-body-padding-vertical: 24px;
+    --kne-drawer-body-padding-horizontal: 24px;
+  }
+
+  .drawer-title {
+    padding: 0 40px 0 16px;
+  }
+
+  .drawer-outer :global(.modal-footer.is-mobile) {
+    padding: 12px 16px 16px;
+  }
+}

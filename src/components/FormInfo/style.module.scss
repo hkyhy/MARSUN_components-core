@@ -1,0 +1,1462 @@
+/* Ported/adapted from kne-union/form-info; classes prefixed marsun-form-info-* */
+@use '@kne/responsive-utils/scss' as resp;
+
+// 嵌套 List 色条：蓝 → 橙 → 灰 → 虚线（第 5 级）
+$nest-rail-blue: var(--primary-color-2, var(--primary-color, #1677ff));
+$nest-rail-orange: #e8b07a;
+$nest-rail-gray: var(--font-color-grey-3, #d9d9d9);
+$nest-head-bg: rgba(0, 0, 0, 0.03);
+// 超深层子项 hover / 等级标签：#f0f5ff 色系
+$nest-item-hover-bg: rgba(109, 169, 252, 0.1);
+$nest-beyond-tag-bg: #f0f5ff;
+$nest-beyond-tag-border: #d6e4ff;
+$nest-beyond-tag-color: #2f54eb;
+$nest-radius: var(--radius-default, 8px);
+
+@mixin nest-extra-btn {
+  height: 28px;
+  padding: 0 10px !important;
+  font-size: 13px;
+  line-height: 26px;
+  border: 1px solid var(--font-color-grey-2, #d9d9d9) !important;
+  border-radius: var(--radius-default, 4px) !important;
+  background: #fff !important;
+  min-width: auto !important;
+  box-shadow: none !important;
+}
+
+@mixin nest-full-width {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+.marsun-form-info-outer {
+  :global(.multi-field-delete-label) {
+    display: none;
+  }
+
+  &:global(.react-form--inner) {
+    :global(.react-form__field-label.marsun-form-info-is-req:before) {
+      position: static;
+      transform: translateX(0);
+      margin-right: 6px;
+    }
+
+    :global(.multi-field-delete-label) {
+      display: block;
+    }
+  }
+
+  :global {
+    .react-form__field {
+      color: var(--font-color);
+
+      input {
+        color: var(--font-color);
+      }
+
+      input::placeholder {
+        color: var(--font-color-grey-2);
+      }
+    }
+
+    .react-form__field-label {
+      color: var(--font-color-grey);
+      font-size: 14px;
+      line-height: 20px;
+      margin-bottom: 8px;
+      font-weight: normal !important;
+
+      &.marsun-form-info-is-req:before {
+        color: var(--color-warning);
+        //position: static;
+        display: inline-block;
+        //transform: translateX(0);
+        //margin-right: 6px;
+        font-weight: bold;
+      }
+    }
+
+    .react-form__field-error {
+      line-height: 14px;
+    }
+
+    .ant-input-number,
+    .ant-input-number-group-wrapper {
+      width: 100%;
+    }
+
+    .ant-picker.react-form__field-component,
+    .data_range_picker {
+      flex: 1;
+      width: 100%;
+    }
+
+    .ant-input-number-group-addon,
+    .ant-input-group-addon {
+      background: #ffffff;
+      color: var(--font-color);
+    }
+  }
+
+  // 移动端表单控件 ≥16px，避免 iOS 聚焦时强制放大页面
+  @include resp.mobile-container {
+    :global {
+      .ant-input,
+      .ant-input-affix-wrapper,
+      .ant-input-number,
+      .ant-input-number-input,
+      .ant-input-textarea textarea,
+      textarea.ant-input,
+      .ant-select-selector,
+      .ant-select-selection-search-input,
+      .ant-picker,
+      .ant-picker-input > input,
+      .ant-mentions,
+      .ant-mentions textarea,
+      .react-form__field input,
+      .react-form__field textarea {
+        font-size: 16px !important;
+      }
+
+      .ant-row {
+        row-gap: 12px !important;
+      }
+
+      .react-form__field-label {
+        margin-bottom: 6px;
+      }
+    }
+  }
+}
+
+.marsun-form-info {
+  > :global(.ant-card-head .part-title) {
+    font-size: var(--font-size-large);
+  }
+
+  // 嵌套 List / FormInfo 整行时保证占满可用宽度，并与上方字段留出间距
+  // 注意：不要在此清 gutter；第 1～4 级需保留 Row 左右 padding。仅 nest-beyond 内再清（见下）
+  .marsun-form-info-nest-block-col {
+    max-width: 100%;
+    margin-top: 8px;
+
+    > :global(.part) {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  @include resp.mobile-container {
+    &:global(.ant-card) {
+      > :global(.ant-card-head) {
+        padding-inline: 0;
+        margin-bottom: 4px;
+      }
+
+      > :global(.ant-card-body) {
+        padding: 12px 0 0;
+      }
+    }
+  }
+}
+
+.marsun-form-info-extra-btn {
+  &:global(.ant-btn) {
+    border-radius: var(--radius-default, 2px);
+    border: 1px solid var(--font-color-grey-2);
+    padding: 6px 12px;
+    box-shadow: none !important;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &:focus-visible {
+      box-shadow: none !important;
+    }
+  }
+}
+
+.marsun-form-info-list-part {
+  > :global(.ant-card-head .part-title) {
+    font-size: var(--font-size-large);
+  }
+
+  &:global {
+    &.ant-card .ant-card-body {
+      padding: 16px 0 0;
+      border-radius: 0;
+    }
+  }
+
+  // 移动端：无边框；用色条 / 浅底 / 分隔线表达层级，并统一舒适间距
+  @include resp.mobile-container {
+    &:global(.ant-card) {
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent;
+
+      > :global(.ant-card-head) {
+        padding: 0 0 4px;
+        min-height: auto;
+        background: transparent;
+        border-bottom: none;
+      }
+
+      > :global(.ant-card-body) {
+        padding: 12px 0 0;
+      }
+    }
+
+    .marsun-form-info-list-item {
+      margin-bottom: 0;
+
+      &:not(:last-child) {
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px dashed var(--font-color-grey-4, #f0f0f0);
+      }
+
+      .marsun-form-info-list-item-part {
+        &:global(.ant-card) {
+          // 保留桌面同级的灰底操作条高度，避免仅「删除」时被压成 ~22px
+          :global(.ant-card-head) {
+            height: auto;
+            min-height: 36px;
+            line-height: 1.5;
+            padding: 8px 12px;
+            margin-bottom: 0;
+            background: #f8f8f8;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+          }
+
+          // 字段之间留出呼吸感
+          :global(.ant-row) {
+            row-gap: 12px !important;
+          }
+
+          :global(.ant-col) {
+            padding-bottom: 4px;
+          }
+        }
+
+        // 移动端仍按外层 Part.bordered 区分
+        &.marsun-form-info-list-item-part-in-bordered:global(.ant-card) {
+          border: none !important;
+          box-shadow: none !important;
+          background: transparent;
+
+          :global(.ant-card-head) {
+            padding: 8px 0;
+          }
+
+          :global(.ant-card-body) {
+            padding: 4px 0 0 !important;
+          }
+        }
+
+        &.marsun-form-info-list-item-part-plain:global(.ant-card) {
+          padding: 0 !important;
+          border: 1px solid var(--font-color-grey-4) !important;
+          background: #fff;
+
+          :global(.ant-card-head) {
+            padding: 8px 12px;
+            border-radius: var(--radius-default, 8px) var(--radius-default, 8px) 0 0 !important;
+          }
+
+          :global(.ant-card-body) {
+            padding: 12px !important;
+          }
+        }
+
+        &.marsun-form-info-list-item-part-wraps-nest-beyond:global(.ant-card)
+          :global(.ant-card-body) {
+          overflow: visible !important;
+        }
+      }
+
+      &.marsun-form-info-is-important {
+        > .marsun-form-info-list-item-part:global(.ant-card > .ant-card-head) {
+          background: #f8f8f8;
+          min-height: 36px;
+          padding: 8px 12px;
+
+          :global(.part-title) {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: var(--primary-color-06);
+            color: var(--primary-color);
+            font-size: var(--font-size-small, 12px);
+            line-height: 16px;
+          }
+        }
+      }
+    }
+
+    // 嵌套 List：左侧色条 + 浅底；Header 贴边满宽（padding 只放 body）
+    .marsun-form-info-list-part:not(.marsun-form-info-nest-beyond) {
+      @include nest-full-width;
+      margin: 12px 0 0;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 8px;
+      background: var(--bg-color-grey-1, #fafafa);
+      border-left: 3px solid $nest-rail-blue !important;
+      overflow: hidden;
+
+      &:global(.ant-card) {
+        > :global(.ant-card-head) {
+          width: 100%;
+          margin: 0 !important;
+          padding: 8px 12px !important;
+          min-height: auto;
+          background: $nest-head-bg !important;
+          border-bottom: none;
+
+          :global(.part-title) {
+            font-size: var(--font-size-default, 14px);
+          }
+        }
+
+        > :global(.ant-card-body) {
+          padding: 12px 12px 12px 14px !important;
+        }
+      }
+
+      .marsun-form-info-list-item {
+        &:not(:last-child) {
+          margin-bottom: 12px;
+          padding-bottom: 12px;
+        }
+      }
+
+      .marsun-form-info-list-item-part.marsun-form-info-list-item-part-in-bordered {
+        border: none !important;
+        background: transparent;
+
+        &:global(.ant-card) {
+          :global(.ant-card-head),
+          :global(.ant-card-body) {
+            padding-left: 0;
+            padding-right: 0;
+          }
+        }
+      }
+
+      // 第 3 层起：橙色色条
+      .marsun-form-info-list-part:not(.marsun-form-info-nest-beyond) {
+        margin-top: 8px;
+        padding: 0 !important;
+        background: rgba(0, 0, 0, 0.02);
+        border-left-color: $nest-rail-orange !important;
+
+        &:global(.ant-card) > :global(.ant-card-body) {
+          padding: 10px 10px 10px 12px !important;
+        }
+      }
+    }
+  }
+}
+
+.marsun-form-info-list-item {
+  &.marsun-form-info-is-important {
+    > .marsun-form-info-list-item-part:global(.ant-card > .ant-card-head) {
+      background: var(--primary-color-06) !important;
+    }
+
+    > .marsun-form-info-list-item-part:global(
+        .ant-card > .ant-card-head .ant-card-head-title .part-title
+      ) {
+      color: var(--primary-color);
+    }
+
+    .marsun-form-info-list-item-part:global(.ant-card .ant-card-head-title .part-title) {
+      font-weight: 500;
+    }
+
+    .marsun-form-info-table-list-inner {
+      border: none;
+    }
+  }
+
+  .marsun-form-info-list-item-part {
+    padding: 0;
+
+    // 覆盖 antd Card CSS-in-JS：去头部分割线
+    &:global(.ant-card) {
+      border-radius: var(--radius-default, 8px) !important;
+      overflow: hidden !important;
+
+      > :global(.ant-card-head) {
+        background: #f8f8f8;
+        border: none !important;
+        border-bottom: none !important;
+        min-height: 36px;
+        height: 36px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+
+        :global(.ant-card-head-wrapper) {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+        }
+
+        // 有 title 时 antd 默认给 title/extra 上下 padding，会把删除挤偏；无 title 时 header 仍保留
+        :global(.ant-card-head-title) {
+          padding: 0 !important;
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+          line-height: 22px;
+        }
+
+        :global(.ant-card-extra) {
+          display: inline-flex;
+          align-items: center;
+          align-self: center;
+          margin-block: 0;
+          margin-inline-start: auto;
+          padding: 0 !important;
+          float: none;
+        }
+
+        :global(.ant-btn) {
+          display: inline-flex;
+          align-items: center;
+          height: auto;
+          line-height: 1;
+          padding: 0;
+        }
+
+        .marsun-form-info-extra-btn {
+          min-width: auto !important;
+          border: none !important;
+          padding: 0 !important;
+          background: transparent !important;
+        }
+      }
+
+      > :global(.ant-card-head-title) :global(.part-title),
+      :global(.ant-card-head-title) :global(.part-title) {
+        // 覆盖嵌套 Part 的 pill 样式，避免标题区变高导致删除不居中
+        background: transparent !important;
+        font-weight: normal;
+        font-size: 14px;
+        color: var(--font-color);
+        padding: 0 !important;
+        border-radius: 0;
+        line-height: 22px;
+      }
+    }
+
+    &.marsun-form-info-list-item-part-beyond:global(.ant-card) {
+      overflow: visible !important;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    // 外层 Part bordered：子项无描边、表头全圆角、body 无左右 padding
+    &.marsun-form-info-list-item-part-in-bordered:global(.ant-card) {
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent;
+
+      > :global(.ant-card-head) {
+        border-radius: var(--radius-default, 8px) !important;
+      }
+
+      > :global(.ant-card-body) {
+        padding: 16px 0 !important;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+    }
+
+    // 普通模式 / 第二级起：子项有描边、表头仅上圆角、body 保留左右 padding
+    &.marsun-form-info-list-item-part-plain:global(.ant-card) {
+      padding: 0 !important;
+      border: 1px solid var(--font-color-grey-4) !important;
+      box-shadow: none !important;
+      background: #fff;
+
+      > :global(.ant-card-head) {
+        margin: 0 !important;
+        border-radius: var(--radius-default, 8px) var(--radius-default, 8px) 0 0 !important;
+      }
+
+      > :global(.ant-card-body) {
+        padding: 16px !important;
+        border-radius: 0 0 var(--radius-default, 8px) var(--radius-default, 8px) !important;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+    }
+
+    &.marsun-form-info-list-item-part-wraps-nest-beyond:global(.ant-card)
+      > :global(.ant-card-body) {
+      overflow: visible !important;
+    }
+
+    // —— 第 1～4 级嵌套：左侧色条蓝→橙→灰；第 5 级起见 .marsun-form-info-nest-beyond ——
+    .marsun-form-info-list-part:not(.marsun-form-info-nest-beyond) {
+      @include nest-full-width;
+      margin-top: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.06) !important;
+      box-shadow: none !important;
+      border-radius: $nest-radius !important;
+      overflow: hidden !important;
+      background: var(--bg-color-grey-1, #fafafa);
+      border-left: 3px solid $nest-rail-blue !important;
+
+      &:global(.ant-card) {
+        > :global(.ant-card-head) {
+          width: 100% !important;
+          margin: 0 !important;
+          padding: 6px 12px !important;
+          min-height: 40px;
+          height: auto;
+          display: flex;
+          align-items: center;
+          background: $nest-head-bg !important;
+          border: none !important;
+          border-bottom: none !important;
+          border-radius: $nest-radius $nest-radius 0 0 !important;
+
+          :global(.ant-card-head-wrapper) {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+
+          :global(.ant-card-head-title),
+          :global(.ant-card-extra) {
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+          }
+
+          :global(.ant-card-extra) {
+            margin-inline-start: auto;
+            flex-shrink: 0;
+          }
+
+          :global(.part-title) {
+            font-size: var(--font-size-default, 14px);
+            font-weight: 600;
+            background: transparent !important;
+            color: rgba(0, 0, 0, 0.88) !important;
+            padding: 0 !important;
+            border-radius: 0;
+            line-height: 22px;
+          }
+        }
+
+        > :global(.ant-card-body) {
+          padding: 12px !important;
+          overflow: hidden;
+          box-sizing: border-box;
+        }
+      }
+
+      .marsun-form-info-extra-container {
+        min-height: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .marsun-form-info-extra-btn:global(.ant-btn) {
+        @include nest-extra-btn;
+      }
+
+      .marsun-form-info-list-item {
+        margin-bottom: 12px;
+
+        .marsun-form-info-list-item-part {
+          &:global(.ant-card) {
+            > :global(.ant-card-head) {
+              background: rgba(0, 0, 0, 0.02);
+              min-height: 32px;
+              height: 32px;
+              padding: 0 12px;
+            }
+          }
+
+          &.marsun-form-info-list-item-part-in-bordered:global(.ant-card)
+            > :global(.ant-card-body) {
+            padding: 12px 0 !important;
+          }
+
+          &.marsun-form-info-list-item-part-plain:global(.ant-card) {
+            border-color: rgba(0, 0, 0, 0.08);
+
+            > :global(.ant-card-body) {
+              padding: 12px !important;
+              overflow: hidden;
+              box-sizing: border-box;
+            }
+          }
+        }
+      }
+
+      // 第 3 层：橙
+      .marsun-form-info-list-part:not(.marsun-form-info-nest-beyond) {
+        margin-top: 8px;
+        background: #fff;
+        border-left-color: $nest-rail-orange !important;
+
+        .marsun-form-info-list-item-part {
+          &:global(.ant-card) {
+            > :global(.ant-card-head) {
+              background: transparent;
+              min-height: 28px;
+              height: 28px;
+              padding: 0 8px;
+            }
+          }
+
+          &.marsun-form-info-list-item-part-in-bordered:global(.ant-card)
+            > :global(.ant-card-body) {
+            padding: 8px 0 !important;
+          }
+
+          &.marsun-form-info-list-item-part-plain:global(.ant-card) {
+            border-style: dashed;
+
+            > :global(.ant-card-body) {
+              padding: 8px !important;
+              overflow: hidden;
+              box-sizing: border-box;
+            }
+          }
+        }
+
+        // 第 4 层：灰
+        .marsun-form-info-list-part:not(.marsun-form-info-nest-beyond) {
+          margin-top: 6px;
+          background: var(--bg-color-grey-1, #fafafa);
+          border-left-width: 3px !important;
+          border-left-style: solid !important;
+          border-left-color: $nest-rail-gray !important;
+
+          .marsun-form-info-list-item {
+            margin-bottom: 8px;
+
+            .marsun-form-info-list-item-part {
+              &:global(.ant-card) {
+                > :global(.ant-card-head) {
+                  min-height: 26px;
+                  height: 26px;
+                  padding: 0 8px;
+                }
+              }
+
+              &.marsun-form-info-list-item-part-in-bordered:global(.ant-card)
+                > :global(.ant-card-body) {
+                padding: 8px 0 !important;
+              }
+
+              &.marsun-form-info-list-item-part-plain:global(.ant-card) {
+                border-color: rgba(0, 0, 0, 0.06);
+
+                > :global(.ant-card-body) {
+                  padding: 8px !important;
+                  overflow: hidden;
+                  box-sizing: border-box;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 子项内嵌套的普通 FormInfo（如分组信息，非 List 子项卡）
+    .marsun-form-info:global(.ant-card):not(.marsun-form-info-list-item-part):not(
+        .marsun-form-info-list-part
+      ) {
+      margin-top: 0;
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: var(--radius-default, 8px) !important;
+      overflow: hidden !important;
+      background: var(--bg-color-grey-1, #fafafa);
+      box-sizing: border-box;
+
+      > :global(.ant-card-head) {
+        border: none !important;
+        border-bottom: none !important;
+        border-radius: var(--radius-default, 8px) var(--radius-default, 8px) 0 0 !important;
+        background: rgba(0, 0, 0, 0.03);
+        min-height: 32px;
+        padding: 0 12px;
+
+        :global(.part-title) {
+          background: transparent !important;
+          color: rgba(0, 0, 0, 0.88);
+          font-size: 13px;
+          font-weight: 600;
+          padding: 0 !important;
+          border-radius: 0;
+        }
+      }
+
+      > :global(.ant-card-body) {
+        padding: 12px !important;
+      }
+    }
+  }
+
+  // 无 itemTitle：不显示标题文案，但 header（灰底 + 删除）仍在
+  .marsun-form-info-list-item-part-no-title:global(.ant-card) {
+    > :global(.ant-card-head) {
+      min-height: 36px;
+      height: auto;
+    }
+
+    > :global(.ant-card-head-title) :global(.part-title) {
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      line-height: 0;
+      font-size: 0;
+    }
+  }
+
+  .marsun-form-info-list-item-title-placeholder {
+    display: block;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+  }
+
+  :global(.ant-divider) {
+    display: none;
+    border-top-color: var(--font-color-grey-2);
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+.marsun-form-info-list-item-part {
+  border-radius: $nest-radius !important;
+  overflow: hidden !important;
+  box-sizing: border-box;
+
+  &.marsun-form-info-list-item-part-in-bordered {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent;
+  }
+
+  &.marsun-form-info-list-item-part-plain {
+    padding: 0 !important;
+    border: 1px solid var(--font-color-grey-4) !important;
+    box-shadow: none !important;
+    background: #fff;
+
+    &:global(.ant-card) > :global(.ant-card-body) {
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+  }
+
+  &.marsun-form-info-list-item-part-wraps-nest-beyond:global(.ant-card) > :global(.ant-card-body) {
+    overflow: visible !important;
+  }
+
+  // nest-beyond 子项：无描边、不裁切更深嵌套
+  &.marsun-form-info-list-item-part-beyond {
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+}
+
+// —— 第 5 级起：满宽同宽；仅第 5 级虚线色条 ——
+.marsun-form-info-list-part.marsun-form-info-nest-beyond {
+  @include nest-full-width;
+  display: block;
+  margin: 8px 0 0 !important;
+  margin-inline: 0 !important;
+  border: none !important;
+  border-left: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent;
+  overflow: visible !important;
+
+  &.marsun-form-info-nest-beyond-rail {
+    border-left: 2px dashed $nest-rail-gray !important;
+    border-radius: $nest-radius !important;
+    // 勿 hidden：会裁掉第 6 级及更深的 nest-beyond
+    overflow: visible !important;
+
+    &:global(.ant-card) {
+      overflow: visible !important;
+    }
+  }
+
+  // 收起：仅样式隐藏 body，不卸载 DOM（保留表单字段）
+  &.marsun-form-info-nest-beyond-collapsed:global(.ant-card) > :global(.ant-card-body) {
+    display: none !important;
+  }
+
+  &:global(.ant-card) {
+    overflow: visible !important;
+
+    > :global(.ant-card-head) {
+      margin: 0 !important;
+      padding: 8px 12px !important;
+      height: auto !important;
+      min-height: 36px;
+      background: $nest-head-bg !important;
+      border: none !important;
+      border-radius: 0 $nest-radius $nest-radius 0 !important;
+      overflow: visible !important;
+
+      :global(.ant-card-head-wrapper) {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 8px;
+        width: 100%;
+        min-width: 0;
+        overflow: visible !important;
+      }
+
+      :global(.ant-card-head-title) {
+        flex: 1 1 120px;
+        min-width: 0;
+        max-width: 100%;
+        overflow: visible !important;
+        white-space: normal !important;
+        padding: 0 !important;
+      }
+
+      :global(.ant-card-extra) {
+        flex: 0 0 auto;
+        margin-inline-start: auto;
+        overflow: visible !important;
+      }
+
+      :global(.part-title) {
+        background: transparent !important;
+        padding: 0 !important;
+        white-space: normal !important;
+        max-width: 100%;
+      }
+    }
+
+    > :global(.ant-card-body) {
+      margin: 0 !important;
+      padding: 8px 0 0 !important;
+      overflow: visible !important;
+    }
+  }
+
+  .marsun-form-info-nest-beyond-title {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .marsun-form-info-nest-level-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+
+    &:focus-visible {
+      border-radius: 999px;
+      box-shadow: 0 0 0 2px rgba(47, 84, 235, 0.35);
+    }
+  }
+
+  .marsun-form-info-nest-toggle-icon {
+    font-size: 10px;
+    color: $nest-beyond-tag-color;
+    line-height: 1;
+  }
+
+  .marsun-form-info-nest-beyond-title-text {
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .marsun-form-info-nest-parent-tag:global(.ant-tag) {
+    margin: 0 !important;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: 999px !important;
+    border-color: $nest-beyond-tag-border;
+    background: $nest-beyond-tag-bg;
+    color: $nest-beyond-tag-color;
+    font-size: 12px;
+    line-height: 20px;
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  .marsun-form-info-extra-container {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .marsun-form-info-extra-btn:global(.ant-btn) {
+    @include nest-extra-btn;
+    white-space: nowrap;
+  }
+
+  .marsun-form-info-list-item {
+    margin-bottom: 8px;
+    max-width: 100%;
+    overflow: visible !important;
+    border-radius: $nest-radius;
+    transition: background-color 0.15s ease;
+
+    // hover 高亮当前 item 范围；嵌套时只亮最内层
+    &:hover {
+      background: $nest-item-hover-bg;
+    }
+
+    &:hover .marsun-form-info-list-item:not(:hover) {
+      background: transparent;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .marsun-form-info-list-item-part,
+  .marsun-form-info-list-item-part-beyond {
+    overflow: visible !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    border: none !important;
+    background: transparent !important;
+
+    &:global(.ant-card) {
+      overflow: visible !important;
+      background: transparent !important;
+
+      > :global(.ant-card-head) {
+        padding: 0 12px !important;
+        overflow: visible !important;
+        border-radius: 0 $nest-radius $nest-radius 0 !important;
+
+        :global(.ant-card-extra) {
+          flex-shrink: 0 !important;
+        }
+      }
+
+      > :global(.ant-card-body) {
+        padding: 8px 0 0 !important;
+        overflow: visible !important;
+      }
+    }
+  }
+
+  :global(.ant-col):not(.marsun-form-info-nest-block-col) {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .marsun-form-info-list-part.marsun-form-info-nest-beyond {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+    border-left: none !important;
+    background: transparent !important;
+
+    &.marsun-form-info-nest-beyond-rail {
+      border-left: 2px dashed $nest-rail-gray !important;
+    }
+  }
+
+  .marsun-form-info-nest-block-col {
+    padding-inline: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+}
+
+// nest-beyond 标记（Col / 子项 overflow）；保留 gutter 左右 padding 与同层字段对齐
+.marsun-form-info-nest-block-col-beyond {
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+// 直接包住 nest-beyond 的子项：仅放开 overflow，保留 plain body 左右 padding
+.marsun-form-info-list-item-part-wraps-nest-beyond:global(.ant-card) {
+  overflow: visible !important;
+
+  > :global(.ant-card-body) {
+    overflow: visible !important;
+  }
+}
+
+.marsun-form-info-multi-field-item {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+
+  &:not(:first-child) {
+    :global {
+      .react-form__field-label {
+        display: none;
+      }
+    }
+  }
+
+  .react-form__field-label {
+    color: var(--font-color-grey);
+    font-size: 14px;
+    line-height: 20px;
+    height: 20px;
+    margin-bottom: 8px;
+  }
+
+  :global {
+    .react-form__field {
+      flex: 1;
+    }
+  }
+}
+
+.marsun-form-info-multi-field-add-btn {
+  margin-bottom: 16px;
+}
+
+.marsun-form-info-table-list-view {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  overflow: visible;
+}
+
+.marsun-form-info-table-list {
+  .marsun-form-info-list-item {
+    margin-bottom: 0 !important;
+  }
+
+  :global {
+    .react-form__field-label {
+      display: none;
+    }
+
+    // 表头/数据行各自为 flex，按内容宽度会错位；统一行宽 + 等分列宽对齐
+    .ant-row {
+      flex-wrap: nowrap;
+      width: 100%;
+      min-width: calc(
+        var(--table-list-field-count, 1) * var(--table-list-col-min-width, 160px) +
+          var(--table-list-options-width, 100px)
+      );
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    .ant-row:not(:last-child) {
+      border-bottom: solid 1px var(--bg-color-grey-3);
+    }
+
+    .ant-row:hover {
+      background: var(--bg-color-grey-1, #fafafa) !important;
+    }
+
+    .ant-col {
+      padding: 16px;
+      flex: 1 1 0;
+      width: 0;
+      min-width: var(--table-list-col-min-width, 160px);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+  }
+
+  // JS is-mobile 与容器查询双通道：预览框/窄容器也能露出字段 label
+  &.marsun-form-info-is-mobile {
+    :global {
+      .react-form__field-label {
+        display: block;
+      }
+    }
+  }
+
+  @include resp.mobile-container {
+    &:global(.ant-card) {
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent;
+
+      > :global(.ant-card-head) {
+        padding: 0 0 4px;
+        min-height: auto;
+        background: transparent;
+        border-bottom: none;
+      }
+
+      > :global(.ant-card-body) {
+        padding: 12px 0 0;
+      }
+    }
+
+    :global {
+      .react-form__field-label {
+        display: block;
+      }
+    }
+
+    .marsun-form-info-table-list-inner {
+      border: none;
+    }
+  }
+}
+
+.marsun-form-info-table-list-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.marsun-form-info-table-list-mobile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid var(--font-color-grey-4, #f0f0f0);
+  border-radius: var(--radius-default, 8px);
+  box-sizing: border-box;
+}
+
+.marsun-form-info-table-list-mobile-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.marsun-form-info-table-list-mobile-field {
+  width: 100%;
+  min-width: 0;
+}
+
+.marsun-form-info-table-list-mobile-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: 8px;
+  margin-top: 4px;
+  border-top: 1px solid var(--font-color-grey-4, #f0f0f0);
+}
+
+.marsun-form-info-table-list-inner {
+  border: solid 1px var(--bg-color-grey-3);
+  border-radius: var(--radius-default, 8px);
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-sizing: border-box;
+}
+
+.marsun-form-info-table-list-field {
+  &:global(.ant-col) {
+    padding-bottom: 0;
+  }
+
+  :global {
+    .react-form__field,
+    .react-form__field-component {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+// 表头底色需压过 .marsun-form-info-table-list .ant-row { background:#fff } 与 hover !important
+.marsun-form-info-table-list-header {
+  &:global(.ant-row) {
+    background: var(--bg-color-grey-1, #fafafa) !important;
+  }
+
+  &:global(.ant-row:hover) {
+    background: var(--bg-color-grey-1, #fafafa) !important;
+  }
+
+  .marsun-form-info-is-req:before {
+    color: var(--color-warning);
+    content: '*';
+    position: static;
+    display: inline-block;
+    transform: translateX(0);
+    margin-right: 6px;
+    font-weight: bold;
+  }
+
+  :global {
+    .ant-col {
+      padding: 8px 16px;
+      background: transparent;
+    }
+  }
+}
+
+.marsun-form-info-table-options {
+  &:global(.ant-col) {
+    flex: 0 0 100px;
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    align-self: stretch;
+  }
+
+  position: relative;
+  text-align: right;
+  background: transparent;
+  // 默认不浮动、无分割线；仅横向溢出时由 .marsun-form-info-is-overflow 开启
+}
+
+.marsun-form-info-table-options-header {
+  background: var(--bg-color-grey-1, #fafafa) !important;
+}
+
+// 需要横向滚动时：表头+行操作列一起 sticky，左侧分割线整列连通
+.marsun-form-info-table-list-inner.marsun-form-info-is-overflow {
+  .marsun-form-info-table-options {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    // inherit 行底色，hover 时与行一致；遮住横向滚过的内容
+    background: inherit;
+    border-left: 1px solid var(--bg-color-grey-3);
+    box-shadow: none;
+
+    // 水平渐变贴左边；略微上下重叠，跨行视觉连成一条
+    &::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      bottom: -1px;
+      left: -8px;
+      width: 8px;
+      pointer-events: none;
+      background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.06));
+    }
+  }
+
+  .marsun-form-info-table-options-header {
+    z-index: 3;
+    background: var(--bg-color-grey-1, #fafafa) !important;
+  }
+}
+
+// 水平 Steps：整体随内容宽度居中（不限制总宽）；标题随文字；步骤间横线最多 40px
+.marsun-form-info-steps {
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  box-sizing: border-box;
+
+  :global(.ant-steps-item) {
+    flex: none;
+    width: auto;
+    min-width: auto;
+    max-width: none;
+    overflow: visible;
+  }
+
+  :global(.ant-steps-item-section) {
+    flex: none;
+    width: auto;
+    min-width: 0;
+  }
+
+  :global(.ant-steps-item-header) {
+    width: auto;
+  }
+
+  :global(.ant-steps-item-title),
+  :global(.ant-steps-item-content) {
+    flex: none;
+    width: auto;
+    max-width: none;
+    white-space: nowrap;
+    text-wrap: nowrap;
+  }
+
+  // antd 6：步骤间连接轨
+  :global(.ant-steps-item-rail) {
+    flex: 0 0 40px !important;
+    width: 40px !important;
+    max-width: 40px;
+    min-width: 0;
+  }
+
+  // 兼容 title 伪元素连线
+  :global(.ant-steps-item-title)::after {
+    width: 40px !important;
+    max-width: 40px;
+  }
+}
+
+// 供 form-creator 等直接使用 antd Steps 时复用同一套样式（仅水平）
+:global(.marsun-form-info-steps.ant-steps-horizontal) {
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+:global(.marsun-form-info-steps.ant-steps-horizontal .ant-steps-item) {
+  flex: none;
+  width: auto;
+  min-width: auto;
+  max-width: none;
+  overflow: visible;
+}
+
+:global(.marsun-form-info-steps.ant-steps-horizontal .ant-steps-item-section) {
+  flex: none;
+  width: auto;
+  min-width: 0;
+}
+
+:global(.marsun-form-info-steps.ant-steps-horizontal .ant-steps-item-header) {
+  width: auto;
+}
+
+:global(.marsun-form-info-steps.ant-steps-horizontal .ant-steps-item-title),
+:global(.marsun-form-info-steps.ant-steps-horizontal .ant-steps-item-content) {
+  flex: none;
+  width: auto;
+  max-width: none;
+  white-space: nowrap;
+  text-wrap: nowrap;
+}
+
+:global(.marsun-form-info-steps.ant-steps-horizontal .ant-steps-item-rail) {
+  flex: 0 0 40px !important;
+  width: 40px !important;
+  max-width: 40px;
+  min-width: 0;
+}
+
+:global(.marsun-form-info-steps.ant-steps-horizontal .ant-steps-item-title)::after {
+  width: 40px !important;
+  max-width: 40px;
+}
+
+.marsun-form-info-steps-vertical {
+  width: 100%;
+  justify-content: flex-start;
+  margin-inline: 0;
+
+  :global(.ant-steps-item) {
+    flex: none;
+    width: 100%;
+    max-width: none;
+  }
+
+  :global(.ant-steps-item-section) {
+    flex: 1;
+    width: auto;
+  }
+
+  :global(.ant-steps-item-title),
+  :global(.ant-steps-item-content) {
+    white-space: normal;
+    text-wrap: wrap;
+  }
+
+  :global(.ant-steps-item-rail) {
+    flex: none !important;
+    width: auto !important;
+    max-width: none;
+  }
+}
+
+.marsun-form-info-steps-form-inner {
+  width: 100%;
+}
+
+.marsun-form-info-steps-embed {
+  width: 100%;
+}
+
+.marsun-form-info-steps-embed-panel {
+  width: 100%;
+}
+
+.marsun-form-info-steps-actions {
+  margin-top: 4px;
+  padding: 0;
+  width: 100%;
+}
+
+.marsun-form-info-steps-actions-side {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    margin-left: auto;
+    justify-content: flex-end;
+  }
+}
+
+.marsun-form-info-steps-modal .marsun-form-info-steps {
+  padding: 0 100px;
+
+  @include resp.mobile-container {
+    padding: 0;
+  }
+
+  &.marsun-form-info-steps-vertical {
+    padding: 0;
+  }
+}
+
+.marsun-form-info-table-list-empty {
+  padding: 16px;
+}
+
+.marsun-form-info-extra-container {
+  min-height: 32px;
+}
+
+.marsun-form-info-column-not-layout {
+  /* flex-box 量宽前占位，避免布局跳动 */
+  visibility: hidden;
+}

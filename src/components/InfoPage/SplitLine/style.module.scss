@@ -1,0 +1,10 @@
+/* Ported from https://github.com/kne-union/info-page/blob/master/src/SplitLine/style.module.scss */
+.split-line-label {
+  color: var(--font-color-grey-1);
+}
+
+.label-horizontal {
+  &:after {
+    content: ':';
+  }
+}

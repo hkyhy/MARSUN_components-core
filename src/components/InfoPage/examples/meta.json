@@ -1,0 +1,159 @@
+{
+  "title": "InfoPage 详情页",
+  "description": "复杂详情/报告分区展示：Part、Content、CentralContent、TableView、Flow、Report、Score、formatView 等。异于 CommonDescriptions（简单字段列表）。",
+  "examples": [
+    {
+      "title": "基础布局",
+      "description": "InfoPage 容器与 Part / Collapse 区块基本用法",
+      "component": "@/components/InfoPage/examples/InfoPageBasicDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "内容列表",
+      "description": "InfoPageContent 多列布局与标签对齐",
+      "component": "@/components/InfoPage/examples/InfoPageContentListDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageContentListDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "内容展示",
+      "description": "Content 列数/对齐/尺寸与 display 显隐",
+      "component": "@/components/InfoPage/examples/InfoPageContentDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageContentDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "描述列表",
+      "description": "InfoPageDescriptions 二维数组详情展示",
+      "component": "@/components/InfoPage/examples/InfoPageDescriptionsDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageDescriptionsDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "智能布局",
+      "description": "CentralContent 数据格式化与自动栅格",
+      "component": "@/components/InfoPage/examples/InfoPageCentralDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageCentralDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "边框区块",
+      "description": "Part bordered + CentralContent",
+      "component": "@/components/InfoPage/examples/InfoPageBorderedDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageBorderedDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "Modal中展示",
+      "description": "InfoPage 放入 ReactModal（非 Marsun Modal 业务壳）",
+      "component": "@/components/InfoPage/examples/InfoPageModalDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageModalDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "表格视图",
+      "description": "TableView 列表与 sticky 表头",
+      "component": "@/components/InfoPage/examples/InfoPageTableViewDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageTableViewDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "表格选择",
+      "description": "TableView 复选 / 单选模式",
+      "component": "@/components/InfoPage/examples/InfoPageTableSelectDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageTableSelectDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "分割线展示",
+      "description": "SplitLine 水平 / 垂直标签布局",
+      "component": "@/components/InfoPage/examples/InfoPageSplitLineDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageSplitLineDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "流程步骤",
+      "description": "Flow 基础步骤、columns 与 progressDot",
+      "component": "@/components/InfoPage/examples/InfoPageFlowDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageFlowDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "报告页面",
+      "description": "Report + List / Result 组合报告",
+      "component": "@/components/InfoPage/examples/InfoPageReportPageDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageReportPageDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "报告组件",
+      "description": "Report 子组件 List / Result / Table / Part",
+      "component": "@/components/InfoPage/examples/InfoPageReportPartsDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageReportPartsDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "评分展示",
+      "description": "Score 星级评分：总分与间距",
+      "component": "@/components/InfoPage/examples/InfoPageScoreDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageScoreDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "格式化视图",
+      "description": "formatView 日期/布尔/数字/金额格式化",
+      "component": "@/components/InfoPage/examples/InfoPageFormatViewDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageFormatViewDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "InfoPage",
+      "rows": [
+        {
+          "prop": "children",
+          "desc": "分区内容（通常为 InfoPage.Part）",
+          "type": "ReactNode",
+          "required": true
+        },
+        {
+          "prop": "className",
+          "desc": "根节点 className",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "componentName": "InfoPage.Part",
+      "rows": [
+        {
+          "prop": "title",
+          "desc": "分区标题",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "subtitle",
+          "desc": "副标题",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "extra",
+          "desc": "标题右侧操作区",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "bordered",
+          "desc": "是否显示边框",
+          "type": "boolean"
+        },
+        {
+          "prop": "children",
+          "desc": "分区正文",
+          "type": "ReactNode"
+        }
+      ]
+    }
+  ]
+}

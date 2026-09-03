@@ -1,0 +1,99 @@
+{
+  "title": "FlexBox 响应式栅格",
+  "description": "按容器宽度自动计算列数（vendor @kne/flex-box master）。对齐上游 doc/example.json 三例。",
+  "examples": [
+    {
+      "title": "FlexBox 响应式卡片栅格",
+      "description": "按容器宽度切换列数，同一行卡片拉齐高度。覆盖基础列表、自定义断点、间距与列变化回调。",
+      "component": "@/components/FlexBox/examples/FlexBoxResponsiveDemo",
+      "sourcePath": "@/components/FlexBox/examples/FlexBoxResponsiveDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "FlexBoxFetch 远程列表",
+      "description": "按当前列配置的 size 请求数据（Demo 内 loader mock），支持分页；缩小容器会换列并重新请求。",
+      "component": "@/components/FlexBox/examples/FlexBoxFetchDemo",
+      "sourcePath": "@/components/FlexBox/examples/FlexBoxFetchDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "useFlexBox 单独使用",
+      "description": "把 ref 绑到任意容器上，根据宽度得到当前 col / size，可用来驱动自己的布局。",
+      "component": "@/components/FlexBox/examples/UseFlexBoxDemo",
+      "sourcePath": "@/components/FlexBox/examples/UseFlexBoxDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "FlexBox",
+      "rows": [
+        {
+          "prop": "dataSource",
+          "desc": "列表数据",
+          "type": "array"
+        },
+        {
+          "prop": "renderItem",
+          "desc": "项渲染；须包 FlexBox.Item",
+          "type": "(item, index) => ReactNode"
+        },
+        {
+          "prop": "columns",
+          "desc": "断点 [{ width, col, size? }]",
+          "type": "FlexBoxColumn[]"
+        },
+        {
+          "prop": "gutter",
+          "desc": "栅格间距（同 antd Row）",
+          "type": "number | [number, number]"
+        },
+        {
+          "prop": "onChange",
+          "desc": "列配置变化（不含首次量宽）",
+          "type": "(column) => void"
+        }
+      ]
+    },
+    {
+      "componentName": "FlexBoxFetch",
+      "rows": [
+        {
+          "prop": "getFetchApi",
+          "desc": "(column) => Fetch api；常用 column.size 作 pageSize",
+          "type": "(column) => object"
+        },
+        {
+          "prop": "pagination",
+          "desc": "分页配置或 true",
+          "type": "boolean | object"
+        },
+        {
+          "prop": "dataFormat",
+          "desc": "从 loader 结果取列表，默认 data.pageData",
+          "type": "(data) => array"
+        }
+      ]
+    },
+    {
+      "componentName": "useFlexBox",
+      "rows": [
+        {
+          "prop": "columns",
+          "desc": "断点列配置",
+          "type": "FlexBoxColumn[]"
+        },
+        {
+          "prop": "returns.ref",
+          "desc": "挂到测量容器 DOM",
+          "type": "Ref"
+        },
+        {
+          "prop": "returns.column",
+          "desc": "当前命中的列配置",
+          "type": "FlexBoxColumn | null"
+        }
+      ]
+    }
+  ]
+}
