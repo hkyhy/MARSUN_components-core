@@ -1,5 +1,5 @@
-import { useFlexBox } from '@/components';
-import { Button, Card, Flex, Space, Tag, Typography } from 'antd';
+import { useFlexBox, SemanticTag, SEMANTIC_COLORS } from '@/components';
+import { Button, Card, Flex, Space, Typography } from 'antd';
 import classNames from 'classnames';
 import { useState } from 'react';
 import styles from './style.module.scss';
@@ -38,11 +38,11 @@ const UseFlexBoxDemo: React.FC = () => {
           </Paragraph>
           <Space wrap style={{ marginBottom: 8 }}>
             {column ? (
-              <Tag color="blue">
+              <SemanticTag color={SEMANTIC_COLORS.INFO}>
                 当前 col={column.col}，size={column.size}，width≤{column.width}
-              </Tag>
+              </SemanticTag>
             ) : (
-              <Tag>尚未量到宽度</Tag>
+              <SemanticTag color={SEMANTIC_COLORS.DEFAULT}>尚未量到宽度</SemanticTag>
             )}
           </Space>
           <div
@@ -75,7 +75,11 @@ const UseFlexBoxDemo: React.FC = () => {
             {history.length === 0 ? (
               <Text type="secondary">尚无切换</Text>
             ) : (
-              history.map((item, index) => <Tag key={`${item}-${index}`}>{item}</Tag>)
+              history.map((item, index) => (
+                <SemanticTag key={`${item}-${index}`} color={SEMANTIC_COLORS.DEFAULT}>
+                  {item}
+                </SemanticTag>
+              ))
             )}
           </Space>
         </div>
@@ -96,7 +100,9 @@ const UseFlexBoxDemo: React.FC = () => {
                 {label}
               </Button>
             ))}
-            {presetColumn ? <Tag color="blue">col={presetColumn.col}</Tag> : null}
+            {presetColumn ? (
+              <SemanticTag color={SEMANTIC_COLORS.INFO}>col={presetColumn.col}</SemanticTag>
+            ) : null}
           </Space>
           <div
             ref={presetRef as React.Ref<HTMLDivElement>}

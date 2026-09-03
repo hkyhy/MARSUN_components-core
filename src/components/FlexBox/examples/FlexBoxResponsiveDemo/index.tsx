@@ -1,5 +1,5 @@
-import { FlexBox } from '@/components';
-import { Button, Card, Flex, Space, Tag, Typography } from 'antd';
+import { FlexBox, SemanticTag, SEMANTIC_COLORS } from '@/components';
+import { Button, Card, Flex, Space, Typography } from 'antd';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { candidates, statusMap, type CandidateItem } from '../mockCandidates';
@@ -9,10 +9,10 @@ const { Text, Title, Paragraph } = Typography;
 
 const CandidateCard = ({ item }: { item: CandidateItem }) => {
   const resolvedStatus = statusMap[item.status];
-  const color = resolvedStatus?.color ?? 'default';
+  const color = resolvedStatus?.color ?? SEMANTIC_COLORS.DEFAULT;
   const text = resolvedStatus?.text ?? '未开始';
   return (
-    <Card size="small" title={item.code} extra={<Tag color={color}>{text}</Tag>}>
+    <Card size="small" title={item.code} extra={<SemanticTag color={color}>{text}</SemanticTag>}>
       <Flex vertical gap={8}>
         <Text strong>{item.name}</Text>
         <Text type="secondary">{item.email}</Text>
@@ -61,11 +61,11 @@ const FlexBoxResponsiveDemo: React.FC = () => {
           <Space wrap style={{ marginBottom: 8 }}>
             <Text type="secondary">首次量宽不回调</Text>
             {column ? (
-              <Tag color="blue">
+              <SemanticTag color={SEMANTIC_COLORS.INFO}>
                 col={column.col} / size={column.size} / width≤{column.width}
-              </Tag>
+              </SemanticTag>
             ) : (
-              <Tag>等待容器量宽</Tag>
+              <SemanticTag color={SEMANTIC_COLORS.DEFAULT}>等待容器量宽</SemanticTag>
             )}
           </Space>
           <FlexBox

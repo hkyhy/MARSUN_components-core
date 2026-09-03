@@ -1,3 +1,5 @@
+import { SEMANTIC_COLORS, type SemanticColor } from '@/components';
+
 /** Demo 共用候选人假数据（对齐上游 flex-box/doc） */
 export type CandidateItem = {
   id: string;
@@ -73,9 +75,10 @@ export const candidates: CandidateItem[] = [
   },
 ];
 
-export const statusMap: Record<string, { color: string; text: string }> = {
-  pending: { color: 'default', text: '未开始' },
-  running: { color: 'processing', text: '进行中' },
-  check: { color: 'error', text: '待复核' },
-  ended: { color: 'success', text: '已完成' },
+/** 状态 → SemanticTag（勿用 antd Tag 的 success 实心绿） */
+export const statusMap: Record<string, { color: SemanticColor; text: string }> = {
+  pending: { color: SEMANTIC_COLORS.DEFAULT, text: '未开始' },
+  running: { color: SEMANTIC_COLORS.PROCESSING, text: '进行中' },
+  check: { color: SEMANTIC_COLORS.DANGER, text: '待复核' },
+  ended: { color: SEMANTIC_COLORS.SUCCESS, text: '已完成' },
 };

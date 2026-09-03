@@ -1,16 +1,16 @@
-import { FlexBoxFetch } from '@/components';
-import { Button, Card, Flex, Space, Tag, Typography } from 'antd';
+import { FlexBoxFetch, SemanticTag, SEMANTIC_COLORS, type SemanticColor } from '@/components';
+import { Button, Card, Flex, Space, Typography } from 'antd';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import styles from './style.module.scss';
 
 const { Text, Title, Paragraph } = Typography;
 
-const statusList = [
-  { color: 'default', text: '未开始' },
-  { color: 'processing', text: '进行中' },
-  { color: 'success', text: '已完成' },
-  { color: 'error', text: '待复核' },
+const statusList: { color: SemanticColor; text: string }[] = [
+  { color: SEMANTIC_COLORS.DEFAULT, text: '未开始' },
+  { color: SEMANTIC_COLORS.PROCESSING, text: '进行中' },
+  { color: SEMANTIC_COLORS.SUCCESS, text: '已完成' },
+  { color: SEMANTIC_COLORS.DANGER, text: '待复核' },
 ];
 
 type InviteItem = {
@@ -47,7 +47,7 @@ const InviteCard = ({ item }: { item: InviteItem }) => (
   <Card
     size="small"
     title={item.code}
-    extra={<Tag color={item.status.color}>{item.status.text}</Tag>}
+    extra={<SemanticTag color={item.status.color}>{item.status.text}</SemanticTag>}
   >
     <Flex vertical gap={8}>
       <Text strong>{item.name}</Text>
