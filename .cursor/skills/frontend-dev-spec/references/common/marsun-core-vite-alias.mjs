@@ -36,10 +36,10 @@ function resolveCoreRelativePath(configDir, options) {
  *
  * 环境变量（写在 .env.local，勿提交；vite.config 须 loadEnv 并传入 env）：
  *   MARSUN_CORE_LOCAL=1              显式启用 sibling defaultRelativePath
- *   MARSUN_CORE_LOCAL=0              强制走 node_modules
+ *   MARSUN_CORE_LOCAL=0              强制走 node_modules（一般不必写）
  *   MARSUN_CORE_LOCAL_PATH=<路径>    相对 vite.config.ts，优先于 MARSUN_CORE_LOCAL
  *
- * monorepo：未设 env 时，若 sibling dist/index.js 存在则自动 alias。
+ * 默认不走本地链；仅上述 env 显式开启。autoDetectSibling 默认 false（勿再依赖 sibling 自动探测）。
  *
  * @param {string} configDir
  * @param {MarsunCoreViteAliasOptions} [options]
@@ -48,7 +48,7 @@ export function marsunCoreViteAlias(configDir, options = {}) {
   const {
     defaultRelativePath = '../../marsun_components-core',
     env,
-    autoDetectSibling = true,
+    autoDetectSibling = false,
   } = options;
 
   const raw = resolveCoreRelativePath(configDir, {
@@ -69,17 +69,7 @@ export function marsunCoreViteAlias(configDir, options = {}) {
     return [];
   }
 
-  const viaEnv =
-    env?.MARSUN_CORE_LOCAL === '1' ||
-    env?.MARSUN_CORE_LOCAL === 'true' ||
-    Boolean(env?.MARSUN_CORE_LOCAL_PATH?.trim()) ||
-    process.env.MARSUN_CORE_LOCAL === '1' ||
-    process.env.MARSUN_CORE_LOCAL === 'true' ||
-    Boolean(process.env.MARSUN_CORE_LOCAL_PATH?.trim());
-
-  console.info(
-    `[marsun-core-local] @hkyhy/marsun-components-core → ${coreRoot}/dist${viaEnv ? '' : ' (monorepo auto)'}`,
-  );
+  console.info(`[marsun-core-local] @hkyhy/marsun-components-core → ${coreRoot}/dist`);
 
   return [
     {

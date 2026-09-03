@@ -180,7 +180,7 @@ src/components/Feedback/examples/meta.json              → /components/feedback
 
 0. `package.json` 声明 `react`/`react-dom` `^19`、`antd` `^6`（与 core peer 一致；见 SKILL.md 技术栈）
 1. 从 `maoyang_data-asset-system` 复制 `scripts/collect-examples.mjs`、`scripts/vite-plugin-examples.mjs`、`src/layouts/ComponentsLayout/`、`src/pages/Components/`
-2. `vite.config.ts` 注册 `viteExamplesPlugin()`
+2. `vite.config.ts` 注册 `viteExamplesPlugin()`；**Agent 脚手架**另须：`/api/v1/user` 代理 → `VITE_USER_PREFS_TARGET`（排在 `/api` 前；见 [routing-api「用户偏好」](../business/routing-api-路由与API.md)）
 3. `App.tsx` 增加 FloatButton + DEV `/components` 路由（见 [routing-api-路由与API.md](../business/routing-api-路由与API.md) §13.5）
 4. 至少一个 `{Domain}/{Module}/examples/meta.json` + Demo，运行 `npm run collect-examples`
 5. `ComponentsLayout` 的 `defaultOpenKeys` 按 pathname 首段域（如 `qualityanalysis`）自动展开

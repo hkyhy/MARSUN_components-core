@@ -8,7 +8,7 @@
 
 ```
 【改已有 App 权限码】同任务必须：
-码表(业务 ALL_PERMISSIONS/常量 + SSO {app}PermissionCatalog)
+码表 SSOT（`repos/marsun_sso/iam/catalogs/<app>.yaml` → `iam:codegen` → 业务 FE `PERMISSIONS` + 生成 catalog/bind）
 → 角色矩阵 → 菜单/路由/API 门禁
 → 绑权目录 bindCatalog（含 defaultGranted）→ FE PERMISSIONS 常量
 → 功能与权限点清单 → PRD 相关节 → Test 用例+冒烟+侧栏核对

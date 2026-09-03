@@ -9,6 +9,7 @@
 - [ ] 明确用户角色、主路径、边界条件与验收标准
 - [ ] 识别涉及模块：`src/components/{Domain}/{Module}/` 或 `src/pages/`
 - [ ] 确认是否涉及权限、筛选、部门/人员、批量操作等业务规则；若有按钮/区域权限码三态（hidden/tooltip/error）→ core `Permissions`；角色/单权限 fallback → `PermissionGuard`（见 [permissions-data](../business/permissions-data-权限与常量.md)）
+- [ ] **展示名取自接口**：涉及 SystemApp / 角色 / 分厂等展示文案 → 用接口已返回的 `name`（或既有 store/缓存）；禁止 FE `code → 中文` 平行表。见 [permissions-data SystemApp 展示名](../business/permissions-data-权限与常量.md)、[hard-requirements 规则 2](../../../hard-requirements/SKILL.md)
 - [ ] **新系统 IAM / RBAC / 功能权限点 / Wave 接线 /「对齐 Assets 权限」**：先读 [iam-system-onboard-新系统IAM接入齐套.md](../business/iam-system-onboard-新系统IAM接入齐套.md) 全套检查表，再改代码；禁止只改菜单或 `hasPermission≡true`
 - [ ] **大表列表 / queryList**：预估行量或曾慢查时，方案须含「选择性筛选门禁 + 默认窗」（产品定条件集；后端 400；前端 `canQuery` + 默认当月/首厂等）。见 [filter §5.11](../common/filter-筛选组件.md)、[list-api 选择性筛选](../../../backend-dev-spec/references/common/list-api-列表分页.md)
 - [ ] **增减/重命名权限码**：同任务齐套（码表/矩阵/bindCatalog/清单/PRD/Test/七问），见 [permissions-catalog-改权限齐套.md](../business/permissions-catalog-改权限齐套.md)
@@ -60,7 +61,8 @@
 20. 检查：Modal 使用 core 的 `FormModal` + `formProps.onSubmit`（或 `FormStepsModal`），取消走 `onCancel`；动态行列用 `TableList`/`List` 进表单值（禁 draftRef）；行内级联 `useGroup` + `setFieldValue`，编辑回填 `setFormData` 禁 remount
 21. 检查：新组件是否已创建 `examples/meta.json`（路由和菜单由脚本自动生成，无需手动注册）
 22. 检查：**core/组件能力变更**是否已补齐对应 `examples` Demo 并写入 `meta.json`（能力点与 Demo 一一对应，如 Table 单表头/多表头/列配置；禁止只改实现不补示例，见 [../common/examples-组件示例.md](../common/examples-组件示例.md) §8.2）
-23. 检查：业务列表是否均用 core `Table` 且有稳定 `tableName`；列配置按需 `columnConfigEnabled` + fetch/save（QA：`userPrefs` → [backend-dev/platform-dev/用户偏好](../../../../backend-dev/platform-dev/用户偏好/接口.md)）；禁止直连 antd `Table`（豁免 Form `TableList` / HTML table / showcase ApiDoc）
+23. 检查：业务列表是否均用 core `Table` 且有稳定 `tableName`；列配置按需 `columnConfigEnabled` + fetch/save（`userPrefs` → [backend-dev/platform-dev/用户偏好](../../../../backend-dev/platform-dev/用户偏好/接口.md)）；**Vite 已拆 `/api/v1/user` 代理**（非业务 BE，见 [routing-api](../business/routing-api-路由与API.md)）；禁止直连 antd `Table`（豁免 Form `TableList` / HTML table / showcase ApiDoc）
+    23a. 检查：页内 Tab / 分段切换是否用 core `StateBar`（禁业务直连 antd `Tabs`/`Segmented` 做状态切换）
 24. 检查：若本任务新接 / 改造 REST（含平台已有接口如 `user_key_*`），是否已同任务更新 `backend-dev/` 三件套（`接口.md` + OpenAPI + 测试用例）；禁止只加 `src/api/*.ts`
 25. 检查：业务子仓库 `App.tsx` 是否在 `import.meta.env.DEV` 下接入 FloatButton + `/components` 路由（见 [../common/examples-组件示例.md](../common/examples-组件示例.md) §8.8）
 26. 检查：Tooltip 展示结构化详情时是否使用 `TooltipInfo` + **`Info` trigger**（禁止 `CircleHelp`）；`overlayStyle`/`styles.container` 须 `minWidth: 220`；禁止 `<button>` 嵌套 Tooltip trigger
@@ -132,8 +134,10 @@
 - [ ] 模块 workarea 扁平：`breadcrumb` 不重复 title；主区无双层 border/padding；Tabs 内容 100% 宽；页脚主按钮非无谓 block（§8.10）；列表/主从区少 panel border（§8.11）
 - [ ] examples/meta.json 已创建（如为新组件）
 - [ ] **core/组件能力变更**已补齐对应 examples Demo 并写入 meta.json（能力点 ↔ Demo；禁止只改实现）
-- [ ] 业务 Table 均来自 core 且有稳定 `tableName`；列配置按需 `columnConfigEnabled` + prefs（禁止直连 antd `Table`）；prefs 契约见 `backend-dev/platform-dev/用户偏好`
+- [ ] 业务 Table 均来自 core 且有稳定 `tableName`；列配置按需 `columnConfigEnabled` + prefs（禁止直连 antd `Table`）；prefs 契约见 `backend-dev/platform-dev/用户偏好`；**`/api/v1/user` Vite 代理已拆且非业务 BE**
+- [ ] 页内 Tab/分段用 core `StateBar`（禁业务 antd `Tabs`/`Segmented` 做状态切换）
 - [ ] **本任务若新接/改造 REST**：已更新 `backend-dev/` 三件套（禁止只加 `src/api`）
+- [ ] **产品/UI 字段变更同任务回写**：改 Form 字段顺序/必填/`rule`/下拉口径/去掉字段时，须同任务更新 Products PRD、Plans TODO、`backend-dev` 三件套、测试用例；触达权限/证据链则同步权限清单与接线证据（禁止只改代码）
 - [ ] 新增/变更组件已同步更新规范文档与提示词（与代码同一任务）
 - [ ] `@hkyhy/marsun-components-core` 版本与 npm 实版一致（`npm view` 核对；无 `file:` lock）
 - [ ] Prettier + ESLint + Husky 工具链已安装，`.prettierrc` / `eslint.config.js` / `.husky/pre-commit` / `lint`·`format`·`lint-staged`·`prepare` scripts 齐全（见 `common/code-formatting-代码格式化.md`）

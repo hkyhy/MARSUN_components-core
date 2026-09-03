@@ -60,7 +60,53 @@ src/api/
 - 新增 API 模块时，创建独立文件并在 `index.ts` 中追加导出
 - 引用方式统一为 `import { xxxApi } from '@/api'`
 
-## HTTP 客户端（`createMarsunRequest`）
+## Vite 开发代理：平台用户偏好（`user_key_*`）硬约束
+
+> 踩坑（2026-09-03）：Agent 脚手架 FE 把通配 `/api` 指到 `marsun-agents` 后，core `Table` 列配置调用的 `user_key_get`/`user_key_set` 被业务 BE 吞掉 → **500**。QA 本仓 FastAPI 已实现该路由；**业务 Agent BE 无此接口**。
+
+### 契约与实现
+
+| 项        | 约定                                                                                                       |
+| --------- | ---------------------------------------------------------------------------------------------------------- |
+| 路径      | `GET/POST /api/v1/user/user/user_key_*`（**双段** `user`，勿改）                                           |
+| 契约 SSOT | marsun_arch [`backend-dev/platform-dev/用户偏好/`](../../../../backend-dev/platform-dev/用户偏好/接口.md)  |
+| 实现仓    | `repos/Agent_QualityAnalysis_backend`（`src/app/routes/user_prefs.py`）                                    |
+| FE 客户端 | `src/api/userPrefs.ts`（脚手架 / Equipment / QA 同形）；`fetchTableColumnConfig` / `saveTableColumnConfig` |
+
+### Vite `proxy`（必须）
+
+1. **`/api/v1/user` 必须排在通配 `/api` 之前**
+2. **目标不得指向 marsun-agents / 其它无 `user_prefs` 的业务 BE**
+3. Agent / 无同仓 FastAPI 的仓：用独立 env
+   - `VITE_USER_PREFS_TARGET`（优先）或与 QA 同机时的 data-service 根
+   - 本机常见：`http://127.0.0.1:8080`（QA FastAPI 占 8080）或 `:5281` / `:15281`
+4. QA 本仓：可与 `VITE_DATA_SERVICE_TARGET` 同目标（见 QA `frontend/vite.config.ts`）
+
+```ts
+// 须在 `/api` 之前
+'/api/v1/user': {
+  target: env.VITE_USER_PREFS_TARGET || env.VITE_DATA_SERVICE_TARGET || 'http://127.0.0.1:8080',
+  changeOrigin: true,
+},
+'/api': {
+  target: env.VITE_API_TARGET || 'http://127.0.0.1:5989', // 业务 BE
+  changeOrigin: true,
+},
+```
+
+### 禁止
+
+- 仅配 `VITE_API_TARGET` → 业务 BE，却启用 core Table `tableName` + 列配置，却**不**拆 `/api/v1/user` 代理
+- 在 marsun-agents / 业务 Agent 内「顺手」再实现一套 `user_key_*`（平台路径 SSOT 在 QA backend）
+- 用 mock / DEMO 填列配置偏好
+
+### 自检
+
+- [ ] `vite.config.ts` 有 `/api/v1/user` 且日志打印其 target
+- [ ] `.env.example` 写明 `VITE_USER_PREFS_TARGET`
+- [ ] 浏览器 Network：`user_key_get` → **200**（空 data 可），非业务 BE 的 404/500
+
+---
 
 业务前端子仓库 **只允许一层薄封装** 调用 `@hkyhy/marsun-components-core` 的 `createMarsunRequest`（Assets：`src/utils/request.ts`；QA：`src/api/client.ts` 对外仍导出 `request` / `requestMarsun`）。注入 token、`onUnauthorized`、`withCredentials`、`isPublicUrl`。**禁止**再写平行原生 `fetch` 客户端（第二套 `api/client.ts` 拦截器）。
 

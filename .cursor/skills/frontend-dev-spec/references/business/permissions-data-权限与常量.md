@@ -15,6 +15,19 @@
 
 角色显示名从 `GET /api/permissions/role-options` 获取，通过 `roleOptionsStore` / `getRoleLabel()` 使用；禁止 `ROLE_LABEL_MAP` 硬编码。
 
+## SystemApp 展示名
+
+IAM 业务系统中文名真相源为库表 `iam_system_apps.name`，经权限/角色接口的 `systemApp.name`（或 SystemApp 列表的 `name`）下发。
+
+| 必须                                                                                                 | 禁止                                                          |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 分组/表格/下拉用 `systemApp.name`（空则退 `code`；无 `systemAppId` 可用固定「平台与其它」/「治理」） | `code === 'assets' ? '数据资产管理系统' : …` 等 FE 平行中文表 |
+| 跨页复用走既有 SystemApp 列表缓存 / store                                                            | 为展示名再写一份 seed 镜像常量                                |
+
+**反例（已废）**：`buildGovernanceSystemEntryCatalog` 内按 `assets` / `s3-agent` / `myflow-agent` / `equipment-agent` 硬映射中文——须改为 `name || code`。
+
+**边界**：按 App `code` 选择静态 `*PermissionBindCatalog`（权限树结构/叶子文案）是另一类问题，不等于 SystemApp 展示名；展示标题仍须吃接口 `name`。
+
 ## 权限定义（管理端）
 
 全量权限定义从 `GET /api/permissions/permissions` 获取，由权限管理页拉取后 props 下发；禁止 `ALL_PERMISSIONS` 前端副本。
