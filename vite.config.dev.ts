@@ -47,7 +47,15 @@ export default defineConfig({
         loadPaths: [resolve(ROOT, 'src/styles')],
         additionalData: (content: string, filename: string) => {
           const normalized = filename.replace(/\\/g, '/');
-          if (normalized.includes('/ReactFilter/')) return content;
+          if (
+            normalized.includes('/ReactFilter/') ||
+            normalized.includes('/InfoPage/') ||
+            normalized.includes('/ReactModal/') ||
+            normalized.includes('/FormInfo/') ||
+            normalized.includes('/FlexBox/')
+          ) {
+            return content;
+          }
           return `@use "mixins" as *;\n${content}`;
         },
       },

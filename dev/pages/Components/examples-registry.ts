@@ -1413,10 +1413,81 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
-  '/components/form': {
-    title: 'Form 表单组件',
+  '/components/flexbox': {
+    title: 'FlexBox 响应式栅格',
     description:
-      '业务表单经 @hkyhy/marsun-components-core 再导出：日常用 FormInfo 栈；引擎用 ReactForm / useField / useFormApi / GroupList 等。禁止业务直连 @kne/form-info、@kne/react-form。FetchSelect、FetchTreeSelect、StepForm 为字段辅助或存量能力。',
+      '按容器宽度自动计算列数（vendor @kne/flex-box master）。对齐上游 doc/example.json 三例。',
+    examples: [
+      {
+        title: 'FlexBox 响应式卡片栅格',
+        description:
+          '按容器宽度切换列数，同一行卡片拉齐高度。覆盖基础列表、自定义断点、间距与列变化回调。',
+        component: React.lazy(() => import('@/components/FlexBox/examples/FlexBoxResponsiveDemo')),
+        sourcePath: () =>
+          import('@/components/FlexBox/examples/FlexBoxResponsiveDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'FlexBoxFetch 远程列表',
+        description:
+          '按当前列配置的 size 请求数据（Demo 内 loader mock），支持分页；缩小容器会换列并重新请求。',
+        component: React.lazy(() => import('@/components/FlexBox/examples/FlexBoxFetchDemo')),
+        sourcePath: () => import('@/components/FlexBox/examples/FlexBoxFetchDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'useFlexBox 单独使用',
+        description: '把 ref 绑到任意容器上，根据宽度得到当前 col / size，可用来驱动自己的布局。',
+        component: React.lazy(() => import('@/components/FlexBox/examples/UseFlexBoxDemo')),
+        sourcePath: () => import('@/components/FlexBox/examples/UseFlexBoxDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'FlexBox',
+        rows: [
+          { prop: 'dataSource', desc: '列表数据', type: 'array' },
+          {
+            prop: 'renderItem',
+            desc: '项渲染；须包 FlexBox.Item',
+            type: '(item, index) => ReactNode',
+          },
+          { prop: 'columns', desc: '断点 [{ width, col, size? }]', type: 'FlexBoxColumn[]' },
+          { prop: 'gutter', desc: '栅格间距（同 antd Row）', type: 'number | [number, number]' },
+          { prop: 'onChange', desc: '列配置变化（不含首次量宽）', type: '(column) => void' },
+        ],
+      },
+      {
+        componentName: 'FlexBoxFetch',
+        rows: [
+          {
+            prop: 'getFetchApi',
+            desc: '(column) => Fetch api；常用 column.size 作 pageSize',
+            type: '(column) => object',
+          },
+          { prop: 'pagination', desc: '分页配置或 true', type: 'boolean | object' },
+          {
+            prop: 'dataFormat',
+            desc: '从 loader 结果取列表，默认 data.pageData',
+            type: '(data) => array',
+          },
+        ],
+      },
+      {
+        componentName: 'useFlexBox',
+        rows: [
+          { prop: 'columns', desc: '断点列配置', type: 'FlexBoxColumn[]' },
+          { prop: 'returns.ref', desc: '挂到测量容器 DOM', type: 'Ref' },
+          { prop: 'returns.column', desc: '当前命中的列配置', type: 'FlexBoxColumn | null' },
+        ],
+      },
+    ],
+  },
+  '/components/form': {
+    title: 'Form（存量兼容）',
+    description:
+      '包根 kne 再导出（@kne/form-info 薄封装）：存量模块继续从包根导入 FormInfo / FormModal 等。新模块请改走 @hkyhy/marsun-components-core/form-info（showcase「FormInfo（新）」）。禁止业务直连 @kne/form-info、@kne/react-form。',
     examples: [
       {
         title: '基础表单 FormInfo',
@@ -1424,6 +1495,14 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           '业务标准（从 core 导入）：Form + FormInfo 多列布局、rule 校验、SubmitButton / ResetButton',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoBaseDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoBaseDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'InputRange 数字区间',
+        description:
+          'FormInfo 字段：纱支/数值分档；值 [min,max]|null；rule=REQ / RANGE_ASC（formProps.rules 展开 inputRangeRules）；双侧有值须上限≥下限',
+        component: React.lazy(() => import('@/components/Form/examples/FormInfoInputRangeDemo')),
+        sourcePath: () => import('@/components/Form/examples/FormInfoInputRangeDemo/index.tsx?raw'),
         block: true,
       },
       {
@@ -1540,9 +1619,26 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'gap', desc: '字段间距', type: 'number' },
           {
             prop: 'list',
-            desc: '表单项列表（Input/TextArea/Select/InputNumber/Switch 等）',
+            desc: '表单项列表（Input/TextArea/Select/InputNumber/InputRange/Switch 等）',
             type: 'ReactNode[]',
           },
+        ],
+      },
+      {
+        componentName: 'InputRange',
+        rows: [
+          { prop: 'name', desc: '字段名', type: 'string', required: true },
+          { prop: 'label', desc: '标签', type: 'ReactNode' },
+          { prop: 'rule', desc: '校验（如 REQ）', type: 'string' },
+          {
+            prop: 'value（表单）',
+            desc: '[min, max] | null；单侧可空',
+            type: '[number|null, number|null] | null',
+          },
+          { prop: 'unit', desc: '单位文案（如 Ne）', type: 'string' },
+          { prop: 'min / max / precision / step', desc: '传给两侧 InputNumber', type: 'number' },
+          { prop: 'minPlaceholder / maxPlaceholder', desc: '占位', type: 'string' },
+          { prop: 'disabled', desc: '禁用', type: 'boolean' },
         ],
       },
       {
@@ -1647,6 +1743,194 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/forminfo': {
+    title: 'FormInfo（新）',
+    description:
+      '自研 FormInfo 壳层：请从 @hkyhy/marsun-components-core/form-info 一站式导入（壳+字段+引擎 hooks+helpers）。包根 FormInfo 仍为存量 kne 再导出。选择器族/金额/电话/薪资/AdvanceSelect/SelectInner 未移植故无对应示例。',
+    examples: [
+      {
+        title: '基础表单示例',
+        description: '一个简单表单示例：Form + FormInfo 多列布局；InfoPage.Part 扁平外壳',
+        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoBaseDemo')),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoBaseDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '多行',
+        description: '多个 TextArea / block 字段；选择器族/金额/电话/薪资等未移植故无对应示例',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoMultilineDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoMultilineDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '边框模式示例',
+        description: 'FormInfo bordered 多段卡片',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoBorderedDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoBorderedDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'labelTips 字符串 → Info',
+        description: 'withNormalizedLabelTips：短字符串变 Info+TooltipInfo',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoLabelTipsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoLabelTipsDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '模态框表单示例',
+        description: 'FormModal + useFormModal；受控与命令式；destroyOnHidden',
+        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoModalDemo')),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoModalDemo/index.tsx?raw'),
+      },
+      {
+        title: 'Drawer Form 抽屉弹窗',
+        description: 'FormDrawer + useFormDrawer；受控与命令式；placement 默认 right',
+        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoDrawerDemo')),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoDrawerDemo/index.tsx?raw'),
+      },
+      {
+        title: 'ErrorTip',
+        description: '校验失败悬停；ahooks useClickAway 外点关闭',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoErrorTipDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoErrorTipDemo/index.tsx?raw'),
+      },
+      {
+        title: 'FormApiButton',
+        description: 'antd Button+loading；onClick(formContext, e)',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoApiButtonDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoApiButtonDemo/index.tsx?raw'),
+      },
+      {
+        title: 'FormItem',
+        description: 'children({...openApi, formData})',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoFormItemDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoFormItemDemo/index.tsx?raw'),
+      },
+      {
+        title: '一个含有多段列表的表单示例',
+        description: 'List + MultiField + TableList；空态 core Empty',
+        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoListDemo')),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoListDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'TableList',
+        description: '表格行增删；空态 Empty（能力点专项）',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoTableListDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoTableListDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'Steps 内嵌',
+        description: '嵌入父 Form；validateFieldsByName',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoStepsEmbedDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoStepsEmbedDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '步骤表单示例',
+        description: 'FormSteps 独立多 Form 向导',
+        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoStepsDemo')),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoStepsDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '模态框步骤表单示例',
+        description: 'FormStepsModal + useFormStepModal；destroyOnHidden',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoStepsModalDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoStepsModalDemo/index.tsx?raw'),
+      },
+      {
+        title: '新旧栈对照',
+        description: '同数据：./form-info 与包根 kne FormInfo 并排',
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoCompareDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoCompareDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'Form / FormInfo（新栈）',
+        rows: [
+          { prop: 'Form.type', desc: '默认 inner', type: 'string' },
+          {
+            prop: 'FormInfo.column',
+            desc: '列数；对象/数组断点时走 useFlexBox',
+            type: 'number | FlexBoxColumn[]',
+          },
+          { prop: 'FormInfo.gap', desc: '字段间距', type: 'number' },
+          { prop: 'FormInfo.list', desc: '字段列表', type: 'ReactNode[]' },
+          { prop: 'FormInfo.block', desc: '仅重字段独占一行', type: 'boolean' },
+          { prop: 'FormInfo.bordered', desc: '边框模式（InfoPage.Part）', type: 'boolean' },
+        ],
+      },
+      {
+        componentName: 'FormModal / FormDrawer / hooks',
+        rows: [
+          { prop: 'formProps', desc: 'data / onSubmit 等', type: 'object | fn' },
+          { prop: 'autoClose', desc: '提交成功后关闭', type: 'boolean' },
+          {
+            prop: 'renderModal',
+            desc: '宿主：createModalRender / createDrawerRender',
+            type: '(hostProps) => ReactNode',
+          },
+          { prop: 'useFormModal / useFormDrawer', desc: '命令式打开', type: 'Hook' },
+          { prop: 'destroyOnHidden', desc: 'antd6 关闭销毁', type: 'boolean' },
+        ],
+      },
+      {
+        componentName: '引擎 hooks（./form-info 再导出）',
+        rows: [
+          { prop: 'useFormApi / useFormContext / useField', desc: '表单引擎', type: 'Hook' },
+          {
+            prop: 'useSubmit / useReset / GroupList / RULES',
+            desc: '提交重置与规则',
+            type: 'Hook / FC / object',
+          },
+          {
+            prop: 'FormDataSync / FetchSelect / FetchTreeSelect / PersonOptionRow',
+            desc: 'helpers（实现在 Form/）',
+            type: 'FC',
+          },
+        ],
+      },
+    ],
+  },
   '/components/icons': {
     title: 'Icons 图标',
     description: 'Lucide 图标封装与交互预览',
@@ -1667,6 +1951,165 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'color', desc: '颜色', type: 'string' },
           { prop: 'spin', desc: '旋转动画', type: 'boolean' },
           { prop: 'rotate', desc: '旋转角度', type: 'number' },
+        ],
+      },
+    ],
+  },
+  '/components/infopage': {
+    title: 'InfoPage 详情页',
+    description:
+      '复杂详情/报告分区展示：Part、Content、CentralContent、TableView、Flow、Report、Score、formatView 等。异于 CommonDescriptions（简单字段列表）。',
+    examples: [
+      {
+        title: '基础布局',
+        description: 'InfoPage 容器与 Part / Collapse 区块基本用法',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageBasicDemo')),
+        sourcePath: () => import('@/components/InfoPage/examples/InfoPageBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '内容列表',
+        description: 'InfoPageContent 多列布局与标签对齐',
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageContentListDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageContentListDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '内容展示',
+        description: 'Content 列数/对齐/尺寸与 display 显隐',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageContentDemo')),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageContentDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '描述列表',
+        description: 'InfoPageDescriptions 二维数组详情展示',
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageDescriptionsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageDescriptionsDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '智能布局',
+        description: 'CentralContent 数据格式化与自动栅格',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageCentralDemo')),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageCentralDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '边框区块',
+        description: 'Part bordered + CentralContent',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageBorderedDemo')),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageBorderedDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'Modal中展示',
+        description: 'InfoPage 放入 ReactModal（非 Marsun Modal 业务壳）',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageModalDemo')),
+        sourcePath: () => import('@/components/InfoPage/examples/InfoPageModalDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '表格视图',
+        description: 'TableView 列表与 sticky 表头',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageTableViewDemo')),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageTableViewDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '表格选择',
+        description: 'TableView 复选 / 单选模式',
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageTableSelectDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageTableSelectDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '分割线展示',
+        description: 'SplitLine 水平 / 垂直标签布局',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageSplitLineDemo')),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageSplitLineDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '流程步骤',
+        description: 'Flow 基础步骤、columns 与 progressDot',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageFlowDemo')),
+        sourcePath: () => import('@/components/InfoPage/examples/InfoPageFlowDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '报告页面',
+        description: 'Report + List / Result 组合报告',
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageReportPageDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageReportPageDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '报告组件',
+        description: 'Report 子组件 List / Result / Table / Part',
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageReportPartsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageReportPartsDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '评分展示',
+        description: 'Score 星级评分：总分与间距',
+        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageScoreDemo')),
+        sourcePath: () => import('@/components/InfoPage/examples/InfoPageScoreDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '格式化视图',
+        description: 'formatView 日期/布尔/数字/金额格式化',
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageFormatViewDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageFormatViewDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'InfoPage',
+        rows: [
+          {
+            prop: 'children',
+            desc: '分区内容（通常为 InfoPage.Part）',
+            type: 'ReactNode',
+            required: true,
+          },
+          { prop: 'className', desc: '根节点 className', type: 'string' },
+        ],
+      },
+      {
+        componentName: 'InfoPage.Part',
+        rows: [
+          { prop: 'title', desc: '分区标题', type: 'ReactNode' },
+          { prop: 'subtitle', desc: '副标题', type: 'ReactNode' },
+          { prop: 'extra', desc: '标题右侧操作区', type: 'ReactNode' },
+          { prop: 'bordered', desc: '是否显示边框', type: 'boolean' },
+          { prop: 'children', desc: '分区正文', type: 'ReactNode' },
         ],
       },
     ],
@@ -2298,6 +2741,164 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'name', desc: '字段名', type: 'string', required: true },
           { prop: 'label', desc: '展示标签', type: 'ReactNode' },
           { prop: 'value', desc: '字段值', type: 'unknown', required: true },
+        ],
+      },
+    ],
+  },
+  '/components/reactmodal': {
+    title: 'ReactModal 命令式弹层',
+    description:
+      '命令式 Modal/Drawer（useModal/useDrawer/useConfirmModal）。业务默认非表单弹窗仍用 Marsun Modal（S/M/L）。FormModal / FormStepsModal + renderModal 示例已落地（M2）。',
+    examples: [
+      {
+        title: '基础弹层',
+        description: 'Modal / Drawer 切换：受控打开与异步 onConfirm',
+        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalBasicDemo')),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'footerButtons 与尺寸',
+        description: 'size / footerButtons / 左侧 footer / noPadding',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalFooterSizeDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalFooterSizeDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '命令式打开（useModal / useDrawer）',
+        description: 'useModal / useDrawer 命令式快览，children 函数可 close()',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalImperativeDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalImperativeDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'useConfirmModal 确认框',
+        description: 'confirm / info / success / warning / error 命令式确认',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalConfirmDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalConfirmDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '长内容滚动',
+        description: 'SimpleBar 与 bodyScroll=false 自管滚动对比',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalScrollDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalScrollDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '高度 CSS 变量',
+        description: 'content-height 色块绑定与变量探针',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalCssVarsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalCssVarsDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'title / footer / noPadding 高度探针',
+        description: 'title、footer、noPadding、bodyScroll 组合实测高度变量',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalHeightProbeDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalHeightProbeDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '高度受限 · 居中弹窗',
+        description: '高度受限样式压低 body；声明式 / useModal 对比',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalHeightLimitedDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalHeightLimitedDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '批量候选人评估（Tabs + 分栏）',
+        description: 'TabsLayout + ColumnsLayout + ScrollRegion',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalTabsColumnsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalTabsColumnsDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '嵌套弹层',
+        description: '外层命令式 Modal/Drawer + 内层声明式 Modal',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalNestedDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalNestedDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'FormModal + renderModal',
+        description: 'createModalRender / createDrawerRender + FormInfo 新栈 FormModal（已落地）',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalFormModalDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalFormModalDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: 'FormStepsModal + renderModal',
+        description: 'createModalRender / createDrawerRender + FormStepsModal（已落地）',
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalFormStepsModalDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalFormStepsModalDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'ReactModal',
+        rows: [
+          { prop: 'open', desc: '是否打开', type: 'boolean' },
+          { prop: 'title', desc: '标题', type: 'ReactNode' },
+          { prop: 'onClose', desc: '关闭回调（映射 antd onCancel）', type: '() => void' },
+          { prop: 'onConfirm', desc: '确认回调', type: '() => void | Promise<void>' },
+          { prop: 'size', desc: '尺寸', type: "'small' | 'default' | 'large'" },
+          {
+            prop: 'footerButtons',
+            desc: '底部按钮配置（可替代默认确认/取消）',
+            type: 'FooterButton[]',
+          },
+          { prop: 'noPadding', desc: '内容区无内边距', type: 'boolean' },
+          {
+            prop: 'bodyScroll',
+            desc: '是否使用内置 SimpleBar（false 时自管滚动）',
+            type: 'boolean',
+          },
+        ],
+      },
+      {
+        componentName: 'useConfirmModal',
+        rows: [
+          {
+            prop: '(options)',
+            desc: '打开确认弹层；返回关闭函数',
+            type: '(opts: ConfirmOptions) => () => void',
+          },
         ],
       },
     ],

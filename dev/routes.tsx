@@ -15,8 +15,11 @@ export const showcaseRoutes = (
     <Route path="empty" element={<ExamplePage />} />
     <Route path="file" element={<ExamplePage />} />
     <Route path="filter" element={<ExamplePage />} />
+    <Route path="flexbox" element={<ExamplePage />} />
     <Route path="form" element={<ExamplePage />} />
+    <Route path="forminfo" element={<ExamplePage />} />
     <Route path="icons" element={<ExamplePage />} />
+    <Route path="infopage" element={<ExamplePage />} />
     <Route path="interactiveblock" element={<ExamplePage />} />
     <Route path="layout" element={<ExamplePage />} />
     <Route path="llmformattedtext" element={<ExamplePage />} />
@@ -25,6 +28,7 @@ export const showcaseRoutes = (
     <Route path="permissionbindpanel" element={<ExamplePage />} />
     <Route path="permissions" element={<ExamplePage />} />
     <Route path="reactfilter" element={<ExamplePage />} />
+    <Route path="reactmodal" element={<ExamplePage />} />
     <Route path="sparkline" element={<ExamplePage />} />
     <Route path="stat" element={<ExamplePage />} />
     <Route path="statebar" element={<ExamplePage />} />
