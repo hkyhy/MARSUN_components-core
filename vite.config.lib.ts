@@ -11,8 +11,10 @@ const EXTERNAL_PACKAGES = new Set([
   'react-router-dom',
   '@kne/button-group',
   '@kne/form-info',
+  '@kne/is-empty',
   '@kne/react-form',
   '@kne/react-form-antd',
+  '@kne/table-view',
   'classnames',
   'dayjs',
   'lucide-react',
@@ -31,22 +33,34 @@ const EXTERNAL_PACKAGES = new Set([
   '@kne/react-intl',
   '@kne/overflow-items',
   '@kne/responsive-utils',
+  'simplebar',
+  'simplebar-react',
 ]);
 
 function isExternal(id: string): boolean {
-  // Bundle CSS/SCSS side-effects (e.g. @kne/super-select/dist/index.css)
+  // Bundle CSS/SCSS side-effects (e.g. @kne/super-select/dist/index.css, @kne/table-view/dist/index.css)
   if (/\.(css|scss|sass|less)(\?|$)/.test(id)) return false;
   if (EXTERNAL_PACKAGES.has(id)) return true;
   if (id === 'lodash' || id.startsWith('lodash/')) return true;
   if (id.startsWith('@kne/')) return true;
   if (id.startsWith('@ant-design/icons')) return true;
+  if (id === 'simplebar' || id.startsWith('simplebar/')) return true;
+  if (id === 'simplebar-react' || id.startsWith('simplebar-react/')) return true;
   return false;
 }
 
 function scssAdditionalData(content: string, filename: string): string {
   const normalized = filename.replace(/\\/g, '/');
-  // ReactFilter vendor SCSS uses @kne/responsive-utils; skip global mixins inject to avoid clashes
-  if (normalized.includes('/ReactFilter/')) return content;
+  // Vendor SCSS uses @kne/responsive-utils; skip global mixins inject to avoid clashes
+  if (
+    normalized.includes('/ReactFilter/') ||
+    normalized.includes('/InfoPage/') ||
+    normalized.includes('/ReactModal/') ||
+    normalized.includes('/FormInfo/') ||
+    normalized.includes('/FlexBox/')
+  ) {
+    return content;
+  }
   return `@use "mixins" as *;\n${content}`;
 }
 
@@ -79,6 +93,7 @@ export default defineConfig({
         'agent-hub': resolve(__dirname, 'src/agent-hub.ts'),
         file: resolve(__dirname, 'src/file.ts'),
         llm: resolve(__dirname, 'src/llm.ts'),
+        'form-info': resolve(__dirname, 'src/form-info.ts'),
       },
       formats: ['es'],
     },
