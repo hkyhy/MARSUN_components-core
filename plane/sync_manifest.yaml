@@ -5,7 +5,7 @@ tasks:
 - id: P6.3.127
   milestone: P6.3
   name: ReactModal SimpleBar clearfix 伪元素高度修复并发版 0.1.74
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: fix
   owner: 黄金芳
