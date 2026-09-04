@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.127
+  next_task_id: P6.3.128
 tasks:
+- id: P6.3.127
+  milestone: P6.3
+  name: ReactModal SimpleBar clearfix 伪元素高度修复并发版 0.1.74
+  status: 进行中
+  priority: P1
+  kind: fix
+  owner: 黄金芳
+  start_date: "2026-09-04"
+  target_date: "2026-09-04"
+  tags: [frontend, release, react-modal, simplebar]
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
+  note: |
+    Refs: P6.1.50
+    Modal/Drawer/ScrollRegion 压掉 SimpleBar ::before/::after 继承 line-height 的空白；发版 0.1.74
+
 - id: P6.3.125
   milestone: P6.3
   name: 发版 marsun-components-core v0.1.69

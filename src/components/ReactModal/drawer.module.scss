@@ -171,6 +171,14 @@
   height: var(--kne-drawer-body-height);
   box-sizing: border-box;
 
+  /* SimpleBar clearfix 伪元素会继承内容 line-height，短表单上下各空约一行 */
+  :global(.simplebar-content)::before,
+  :global(.simplebar-content)::after {
+    line-height: 0;
+    font-size: 0;
+    height: 0;
+  }
+
   &.body-scroll-off {
     display: flex;
     flex-direction: column;

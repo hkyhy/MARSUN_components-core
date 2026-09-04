@@ -132,6 +132,14 @@
     height: 100%;
     min-height: 0;
   }
+
+  /* SimpleBar clearfix 伪元素会继承内容 line-height，短表单上下各空约一行 */
+  :global(.simplebar-content)::before,
+  :global(.simplebar-content)::after {
+    line-height: 0;
+    font-size: 0;
+    height: 0;
+  }
 }
 
 .modal-scroll-region-inner {
