@@ -1,0 +1,13 @@
+{
+  "title": "Iam 权限设置四页",
+  "description": "注入 IamClient + PermissionBindCatalog 后的用户/角色/组织/共享组页面壳（L2）。",
+  "examples": [
+    {
+      "title": "用户管理（Mock Client）",
+      "description": "fixture catalog + 内存 mock client，演示列表与权限预览布局",
+      "component": "@/components/Iam/examples/UsersDemo",
+      "sourcePath": "@/components/Iam/examples/UsersDemo/index.tsx",
+      "block": true
+    }
+  ]
+}

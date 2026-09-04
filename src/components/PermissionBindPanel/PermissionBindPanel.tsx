@@ -341,7 +341,15 @@ export default function PermissionBindPanel({
           );
         })}
       </Col>
-      <Col span={17} style={{ padding: 16, maxHeight: height, overflow: 'auto' }}>
+      <Col
+        span={17}
+        style={{
+          padding: '20px 24px',
+          maxHeight: height,
+          overflow: 'auto',
+          boxSizing: 'border-box',
+        }}
+      >
         {active ? (
           <>
             <div
@@ -405,10 +413,10 @@ const CategoryBlock = memo(function CategoryBlock({
   onToggle: (id: string, on: boolean) => void;
 }) {
   return (
-    <div style={{ marginBottom: 16 }}>
+    <div style={{ marginBottom: 20, paddingInline: 4 }}>
       <Typography.Text
         type="secondary"
-        style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}
+        style={{ display: 'block', marginBottom: 10, fontWeight: 500 }}
       >
         {category.label}
       </Typography.Text>
@@ -416,7 +424,7 @@ const CategoryBlock = memo(function CategoryBlock({
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-          gap: '8px 16px',
+          gap: '10px 20px',
         }}
       >
         {category.leaves.map((leaf) => {

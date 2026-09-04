@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.69",
+  "version": "0.1.72",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -44,6 +44,10 @@
     "./form-info": {
       "import": "./dist/form-info.js",
       "types": "./dist/form-info.d.ts"
+    },
+    "./iam": {
+      "import": "./dist/iam.js",
+      "types": "./dist/iam.d.ts"
     }
   },
   "sideEffects": [
