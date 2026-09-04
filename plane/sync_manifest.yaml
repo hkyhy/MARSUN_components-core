@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.129
+  next_task_id: P6.3.130
 tasks:
+- id: P6.3.129
+  milestone: P6.3
+  name: 发版 marsun-components-core v0.1.75（SuperSelect）
+  status: 已完成
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: "2026-09-04"
+  target_date: "2026-09-04"
+  tags: [frontend, release, form-info, super-select]
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
+  note: |
+    Refs: P6.3.128 · Related: S4.30.1027
+    chore(release) 0.1.75；含 SuperSelect allowSelectedAll
+
 - id: P6.3.128
   milestone: P6.3
   name: Form SuperSelect allowSelectedAll 全选
