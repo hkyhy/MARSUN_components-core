@@ -218,7 +218,7 @@ export default function IamUsersPage({
   const viewItems = useMemo(() => (viewUser ? buildViewItems(viewUser) : []), [viewUser]);
 
   return (
-    <ModulePageShell title={title}>
+    <ModulePageShell title={title} fillHeight={false}>
       <div style={{ marginBottom: 12 }}>
         <ReactFilterBar
           value={filterValue}

@@ -4,10 +4,20 @@
   display: flex;
   flex-direction: column;
 
+  &--natural {
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+
   :global(.ant-spin-container) {
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column;
+  }
+
+  &--natural :global(.ant-spin-container) {
+    flex: 0 0 auto;
+    min-height: 0;
   }
 }

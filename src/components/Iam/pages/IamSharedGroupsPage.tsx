@@ -62,7 +62,7 @@ export default function IamSharedGroupsPage({
   );
 
   return (
-    <ModulePageShell title={title} actions={headerActions}>
+    <ModulePageShell title={title} actions={headerActions} fillHeight={false}>
       <Table
         rowKey="id"
         loading={loading}

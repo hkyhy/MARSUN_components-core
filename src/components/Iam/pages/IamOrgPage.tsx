@@ -42,7 +42,7 @@ export default function IamOrgPage({
   const nodes = useMemo(() => toNodes(tree), [tree]);
 
   return (
-    <ModulePageShell title={title}>
+    <ModulePageShell title={title} fillHeight={false}>
       <Alert
         type="info"
         showIcon

@@ -69,7 +69,7 @@ export function IamRolesPage({
   );
 
   return (
-    <ModulePageShell title={title} actions={headerActions}>
+    <ModulePageShell title={title} actions={headerActions} fillHeight={false}>
       <Table
         rowKey="id"
         loading={loading}
@@ -265,7 +265,7 @@ export function IamRolePermissionsPage({
   );
 
   return (
-    <ModulePageShell title={title} actions={headerActions} spinning={loading}>
+    <ModulePageShell title={title} actions={headerActions} spinning={loading} fillHeight={false}>
       <Typography.Paragraph style={{ marginTop: 0 }}>
         角色名称：{role?.name || '—'}
       </Typography.Paragraph>

@@ -1,6 +1,6 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.126
+  next_task_id: P6.3.127
 tasks:
 - id: P6.3.125
   milestone: P6.3
@@ -1886,4 +1886,18 @@ tasks:
   note: |
     Refs: P6.3 · Related: P6.3.119 · Commits Task: bbfc7837…
     date.toApiStartEnd 展开 YYYY-MM；da-workflow/frontend-dev-spec skills 同步
+
+- id: P6.3.126
+  milestone: P6.3
+  name: ModulePageShell fillHeight 修复 IAM 外层滚动
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: "2026-09-04"
+  target_date: "2026-09-04"
+  tags: [frontend, components, ModulePageShell, iam, release]
+  note: |
+    Refs: P6.3 · Related: P6-1587
+    fillHeight={false} 给 IAM 四页；PageSpin naturalHeight；发版 0.1.73
 

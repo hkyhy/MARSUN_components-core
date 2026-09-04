@@ -18,6 +18,11 @@ export type ModulePageShellProps = {
   children?: ReactNode;
   className?: string;
   bodyClassName?: string;
+  /**
+   * true（默认）：填满父级 flex 链并 clip，供页内嵌套滚动（沙盘/预警等）。
+   * false：高度随内容撑开，交给外层 VirtualScrollbar（IAM 列表等文档流页）。
+   */
+  fillHeight?: boolean;
 };
 
 const ModulePageShell: React.FC<ModulePageShellProps> = ({
@@ -31,6 +36,7 @@ const ModulePageShell: React.FC<ModulePageShellProps> = ({
   children,
   className,
   bodyClassName,
+  fillHeight = true,
 }) => {
   const { setPageMeta, pageLoading: ctxLoading } = usePageShell();
   const showSpinning = Boolean(spinning || ctxLoading);
@@ -46,7 +52,14 @@ const ModulePageShell: React.FC<ModulePageShellProps> = ({
   }, [title, description, actions, syncPageMeta, setPageMeta]);
 
   return (
-    <div className={classNames('module-page-shell', styles['module-page-shell'], className)}>
+    <div
+      className={classNames(
+        'module-page-shell',
+        styles['module-page-shell'],
+        fillHeight && styles['module-page-shell--fill'],
+        className,
+      )}
+    >
       {breadcrumb ? (
         <div className={classNames('module-page-breadcrumb', styles['module-page-breadcrumb'])}>
           {breadcrumb}
@@ -59,8 +72,17 @@ const ModulePageShell: React.FC<ModulePageShellProps> = ({
         </div>
       ) : null}
 
-      <div className={classNames('module-page-body', styles['module-page-body'], bodyClassName)}>
-        <PageSpin spinning={showSpinning}>{children}</PageSpin>
+      <div
+        className={classNames(
+          'module-page-body',
+          styles['module-page-body'],
+          fillHeight && styles['module-page-body--fill'],
+          bodyClassName,
+        )}
+      >
+        <PageSpin spinning={showSpinning} naturalHeight={!fillHeight}>
+          {children}
+        </PageSpin>
       </div>
     </div>
   );
