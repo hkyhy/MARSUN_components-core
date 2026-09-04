@@ -28,7 +28,11 @@ export {
   SubmitButton,
   ResetButton,
   CancelButton,
+  SuperSelect,
+  SUPER_SELECT_ALL_VALUE,
+  isSuperSelectAllValue,
 } from './fields';
+export type { SuperSelectProps, SuperSelectOption } from './fields';
 
 export type {
   FormInfoProps,

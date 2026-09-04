@@ -31,6 +31,13 @@
       "block": true
     },
     {
+      "title": "SuperSelect 全选",
+      "description": "Form SuperSelect + allowSelectedAll；全选 form 值为 ['all']",
+      "component": "@/components/FormInfo/examples/NewFormInfoSuperSelectDemo",
+      "sourcePath": "@/components/FormInfo/examples/NewFormInfoSuperSelectDemo/index.tsx",
+      "block": true
+    },
+    {
       "title": "模态框表单示例",
       "description": "FormModal + useFormModal；受控与命令式；destroyOnHidden",
       "component": "@/components/FormInfo/examples/NewFormInfoModalDemo",

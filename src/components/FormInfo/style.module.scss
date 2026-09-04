@@ -68,6 +68,7 @@ $nest-radius: var(--radius-default, 8px);
       line-height: 20px;
       margin-bottom: 8px;
       font-weight: normal !important;
+      padding-left: 10px;
 
       &.marsun-form-info-is-req:before {
         color: var(--color-warning);

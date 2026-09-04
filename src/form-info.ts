@@ -28,3 +28,14 @@ export {
 export type { GroupListRenderProps } from './components/Form/kneReactForm';
 
 export { normalizeLabelTips, withNormalizedLabelTips } from './components/Form/normalizeLabelTips';
+
+/** Form SuperSelect（allowSelectedAll）；实现在 Form/ */
+export {
+  SuperSelect,
+  SUPER_SELECT_ALL_VALUE,
+  isSuperSelectAllValue,
+} from './components/Form/SuperSelect';
+export type { SuperSelectProps, SuperSelectOption } from './components/Form/SuperSelect';
+export { InputRange } from './components/Form/InputRange';
+export type { InputRangeProps, InputRangeValue } from './components/Form/InputRange';
+export { inputRangeRules } from './components/Form/inputRangeRules';

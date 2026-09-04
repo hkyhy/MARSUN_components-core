@@ -14,6 +14,9 @@ export type { InputRangeProps, InputRangeValue } from './InputRange';
 export { inputRangeRules, validateRangeAsc, RANGE_ASC_RULE_NAME } from './inputRangeRules';
 export type { KneRuleResult } from './inputRangeRules';
 
+export { SuperSelect, SUPER_SELECT_ALL_VALUE, isSuperSelectAllValue } from './SuperSelect';
+export type { SuperSelectProps, SuperSelectOption } from './SuperSelect';
+
 /** @kne/form-info — 业务从包根导入，勿直连 @kne/form-info */
 export {
   FormInfo,

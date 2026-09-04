@@ -52,6 +52,13 @@ export const Select = withNormalizedLabelTips(
 export const TreeSelect = withNormalizedLabelTips(
   BaseTreeSelect as ComponentType<FieldProps>,
 ) as ComponentType<FieldProps>;
+
+export {
+  SuperSelect,
+  SUPER_SELECT_ALL_VALUE,
+  isSuperSelectAllValue,
+} from '@/components/Form/SuperSelect';
+export type { SuperSelectProps, SuperSelectOption } from '@/components/Form/SuperSelect';
 export const InputNumber = withNormalizedLabelTips(
   BaseInputNumber as ComponentType<FieldProps>,
 ) as ComponentType<FieldProps>;

@@ -1,0 +1,24 @@
+.marsun-form-super-select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  /* 只约束触发器本体；勿选中 .select-input-icon 等子节点（否则箭头被拉满宽） */
+  :global(.select-input),
+  :global(.ant-select),
+  :global(.ant-select-selector) {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+
+  :global(.select-input-icon) {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    flex: 0 0 auto;
+  }
+}
