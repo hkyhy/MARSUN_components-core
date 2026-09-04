@@ -20,6 +20,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
   { key: '/components/flexbox', label: 'FlexBox' },
   { key: '/components/form', label: 'Form' },
   { key: '/components/forminfo', label: 'FormInfo' },
+  { key: '/components/iam', label: 'Iam' },
   { key: '/components/icons', label: 'Icons' },
   { key: '/components/infopage', label: 'InfoPage' },
   { key: '/components/interactiveblock', label: 'InteractiveBlock' },

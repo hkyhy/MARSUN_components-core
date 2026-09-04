@@ -18,6 +18,7 @@ export const showcaseRoutes = (
     <Route path="flexbox" element={<ExamplePage />} />
     <Route path="form" element={<ExamplePage />} />
     <Route path="forminfo" element={<ExamplePage />} />
+    <Route path="iam" element={<ExamplePage />} />
     <Route path="icons" element={<ExamplePage />} />
     <Route path="infopage" element={<ExamplePage />} />
     <Route path="interactiveblock" element={<ExamplePage />} />

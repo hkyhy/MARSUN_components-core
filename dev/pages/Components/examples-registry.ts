@@ -1931,6 +1931,19 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/iam': {
+    title: 'Iam 权限设置四页',
+    description: '注入 IamClient + PermissionBindCatalog 后的用户/角色/组织/共享组页面壳（L2）。',
+    examples: [
+      {
+        title: '用户管理（Mock Client）',
+        description: 'fixture catalog + 内存 mock client，演示列表与权限预览布局',
+        component: React.lazy(() => import('@/components/Iam/examples/UsersDemo')),
+        sourcePath: () => import('@/components/Iam/examples/UsersDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+  },
   '/components/icons': {
     title: 'Icons 图标',
     description: 'Lucide 图标封装与交互预览',
