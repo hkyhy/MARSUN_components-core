@@ -29,3 +29,12 @@ describe('SuperSelect focus stability', () => {
     expect(src).not.toMatch(/const Bound\s*=/);
   });
 });
+
+describe('SuperSelect api mode', () => {
+  it('does not force options when api is provided', () => {
+    const src = readFileSync(join(here, '../SuperSelect.tsx'), 'utf8');
+    expect(src).toMatch(/const useApi = api != null/);
+    expect(src).toMatch(/useApi\s*\?\s*\{[\s\S]*api,/);
+    expect(src).not.toMatch(/options=\{options\}\s*\n\s*single=\{single\}/);
+  });
+});

@@ -97,6 +97,9 @@ const SuperSelectField: FC<
     showSearch?: boolean;
     allowClear?: boolean;
     className?: string;
+    /** 有 api 时走远程/分页加载，不再传 options（否则 kne 会忽略 api） */
+    api?: unknown;
+    getSearchProps?: (searchProps: { searchText?: string }) => Record<string, unknown>;
     [key: string]: unknown;
   }
 > = ({
@@ -111,12 +114,15 @@ const SuperSelectField: FC<
   showSearch = true,
   allowClear = true,
   className,
+  api,
+  getSearchProps: getSearchPropsProp,
   ...kneRest
 }) => {
   const mapsRef = useRef({
     labelMap: {} as Record<string, string>,
     itemMap: {} as Record<string, KneSelectItem>,
   });
+  const useApi = api != null;
 
   const labelMapFromOptions = useMemo(() => {
     const map: Record<string, string> = {};
@@ -143,6 +149,11 @@ const SuperSelectField: FC<
     onChange?.(kneToMarsun(next, single));
   };
 
+  const defaultGetSearchProps = ({ searchText }: { searchText?: string }) => ({
+    keyword: searchText || '',
+    currentPage: 1,
+  });
+
   return (
     <div
       className={classNames(
@@ -155,23 +166,30 @@ const SuperSelectField: FC<
         {...kneRest}
         value={kneValue}
         onChange={handleChange}
-        options={options}
+        {...(useApi
+          ? {
+              api,
+              getSearchProps: showSearch
+                ? getSearchPropsProp || defaultGetSearchProps
+                : getSearchPropsProp,
+            }
+          : {
+              options,
+              getSearchCallback: showSearch
+                ? ({ searchText }: { searchText?: string }, item: KneSelectItem) => {
+                    if (!searchText) return true;
+                    const kw = searchText.toLowerCase();
+                    const label = String(item.label ?? '').toLowerCase();
+                    const val = String(item.value ?? '').toLowerCase();
+                    return label.includes(kw) || val.includes(kw);
+                  }
+                : undefined,
+            })}
         single={single}
         allowSelectedAll={!single && allowSelectedAll}
         selectedAllValue={selectedAllValue}
         placeholder={placeholder}
         isPopup
-        getSearchCallback={
-          showSearch
-            ? ({ searchText }: { searchText?: string }, item: KneSelectItem) => {
-                if (!searchText) return true;
-                const kw = searchText.toLowerCase();
-                const label = String(item.label ?? '').toLowerCase();
-                const val = String(item.value ?? '').toLowerCase();
-                return label.includes(kw) || val.includes(kw);
-              }
-            : undefined
-        }
         allowClear={allowClear && !disabled}
         disabled={disabled}
       />
