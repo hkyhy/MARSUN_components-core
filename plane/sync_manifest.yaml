@@ -5,7 +5,7 @@ tasks:
 - id: P6.3.130
   milestone: P6.3
   name: Table 单元格 padding 收紧 + SuperSelect api + FormInfo 必填 label 并发版 0.1.76
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: feature
   owner: 黄金芳
