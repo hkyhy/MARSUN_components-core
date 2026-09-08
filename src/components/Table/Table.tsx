@@ -1,19 +1,25 @@
+import { useMarsunFetch } from '@/provider';
+import type { TableProps as AntTableProps } from 'antd';
+import { Table as AntTable, Button, Space, Tooltip } from 'antd';
+import type { ColumnsType, ColumnType } from 'antd/es/table';
+import classNames from 'classnames';
 import {
+  forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
   type Key,
+  type ReactElement,
   type ReactNode,
+  type Ref,
 } from 'react';
-import { Button, Space, Table as AntTable, Tooltip } from 'antd';
-import type { TableProps as AntTableProps } from 'antd';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
-import classNames from 'classnames';
 import { Empty } from '../Empty';
 import { Eye } from '../Icons';
+import gearStyles from './columnConfig.module.scss';
 import { ColumnConfigTrigger } from './ColumnConfigPanel';
 import type {
   TableColumnConfigFetcher,
@@ -22,23 +28,37 @@ import type {
 } from './columnConfigTypes';
 import {
   applyColumnConfig,
+  COLUMN_CONFIG_COL_KEY,
   columnsToConfig,
   columnsToPanelItems,
-  COLUMN_CONFIG_COL_KEY,
   FLEX_SPACER_COL_KEY,
   hideColumnAtPath,
   isInternalColumnKey,
   shortChildId,
   type ColumnTypeAny,
 } from './columnConfigUtils';
+import styles from './style.module.scss';
 import type { TablePrefs, TablePrefsFetcher, TablePrefsSaver } from './tablePrefsTypes';
 import { emptyTablePrefs } from './tablePrefsTypes';
 import { applyHiddenRows, mergeTablePrefs, normalizeHiddenRowKeys } from './tablePrefsUtils';
-import styles from './style.module.scss';
-import gearStyles from './columnConfig.module.scss';
+import {
+  useTableFetch,
+  type TableFetchHandle,
+  type TableFetchMapped,
+  type TableFetchQuery,
+} from './useTableFetch';
 
-export type { TableColumnConfigItem, TableColumnConfigFetcher, TableColumnConfigSaver };
-export type { TablePrefs, TablePrefsFetcher, TablePrefsSaver };
+export type {
+  TableColumnConfigFetcher,
+  TableColumnConfigItem,
+  TableColumnConfigSaver,
+  TableFetchHandle,
+  TableFetchMapped,
+  TableFetchQuery,
+  TablePrefs,
+  TablePrefsFetcher,
+  TablePrefsSaver,
+};
 
 export type TableProps<RecordType extends object = Record<string, unknown>> =
   AntTableProps<RecordType> & {
@@ -66,6 +86,22 @@ export type TableProps<RecordType extends object = Record<string, unknown>> =
     rowHideSelectedKeys?: Key[];
     /** 自定义行隐藏工具条；默认内置按钮 */
     rowConfigToolbar?: ReactNode | false;
+    /**
+     * Fetch 模式：`dataSource === undefined` 且提供本回调（或 fetchUrl）时由 Table 拉数。
+     * 优先于 fetchUrl。Marsun typed list 主路径。
+     */
+    fetchData?: (q: TableFetchQuery) => Promise<unknown>;
+    /** Form FetchSelect 同构：GET/自定义 Request；需配合 transformData 或默认 pageData 解析 */
+    fetchUrl?: string;
+    fetchOptions?: RequestInit | ((q: TableFetchQuery) => RequestInit);
+    transformData?: (raw: unknown) => TableFetchMapped<RecordType>;
+    /** 筛选项；稳定序列化变则回第 1 页再请求 */
+    fetchParams?: unknown;
+    /** Tab 懒请求；默认 true */
+    enabled?: boolean;
+    /** fetch 模式默认 pageSize；默认 20 */
+    defaultPageSize?: number;
+    onFetched?: (r: TableFetchMapped<RecordType> & { error: Error | null }) => void;
   };
 
 const DEFAULT_SCROLL = { x: 'max-content' as const };
@@ -208,33 +244,77 @@ function injectHeaderHideEyes<RecordType extends object>(
 /**
  * 基于 antd Table 的列表表格包装。
  * 列偏好经 user_key；行隐藏仅会话 state，不进 user_key。
+ * Fetch：dataSource===undefined 且 fetchData/fetchUrl 时由 Table 拉 pageData。
  */
-function Table<RecordType extends object = Record<string, unknown>>({
-  className,
-  style,
-  scroll,
-  pagination,
-  locale,
-  columns,
-  dataSource,
-  rowKey,
-  tableName,
-  columnConfigEnabled,
-  fetchColumnConfig,
-  saveColumnConfig,
-  onColumnConfigChange,
-  fetchTablePrefs,
-  saveTablePrefs,
-  onTablePrefsChange,
-  rowConfigEnabled = false,
-  lockedRowKeys,
-  hiddenRowKeys: hiddenRowKeysProp,
-  onHiddenRowKeysChange,
-  rowHideSelectedKeys,
-  rowConfigToolbar,
-  rowSelection,
-  ...rest
-}: TableProps<RecordType>) {
+function TableInner<RecordType extends object = Record<string, unknown>>(
+  {
+    className,
+    style,
+    scroll,
+    pagination,
+    locale,
+    columns,
+    dataSource,
+    rowKey,
+    loading: loadingProp,
+    tableName,
+    columnConfigEnabled,
+    fetchColumnConfig,
+    saveColumnConfig,
+    onColumnConfigChange,
+    fetchTablePrefs,
+    saveTablePrefs,
+    onTablePrefsChange,
+    rowConfigEnabled = false,
+    lockedRowKeys,
+    hiddenRowKeys: hiddenRowKeysProp,
+    onHiddenRowKeysChange,
+    rowHideSelectedKeys,
+    rowConfigToolbar,
+    rowSelection,
+    fetchData,
+    fetchUrl,
+    fetchOptions,
+    transformData,
+    fetchParams,
+    enabled = true,
+    defaultPageSize = 20,
+    onFetched,
+    ...rest
+  }: TableProps<RecordType>,
+  ref: Ref<TableFetchHandle>,
+) {
+  const fetchCtx = useMarsunFetch();
+  const {
+    fetchMode,
+    rows: fetchRows,
+    total: fetchTotal,
+    loading: fetchLoading,
+    error: fetchError,
+    currentPage,
+    pageSize,
+    setPage,
+    reload,
+  } = useTableFetch<RecordType>({
+    dataSource,
+    fetchData,
+    fetchUrl,
+    fetchOptions,
+    transformData,
+    fetchParams,
+    enabled,
+    defaultPageSize,
+    baseUrl: fetchCtx.baseUrl,
+    defaultHeaders: fetchCtx.headers,
+    timeoutMs: fetchCtx.timeoutMs,
+    onFetched,
+  });
+
+  useImperativeHandle(ref, () => ({ reload }), [reload]);
+
+  const resolvedDataSource = fetchMode ? fetchRows : dataSource;
+  const resolvedLoading = Boolean(loadingProp) || (fetchMode && fetchLoading);
+
   const enableConfig = columnConfigEnabled ?? Boolean(tableName);
   const defaultColumnsRef = useRef(columns);
   const [prefs, setPrefs] = useState<TablePrefs | null>(null);
@@ -420,10 +500,10 @@ function Table<RecordType extends object = Record<string, unknown>>({
   ]);
 
   const displayDataSource = useMemo(() => {
-    if (!rowConfigEnabled) return dataSource;
+    if (!rowConfigEnabled) return resolvedDataSource;
     const keyFn = typeof rowKey === 'function' || typeof rowKey === 'string' ? rowKey : undefined;
-    return applyHiddenRows(dataSource, resolvedHiddenKeys, keyFn, lockedRowKeys);
-  }, [rowConfigEnabled, dataSource, resolvedHiddenKeys, rowKey, lockedRowKeys]);
+    return applyHiddenRows(resolvedDataSource, resolvedHiddenKeys, keyFn, lockedRowKeys);
+  }, [rowConfigEnabled, resolvedDataSource, resolvedHiddenKeys, rowKey, lockedRowKeys]);
 
   const mergedPagination =
     pagination === false
@@ -432,11 +512,30 @@ function Table<RecordType extends object = Record<string, unknown>>({
           showSizeChanger: true,
           showTotal: defaultShowTotal,
           ...(pagination && typeof pagination === 'object' ? pagination : {}),
+          ...(fetchMode
+            ? {
+                current: currentPage,
+                pageSize,
+                total: fetchTotal,
+                onChange: (page: number, size: number) => {
+                  setPage(page, size);
+                  if (pagination && typeof pagination === 'object' && pagination.onChange) {
+                    pagination.onChange(page, size);
+                  }
+                },
+              }
+            : null),
         };
 
   const mergedLocale = {
-    emptyText: <Empty iconType="simple" description="暂无数据" />,
     ...locale,
+    emptyText:
+      locale?.emptyText ??
+      (fetchError ? (
+        <Empty iconType="simple" description={fetchError.message || '加载失败'} />
+      ) : (
+        <Empty iconType="simple" description="暂无数据" />
+      )),
   };
 
   const lockedSet = useMemo(() => new Set((lockedRowKeys || []).map(String)), [lockedRowKeys]);
@@ -544,6 +643,7 @@ function Table<RecordType extends object = Record<string, unknown>>({
         columns={displayColumns}
         dataSource={displayDataSource}
         rowKey={rowKey}
+        loading={resolvedLoading}
         rowSelection={mergedRowSelection}
         {...rest}
       />
@@ -551,21 +651,25 @@ function Table<RecordType extends object = Record<string, unknown>>({
   );
 }
 
+const Table = forwardRef(TableInner) as <RecordType extends object = Record<string, unknown>>(
+  props: TableProps<RecordType> & { ref?: Ref<TableFetchHandle> },
+) => ReactElement | null;
+
 export default Table;
 
+export { emptyTablePrefs } from './tablePrefsTypes';
 export {
-  columnsToConfig,
-  applyColumnConfig,
-  COLUMN_CONFIG_COL_KEY,
-  FLEX_SPACER_COL_KEY,
-  isInternalColumnKey,
-  hideColumnAtPath,
-};
-export {
+  applyHiddenRows,
+  mergeTablePrefs,
+  normalizeHiddenRowKeys,
   parseTablePrefs,
   serializeTablePrefs,
-  mergeTablePrefs,
-  applyHiddenRows,
-  normalizeHiddenRowKeys,
 } from './tablePrefsUtils';
-export { emptyTablePrefs } from './tablePrefsTypes';
+export {
+  applyColumnConfig,
+  COLUMN_CONFIG_COL_KEY,
+  columnsToConfig,
+  FLEX_SPACER_COL_KEY,
+  hideColumnAtPath,
+  isInternalColumnKey,
+};

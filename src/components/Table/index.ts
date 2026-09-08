@@ -7,6 +7,9 @@ export type {
   TablePrefs,
   TablePrefsFetcher,
   TablePrefsSaver,
+  TableFetchHandle,
+  TableFetchMapped,
+  TableFetchQuery,
 } from './Table';
 export {
   columnsToConfig,

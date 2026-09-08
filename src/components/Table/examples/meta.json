@@ -1,12 +1,19 @@
 {
   "title": "Table 表格",
-  "description": "基于 antd Table 的列表包装：默认横向滚动、受控分页、空态 Empty。支持单/多/三级表头、列配置与行隐藏（TablePrefs v2：columns + hiddenRowKeys）。",
+  "description": "基于 antd Table 的列表包装：默认横向滚动、受控分页、空态 Empty。支持单/多/三级表头、列配置与行隐藏；Fetch 模式（fetchData / fetchUrl）由 Table 接管 pageData 分页。",
   "examples": [
     {
       "title": "单表头",
       "description": "单行表头 + 受控分页 + 默认滚动与空态",
       "component": "@/components/Table/examples/TableBasicDemo",
       "sourcePath": "@/components/Table/examples/TableBasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "Fetch 拉数",
+      "description": "fetchData（Marsun pageData）+ fetchUrl（Form 同构）；showcase 假数据非业务 mock；筛变回第 1 页、ref.reload",
+      "component": "@/components/Table/examples/TableFetchDemo",
+      "sourcePath": "@/components/Table/examples/TableFetchDemo/index.tsx",
       "block": true
     },
     {
@@ -44,7 +51,7 @@
       "rows": [
         {
           "prop": "pagination",
-          "desc": "false 关闭；对象时合并默认 showSizeChanger、showTotal「共 n 项」",
+          "desc": "false 关闭；对象时合并默认 showSizeChanger、showTotal「共 n 项」；Fetch 模式下 current/pageSize/total/onChange 由 Table 接管",
           "type": "false | TablePaginationConfig",
           "defaultVal": "合并默认"
         },
@@ -56,8 +63,60 @@
         },
         {
           "prop": "locale",
-          "desc": "覆盖空态等；默认 emptyText 为 Empty simple「暂无数据」",
+          "desc": "覆盖空态等；Fetch 失败且未传 emptyText 时用 error.message",
           "type": "TableProps['locale']"
+        },
+        {
+          "prop": "dataSource",
+          "desc": "props 模式数据；传了（含 []）则忽略 fetchData/fetchUrl",
+          "type": "RecordType[]"
+        },
+        {
+          "prop": "fetchData",
+          "desc": "Fetch 主路径：(query)=>Promise；优先于 fetchUrl；需 dataSource===undefined",
+          "type": "(q: TableFetchQuery) => Promise<unknown>"
+        },
+        {
+          "prop": "fetchUrl",
+          "desc": "Form FetchSelect 同构辅路径；配合 fetchOptions/transformData；需 dataSource===undefined",
+          "type": "string"
+        },
+        {
+          "prop": "fetchOptions",
+          "desc": "RequestInit 或按 query 生成（可写入 currentPage/pageSize）",
+          "type": "RequestInit | ((q: TableFetchQuery) => RequestInit)"
+        },
+        {
+          "prop": "transformData",
+          "desc": "raw → { pageData, total, extra? }；默认解析 Marsun pageData",
+          "type": "(raw: unknown) => TableFetchMapped<T>"
+        },
+        {
+          "prop": "fetchParams",
+          "desc": "筛选项；稳定序列化变则回第 1 页再请求",
+          "type": "unknown"
+        },
+        {
+          "prop": "enabled",
+          "desc": "Tab 懒请求；false 不拉数",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "defaultPageSize",
+          "desc": "Fetch 模式初始 pageSize",
+          "type": "number",
+          "defaultVal": "20"
+        },
+        {
+          "prop": "onFetched",
+          "desc": "每次拉数结束（成功或失败）；可取 extra/mapping",
+          "type": "(r: TableFetchMapped & { error }) => void"
+        },
+        {
+          "prop": "ref",
+          "desc": "TableFetchHandle：{ reload() }，写后刷新",
+          "type": "Ref<TableFetchHandle>"
         },
         {
           "prop": "tableName",
