@@ -73,12 +73,12 @@ $nest-radius: var(--radius-default, 8px);
         padding-left: 10px;
       }
 
+      /* content 自带：不依赖 @kne/react-form-antd 是否被打进业务包 */
+      &.is-req:before,
       &.marsun-form-info-is-req:before {
+        content: '*';
         color: var(--color-warning);
-        //position: static;
         display: inline-block;
-        //transform: translateX(0);
-        //margin-right: 6px;
         font-weight: bold;
       }
     }

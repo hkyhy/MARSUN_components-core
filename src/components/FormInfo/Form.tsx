@@ -1,4 +1,6 @@
 // @ts-nocheck
+/** 必填星号 / inner 字段间距；勿依赖 kneFormInfo 侧链（生产易被 tree-shake） */
+import '@kne/react-form-antd/dist/index.css';
 import { FormAntd as ReactForm } from '@kne/react-form-antd';
 import classnames from 'classnames';
 import { forwardRef } from 'react';
