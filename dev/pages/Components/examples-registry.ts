@@ -10,100 +10,146 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: '引用角标',
         description: 'CitationInlineBadge 行内引用序号角标，嵌入在回答正文中',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/CitationInlineBadgeBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/CitationInlineBadgeBasicDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/CitationInlineBadgeBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/CitationInlineBadgeBasicDemo/index.tsx?raw'),
       },
       {
         title: '对话输入框',
         description: 'ChatInput 支持 Enter 发送、Shift+Enter 换行，生成中显示停止按钮',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ChatInputBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatInputBasicDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatInputBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatInputBasicDemo/index.tsx?raw'),
       },
       {
         title: '对话面板',
         description: 'ChatPanel 消息列表 + 建议问题 + 输入框的完整对话容器',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ChatPanelBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatPanelBasicDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatPanelBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatPanelBasicDemo/index.tsx?raw'),
       },
       {
         title: '浮动助手 FAB',
-        description: 'ChatAgentFab + ChatAgentFabLayout：reference 引用侧栏、panelFullscreen 全屏高度；headerActions 切换全屏',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ChatAgentFabBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatAgentFabBasicDemo/index.tsx?raw'),
-        block: true
+        description:
+          'ChatAgentFab + ChatAgentFabLayout：reference 引用侧栏、panelFullscreen 全屏高度；headerActions 切换全屏',
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatAgentFabBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatAgentFabBasicDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '消息气泡',
-        description: 'MessageItem 用户/助手消息、Markdown 渲染、流式打字、引用摘要与 widgets 内嵌展示',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/MessageItemBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/MessageItemBasicDemo/index.tsx?raw')
+        description:
+          'MessageItem 用户/助手消息、Markdown 渲染、流式打字、引用摘要与 widgets 内嵌展示',
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/MessageItemBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/MessageItemBasicDemo/index.tsx?raw'),
       },
       {
         title: '对话 Widget',
-        description: 'ChatWidgetBlock 渲染 SSE snapshot 的 line_chart / table / metric_cards / 列表等结构化内容',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ChatWidgetBlockBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatWidgetBlockBasicDemo/index.tsx?raw')
+        description:
+          'ChatWidgetBlock 渲染 SSE snapshot 的 line_chart / table / metric_cards / 列表等结构化内容',
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatWidgetBlockBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatWidgetBlockBasicDemo/index.tsx?raw'),
       },
       {
         title: '消息操作栏',
         description: 'MessageActions 编辑/复制/重发/点赞/点踩等操作按钮组',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/MessageActionsBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/MessageActionsBasicDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/MessageActionsBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/MessageActionsBasicDemo/index.tsx?raw'),
       },
       {
         title: '思考过程',
         description: 'ThinkingSection 展示助手推理过程，支持思考中动画',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ThinkingSectionBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/ThinkingSectionBasicDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ThinkingSectionBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ThinkingSectionBasicDemo/index.tsx?raw'),
       },
       {
         title: '引用来源面板',
         description: 'CitationPanel 展示引用文档列表，支持高亮定位与展开详情',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/CitationPanelBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/CitationPanelBasicDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/CitationPanelBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/CitationPanelBasicDemo/index.tsx?raw'),
       },
       {
         title: '助手卡片',
         description: 'ChatCard 助手列表卡片，展示关联知识库与操作按钮',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ChatCardBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatCardBasicDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatCardBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatCardBasicDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '对话场景',
         description: '消息列表 + 输入框 + 引用面板的完整对话交互',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ChatConversationDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatConversationDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatConversationDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatConversationDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '会话侧边栏',
         description: 'SessionSidebar 展示 Agent 标题、新建会话入口与历史对话列表，位于消息区左侧',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/SessionSidebarBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/SessionSidebarBasicDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/SessionSidebarBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/SessionSidebarBasicDemo/index.tsx?raw'),
       },
       {
         title: '会话操作按钮',
         description: 'SessionActionButtons 页面头部清空对话操作',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/SessionActionButtonsBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/SessionActionButtonsBasicDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/SessionActionButtonsBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/SessionActionButtonsBasicDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '会话对话布局',
-        description: '左侧会话侧边栏 + 消息区 + 引用面板，支持会话切换滚动到底部与点击角标打开引用来源',
-        component: React.lazy(() => import('@/components/AgentHub/Chat/examples/ChatSessionLayoutDemo')),
-        sourcePath: () => import('@/components/AgentHub/Chat/examples/ChatSessionLayoutDemo/index.tsx?raw'),
-        block: true
-      }
+        description:
+          '左侧会话侧边栏 + 消息区 + 引用面板，支持会话切换滚动到底部与点击角标打开引用来源',
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatSessionLayoutDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatSessionLayoutDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'CitationInlineBadgeProps',
         rows: [
           { prop: 'number', desc: '引用序号', type: 'number', required: true },
-          { prop: 'onClick', desc: '点击角标回调', type: '() => void' }
-        ]
+          { prop: 'onClick', desc: '点击角标回调', type: '() => void' },
+        ],
       },
       {
         componentName: 'ChatInputProps',
@@ -113,8 +159,13 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'onChange', desc: '内容变更回调', type: '(v: string) => void', required: true },
           { prop: 'onSend', desc: '发送回调', type: '() => void', required: true },
           { prop: 'onStop', desc: '停止生成回调', type: '() => void' },
-          { prop: 'placeholder', desc: '占位提示', type: 'string', defaultVal: '输入问题… Enter 发送，Shift+Enter 换行' }
-        ]
+          {
+            prop: 'placeholder',
+            desc: '占位提示',
+            type: 'string',
+            defaultVal: '输入问题… Enter 发送，Shift+Enter 换行',
+          },
+        ],
       },
       {
         componentName: 'ChatPanelProps',
@@ -125,18 +176,47 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'onSend', desc: '发送', type: '() => void', required: true },
           { prop: 'title', desc: '面板标题', type: 'string' },
           { prop: 'subtitle', desc: '副标题', type: 'string' },
-          { prop: 'headerActions', desc: '头部右侧自定义操作区（icon 按钮等），位于「收起」左侧', type: 'ReactNode' },
+          {
+            prop: 'headerActions',
+            desc: '头部右侧自定义操作区（icon 按钮等），位于「收起」左侧',
+            type: 'ReactNode',
+          },
           { prop: 'headerExtra', desc: '头部下方扩展区（如最近对话 chip）', type: 'ReactNode' },
-          { prop: 'beforeInput', desc: '输入框上方扩展区（自定义插槽，推荐问请用 followUpItems）', type: 'ReactNode' },
+          {
+            prop: 'beforeInput',
+            desc: '输入框上方扩展区（自定义插槽，推荐问请用 followUpItems）',
+            type: 'ReactNode',
+          },
           { prop: 'followUpItems', desc: 'API 返回的推荐问/追问列表', type: 'string[]' },
-          { prop: 'starterItems', desc: '无用户消息且无 followUpItems 时的兜底推荐', type: 'string[]' },
-          { prop: 'onFollowUpSelect', desc: '点击推荐项回调（完全自定义，优先于 onSendMessage）', type: '(text: string) => void' },
-          { prop: 'onSendMessage', desc: '点击推荐项直接发送（默认推荐行为，勿填输入框）', type: '(text: string) => void' },
+          {
+            prop: 'starterItems',
+            desc: '无用户消息且无 followUpItems 时的兜底推荐',
+            type: 'string[]',
+          },
+          {
+            prop: 'onFollowUpSelect',
+            desc: '点击推荐项回调（完全自定义，优先于 onSendMessage）',
+            type: '(text: string) => void',
+          },
+          {
+            prop: 'onSendMessage',
+            desc: '点击推荐项直接发送（默认推荐行为，勿填输入框）',
+            type: '(text: string) => void',
+          },
           { prop: 'followUpLoading', desc: 'true 时隐藏推荐区', type: 'boolean' },
           { prop: 'starterTitle', desc: '冷启动推荐标题', type: 'string', defaultVal: '推荐问' },
-          { prop: 'followUpTitle', desc: '有用户消息后的推荐标题', type: 'string', defaultVal: '推荐追问' },
-          { prop: 'onCitationClick', desc: '引用角标点击', type: 'MessageItemProps[\'onCitationClick\']' }
-        ]
+          {
+            prop: 'followUpTitle',
+            desc: '有用户消息后的推荐标题',
+            type: 'string',
+            defaultVal: '推荐追问',
+          },
+          {
+            prop: 'onCitationClick',
+            desc: '引用角标点击',
+            type: "MessageItemProps['onCitationClick']",
+          },
+        ],
       },
       {
         componentName: 'ChatAgentFabProps',
@@ -145,25 +225,54 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'onOpenChange', desc: '展开状态变更', type: '(open: boolean) => void' },
           { prop: 'children', desc: '展开时面板内容（通常为 ChatPanel）', type: 'ReactNode' },
           { prop: 'fabLabel', desc: 'FAB 按钮文案', type: 'ReactNode', defaultVal: 'AI+' },
-          { prop: 'openAriaLabel', desc: '收起时按钮无障碍文案', type: 'string', defaultVal: '打开 AI 助手' },
-          { prop: 'closeAriaLabel', desc: '展开时按钮无障碍文案', type: 'string', defaultVal: '收起 AI 助手' },
+          {
+            prop: 'openAriaLabel',
+            desc: '收起时按钮无障碍文案',
+            type: 'string',
+            defaultVal: '打开 AI 助手',
+          },
+          {
+            prop: 'closeAriaLabel',
+            desc: '展开时按钮无障碍文案',
+            type: 'string',
+            defaultVal: '收起 AI 助手',
+          },
           { prop: 'panelAriaLabel', desc: '弹出层 dialog 标签', type: 'string' },
-          { prop: 'panelExpanded', desc: '引用侧栏等场景下加宽面板', type: 'boolean', defaultVal: 'false' },
-          { prop: 'panelFullscreen', desc: '全屏高度（宽度仍由 panelExpanded 控制）', type: 'boolean', defaultVal: 'false' },
-          { prop: 'closeOnClickOutside', desc: '点击 FAB 区域外是否关闭', type: 'boolean', defaultVal: 'true' },
+          {
+            prop: 'panelExpanded',
+            desc: '引用侧栏等场景下加宽面板',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'panelFullscreen',
+            desc: '全屏高度（宽度仍由 panelExpanded 控制）',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'closeOnClickOutside',
+            desc: '点击 FAB 区域外是否关闭',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
           { prop: 'offsetRight', desc: '距右侧偏移', type: 'number | string', defaultVal: '24' },
           { prop: 'offsetBottom', desc: '距底部偏移', type: 'number | string', defaultVal: '24' },
-          { prop: 'zIndex', desc: '层级', type: 'number', defaultVal: '1100' }
-        ]
+          { prop: 'zIndex', desc: '层级', type: 'number', defaultVal: '1100' },
+        ],
       },
       {
         componentName: 'MessageActionsProps',
         rows: [
           { prop: 'items', desc: '操作项列表', type: 'MessageActionItem[]', required: true },
-          { prop: 'align', desc: '对齐方式', type: '\'left\' | \'right\'', defaultVal: 'right' },
-          { prop: 'editPopover', desc: '编辑 Popover 配置', type: 'Omit<MessageEditPopoverProps, \'children\'>' },
-          { prop: 'actionsVisible', desc: '是否强制显示操作栏', type: 'boolean' }
-        ]
+          { prop: 'align', desc: '对齐方式', type: "'left' | 'right'", defaultVal: 'right' },
+          {
+            prop: 'editPopover',
+            desc: '编辑 Popover 配置',
+            type: "Omit<MessageEditPopoverProps, 'children'>",
+          },
+          { prop: 'actionsVisible', desc: '是否强制显示操作栏', type: 'boolean' },
+        ],
       },
       {
         componentName: 'ThinkingSectionProps',
@@ -172,19 +281,44 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'isThinking', desc: '是否思考中', type: 'boolean' },
           { prop: 'isTyping', desc: '是否打字机输出', type: 'boolean' },
           { prop: 'citations', desc: '引用列表', type: 'Citation[]' },
-          { prop: 'onCitationClick', desc: '引用角标点击', type: '(citations: Citation[], index?: number) => void' }
-        ]
+          {
+            prop: 'onCitationClick',
+            desc: '引用角标点击',
+            type: '(citations: Citation[], index?: number) => void',
+          },
+        ],
       },
       {
         componentName: 'MessageItemProps',
         rows: [
-          { prop: 'message', desc: '聊天消息对象（assistant 可含 widgets）', type: 'ChatMessage', required: true },
-          { prop: 'onCitationClick', desc: '点击引用角标或来源摘要回调', type: '(citations: Citation[], index?: number) => void' },
-          { prop: 'onTypingChange', desc: '助手消息打字机状态变化回调', type: '(typing: boolean) => void' },
-          { prop: 'onEditMessage', desc: '用户消息重新编辑确认回调（Popover 内确认后触发，含 messageId）', type: '(messageId: string, content: string) => void' },
-          { prop: 'onResendMessage', desc: '用户消息重新发送回调（将内容回填到输入框）', type: '(content: string) => void' },
-          { prop: 'editDisabled', desc: '是否禁用重新编辑（生成中）', type: 'boolean' }
-        ]
+          {
+            prop: 'message',
+            desc: '聊天消息对象（assistant 可含 widgets）',
+            type: 'ChatMessage',
+            required: true,
+          },
+          {
+            prop: 'onCitationClick',
+            desc: '点击引用角标或来源摘要回调',
+            type: '(citations: Citation[], index?: number) => void',
+          },
+          {
+            prop: 'onTypingChange',
+            desc: '助手消息打字机状态变化回调',
+            type: '(typing: boolean) => void',
+          },
+          {
+            prop: 'onEditMessage',
+            desc: '用户消息重新编辑确认回调（Popover 内确认后触发，含 messageId）',
+            type: '(messageId: string, content: string) => void',
+          },
+          {
+            prop: 'onResendMessage',
+            desc: '用户消息重新发送回调（将内容回填到输入框）',
+            type: '(content: string) => void',
+          },
+          { prop: 'editDisabled', desc: '是否禁用重新编辑（生成中）', type: 'boolean' },
+        ],
       },
       {
         componentName: 'MessageEditPopoverProps',
@@ -192,31 +326,53 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'open', desc: '是否展开', type: 'boolean', required: true },
           { prop: 'value', desc: '编辑中的内容', type: 'string', required: true },
           { prop: 'originalContent', desc: '原始消息内容', type: 'string', required: true },
-          { prop: 'onOpenChange', desc: '展开状态变化', type: '(open: boolean) => void', required: true },
+          {
+            prop: 'onOpenChange',
+            desc: '展开状态变化',
+            type: '(open: boolean) => void',
+            required: true,
+          },
           { prop: 'onChange', desc: '内容变更', type: '(value: string) => void', required: true },
           { prop: 'onConfirm', desc: '确认编辑', type: '() => void', required: true },
           { prop: 'onCancel', desc: '取消编辑', type: '() => void', required: true },
-          { prop: 'children', desc: '锚点元素（编辑图标按钮）', type: 'React.ReactNode', required: true }
-        ]
+          {
+            prop: 'children',
+            desc: '锚点元素（编辑图标按钮）',
+            type: 'React.ReactNode',
+            required: true,
+          },
+        ],
       },
       {
         componentName: 'ChatAgentFabProps',
         rows: [
           { prop: 'open', desc: '面板是否展开', type: 'boolean' },
           { prop: 'onOpenChange', desc: '展开/收起回调', type: '(open: boolean) => void' },
-          { prop: 'panelExpanded', desc: '引用侧栏打开时加宽面板（配合 ChatAgentFabLayout + CitationPanel）', type: 'boolean' },
-          { prop: 'panelFullscreen', desc: '全屏高度 calc(100vh - 88px)，仍锚定右下角 FAB', type: 'boolean' },
+          {
+            prop: 'panelExpanded',
+            desc: '引用侧栏打开时加宽面板（配合 ChatAgentFabLayout + CitationPanel）',
+            type: 'boolean',
+          },
+          {
+            prop: 'panelFullscreen',
+            desc: '全屏高度 calc(100vh - 88px)，仍锚定右下角 FAB',
+            type: 'boolean',
+          },
           { prop: 'panelAriaLabel', desc: '弹出面板无障碍标签', type: 'string' },
           { prop: 'closeOnClickOutside', desc: '点击面板外是否收起', type: 'boolean' },
-          { prop: 'children', desc: '面板内容，通常为 ChatAgentFabLayout', type: 'React.ReactNode' }
-        ]
+          {
+            prop: 'children',
+            desc: '面板内容，通常为 ChatAgentFabLayout',
+            type: 'React.ReactNode',
+          },
+        ],
       },
       {
         componentName: 'ChatAgentFabLayoutProps',
         rows: [
           { prop: 'main', desc: '主对话区（ChatPanel）', type: 'React.ReactNode', required: true },
-          { prop: 'citationAside', desc: '引用侧栏（CitationPanel）', type: 'React.ReactNode' }
-        ]
+          { prop: 'citationAside', desc: '引用侧栏（CitationPanel）', type: 'React.ReactNode' },
+        ],
       },
       {
         componentName: 'UseCitationPanelResult',
@@ -224,28 +380,52 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'citationOpen', desc: '引用侧栏是否打开', type: 'boolean' },
           { prop: 'panelCitations', desc: '当前展示的引用列表', type: 'Citation[]' },
           { prop: 'highlightedCitationIndex', desc: '高亮定位的引用下标', type: 'number' },
-          { prop: 'handleCitationClick', desc: '传给 ChatPanel.onCitationClick', type: '(items: Citation[], index?: number) => void' },
+          {
+            prop: 'handleCitationClick',
+            desc: '传给 ChatPanel.onCitationClick',
+            type: '(items: Citation[], index?: number) => void',
+          },
           { prop: 'closeCitationPanel', desc: '关闭侧栏', type: '() => void' },
-          { prop: 'resetCitationState', desc: '发送新消息/切换会话时重置', type: '() => void' }
-        ]
+          { prop: 'resetCitationState', desc: '发送新消息/切换会话时重置', type: '() => void' },
+        ],
       },
       {
         componentName: 'CitationPanelProps',
         rows: [
           { prop: 'citations', desc: '引用来源列表', type: 'Citation[]', required: true },
           { prop: 'highlightedIndex', desc: '高亮定位的引用下标', type: 'number' },
-          { prop: 'onClose', desc: '关闭面板回调', type: '() => void' }
-        ]
+          { prop: 'onClose', desc: '关闭面板回调', type: '() => void' },
+        ],
       },
       {
         componentName: 'ChatCardProps',
         rows: [
           { prop: 'chat', desc: '问答助手对象', type: 'ChatAssistant', required: true },
-          { prop: 'datasets', desc: '知识库列表（用于解析关联名称）', type: 'Dataset[]', required: true },
-          { prop: 'onStartChat', desc: '开始对话', type: '(chat: ChatAssistant) => void', required: true },
-          { prop: 'onEdit', desc: '编辑助手', type: '(chat: ChatAssistant) => void', required: true },
-          { prop: 'onDelete', desc: '删除助手', type: '(chat: ChatAssistant) => void', required: true }
-        ]
+          {
+            prop: 'datasets',
+            desc: '知识库列表（用于解析关联名称）',
+            type: 'Dataset[]',
+            required: true,
+          },
+          {
+            prop: 'onStartChat',
+            desc: '开始对话',
+            type: '(chat: ChatAssistant) => void',
+            required: true,
+          },
+          {
+            prop: 'onEdit',
+            desc: '编辑助手',
+            type: '(chat: ChatAssistant) => void',
+            required: true,
+          },
+          {
+            prop: 'onDelete',
+            desc: '删除助手',
+            type: '(chat: ChatAssistant) => void',
+            required: true,
+          },
+        ],
       },
       {
         componentName: 'SessionSidebarProps',
@@ -255,21 +435,46 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'activeSessionId', desc: '当前激活的会话 ID', type: 'string' },
           { prop: 'loading', desc: '会话列表加载中', type: 'boolean' },
           { prop: 'disabled', desc: '禁用切换与新建（如流式生成中）', type: 'boolean' },
-          { prop: 'onSelect', desc: '切换会话回调', type: '(sessionId: string) => void', required: true },
-          { prop: 'onCreateSession', desc: '新建会话回调（标题栏 + 按钮）', type: '() => void', required: true },
-          { prop: 'onClearSession', desc: '清空当前选中会话内容', type: '(sessionId: string) => void', required: true },
-          { prop: 'onDeleteSession', desc: '删除指定会话', type: '(sessionId: string) => void', required: true }
-        ]
+          {
+            prop: 'onSelect',
+            desc: '切换会话回调',
+            type: '(sessionId: string) => void',
+            required: true,
+          },
+          {
+            prop: 'onCreateSession',
+            desc: '新建会话回调（标题栏 + 按钮）',
+            type: '() => void',
+            required: true,
+          },
+          {
+            prop: 'onClearSession',
+            desc: '清空当前选中会话内容',
+            type: '(sessionId: string) => void',
+            required: true,
+          },
+          {
+            prop: 'onDeleteSession',
+            desc: '删除指定会话',
+            type: '(sessionId: string) => void',
+            required: true,
+          },
+        ],
       },
       {
         componentName: 'SessionActionButtonsProps',
         rows: [
           { prop: 'streaming', desc: '是否正在流式生成', type: 'boolean' },
           { prop: 'clearDisabled', desc: '是否禁用清空对话', type: 'boolean' },
-          { prop: 'onClearConversation', desc: '清空当前对话回调', type: '() => void', required: true }
-        ]
-      }
-    ]
+          {
+            prop: 'onClearConversation',
+            desc: '清空当前对话回调',
+            type: '() => void',
+            required: true,
+          },
+        ],
+      },
+    ],
   },
   '/components/agenthub/knowledgebase': {
     title: 'KnowledgeBase 知识库',
@@ -278,54 +483,90 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: '解析状态标签',
         description: 'ParseStatusTag 展示文档解析各阶段状态',
-        component: React.lazy(() => import('@/components/AgentHub/KnowledgeBase/examples/ParseStatusTagBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/KnowledgeBase/examples/ParseStatusTagBasicDemo.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/AgentHub/KnowledgeBase/examples/ParseStatusTagBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/KnowledgeBase/examples/ParseStatusTagBasicDemo.tsx?raw'),
       },
       {
         title: '筛选栏',
         description: 'KBFilterBar 按知识库名称关键词筛选',
-        component: React.lazy(() => import('@/components/AgentHub/KnowledgeBase/examples/KnowledgeBaseFilterDemo')),
-        sourcePath: () => import('@/components/AgentHub/KnowledgeBase/examples/KnowledgeBaseFilterDemo.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/AgentHub/KnowledgeBase/examples/KnowledgeBaseFilterDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/KnowledgeBase/examples/KnowledgeBaseFilterDemo.tsx?raw'),
+        block: true,
       },
       {
         title: '知识库卡片',
         description: 'KnowledgeCard 展示文档数、分块数、解析进度与操作按钮',
-        component: React.lazy(() => import('@/components/AgentHub/KnowledgeBase/examples/KnowledgeCardBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/KnowledgeBase/examples/KnowledgeCardBasicDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/AgentHub/KnowledgeBase/examples/KnowledgeCardBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/KnowledgeBase/examples/KnowledgeCardBasicDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '文档列表',
         description: 'DocumentTable 知识库内文档管理表格，含解析/停止/删除操作',
-        component: React.lazy(() => import('@/components/AgentHub/KnowledgeBase/examples/DocumentTableBasicDemo')),
-        sourcePath: () => import('@/components/AgentHub/KnowledgeBase/examples/DocumentTableBasicDemo.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/AgentHub/KnowledgeBase/examples/DocumentTableBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/KnowledgeBase/examples/DocumentTableBasicDemo.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'ParseStatusTagProps',
         rows: [
-          { prop: 'status', desc: '解析状态（UNSTART / RUNNING / DONE / FAIL / CANCEL）', type: 'string' }
-        ]
+          {
+            prop: 'status',
+            desc: '解析状态（UNSTART / RUNNING / DONE / FAIL / CANCEL）',
+            type: 'string',
+          },
+        ],
       },
       {
         componentName: 'KBFilterBarProps',
         rows: [
           { prop: 'keyword', desc: '搜索关键词', type: 'string', required: true },
-          { prop: 'onKeywordChange', desc: '关键词变更回调', type: '(v: string) => void', required: true }
-        ]
+          {
+            prop: 'onKeywordChange',
+            desc: '关键词变更回调',
+            type: '(v: string) => void',
+            required: true,
+          },
+        ],
       },
       {
         componentName: 'KnowledgeCardProps',
         rows: [
           { prop: 'dataset', desc: '知识库对象', type: 'Dataset', required: true },
           { prop: 'onView', desc: '查看文档', type: '(dataset: Dataset) => void', required: true },
-          { prop: 'onUpload', desc: '上传文档', type: '(dataset: Dataset) => void', required: true },
-          { prop: 'onEdit', desc: '编辑知识库', type: '(dataset: Dataset) => void', required: true },
-          { prop: 'onDelete', desc: '删除知识库', type: '(dataset: Dataset) => void', required: true }
-        ]
+          {
+            prop: 'onUpload',
+            desc: '上传文档',
+            type: '(dataset: Dataset) => void',
+            required: true,
+          },
+          {
+            prop: 'onEdit',
+            desc: '编辑知识库',
+            type: '(dataset: Dataset) => void',
+            required: true,
+          },
+          {
+            prop: 'onDelete',
+            desc: '删除知识库',
+            type: '(dataset: Dataset) => void',
+            required: true,
+          },
+        ],
       },
       {
         componentName: 'DocumentTableProps',
@@ -336,13 +577,23 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'total', desc: '文档总数', type: 'number', required: true },
           { prop: 'page', desc: '当前页码', type: 'number', required: true },
           { prop: 'pageSize', desc: '每页条数', type: 'number', required: true },
-          { prop: 'onPageChange', desc: '分页变更', type: '(page, pageSize) => void', required: true },
+          {
+            prop: 'onPageChange',
+            desc: '分页变更',
+            type: '(page, pageSize) => void',
+            required: true,
+          },
           { prop: 'onParse', desc: '开始解析', type: '(doc: KBDocument) => void', required: true },
-          { prop: 'onStopParse', desc: '停止解析', type: '(doc: KBDocument) => void', required: true },
-          { prop: 'onDelete', desc: '删除文档', type: '(doc: KBDocument) => void', required: true }
-        ]
-      }
-    ]
+          {
+            prop: 'onStopParse',
+            desc: '停止解析',
+            type: '(doc: KBDocument) => void',
+            required: true,
+          },
+          { prop: 'onDelete', desc: '删除文档', type: '(doc: KBDocument) => void', required: true },
+        ],
+      },
+    ],
   },
   '/components/agenthub/report': {
     title: 'Report 报告模板',
@@ -351,17 +602,23 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: '报告模板',
         description: 'ReportTemplate + ReportMetaStrip + InteractiveBlock inset',
-        component: React.lazy(() => import('@/components/AgentHub/Report/examples/ReportTemplateDemo')),
-        sourcePath: () => import('@/components/AgentHub/Report/examples/ReportTemplateDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/AgentHub/Report/examples/ReportTemplateDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Report/examples/ReportTemplateDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '导出工作台 + api',
         description: 'ReportExportLayout：版本列表 + HTML 预览 + 归档弹窗（mock api）',
-        component: React.lazy(() => import('@/components/AgentHub/Report/examples/ReportExportLayoutDemo')),
-        sourcePath: () => import('@/components/AgentHub/Report/examples/ReportExportLayoutDemo/index.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/AgentHub/Report/examples/ReportExportLayoutDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Report/examples/ReportExportLayoutDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -374,38 +631,47 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'metaColumns', desc: 'Meta 列数', type: 'number', defaultVal: '4' },
           { prop: 'toolbar', desc: '可选工具条', type: 'ReactNode' },
           { prop: 'children', desc: '叙事区', type: 'ReactNode' },
-          { prop: 'footer', desc: '可选页脚', type: 'ReactNode' }
-        ]
+          { prop: 'footer', desc: '可选页脚', type: 'ReactNode' },
+        ],
       },
       {
         componentName: 'ReportExportLayoutProps',
         rows: [
           { prop: 'reportId', desc: '报告 ID', type: 'string', required: true },
-          { prop: 'api', desc: '注入 API（fetchVersions / fetchPreviewHtml / archive）', type: 'ReportExportApi' },
-          { prop: 'archivedBy', desc: '归档人（只读展示，通常 SSO）', type: 'string', required: true },
+          {
+            prop: 'api',
+            desc: '注入 API（fetchVersions / fetchPreviewHtml / archive）',
+            type: 'ReportExportApi',
+          },
+          {
+            prop: 'archivedBy',
+            desc: '归档人（只读展示，通常 SSO）',
+            type: 'string',
+            required: true,
+          },
           { prop: 'snapshot', desc: '传给 preview/archive 的快照', type: 'unknown' },
           { prop: 'documentTitle', desc: 'iframe title / 文档标题', type: 'string' },
           { prop: 'archiveOpen', desc: '受控归档弹窗', type: 'boolean' },
           { prop: 'onArchiveOpenChange', desc: '归档弹窗开关', type: '(open: boolean) => void' },
-          { prop: 'formatTime', desc: '版本时间格式化', type: '(value: string) => string' }
-        ]
+          { prop: 'formatTime', desc: '版本时间格式化', type: '(value: string) => string' },
+        ],
       },
       {
         componentName: 'ReportWorkspaceProps',
         rows: [
           { prop: 'list', desc: '左侧列表槽', type: 'ReactNode', required: true },
-          { prop: 'detail', desc: '右侧详情槽', type: 'ReactNode', required: true }
-        ]
+          { prop: 'detail', desc: '右侧详情槽', type: 'ReactNode', required: true },
+        ],
       },
       {
         componentName: 'ReportVersionItem',
         rows: [
           { prop: 'id', desc: '版本 id', type: 'string', required: true },
           { prop: 'at', desc: '时间', type: 'string', required: true },
-          { prop: 'by', desc: '操作人', type: 'string' }
-        ]
-      }
-    ]
+          { prop: 'by', desc: '操作人', type: 'string' },
+        ],
+      },
+    ],
   },
   '/components/alert': {
     title: 'Alert 显性提示',
@@ -416,60 +682,70 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: 'info / success / warning / error；含 description、action、closable',
         component: React.lazy(() => import('@/components/Alert/examples/AlertDemo')),
         sourcePath: () => import('@/components/Alert/examples/AlertDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'MarsunAlertProps',
         rows: [
-          { prop: 'type', desc: '语义类型', type: '\'info\' | \'success\' | \'warning\' | \'error\'', defaultVal: '\'info\'' },
+          {
+            prop: 'type',
+            desc: '语义类型',
+            type: "'info' | 'success' | 'warning' | 'error'",
+            defaultVal: "'info'",
+          },
           { prop: 'message', desc: '主文案（建议 ≤2 行）', type: 'ReactNode', required: true },
           { prop: 'description', desc: '补充说明', type: 'ReactNode' },
           { prop: 'showIcon', desc: '是否展示语义图标', type: 'boolean', defaultVal: 'true' },
           { prop: 'icon', desc: '自定义图标', type: 'ReactNode' },
           { prop: 'action', desc: '右侧操作区', type: 'ReactNode' },
           { prop: 'closable', desc: '是否可关闭', type: 'boolean', defaultVal: 'false' },
-          { prop: 'onClose', desc: '关闭回调', type: '() => void' }
-        ]
-      }
-    ]
+          { prop: 'onClose', desc: '关闭回调', type: '() => void' },
+        ],
+      },
+    ],
   },
   '/components/auth': {
     title: 'Auth 权限控制',
-    description: '基于角色的权限管理方案：PermissionGuard（角色/单权限 + fallback）；按钮/区域三种呈现见独立 Permissions 组件；含侧栏用户卡片。',
+    description:
+      '基于角色的权限管理方案：PermissionGuard（角色/单权限 + fallback）；按钮/区域三种呈现见独立 Permissions 组件；含侧栏用户卡片。',
     examples: [
       {
         title: 'hasPermission 权限判断',
         description: '判断当前用户是否拥有指定权限，返回 boolean',
         component: React.lazy(() => import('@/components/Auth/examples/AuthDemo')),
         sourcePath: () => import('@/components/Auth/examples/AuthDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'PermissionGuard 权限守卫',
         description: '包裹需要权限控制的区域，无权限时隐藏内容或显示 fallback',
         component: React.lazy(() => import('@/components/Auth/examples/PermissionGuardDemo')),
-        sourcePath: () => import('@/components/Auth/examples/PermissionGuardDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Auth/examples/PermissionGuardDemo/index.tsx?raw'),
       },
       {
         title: 'UserProfileCard 用户卡片',
         description: '侧栏底部用户信息；点击展开退出；折叠时仅头像',
         component: React.lazy(() => import('@/components/Auth/examples/UserProfileCardDemo')),
-        sourcePath: () => import('@/components/Auth/examples/UserProfileCardDemo/index.tsx?raw')
-      }
+        sourcePath: () => import('@/components/Auth/examples/UserProfileCardDemo/index.tsx?raw'),
+      },
     ],
     apiDoc: [
       {
         componentName: 'PermissionGuardProps',
         rows: [
-          { prop: 'roles', desc: '允许访问的角色列表，为空则所有已登录用户可访问', type: 'string[]' },
+          {
+            prop: 'roles',
+            desc: '允许访问的角色列表，为空则所有已登录用户可访问',
+            type: 'string[]',
+          },
           { prop: 'permission', desc: '允许访问的权限 key', type: 'string' },
           { prop: 'display', desc: '展示控制', type: 'MaybeFn<boolean>' },
           { prop: 'hidden', desc: '隐藏控制', type: 'MaybeFn<boolean>' },
           { prop: 'fallback', desc: '无权限时的回退内容', type: 'React.ReactNode' },
-          { prop: 'children', desc: '受保护的内容', type: 'React.ReactNode', required: true }
-        ]
+          { prop: 'children', desc: '受保护的内容', type: 'React.ReactNode', required: true },
+        ],
       },
       {
         componentName: 'UserProfileCardProps',
@@ -478,12 +754,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'sub', desc: '副文案（邮箱 / 工号等）', type: 'string' },
           { prop: 'avatarText', desc: '头像文字，默认 name 首字', type: 'string' },
           { prop: 'collapsed', desc: '侧栏折叠时仅显示头像', type: 'boolean' },
-          { prop: 'menuItems', desc: '自定义下拉菜单项', type: 'MenuProps[\'items\']' },
+          { prop: 'menuItems', desc: '自定义下拉菜单项', type: "MenuProps['items']" },
           { prop: 'onLogout', desc: '默认「退出登录」回调（无 menuItems 时）', type: '() => void' },
-          { prop: 'className', desc: '卡片按钮额外 className', type: 'string' }
-        ]
-      }
-    ]
+          { prop: 'className', desc: '卡片按钮额外 className', type: 'string' },
+        ],
+      },
+    ],
   },
   '/components/descriptions': {
     title: 'Descriptions 描述列表',
@@ -492,31 +768,44 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: '基础用法',
         description: '将 DescriptionItem 数组渲染为标准描述列表',
-        component: React.lazy(() => import('@/components/Descriptions/examples/CommonDescriptionsDemo')),
-        sourcePath: () => import('@/components/Descriptions/examples/CommonDescriptionsDemo/index.tsx?raw')
-      }
+        component: React.lazy(
+          () => import('@/components/Descriptions/examples/CommonDescriptionsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Descriptions/examples/CommonDescriptionsDemo/index.tsx?raw'),
+      },
     ],
     apiDoc: [
       {
         componentName: 'CommonDescriptionsProps',
         rows: [
           { prop: 'content', desc: '描述项数组', type: 'DescriptionItem[]', required: true },
-          { prop: 'column', desc: '列数配置，支持响应式对象', type: 'number | ResponsiveValue', defaultVal: '3' },
+          {
+            prop: 'column',
+            desc: '列数配置，支持响应式对象',
+            type: 'number | ResponsiveValue',
+            defaultVal: '3',
+          },
           { prop: 'bordered', desc: '是否带边框', type: 'boolean', defaultVal: 'false' },
-          { prop: 'size', desc: '尺寸', type: '\'small\' | \'default\' | \'middle\'', defaultVal: '\'default\'' },
+          {
+            prop: 'size',
+            desc: '尺寸',
+            type: "'small' | 'default' | 'middle'",
+            defaultVal: "'default'",
+          },
           { prop: 'title', desc: '标题文本', type: 'React.ReactNode' },
-          { prop: 'extra', desc: '操作区', type: 'React.ReactNode' }
-        ]
+          { prop: 'extra', desc: '操作区', type: 'React.ReactNode' },
+        ],
       },
       {
         componentName: 'DescriptionItem',
         rows: [
           { prop: 'label', desc: '标签文本', type: 'string', required: true },
           { prop: 'value', desc: '值内容', type: 'React.ReactNode', required: true },
-          { prop: 'span', desc: '占列数', type: 'number', defaultVal: '1' }
-        ]
-      }
-    ]
+          { prop: 'span', desc: '占列数', type: 'number', defaultVal: '1' },
+        ],
+      },
+    ],
   },
   '/components/empty': {
     title: 'Empty 空态',
@@ -527,20 +816,25 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: 'default / simple 图标、无图标、仅图标等常见空态',
         component: React.lazy(() => import('@/components/Empty/examples/EmptyDemo')),
         sourcePath: () => import('@/components/Empty/examples/EmptyDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'MarsunEmptyProps',
         rows: [
           { prop: 'showIcon', desc: '是否展示图标', type: 'boolean', defaultVal: 'true' },
-          { prop: 'iconType', desc: '预设图标：default=antd 默认图，simple=PRESENTED_IMAGE_SIMPLE', type: '\'default\' | \'simple\'', defaultVal: '\'default\'' },
+          {
+            prop: 'iconType',
+            desc: '预设图标：default=antd 默认图，simple=PRESENTED_IMAGE_SIMPLE',
+            type: "'default' | 'simple'",
+            defaultVal: "'default'",
+          },
           { prop: 'icon', desc: '自定义图标节点，优先级高于 iconType', type: 'ReactNode' },
-          { prop: 'description', desc: '描述文案，不传则不渲染 description', type: 'ReactNode' }
-        ]
-      }
-    ]
+          { prop: 'description', desc: '描述文案，不传则不渲染 description', type: 'ReactNode' },
+        ],
+      },
+    ],
   },
   '/components/file': {
     title: 'File 文件展示',
@@ -551,34 +845,34 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: '展示文件图标、名称、状态 slot 和操作按钮',
         component: React.lazy(() => import('@/components/File/examples/FileItemBasicDemo')),
         sourcePath: () => import('@/components/File/examples/FileItemBasicDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'FileLink 文件链接',
         description: '以链接形式展示文件',
         component: React.lazy(() => import('@/components/File/examples/FileLinkDemo')),
-        sourcePath: () => import('@/components/File/examples/FileLinkDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/File/examples/FileLinkDemo/index.tsx?raw'),
       },
       {
         title: '多文件项组合',
         description: '组合 FileItemView / FileLink 展示文件列表（消费方自行编排）',
         component: React.lazy(() => import('@/components/File/examples/FileListDemo')),
         sourcePath: () => import('@/components/File/examples/FileListDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'FilePreviewLink 预览链接',
         description: '点击文件名打开预览弹窗，弹窗内支持下载',
         component: React.lazy(() => import('@/components/File/examples/FilePreviewLinkDemo')),
-        sourcePath: () => import('@/components/File/examples/FilePreviewLinkDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/File/examples/FilePreviewLinkDemo/index.tsx?raw'),
       },
       {
         title: 'FilePreview 文件预览',
         description: '文件预览弹窗，支持图片、PDF、视频、Excel、文本等格式',
         component: React.lazy(() => import('@/components/File/examples/FilePreviewDemo')),
         sourcePath: () => import('@/components/File/examples/FilePreviewDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -589,8 +883,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'downloadUrl', desc: '下载 URL（缺省回退预览 URL）', type: 'string' },
           { prop: 'onDownload', desc: '自定义下载回调', type: '(file) => void' },
           { prop: 'disabled', desc: '禁用点击', type: 'boolean', defaultVal: 'false' },
-          { prop: 'showType', desc: '是否展示文件类型', type: 'boolean', defaultVal: 'true' }
-        ]
+          { prop: 'showType', desc: '是否展示文件类型', type: 'boolean', defaultVal: 'true' },
+        ],
       },
       {
         componentName: 'FileItemViewProps',
@@ -599,8 +893,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'status', desc: '状态标签 slot', type: 'React.ReactNode' },
           { prop: 'showDownload', desc: '是否显示下载按钮', type: 'boolean', defaultVal: 'true' },
           { prop: 'showDelete', desc: '是否显示删除按钮', type: 'boolean', defaultVal: 'false' },
-          { prop: 'actions', desc: '自定义操作项', type: 'FileItemAction[]' }
-        ]
+          { prop: 'actions', desc: '自定义操作项', type: 'FileItemAction[]' },
+        ],
       },
       {
         componentName: 'FileDisplayItem',
@@ -610,10 +904,10 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'size', desc: '文件大小（字节）', type: 'number' },
           { prop: 'mimeType', desc: 'MIME 类型', type: 'string' },
           { prop: 'url', desc: '下载/预览地址', type: 'string' },
-          { prop: 'tags', desc: '标签列表', type: 'string[]' }
-        ]
-      }
-    ]
+          { prop: 'tags', desc: '标签列表', type: 'string[]' },
+        ],
+      },
+    ],
   },
   '/components/filter': {
     title: 'Filter 筛选栏',
@@ -624,245 +918,453 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: 'CommonFilter 完整组合；含 Segmented 桌面/移动布局预览（layoutMode）',
         component: React.lazy(() => import('@/components/Filter/examples/CommonFilterDemo')),
         sourcePath: () => import('@/components/Filter/examples/CommonFilterDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '移动端 / 窄屏',
-        description: 'layoutMode=mobile：横滑 pill、隐藏标签、已选横滑与展开；对齐 ReactFilter 移动壳（SKILL #46）',
+        description:
+          'layoutMode=mobile：横滑 pill、隐藏标签、已选横滑与展开；对齐 ReactFilter 移动壳（SKILL #46）',
         component: React.lazy(() => import('@/components/Filter/examples/CommonFilterMobileDemo')),
         sourcePath: () => import('@/components/Filter/examples/CommonFilterMobileDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '桌面 / 移动切换',
         description: 'Segmented 切换 layoutMode（desktop | mobile），同一组 Filter* 预览双端交互',
-        component: React.lazy(() => import('@/components/Filter/examples/CommonFilterLayoutSwitchDemo')),
-        sourcePath: () => import('@/components/Filter/examples/CommonFilterLayoutSwitchDemo.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/Filter/examples/CommonFilterLayoutSwitchDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Filter/examples/CommonFilterLayoutSwitchDemo.tsx?raw'),
+        block: true,
       },
       {
         title: 'list 条件隐藏',
         description: 'list 模式用 hidden / display 按条件隐藏；含桌面/移动布局预览',
-        component: React.lazy(() => import('@/components/Filter/examples/CommonFilterListVisibilityDemo')),
-        sourcePath: () => import('@/components/Filter/examples/CommonFilterListVisibilityDemo.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/Filter/examples/CommonFilterListVisibilityDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Filter/examples/CommonFilterListVisibilityDemo.tsx?raw'),
+        block: true,
       },
       {
         title: '单选 / 多选筛选器',
         description: 'FilterSelect 单选、可搜索、多选；loading/空态；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterSelectDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterSelectDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterSelectDemo/index.tsx?raw'),
       },
       {
         title: '输入框筛选器',
         description: 'FilterInput 文本输入筛选（语义化 label）；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterInputDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterInputDemo.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterInputDemo.tsx?raw'),
       },
       {
         title: '日期范围筛选器',
         description: 'FilterDateRange 日期区间选择，支持快捷选项；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterDateRangeDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterDateRangeDemo.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterDateRangeDemo.tsx?raw'),
       },
       {
         title: '单日期筛选器',
         description: 'FilterDatePicker 日/月/年粒度与快捷选项；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterDatePickerDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterDatePickerDemo.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterDatePickerDemo.tsx?raw'),
       },
       {
         title: '数字范围筛选器',
         description: 'FilterNumberRange 数值区间选择，支持单位后缀；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterNumberRangeDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterNumberRangeDemo.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterNumberRangeDemo.tsx?raw'),
       },
       {
         title: '树形筛选器',
         description: 'FilterTreeSelect：组织树 / leafOnly；loading/空态；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTreeSelectDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterTreeSelectDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterTreeSelectDemo/index.tsx?raw'),
       },
       {
         title: '级联路径筛选器',
         description: 'FilterCascader：leafOnly / onChangePath / dependsOn；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterCascaderDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterCascaderDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '声明式依赖 / 动态拉取',
         description: 'dependsOn + loadData + panelExtra；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterDependsDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterDependsDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'S3 质量分析筛选',
-        description: '对齐 VarietyHistorySearchBar：对标模式 + FilterCascader leafOnly + 主对标月份 / 新品种属性搜树 panelExtra；含布局预览',
-        component: React.lazy(() => import('@/components/Filter/examples/QualityAnalysisFilterDemo')),
-        sourcePath: () => import('@/components/Filter/examples/QualityAnalysisFilterDemo/index.tsx?raw'),
-        block: true
+        description:
+          '对齐 VarietyHistorySearchBar：对标模式 + FilterCascader leafOnly + 主对标月份 / 新品种属性搜树 panelExtra；含布局预览',
+        component: React.lazy(
+          () => import('@/components/Filter/examples/QualityAnalysisFilterDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Filter/examples/QualityAnalysisFilterDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '筛选触发器',
         description: 'FilterTrigger 未选中 / 已选中 / 可展开 / loading；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTriggerDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterTriggerDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterTriggerDemo/index.tsx?raw'),
       },
       {
         title: '筛选面板',
         description: 'FilterPanel 带确定/取消底栏的面板容器',
         component: React.lazy(() => import('@/components/Filter/examples/FilterPanelDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterPanelDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterPanelDemo/index.tsx?raw'),
       },
       {
         title: '筛选 Popover',
         description: 'FilterPopover 触发器 + 面板组合；含桌面/移动布局预览（移动为 sheet）',
         component: React.lazy(() => import('@/components/Filter/examples/FilterPopoverDemo')),
-        sourcePath: () => import('@/components/Filter/examples/FilterPopoverDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Filter/examples/FilterPopoverDemo/index.tsx?raw'),
       },
       {
         title: '类型日期范围',
-        description: 'FilterTypeDateRange：date/month/week + 快捷项；Marsun 值 { type, range }；含布局预览',
+        description:
+          'FilterTypeDateRange：date/month/week + 快捷项；Marsun 值 { type, range }；含布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterTypeDateRangeDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterTypeDateRangeDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'Tag 列表筛选',
         description: 'FilterList：单选/多选 CheckableTag；popover / inline；含布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterListDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterListDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'SuperSelect / 业务选择器',
-        description: 'FilterSuperSelect / TableList / Function / Industry / Address / City；kne wrap + Marsun 值；含布局预览',
+        description:
+          'FilterSuperSelect / TableList / Function / Industry / Address / City；kne wrap + Marsun 值；含布局预览',
         component: React.lazy(() => import('@/components/Filter/examples/FilterKneSelectDemo')),
         sourcePath: () => import('@/components/Filter/examples/FilterKneSelectDemo.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'BaseFilterProps (公共属性)',
         rows: [
           { prop: 'filterKey', desc: '筛选项唯一标识', type: 'string', required: true },
-          { prop: 'label', desc: '显示标签；可为函数，根据其它筛选项 values 动态生成', type: 'string | ((ctx: { values }) => string)', required: true },
+          {
+            prop: 'label',
+            desc: '显示标签；可为函数，根据其它筛选项 values 动态生成',
+            type: 'string | ((ctx: { values }) => string)',
+            required: true,
+          },
           { prop: 'active', desc: '是否有值（控制选中态样式）', type: 'boolean' },
-          { prop: 'hidden', desc: '为 true 时不渲染该筛选项；支持 boolean 或函数；与 display 二选一，display 优先', type: 'boolean | ((ctx) => boolean)' },
-          { prop: 'display', desc: '为 false 时不渲染该筛选项；支持 boolean 或函数；与 hidden 二选一，display 优先', type: 'boolean | ((ctx) => boolean)' },
-          { prop: 'dependsOn', desc: '依赖的其它 filterKey；变化时默认清空本项并触发 loadData', type: 'string | string[]' },
-          { prop: 'clearOnDepsChange', desc: '依赖变化时是否清空本项', type: 'boolean', defaultVal: 'true' },
-          { prop: 'filterGroup', desc: '可选分组标记（文档/示例语义）', type: 'string' }
-        ]
+          {
+            prop: 'hidden',
+            desc: '为 true 时不渲染该筛选项；支持 boolean 或函数；与 display 二选一，display 优先',
+            type: 'boolean | ((ctx) => boolean)',
+          },
+          {
+            prop: 'display',
+            desc: '为 false 时不渲染该筛选项；支持 boolean 或函数；与 hidden 二选一，display 优先',
+            type: 'boolean | ((ctx) => boolean)',
+          },
+          {
+            prop: 'dependsOn',
+            desc: '依赖的其它 filterKey；变化时默认清空本项并触发 loadData',
+            type: 'string | string[]',
+          },
+          {
+            prop: 'clearOnDepsChange',
+            desc: '依赖变化时是否清空本项',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
+          { prop: 'filterGroup', desc: '可选分组标记（文档/示例语义）', type: 'string' },
+        ],
       },
       {
         componentName: 'FilterSelectProps',
         rows: [
-          { prop: 'options', desc: '静态选项列表；与 loadData 二选一（同时存在以 options 为准）', type: 'FilterOption[]' },
-          { prop: 'loadData', desc: '按依赖值动态拉取选项', type: '(ctx: { values, keyword? }) => Promise<FilterOption[]>' },
-          { prop: 'panelExtra', desc: '面板内嵌从属条件（search 下方）；禁止再嵌 Filter*', type: 'React.ReactNode' },
+          {
+            prop: 'options',
+            desc: '静态选项列表；与 loadData 二选一（同时存在以 options 为准）',
+            type: 'FilterOption[]',
+          },
+          {
+            prop: 'loadData',
+            desc: '按依赖值动态拉取选项',
+            type: '(ctx: { values, keyword? }) => Promise<FilterOption[]>',
+          },
+          {
+            prop: 'panelExtra',
+            desc: '面板内嵌从属条件（search 下方）；禁止再嵌 Filter*',
+            type: 'React.ReactNode',
+          },
           { prop: 'panelWidth', desc: '面板宽度；有 panelExtra 时默认 460', type: 'number' },
           { prop: 'enabled', desc: '是否启用 loadData', type: 'boolean', defaultVal: 'true' },
-          { prop: 'value', desc: '选中值（多选为数组）', type: 'string | number | (string | number)[] | undefined' },
+          {
+            prop: 'value',
+            desc: '选中值（多选为数组）',
+            type: 'string | number | (string | number)[] | undefined',
+          },
           { prop: 'onChange', desc: '值变更回调', type: '(value) => void' },
-          { prop: 'defaultValue', desc: '单选默认值（等于默认时不视为已筛选）', type: 'string | number' },
-          { prop: 'defaultValues', desc: '多选默认集合（等于默认时不视为已筛选）', type: '(string | number)[]' },
+          {
+            prop: 'defaultValue',
+            desc: '单选默认值（等于默认时不视为已筛选）',
+            type: 'string | number',
+          },
+          {
+            prop: 'defaultValues',
+            desc: '多选默认集合（等于默认时不视为已筛选）',
+            type: '(string | number)[]',
+          },
           { prop: 'placeholder', desc: '占位符', type: 'string' },
           { prop: 'searchable', desc: '是否可搜索', type: 'boolean' },
-          { prop: 'multiple', desc: '多选：顶部全选、底部已选标签（限高滚动）、确定/取消', type: 'boolean' },
+          {
+            prop: 'multiple',
+            desc: '多选：顶部全选、底部已选标签（限高滚动）、确定/取消',
+            type: 'boolean',
+          },
           { prop: 'minSelection', desc: '多选至少保留项数；全不选/移除标签时生效', type: 'number' },
-          { prop: 'variant', desc: '人员选项展示部门与联系方式', type: '\'default\' | \'person\'' },
-          { prop: 'loading', desc: '选项加载中：Filter Item 右侧 Loader2 spin；面板列表 Spin（不渲染空态）；与内部 loadData loading 取或', type: 'boolean', defaultVal: 'false' }
-        ]
+          { prop: 'variant', desc: '人员选项展示部门与联系方式', type: "'default' | 'person'" },
+          {
+            prop: 'loading',
+            desc: '选项加载中：Filter Item 右侧 Loader2 spin；面板列表 Spin（不渲染空态）；与内部 loadData loading 取或',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+        ],
       },
       {
         componentName: 'FilterInputProps',
         rows: [
           { prop: 'value', desc: '输入值', type: 'string' },
           { prop: 'onChange', desc: '值变更回调', type: '(value) => void' },
-          { prop: 'placeholder', desc: '占位符', type: 'string' }
-        ]
+          { prop: 'placeholder', desc: '占位符', type: 'string' },
+        ],
       },
       {
         componentName: 'FilterDateRangeProps',
         rows: [
           { prop: 'value', desc: '日期区间 [start, end]', type: '[string, string] | null' },
           { prop: 'onChange', desc: '值变更回调', type: '(value) => void' },
-          { prop: 'showQuickOptions', desc: '是否显示快捷选项', type: 'boolean', defaultVal: 'false' },
-          { prop: 'quickOptions', desc: '自定义快捷选项', type: 'QuickOption[]' }
-        ]
+          {
+            prop: 'showQuickOptions',
+            desc: '是否显示快捷选项',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          { prop: 'quickOptions', desc: '自定义快捷选项', type: 'QuickOption[]' },
+        ],
       },
       {
         componentName: 'FilterDatePickerProps',
         rows: [
-          { prop: 'value', desc: '选中值；date→YYYY-MM-DD，month→YYYY-MM，year→YYYY', type: 'string | null' },
+          {
+            prop: 'value',
+            desc: '选中值；date→YYYY-MM-DD，month→YYYY-MM，year→YYYY',
+            type: 'string | null',
+          },
           { prop: 'onChange', desc: '值变更回调', type: '(value: string | null) => void' },
-          { prop: 'picker', desc: '选择粒度', type: '\'date\' | \'month\' | \'year\'', defaultVal: '\'date\'' },
+          {
+            prop: 'picker',
+            desc: '选择粒度',
+            type: "'date' | 'month' | 'year'",
+            defaultVal: "'date'",
+          },
           { prop: 'defaultValue', desc: '默认值；与默认相同时视为未筛选', type: 'string' },
-          { prop: 'showDefaultAsSelected', desc: 'value 等于 defaultValue 时仍展示 Tag', type: 'boolean', defaultVal: 'false' },
-          { prop: 'showQuickOptions', desc: '是否显示内置快捷选项（今天/本月/今年）', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'showDefaultAsSelected',
+            desc: 'value 等于 defaultValue 时仍展示 Tag',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'showQuickOptions',
+            desc: '是否显示内置快捷选项（今天/本月/今年）',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'quickOptions', desc: '自定义快捷选项', type: 'SingleQuickOption[]' },
-          { prop: 'disabledDate', desc: '禁用日期（透传 antd DatePicker）', type: '(current: Dayjs) => boolean' }
-        ]
+          {
+            prop: 'disabledDate',
+            desc: '禁用日期（透传 antd DatePicker）',
+            type: '(current: Dayjs) => boolean',
+          },
+        ],
       },
       {
         componentName: 'FilterNumberRangeProps',
         rows: [
-          { prop: 'value', desc: '数值区间 [min, max]', type: '[number|undefined, number|undefined]|null' },
+          {
+            prop: 'value',
+            desc: '数值区间 [min, max]',
+            type: '[number|undefined, number|undefined]|null',
+          },
           { prop: 'onChange', desc: '值变更回调', type: '(value) => void' },
           { prop: 'unit', desc: '单位后缀', type: 'string' },
-          { prop: 'minPlaceholder / maxPlaceholder', desc: '最小/最大值占位符', type: 'string' }
-        ]
+          { prop: 'minPlaceholder / maxPlaceholder', desc: '最小/最大值占位符', type: 'string' },
+        ],
       },
       {
         componentName: 'FilterTreeSelectProps',
         rows: [
           { prop: 'treeData', desc: '树形数据 { id, name, children? }', type: 'TreeFilterNode[]' },
-          { prop: 'fetchUrl / transformData', desc: '远程拉树（可选；与 treeData / loadData 择一）', type: 'string / (raw) => TreeFilterNode[]' },
-          { prop: 'loadData', desc: '按 dependsOn 动态拉取树；有 treeData 时仍以 treeData 为准', type: '(ctx: { values, keyword? }) => Promise<TreeFilterNode[]>' },
-          { prop: 'panelExtra', desc: '面板内嵌从属条件（search 下方）；禁止再嵌 Filter*', type: 'React.ReactNode' },
+          {
+            prop: 'fetchUrl / transformData',
+            desc: '远程拉树（可选；与 treeData / loadData 择一）',
+            type: 'string / (raw) => TreeFilterNode[]',
+          },
+          {
+            prop: 'loadData',
+            desc: '按 dependsOn 动态拉取树；有 treeData 时仍以 treeData 为准',
+            type: '(ctx: { values, keyword? }) => Promise<TreeFilterNode[]>',
+          },
+          {
+            prop: 'panelExtra',
+            desc: '面板内嵌从属条件（search 下方）；禁止再嵌 Filter*',
+            type: 'React.ReactNode',
+          },
           { prop: 'panelWidth', desc: '面板宽度；有 panelExtra 时默认 460', type: 'number' },
-          { prop: 'value', desc: '选中值（多选为数组，节点 id）', type: 'string | string[] | undefined' },
-          { prop: 'onChange', desc: '值变更回调', type: '(value: string | string[] | undefined) => void' },
+          {
+            prop: 'value',
+            desc: '选中值（多选为数组，节点 id）',
+            type: 'string | string[] | undefined',
+          },
+          {
+            prop: 'onChange',
+            desc: '值变更回调',
+            type: '(value: string | string[] | undefined) => void',
+          },
           { prop: 'showSearch', desc: '是否显示搜索框', type: 'boolean', defaultVal: 'false' },
-          { prop: 'multiple', desc: '是否多选（确定后提交）', type: 'boolean', defaultVal: 'false' },
-          { prop: 'leafOnly', desc: '仅叶子写入值；多选时点父节点全选/取消子叶子，父勾选框支持半选', type: 'boolean', defaultVal: 'false' },
-          { prop: 'getNodeLabel', desc: '自定义节点展示 / 已选 Tag 文案', type: '(node: TreeFilterNode) => string' },
-          { prop: 'loading', desc: '选项加载中：Filter Item 右侧 Loader2 spin；面板列表 Spin（不渲染空态）；与内部 fetchUrl/loadData loading 取或', type: 'boolean', defaultVal: 'false' }
-        ]
+          {
+            prop: 'multiple',
+            desc: '是否多选（确定后提交）',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'leafOnly',
+            desc: '仅叶子写入值；多选时点父节点全选/取消子叶子，父勾选框支持半选',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'getNodeLabel',
+            desc: '自定义节点展示 / 已选 Tag 文案',
+            type: '(node: TreeFilterNode) => string',
+          },
+          {
+            prop: 'loading',
+            desc: '选项加载中：Filter Item 右侧 Loader2 spin；面板列表 Spin（不渲染空态）；与内部 fetchUrl/loadData loading 取或',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+        ],
       },
       {
         componentName: 'FilterCascaderProps',
         rows: [
-          { prop: 'treeData', desc: '树形数据（与 FilterTreeSelect 同构）；亦可用 options / loadData', type: 'TreeFilterNode[]' },
-          { prop: 'options', desc: '已转换 Cascader options；与 treeData 同时存在以 options 为准', type: 'DefaultOptionType[]' },
-          { prop: 'loadData', desc: '按 dependsOn 动态拉取树', type: '(ctx: { values, keyword? }) => Promise<TreeFilterNode[]>' },
-          { prop: 'value', desc: '叶子 id（leafOnly 默认 true）；多选为叶子 id 数组', type: 'string | string[] | undefined' },
-          { prop: 'onChange', desc: '叶子值变更', type: '(value: string | string[] | undefined) => void' },
-          { prop: 'onChangePath', desc: '完整路径；单选 string[]，多选 string[][]；可用 path[0] 取一级 Code', type: '(paths: string[] | string[][] | undefined) => void' },
-          { prop: 'leafOnly', desc: '仅叶子写入值；changeOnSelect=false', type: 'boolean', defaultVal: 'true' },
-          { prop: 'multiple', desc: '多选 = 多条路径；勾选为草稿，确定才 onChange，取消/关面板回滚', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'treeData',
+            desc: '树形数据（与 FilterTreeSelect 同构）；亦可用 options / loadData',
+            type: 'TreeFilterNode[]',
+          },
+          {
+            prop: 'options',
+            desc: '已转换 Cascader options；与 treeData 同时存在以 options 为准',
+            type: 'DefaultOptionType[]',
+          },
+          {
+            prop: 'loadData',
+            desc: '按 dependsOn 动态拉取树',
+            type: '(ctx: { values, keyword? }) => Promise<TreeFilterNode[]>',
+          },
+          {
+            prop: 'value',
+            desc: '叶子 id（leafOnly 默认 true）；多选为叶子 id 数组',
+            type: 'string | string[] | undefined',
+          },
+          {
+            prop: 'onChange',
+            desc: '叶子值变更',
+            type: '(value: string | string[] | undefined) => void',
+          },
+          {
+            prop: 'onChangePath',
+            desc: '完整路径；单选 string[]，多选 string[][]；可用 path[0] 取一级 Code',
+            type: '(paths: string[] | string[][] | undefined) => void',
+          },
+          {
+            prop: 'leafOnly',
+            desc: '仅叶子写入值；changeOnSelect=false',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
+          {
+            prop: 'multiple',
+            desc: '多选 = 多条路径；勾选为草稿，确定才 onChange，取消/关面板回滚',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'showSearch', desc: '面板内搜索', type: 'boolean', defaultVal: 'false' },
-          { prop: 'panelExtra / panelWidth / loading', desc: '同 FilterTreeSelect', type: 'ReactNode / number / boolean' }
-        ]
+          {
+            prop: 'panelExtra / panelWidth / loading',
+            desc: '同 FilterTreeSelect',
+            type: 'ReactNode / number / boolean',
+          },
+        ],
       },
       {
         componentName: 'CommonFilterProps',
         rows: [
           { prop: 'children', desc: '子筛选器组件', type: 'React.ReactNode', required: true },
-          { prop: 'list', desc: '筛选项 JSX 数组；item 的 hidden===true 或 display===false 时不渲染', type: 'React.ReactNode[]' },
+          {
+            prop: 'list',
+            desc: '筛选项 JSX 数组；item 的 hidden===true 或 display===false 时不渲染',
+            type: 'React.ReactNode[]',
+          },
           { prop: 'extra', desc: '右侧额外内容（与筛选项两端对齐）', type: 'React.ReactNode' },
-          { prop: 'onClearAll', desc: '清空全部额外回调（内部已通过 onRemove 自动清空）', type: '() => void' },
+          {
+            prop: 'onClearAll',
+            desc: '清空全部额外回调（内部已通过 onRemove 自动清空）',
+            type: '() => void',
+          },
           { prop: 'label', desc: '左侧标签文字', type: 'string', defaultVal: '"筛选"' },
-          { prop: 'selectedTagMaxLength', desc: '已选标签 value 最大字符数，超出显示 ... 并在 hover 时展示完整内容', type: 'number', defaultVal: '20' },
-          { prop: 'displayLine', desc: '默认展示的筛选项个数；超出收入「更多」。移动布局下忽略', type: 'number' },
-          { prop: 'layoutMode', desc: 'auto 跟视口；mobile / desktop 强制。默认 auto', type: '\'auto\' | \'mobile\' | \'desktop\'', defaultVal: 'auto' },
-          { prop: 'measureContainer', desc: '为 true 时 auto 按根容器宽度判定（窄预览）；默认 false 避免半栏误判', type: 'boolean', defaultVal: 'false' },
-          { prop: 'forceMobile', desc: '已废弃：true→mobile，false→desktop；请用 layoutMode', type: 'boolean' }
-        ]
+          {
+            prop: 'selectedTagMaxLength',
+            desc: '已选标签 value 最大字符数，超出显示 ... 并在 hover 时展示完整内容',
+            type: 'number',
+            defaultVal: '20',
+          },
+          {
+            prop: 'displayLine',
+            desc: '默认展示的筛选项个数；超出收入「更多」。移动布局下忽略',
+            type: 'number',
+          },
+          {
+            prop: 'layoutMode',
+            desc: 'auto 跟视口；mobile / desktop 强制。默认 auto',
+            type: "'auto' | 'mobile' | 'desktop'",
+            defaultVal: 'auto',
+          },
+          {
+            prop: 'measureContainer',
+            desc: '为 true 时 auto 按根容器宽度判定（窄预览）；默认 false 避免半栏误判',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'forceMobile',
+            desc: '已废弃：true→mobile，false→desktop；请用 layoutMode',
+            type: 'boolean',
+          },
+        ],
       },
       {
         componentName: 'FilterTriggerProps',
@@ -870,10 +1372,15 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'label', desc: '显示标签', type: 'string', required: true },
           { prop: 'active', desc: '是否有值（控制选中态样式）', type: 'boolean' },
           { prop: 'open', desc: 'Popover 展开态（控制箭头方向）', type: 'boolean' },
-          { prop: 'loading', desc: '选项加载中：右侧 Loader2 spin 替换 chevron', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'loading',
+            desc: '选项加载中：右侧 Loader2 spin 替换 chevron',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'onClick', desc: '点击回调', type: '(e: React.MouseEvent) => void' },
-          { prop: 'children', desc: '自定义触发内容', type: 'React.ReactNode' }
-        ]
+          { prop: 'children', desc: '自定义触发内容', type: 'React.ReactNode' },
+        ],
       },
       {
         componentName: 'FilterPanelProps',
@@ -882,197 +1389,225 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'onConfirm', desc: '确定回调', type: '() => void' },
           { prop: 'onReset', desc: '取消回调', type: '() => void' },
           { prop: 'confirmText', desc: '确定按钮文字', type: 'string', defaultVal: '确定' },
-          { prop: 'width', desc: '面板最大宽度', type: 'number', defaultVal: '360' }
-        ]
+          { prop: 'width', desc: '面板最大宽度', type: 'number', defaultVal: '360' },
+        ],
       },
       {
         componentName: 'FilterPopoverProps',
         rows: [
           { prop: 'label', desc: '筛选项标签', type: 'string', required: true },
           { prop: 'active', desc: '是否有值', type: 'boolean' },
-          { prop: 'loading', desc: '选项加载中：透传至 FilterTrigger', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'loading',
+            desc: '选项加载中：透传至 FilterTrigger',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'children', desc: '面板内容', type: 'React.ReactNode', required: true },
           { prop: 'open', desc: '受控展开状态', type: 'boolean' },
           { prop: 'onOpenChange', desc: '展开状态变更', type: '(open: boolean) => void' },
           { prop: 'onConfirm', desc: '确定回调', type: '() => void' },
           { prop: 'onReset', desc: '取消回调', type: '() => void' },
-          { prop: 'width', desc: '面板宽度', type: 'number' }
-        ]
-      }
-    ]
+          { prop: 'width', desc: '面板宽度', type: 'number' },
+        ],
+      },
+    ],
   },
   '/components/flexbox': {
     title: 'FlexBox 响应式栅格',
-    description: '按容器宽度自动计算列数（vendor @kne/flex-box master）。对齐上游 doc/example.json 三例。',
+    description:
+      '按容器宽度自动计算列数（vendor @kne/flex-box master）。对齐上游 doc/example.json 三例。',
     examples: [
       {
         title: 'FlexBox 响应式卡片栅格',
-        description: '按容器宽度切换列数，同一行卡片拉齐高度。覆盖基础列表、自定义断点、间距与列变化回调。',
+        description:
+          '按容器宽度切换列数，同一行卡片拉齐高度。覆盖基础列表、自定义断点、间距与列变化回调。',
         component: React.lazy(() => import('@/components/FlexBox/examples/FlexBoxResponsiveDemo')),
-        sourcePath: () => import('@/components/FlexBox/examples/FlexBoxResponsiveDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/FlexBox/examples/FlexBoxResponsiveDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'FlexBoxFetch 远程列表',
-        description: '按当前列配置的 size 请求数据（Demo 内 loader mock），支持分页；缩小容器会换列并重新请求。',
+        description:
+          '按当前列配置的 size 请求数据（Demo 内 loader mock），支持分页；缩小容器会换列并重新请求。',
         component: React.lazy(() => import('@/components/FlexBox/examples/FlexBoxFetchDemo')),
         sourcePath: () => import('@/components/FlexBox/examples/FlexBoxFetchDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'useFlexBox 单独使用',
         description: '把 ref 绑到任意容器上，根据宽度得到当前 col / size，可用来驱动自己的布局。',
         component: React.lazy(() => import('@/components/FlexBox/examples/UseFlexBoxDemo')),
         sourcePath: () => import('@/components/FlexBox/examples/UseFlexBoxDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'FlexBox',
         rows: [
           { prop: 'dataSource', desc: '列表数据', type: 'array' },
-          { prop: 'renderItem', desc: '项渲染；须包 FlexBox.Item', type: '(item, index) => ReactNode' },
+          {
+            prop: 'renderItem',
+            desc: '项渲染；须包 FlexBox.Item',
+            type: '(item, index) => ReactNode',
+          },
           { prop: 'columns', desc: '断点 [{ width, col, size? }]', type: 'FlexBoxColumn[]' },
           { prop: 'gutter', desc: '栅格间距（同 antd Row）', type: 'number | [number, number]' },
-          { prop: 'onChange', desc: '列配置变化（不含首次量宽）', type: '(column) => void' }
-        ]
+          { prop: 'onChange', desc: '列配置变化（不含首次量宽）', type: '(column) => void' },
+        ],
       },
       {
         componentName: 'FlexBoxFetch',
         rows: [
-          { prop: 'getFetchApi', desc: '(column) => Fetch api；常用 column.size 作 pageSize', type: '(column) => object' },
+          {
+            prop: 'getFetchApi',
+            desc: '(column) => Fetch api；常用 column.size 作 pageSize',
+            type: '(column) => object',
+          },
           { prop: 'pagination', desc: '分页配置或 true', type: 'boolean | object' },
-          { prop: 'dataFormat', desc: '从 loader 结果取列表，默认 data.pageData', type: '(data) => array' }
-        ]
+          {
+            prop: 'dataFormat',
+            desc: '从 loader 结果取列表，默认 data.pageData',
+            type: '(data) => array',
+          },
+        ],
       },
       {
         componentName: 'useFlexBox',
         rows: [
           { prop: 'columns', desc: '断点列配置', type: 'FlexBoxColumn[]' },
           { prop: 'returns.ref', desc: '挂到测量容器 DOM', type: 'Ref' },
-          { prop: 'returns.column', desc: '当前命中的列配置', type: 'FlexBoxColumn | null' }
-        ]
-      }
-    ]
+          { prop: 'returns.column', desc: '当前命中的列配置', type: 'FlexBoxColumn | null' },
+        ],
+      },
+    ],
   },
   '/components/form': {
     title: 'Form（存量兼容）',
-    description: '包根 kne 再导出（@kne/form-info 薄封装）：存量模块继续从包根导入 FormInfo / FormModal 等。新模块请改走 @hkyhy/marsun-components-core/form-info（showcase「FormInfo（新）」）。禁止业务直连 @kne/form-info、@kne/react-form。',
+    description:
+      '包根 kne 再导出（@kne/form-info 薄封装）：存量模块继续从包根导入 FormInfo / FormModal 等。新模块请改走 @hkyhy/marsun-components-core/form-info（showcase「FormInfo（新）」）。禁止业务直连 @kne/form-info、@kne/react-form。',
     examples: [
       {
         title: '基础表单 FormInfo',
-        description: '业务标准（从 core 导入）：Form + FormInfo 多列布局、rule 校验、SubmitButton / ResetButton',
+        description:
+          '业务标准（从 core 导入）：Form + FormInfo 多列布局、rule 校验、SubmitButton / ResetButton',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoBaseDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoBaseDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'InputRange 数字区间',
-        description: 'FormInfo 字段：纱支/数值分档；值 [min,max]|null；rule=REQ / RANGE_ASC（formProps.rules 展开 inputRangeRules）；双侧有值须上限≥下限',
+        description:
+          'FormInfo 字段：纱支/数值分档；值 [min,max]|null；rule=REQ / RANGE_ASC（formProps.rules 展开 inputRangeRules）；双侧有值须上限≥下限',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoInputRangeDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoInputRangeDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'labelTips 字符串自动 Info',
-        description: 'labelTips="短句" 由 core 包成 Info+TooltipInfo；自定义 ReactNode 透传；必填仍用 rule=REQ',
+        description:
+          'labelTips="短句" 由 core 包成 Info+TooltipInfo；自定义 ReactNode 透传；必填仍用 rule=REQ',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoLabelTipsDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoLabelTipsDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '弹窗 FormModal',
         description: '业务标准：FormModal + formProps.onSubmit，编辑场景自动关闭',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoModalDemo')),
-        sourcePath: () => import('@/components/Form/examples/FormInfoModalDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Form/examples/FormInfoModalDemo/index.tsx?raw'),
       },
       {
         title: 'FormDataSync 即时回写',
         description: '配置页等：Form 子节点 FormDataSync，字段变更同步父级 onChange',
         component: React.lazy(() => import('@/components/Form/examples/FormDataSyncDemo')),
         sourcePath: () => import('@/components/Form/examples/FormDataSyncDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '动态列表 List / MultiField',
         description: '业务标准：List 动态增减分组；MultiField 多值字段',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoListDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoListDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '表格列表 TableList',
         description: '业务标准：TableList 表格行增删',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoTableListDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoTableListDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '步骤表单 FormSteps',
         description: '业务标准：FormSteps 多步向导（页内）',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoStepsDemo')),
         sourcePath: () => import('@/components/Form/examples/FormInfoStepsDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '步骤弹窗 FormStepsModal',
         description: '业务标准：FormStepsModal 多步弹窗（新业务替代 antd StepForm）',
         component: React.lazy(() => import('@/components/Form/examples/FormInfoStepsModalDemo')),
-        sourcePath: () => import('@/components/Form/examples/FormInfoStepsModalDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Form/examples/FormInfoStepsModalDemo/index.tsx?raw'),
       },
       {
         title: 'ReactForm 基础引擎',
-        description: '引擎（从 core 导入 ReactForm / useField）：绑定 antd Input，rule 校验与提交/重置',
+        description:
+          '引擎（从 core 导入 ReactForm / useField）：绑定 antd Input，rule 校验与提交/重置',
         component: React.lazy(() => import('@/components/Form/examples/ReactFormBaseDemo')),
         sourcePath: () => import('@/components/Form/examples/ReactFormBaseDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'ReactForm useFormApi',
         description: '引擎（从 core 导入）：表单内 useFormApi 读写数据、手动校验',
         component: React.lazy(() => import('@/components/Form/examples/ReactFormApiDemo')),
-        sourcePath: () => import('@/components/Form/examples/ReactFormApiDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Form/examples/ReactFormApiDemo/index.tsx?raw'),
       },
       {
         title: 'ReactForm GroupList',
         description: '引擎（从 core 导入）：GroupList 动态增减分组字段',
         component: React.lazy(() => import('@/components/Form/examples/ReactFormGroupListDemo')),
         sourcePath: () => import('@/components/Form/examples/ReactFormGroupListDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'ReactForm 字段关联',
         description: '引擎（从 core 导入）：associations 多字段联动与计算',
         component: React.lazy(() => import('@/components/Form/examples/ReactFormAssociationsDemo')),
-        sourcePath: () => import('@/components/Form/examples/ReactFormAssociationsDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/Form/examples/ReactFormAssociationsDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'ReactForm 远程校验',
         description: '引擎（从 core 导入）：自定义异步 rules（模拟远程唯一性校验）',
         component: React.lazy(() => import('@/components/Form/examples/ReactFormRemoteRuleDemo')),
-        sourcePath: () => import('@/components/Form/examples/ReactFormRemoteRuleDemo/index.tsx?raw')
+        sourcePath: () =>
+          import('@/components/Form/examples/ReactFormRemoteRuleDemo/index.tsx?raw'),
       },
       {
         title: 'FetchTreeSelect（字段辅助）',
         description: '存量/字段辅助：树形选择 props treeData，或 fetchUrl + transformData',
         component: React.lazy(() => import('@/components/Form/examples/FetchTreeSelectDemo')),
-        sourcePath: () => import('@/components/Form/examples/FetchTreeSelectDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Form/examples/FetchTreeSelectDemo/index.tsx?raw'),
       },
       {
         title: 'FetchSelect（字段辅助）',
         description: '存量/字段辅助：下拉选择 props options，或 fetchUrl + transformData',
         component: React.lazy(() => import('@/components/Form/examples/FetchSelectDemo')),
-        sourcePath: () => import('@/components/Form/examples/FetchSelectDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Form/examples/FetchSelectDemo/index.tsx?raw'),
       },
       {
         title: 'StepForm（存量）',
         description: '存量：antd StepForm + StepModal；新业务请用 FormSteps / FormStepsModal',
         component: React.lazy(() => import('@/components/Form/examples/StepFormDemo')),
         sourcePath: () => import('@/components/Form/examples/StepFormDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -1082,8 +1617,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'subtitle', desc: '副标题', type: 'string | ReactNode' },
           { prop: 'column', desc: '列数或 Flex 配置', type: 'number | object' },
           { prop: 'gap', desc: '字段间距', type: 'number' },
-          { prop: 'list', desc: '表单项列表（Input/TextArea/Select/InputNumber/InputRange/Switch 等）', type: 'ReactNode[]' }
-        ]
+          {
+            prop: 'list',
+            desc: '表单项列表（Input/TextArea/Select/InputNumber/InputRange/Switch 等）',
+            type: 'ReactNode[]',
+          },
+        ],
       },
       {
         componentName: 'InputRange',
@@ -1091,12 +1630,16 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'name', desc: '字段名', type: 'string', required: true },
           { prop: 'label', desc: '标签', type: 'ReactNode' },
           { prop: 'rule', desc: '校验（如 REQ）', type: 'string' },
-          { prop: 'value（表单）', desc: '[min, max] | null；单侧可空', type: '[number|null, number|null] | null' },
+          {
+            prop: 'value（表单）',
+            desc: '[min, max] | null；单侧可空',
+            type: '[number|null, number|null] | null',
+          },
           { prop: 'unit', desc: '单位文案（如 Ne）', type: 'string' },
           { prop: 'min / max / precision / step', desc: '传给两侧 InputNumber', type: 'number' },
           { prop: 'minPlaceholder / maxPlaceholder', desc: '占位', type: 'string' },
-          { prop: 'disabled', desc: '禁用', type: 'boolean' }
-        ]
+          { prop: 'disabled', desc: '禁用', type: 'boolean' },
+        ],
       },
       {
         componentName: 'FormModal',
@@ -1104,16 +1647,25 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'open', desc: '是否显示', type: 'boolean' },
           { prop: 'title', desc: '弹窗标题', type: 'ReactNode' },
           { prop: 'onCancel', desc: '关闭回调', type: '() => void' },
-          { prop: 'formProps', desc: '表单：data / onSubmit 等', type: '{ data?, onSubmit?, ... }' },
+          {
+            prop: 'formProps',
+            desc: '表单：data / onSubmit 等',
+            type: '{ data?, onSubmit?, ... }',
+          },
           { prop: 'autoClose', desc: '提交成功后自动关闭', type: 'boolean' },
-          { prop: 'children', desc: '通常为 FormInfo / List', type: 'ReactNode' }
-        ]
+          { prop: 'children', desc: '通常为 FormInfo / List', type: 'ReactNode' },
+        ],
       },
       {
         componentName: 'FormDataSync',
         rows: [
-          { prop: 'onChange', desc: '字段值变更时回写完整 formData（须作 Form 子节点）', type: '(data: Record<string, unknown>) => void', required: true }
-        ]
+          {
+            prop: 'onChange',
+            desc: '字段值变更时回写完整 formData（须作 Form 子节点）',
+            type: '(data: Record<string, unknown>) => void',
+            required: true,
+          },
+        ],
       },
       {
         componentName: 'FormSteps / FormStepsModal',
@@ -1121,8 +1673,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'items', desc: '步骤：title + formProps + children', type: 'StepItem[]' },
           { prop: 'autoStep', desc: '提交后自动进入下一步', type: 'boolean' },
           { prop: 'onComplete', desc: '全部步骤完成回调', type: '(data) => void' },
-          { prop: 'modalProps', desc: '仅 FormStepsModal：open/title/onCancel', type: 'object' }
-        ]
+          { prop: 'modalProps', desc: '仅 FormStepsModal：open/title/onCancel', type: 'object' },
+        ],
       },
       {
         componentName: 'List / TableList / MultiField',
@@ -1131,184 +1683,263 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'title', desc: '列表标题', type: 'ReactNode' },
           { prop: 'list', desc: '每项字段', type: 'ReactNode[]' },
           { prop: 'addText', desc: '添加按钮文案', type: 'string' },
-          { prop: 'field', desc: '仅 MultiField：单项组件', type: 'ComponentType' }
-        ]
+          { prop: 'field', desc: '仅 MultiField：单项组件', type: 'ComponentType' },
+        ],
       },
       {
         componentName: 'ReactForm 引擎（core 再导出）',
         rows: [
-          { prop: 'ReactForm', desc: '引擎根容器（非 FormInfo 的 Form）；data / onSubmit / rules', type: 'FC' },
+          {
+            prop: 'ReactForm',
+            desc: '引擎根容器（非 FormInfo 的 Form）；data / onSubmit / rules',
+            type: 'FC',
+          },
           { prop: 'useField', desc: '字段绑定：value / onChange / rule / errMsg', type: 'Hook' },
           { prop: 'useFormApi / useFormContext', desc: '表单内 openApi：读写/校验', type: 'Hook' },
           { prop: 'useSubmit / useReset', desc: '提交与重置', type: 'Hook' },
           { prop: 'useGroup', desc: '当前分组上下文', type: 'Hook' },
           { prop: 'GroupList', desc: '动态分组增删', type: 'FC' },
-          { prop: 'RULES / preset / interceptors', desc: '内置规则、预置、拦截器', type: 'object / fn' },
+          {
+            prop: 'RULES / preset / interceptors',
+            desc: '内置规则、预置、拦截器',
+            type: 'object / fn',
+          },
           { prop: 'associations', desc: '字段联动配置（字段 props）', type: 'object' },
-          { prop: 'rules', desc: '自定义校验（可异步，ReactForm props）', type: 'Record<string, RuleFn>' }
-        ]
+          {
+            prop: 'rules',
+            desc: '自定义校验（可异步，ReactForm props）',
+            type: 'Record<string, RuleFn>',
+          },
+        ],
       },
       {
         componentName: 'FetchTreeSelectProps',
         rows: [
           { prop: 'treeData', desc: 'props 模式树数据（优先）', type: 'TreeNodeOption[]' },
           { prop: 'fetchUrl', desc: 'fetch 模式 URL', type: 'string' },
-          { prop: 'transformData', desc: '将 API 响应转为 treeData', type: '(raw: unknown) => TreeNodeOption[]' },
-          { prop: '...TreeSelectProps', desc: '继承 antd TreeSelect', type: 'Omit<TreeSelectProps, \'treeData\' | \'loading\'>' }
-        ]
+          {
+            prop: 'transformData',
+            desc: '将 API 响应转为 treeData',
+            type: '(raw: unknown) => TreeNodeOption[]',
+          },
+          {
+            prop: '...TreeSelectProps',
+            desc: '继承 antd TreeSelect',
+            type: "Omit<TreeSelectProps, 'treeData' | 'loading'>",
+          },
+        ],
       },
       {
         componentName: 'FetchSelectProps',
         rows: [
           { prop: 'options', desc: 'props 模式选项（优先）', type: 'SelectOptionItem[]' },
           { prop: 'fetchUrl', desc: 'fetch 模式 URL', type: 'string' },
-          { prop: 'transformData', desc: '将 API 响应转为 options', type: '(raw: unknown) => SelectOptionItem[]' }
-        ]
-      }
-    ]
+          {
+            prop: 'transformData',
+            desc: '将 API 响应转为 options',
+            type: '(raw: unknown) => SelectOptionItem[]',
+          },
+        ],
+      },
+    ],
   },
   '/components/forminfo': {
     title: 'FormInfo（新）',
-    description: '自研 FormInfo 壳层：请从 @hkyhy/marsun-components-core/form-info 一站式导入（壳+字段+引擎 hooks+helpers）。包根 FormInfo 仍为存量 kne 再导出。选择器族/金额/电话/薪资/AdvanceSelect/SelectInner 未移植故无对应示例。',
+    description:
+      '自研 FormInfo 壳层：请从 @hkyhy/marsun-components-core/form-info 一站式导入（壳+字段+引擎 hooks+helpers）。包根 FormInfo 仍为存量 kne 再导出。选择器族/金额/电话/薪资/AdvanceSelect/SelectInner 未移植故无对应示例。',
     examples: [
       {
         title: '基础表单示例',
         description: '一个简单表单示例：Form + FormInfo 多列布局；InfoPage.Part 扁平外壳',
         component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoBaseDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoBaseDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoBaseDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '多行',
         description: '多个 TextArea / block 字段；选择器族/金额/电话/薪资等未移植故无对应示例',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoMultilineDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoMultilineDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoMultilineDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoMultilineDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '边框模式示例',
         description: 'FormInfo bordered 多段卡片',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoBorderedDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoBorderedDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoBorderedDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoBorderedDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'labelTips 字符串 → Info',
         description: 'withNormalizedLabelTips：短字符串变 Info+TooltipInfo',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoLabelTipsDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoLabelTipsDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoLabelTipsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoLabelTipsDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'SuperSelect 全选',
-        description: 'Form SuperSelect + allowSelectedAll；全选 form 值为 [\'all\']',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoSuperSelectDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoSuperSelectDemo/index.tsx?raw'),
-        block: true
+        description: "Form SuperSelect + allowSelectedAll；全选 form 值为 ['all']",
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoSuperSelectDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoSuperSelectDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '模态框表单示例',
         description: 'FormModal + useFormModal；受控与命令式；destroyOnHidden',
         component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoModalDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoModalDemo/index.tsx?raw')
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoModalDemo/index.tsx?raw'),
       },
       {
         title: 'Drawer Form 抽屉弹窗',
         description: 'FormDrawer + useFormDrawer；受控与命令式；placement 默认 right',
         component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoDrawerDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoDrawerDemo/index.tsx?raw')
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoDrawerDemo/index.tsx?raw'),
       },
       {
         title: 'ErrorTip',
         description: '校验失败悬停；ahooks useClickAway 外点关闭',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoErrorTipDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoErrorTipDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoErrorTipDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoErrorTipDemo/index.tsx?raw'),
       },
       {
         title: 'FormApiButton',
         description: 'antd Button+loading；onClick(formContext, e)',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoApiButtonDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoApiButtonDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoApiButtonDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoApiButtonDemo/index.tsx?raw'),
       },
       {
         title: 'FormItem',
         description: 'children({...openApi, formData})',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoFormItemDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoFormItemDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoFormItemDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoFormItemDemo/index.tsx?raw'),
       },
       {
         title: '一个含有多段列表的表单示例',
         description: 'List + MultiField + TableList；空态 core Empty',
         component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoListDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoListDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoListDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'TableList',
         description: '表格行增删；空态 Empty（能力点专项）',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoTableListDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoTableListDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoTableListDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoTableListDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'Steps 内嵌',
         description: '嵌入父 Form；validateFieldsByName',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoStepsEmbedDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoStepsEmbedDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoStepsEmbedDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoStepsEmbedDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '步骤表单示例',
         description: 'FormSteps 独立多 Form 向导',
         component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoStepsDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoStepsDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoStepsDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '模态框步骤表单示例',
         description: 'FormStepsModal + useFormStepModal；destroyOnHidden',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoStepsModalDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoStepsModalDemo/index.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoStepsModalDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoStepsModalDemo/index.tsx?raw'),
       },
       {
         title: '新旧栈对照',
         description: '同数据：./form-info 与包根 kne FormInfo 并排',
-        component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoCompareDemo')),
-        sourcePath: () => import('@/components/FormInfo/examples/NewFormInfoCompareDemo/index.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/FormInfo/examples/NewFormInfoCompareDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/FormInfo/examples/NewFormInfoCompareDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'Form / FormInfo（新栈）',
         rows: [
           { prop: 'Form.type', desc: '默认 inner', type: 'string' },
-          { prop: 'FormInfo.column', desc: '列数；对象/数组断点时走 useFlexBox', type: 'number | FlexBoxColumn[]' },
+          {
+            prop: 'FormInfo.column',
+            desc: '列数；对象/数组断点时走 useFlexBox',
+            type: 'number | FlexBoxColumn[]',
+          },
           { prop: 'FormInfo.gap', desc: '字段间距', type: 'number' },
           { prop: 'FormInfo.list', desc: '字段列表', type: 'ReactNode[]' },
           { prop: 'FormInfo.block', desc: '仅重字段独占一行', type: 'boolean' },
-          { prop: 'FormInfo.bordered', desc: '边框模式（InfoPage.Part）', type: 'boolean' }
-        ]
+          { prop: 'FormInfo.bordered', desc: '边框模式（InfoPage.Part）', type: 'boolean' },
+        ],
       },
       {
         componentName: 'FormModal / FormDrawer / hooks',
         rows: [
           { prop: 'formProps', desc: 'data / onSubmit 等', type: 'object | fn' },
           { prop: 'autoClose', desc: '提交成功后关闭', type: 'boolean' },
-          { prop: 'renderModal', desc: '宿主：createModalRender / createDrawerRender', type: '(hostProps) => ReactNode' },
+          {
+            prop: 'renderModal',
+            desc: '宿主：createModalRender / createDrawerRender',
+            type: '(hostProps) => ReactNode',
+          },
           { prop: 'useFormModal / useFormDrawer', desc: '命令式打开', type: 'Hook' },
-          { prop: 'destroyOnHidden', desc: 'antd6 关闭销毁', type: 'boolean' }
-        ]
+          { prop: 'destroyOnHidden', desc: 'antd6 关闭销毁', type: 'boolean' },
+        ],
       },
       {
         componentName: '引擎 hooks（./form-info 再导出）',
         rows: [
           { prop: 'useFormApi / useFormContext / useField', desc: '表单引擎', type: 'Hook' },
-          { prop: 'useSubmit / useReset / GroupList / RULES', desc: '提交重置与规则', type: 'Hook / FC / object' },
-          { prop: 'FormDataSync / FetchSelect / FetchTreeSelect / PersonOptionRow', desc: 'helpers（实现在 Form/）', type: 'FC' }
-        ]
-      }
-    ]
+          {
+            prop: 'useSubmit / useReset / GroupList / RULES',
+            desc: '提交重置与规则',
+            type: 'Hook / FC / object',
+          },
+          {
+            prop: 'FormDataSync / FetchSelect / FetchTreeSelect / PersonOptionRow',
+            desc: 'helpers（实现在 Form/）',
+            type: 'FC',
+          },
+        ],
+      },
+    ],
   },
   '/components/iam': {
     title: 'Iam 权限设置四页',
@@ -1319,9 +1950,9 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: 'fixture catalog + 内存 mock client，演示列表与权限预览布局',
         component: React.lazy(() => import('@/components/Iam/examples/UsersDemo')),
         sourcePath: () => import('@/components/Iam/examples/UsersDemo/index.tsx?raw'),
-        block: true
-      }
-    ]
+        block: true,
+      },
+    ],
   },
   '/components/icons': {
     title: 'Icons 图标',
@@ -1332,8 +1963,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: '切换图标、尺寸、颜色、旋转',
         component: React.lazy(() => import('@/components/Icons/examples/IconPlaygroundDemo')),
         sourcePath: () => import('@/components/Icons/index.ts?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -1342,128 +1973,157 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'size', desc: '尺寸', type: 'number | string', defaultVal: '1em' },
           { prop: 'color', desc: '颜色', type: 'string' },
           { prop: 'spin', desc: '旋转动画', type: 'boolean' },
-          { prop: 'rotate', desc: '旋转角度', type: 'number' }
-        ]
-      }
-    ]
+          { prop: 'rotate', desc: '旋转角度', type: 'number' },
+        ],
+      },
+    ],
   },
   '/components/infopage': {
     title: 'InfoPage 详情页',
-    description: '复杂详情/报告分区展示：Part、Content、CentralContent、TableView、Flow、Report、Score、formatView 等。异于 CommonDescriptions（简单字段列表）。',
+    description:
+      '复杂详情/报告分区展示：Part、Content、CentralContent、TableView、Flow、Report、Score、formatView 等。异于 CommonDescriptions（简单字段列表）。',
     examples: [
       {
         title: '基础布局',
         description: 'InfoPage 容器与 Part / Collapse 区块基本用法',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageBasicDemo')),
         sourcePath: () => import('@/components/InfoPage/examples/InfoPageBasicDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '内容列表',
         description: 'InfoPageContent 多列布局与标签对齐',
-        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageContentListDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageContentListDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageContentListDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageContentListDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '内容展示',
         description: 'Content 列数/对齐/尺寸与 display 显隐',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageContentDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageContentDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageContentDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '描述列表',
         description: 'InfoPageDescriptions 二维数组详情展示',
-        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageDescriptionsDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageDescriptionsDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageDescriptionsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageDescriptionsDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '智能布局',
         description: 'CentralContent 数据格式化与自动栅格',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageCentralDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageCentralDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageCentralDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '边框区块',
         description: 'Part bordered + CentralContent',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageBorderedDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageBorderedDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageBorderedDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'Modal中展示',
         description: 'InfoPage 放入 ReactModal（非 Marsun Modal 业务壳）',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageModalDemo')),
         sourcePath: () => import('@/components/InfoPage/examples/InfoPageModalDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '表格视图',
         description: 'TableView 列表与 sticky 表头',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageTableViewDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageTableViewDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageTableViewDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '表格选择',
         description: 'TableView 复选 / 单选模式',
-        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageTableSelectDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageTableSelectDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageTableSelectDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageTableSelectDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '分割线展示',
         description: 'SplitLine 水平 / 垂直标签布局',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageSplitLineDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageSplitLineDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageSplitLineDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '流程步骤',
         description: 'Flow 基础步骤、columns 与 progressDot',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageFlowDemo')),
         sourcePath: () => import('@/components/InfoPage/examples/InfoPageFlowDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '报告页面',
         description: 'Report + List / Result 组合报告',
-        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageReportPageDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageReportPageDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageReportPageDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageReportPageDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '报告组件',
         description: 'Report 子组件 List / Result / Table / Part',
-        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageReportPartsDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageReportPartsDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageReportPartsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageReportPartsDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '评分展示',
         description: 'Score 星级评分：总分与间距',
         component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageScoreDemo')),
         sourcePath: () => import('@/components/InfoPage/examples/InfoPageScoreDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '格式化视图',
         description: 'formatView 日期/布尔/数字/金额格式化',
-        component: React.lazy(() => import('@/components/InfoPage/examples/InfoPageFormatViewDemo')),
-        sourcePath: () => import('@/components/InfoPage/examples/InfoPageFormatViewDemo/index.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/InfoPage/examples/InfoPageFormatViewDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InfoPage/examples/InfoPageFormatViewDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'InfoPage',
         rows: [
-          { prop: 'children', desc: '分区内容（通常为 InfoPage.Part）', type: 'ReactNode', required: true },
-          { prop: 'className', desc: '根节点 className', type: 'string' }
-        ]
+          {
+            prop: 'children',
+            desc: '分区内容（通常为 InfoPage.Part）',
+            type: 'ReactNode',
+            required: true,
+          },
+          { prop: 'className', desc: '根节点 className', type: 'string' },
+        ],
       },
       {
         componentName: 'InfoPage.Part',
@@ -1472,29 +2132,36 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'subtitle', desc: '副标题', type: 'ReactNode' },
           { prop: 'extra', desc: '标题右侧操作区', type: 'ReactNode' },
           { prop: 'bordered', desc: '是否显示边框', type: 'boolean' },
-          { prop: 'children', desc: '分区正文', type: 'ReactNode' }
-        ]
-      }
-    ]
+          { prop: 'children', desc: '分区正文', type: 'ReactNode' },
+        ],
+      },
+    ],
   },
   '/components/interactiveblock': {
     title: 'InteractiveBlock 内容块',
-    description: '带操作性的展示块：title → Info + TooltipInfo → actions；tags 紧贴 subtitle；inset 列表表面。',
+    description:
+      '带操作性的展示块：title → Info + TooltipInfo → actions；tags 紧贴 subtitle；inset 列表表面。',
     examples: [
       {
         title: '基础 / tags / actions',
         description: '选中态、info 详情、tagsPlacement、hidden action',
-        component: React.lazy(() => import('@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo')),
-        sourcePath: () => import('@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InteractiveBlock/examples/InteractiveBlockBasicDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'inset 列表表面',
         description: 'surface=inset 灰底/hover/选中，对齐归档检索列表项',
-        component: React.lazy(() => import('@/components/InteractiveBlock/examples/InteractiveBlockInsetDemo')),
-        sourcePath: () => import('@/components/InteractiveBlock/examples/InteractiveBlockInsetDemo/index.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/InteractiveBlock/examples/InteractiveBlockInsetDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/InteractiveBlock/examples/InteractiveBlockInsetDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -1505,62 +2172,71 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'subtitle', desc: '副标题', type: 'ReactNode' },
           { prop: 'description', desc: '描述（最多两行）', type: 'ReactNode' },
           { prop: 'tags', desc: '语义标签', type: 'InteractiveBlockTag[]' },
-          { prop: 'tagsPlacement', desc: 'tags 相对 subtitle：inline | below', type: '\'inline\' | \'below\'' },
+          {
+            prop: 'tagsPlacement',
+            desc: 'tags 相对 subtitle：inline | below',
+            type: "'inline' | 'below'",
+          },
           { prop: 'actions', desc: '右侧 link 操作', type: 'InteractiveBlockAction[]' },
-          { prop: 'surface', desc: '列表表面 plain | inset', type: '\'plain\' | \'inset\'' },
+          { prop: 'surface', desc: '列表表面 plain | inset', type: "'plain' | 'inset'" },
           { prop: 'selected', desc: '选中态', type: 'boolean' },
           { prop: 'onClick', desc: '整块可点击', type: '() => void' },
-          { prop: 'className', desc: '附加类名', type: 'string' }
-        ]
-      }
-    ]
+          { prop: 'className', desc: '附加类名', type: 'string' },
+        ],
+      },
+    ],
   },
   '/components/layout': {
     title: 'Layout 页面布局',
-    description: 'AgentAppShell 业务壳；PageHeaderLayout、ModulePageShell、PageSpin、ContentCard、FullscreenBox；App 根须包裹 PageShellProvider。',
+    description:
+      'AgentAppShell 业务壳；PageHeaderLayout、ModulePageShell、PageSpin、ContentCard、FullscreenBox；App 根须包裹 PageShellProvider。',
     examples: [
       {
         title: 'AgentAppShell',
         description: '左 sider + 右主区顶栏；菜单/底部槽/children 由业务注入',
         component: React.lazy(() => import('@/components/Layout/examples/AgentAppShellDemo')),
         sourcePath: () => import('@/components/Layout/examples/AgentAppShellDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'PageHeaderLayout',
         description: '标题 + 操作按钮 + body Spin',
         component: React.lazy(() => import('@/components/Layout/examples/PageHeaderLayoutDemo')),
         sourcePath: () => import('@/components/Layout/examples/PageHeaderLayoutDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'ModulePageShell',
         description: 'toolbar + body 内置 PageSpin',
         component: React.lazy(() => import('@/components/Layout/examples/ModulePageShellDemo')),
         sourcePath: () => import('@/components/Layout/examples/ModulePageShellDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'ContentCard',
         description: '主内容卡片；模块 workarea 用 flat / noPadding',
         component: React.lazy(() => import('@/components/Layout/examples/ContentCardBasicDemo')),
         sourcePath: () => import('@/components/Layout/examples/ContentCardBasicDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'FullscreenBox 图标开关',
         description: '操作区图标铺满视口（预警详情）；Esc 退出',
         component: React.lazy(() => import('@/components/Layout/examples/FullscreenBoxBasicDemo')),
-        sourcePath: () => import('@/components/Layout/examples/FullscreenBoxBasicDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/Layout/examples/FullscreenBoxBasicDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'FullscreenBox 标题开关',
         description: '标题+图标同一按钮（对比矩阵）',
-        component: React.lazy(() => import('@/components/Layout/examples/FullscreenBoxTitleToggleDemo')),
-        sourcePath: () => import('@/components/Layout/examples/FullscreenBoxTitleToggleDemo/index.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/Layout/examples/FullscreenBoxTitleToggleDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Layout/examples/FullscreenBoxTitleToggleDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -1569,9 +2245,14 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'brandTitle', desc: '侧栏品牌标题', type: 'string', required: true },
           { prop: 'brandLogo', desc: '侧栏品牌图标节点', type: 'React.ReactNode' },
           { prop: 'brandMark', desc: '无 logo 时的单字徽章', type: 'string' },
-          { prop: 'menuItems', desc: 'antd Menu items', type: 'MenuProps[\'items\']', required: true },
+          {
+            prop: 'menuItems',
+            desc: 'antd Menu items',
+            type: "MenuProps['items']",
+            required: true,
+          },
           { prop: 'selectedKeys', desc: '选中菜单 key', type: 'string[]' },
-          { prop: 'onMenuClick', desc: '菜单点击', type: 'MenuProps[\'onClick\']' },
+          { prop: 'onMenuClick', desc: '菜单点击', type: "MenuProps['onClick']" },
           { prop: 'collapsed', desc: '侧栏折叠', type: 'boolean' },
           { prop: 'onToggleCollapsed', desc: '折叠切换', type: '() => void' },
           { prop: 'siderWidth', desc: '展开宽度', type: 'number' },
@@ -1580,8 +2261,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'headerDescription', desc: '顶栏描述', type: 'React.ReactNode' },
           { prop: 'headerActions', desc: '顶栏右侧操作', type: 'React.ReactNode' },
           { prop: 'headerScrolled', desc: '滚动后顶栏毛玻璃', type: 'boolean' },
-          { prop: 'children', desc: '主内容', type: 'React.ReactNode', required: true }
-        ]
+          { prop: 'children', desc: '主内容', type: 'React.ReactNode', required: true },
+        ],
       },
       {
         componentName: 'PageHeaderLayoutProps',
@@ -1590,30 +2271,38 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'onBack', desc: '返回按钮点击回调', type: '() => void' },
           { prop: 'actions', desc: '右侧操作区内容', type: 'React.ReactNode' },
           { prop: 'description', desc: '页面说明提示', type: 'React.ReactNode' },
-          { prop: 'spinning', desc: '页面级 loading（与 usePageShellLoading 合并）', type: 'boolean' },
-          { prop: 'children', desc: '页面主体内容', type: 'React.ReactNode' }
-        ]
+          {
+            prop: 'spinning',
+            desc: '页面级 loading（与 usePageShellLoading 合并）',
+            type: 'boolean',
+          },
+          { prop: 'children', desc: '页面主体内容', type: 'React.ReactNode' },
+        ],
       },
       {
         componentName: 'ModulePageShellProps',
         rows: [
           { prop: 'title', desc: '同步到 PageShellProvider 的标题', type: 'string' },
           { prop: 'description', desc: '同步到 PageShellProvider 的描述', type: 'React.ReactNode' },
-          { prop: 'actions', desc: '同步到 PageShellProvider 的顶栏操作', type: 'Record<string, unknown>[]' },
+          {
+            prop: 'actions',
+            desc: '同步到 PageShellProvider 的顶栏操作',
+            type: 'Record<string, unknown>[]',
+          },
           { prop: 'breadcrumb', desc: '面包屑（不参与 Spin）', type: 'React.ReactNode' },
           { prop: 'toolbar', desc: '工具栏（不参与 Spin）', type: 'React.ReactNode' },
           { prop: 'spinning', desc: '页面级 loading', type: 'boolean' },
           { prop: 'syncPageMeta', desc: '是否同步 meta 到 Provider', type: 'boolean' },
-          { prop: 'children', desc: 'body 内容', type: 'React.ReactNode' }
-        ]
+          { prop: 'children', desc: 'body 内容', type: 'React.ReactNode' },
+        ],
       },
       {
         componentName: 'PageSpinProps',
         rows: [
           { prop: 'spinning', desc: '是否显示遮罩', type: 'boolean', required: true },
           { prop: 'children', desc: '被遮罩的内容', type: 'React.ReactNode', required: true },
-          { prop: 'className', desc: 'Spin wrapper 附加类名', type: 'string' }
-        ]
+          { prop: 'className', desc: 'Spin wrapper 附加类名', type: 'string' },
+        ],
       },
       {
         componentName: 'ContentCardProps',
@@ -1621,8 +2310,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'children', desc: '卡片内容', type: 'React.ReactNode', required: true },
           { prop: 'className', desc: '附加类名', type: 'string' },
           { prop: 'noPadding', desc: '去掉内边距', type: 'boolean' },
-          { prop: 'flat', desc: '无 border/shadow/radius，用于模块 workarea', type: 'boolean' }
-        ]
+          { prop: 'flat', desc: '无 border/shadow/radius，用于模块 workarea', type: 'boolean' },
+        ],
       },
       {
         componentName: 'FullscreenBoxProps',
@@ -1631,10 +2320,14 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'className', desc: '附加类名', type: 'string' },
           { prop: 'fullscreenClassName', desc: '仅全屏时附加类名', type: 'string' },
           { prop: 'fullscreen', desc: '是否铺满视口（受控）', type: 'boolean', required: true },
-          { prop: 'onFullscreenChange', desc: '全屏变化（Esc 退出时回调 false）', type: '(open: boolean) => void' },
+          {
+            prop: 'onFullscreenChange',
+            desc: '全屏变化（Esc 退出时回调 false）',
+            type: '(open: boolean) => void',
+          },
           { prop: 'exitOnEsc', desc: 'Esc 退出，默认 true', type: 'boolean' },
-          { prop: 'lockScroll', desc: '全屏时锁定 body 滚动，默认 true', type: 'boolean' }
-        ]
+          { prop: 'lockScroll', desc: '全屏时锁定 body 滚动，默认 true', type: 'boolean' },
+        ],
       },
       {
         componentName: 'FullscreenToggleProps',
@@ -1642,22 +2335,20 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'fullscreen', desc: '当前是否全屏', type: 'boolean', required: true },
           { prop: 'onToggle', desc: '点击切换', type: '() => void', required: true },
           { prop: 'className', desc: '附加类名', type: 'string' },
-          { prop: 'children', desc: '图标旁标题；不传则为纯图标按钮', type: 'React.ReactNode' }
-        ]
+          { prop: 'children', desc: '图标旁标题；不传则为纯图标按钮', type: 'React.ReactNode' },
+        ],
       },
       {
         componentName: 'useFullscreen',
-        rows: [
-          { prop: 'defaultFullscreen', desc: '初始是否全屏，默认 false', type: 'boolean' }
-        ]
+        rows: [{ prop: 'defaultFullscreen', desc: '初始是否全屏，默认 false', type: 'boolean' }],
       },
       {
         componentName: 'usePageShellLoading',
         rows: [
-          { prop: 'spinning', desc: '深层组件注册 loading 态', type: 'boolean', required: true }
-        ]
-      }
-    ]
+          { prop: 'spinning', desc: '深层组件注册 loading 态', type: 'boolean', required: true },
+        ],
+      },
+    ],
   },
   '/components/llmformattedtext': {
     title: 'LlmFormattedText LLM 结构化文本',
@@ -1666,27 +2357,40 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: '基础用法',
         description: '结构化解析、纯文本与加载态',
-        component: React.lazy(() => import('@/components/LlmFormattedText/examples/LlmFormattedTextBasicDemo')),
-        sourcePath: () => import('@/components/LlmFormattedText/examples/LlmFormattedTextBasicDemo/index.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/LlmFormattedText/examples/LlmFormattedTextBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/LlmFormattedText/examples/LlmFormattedTextBasicDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'LlmFormattedTextProps',
         rows: [
-          { prop: 'text', desc: 'LLM 输出的纯文本', type: 'string', defaultVal: '\'\'' },
-          { prop: 'loading', desc: '强制显示加载态（也可由文本内容自动识别）', type: 'boolean', defaultVal: 'false' },
-          { prop: 'className', desc: '自定义 className', type: 'string' }
-        ]
+          { prop: 'text', desc: 'LLM 输出的纯文本', type: 'string', defaultVal: "''" },
+          {
+            prop: 'loading',
+            desc: '强制显示加载态（也可由文本内容自动识别）',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          { prop: 'className', desc: '自定义 className', type: 'string' },
+        ],
       },
       {
         componentName: 'parseLlmText',
         rows: [
-          { prop: 'text', desc: '待解析文本，返回 summary / sections / loading', type: 'string', required: true }
-        ]
-      }
-    ]
+          {
+            prop: 'text',
+            desc: '待解析文本，返回 summary / sections / loading',
+            type: 'string',
+            required: true,
+          },
+        ],
+      },
+    ],
   },
   '/components/modal': {
     title: 'Modal 弹窗组件',
@@ -1694,32 +2398,47 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
     examples: [
       {
         title: '通用 Modal',
-        description: '必填标题、标题右侧 ButtonGroup actions、S/M/L 宽度（只可缩小）、固定 body 高与单层滚动',
+        description:
+          '必填标题、标题右侧 ButtonGroup actions、S/M/L 宽度（只可缩小）、固定 body 高与单层滚动',
         component: React.lazy(() => import('@/components/Modal/examples/ModalBasicDemo')),
         sourcePath: () => import('@/components/Modal/examples/ModalBasicDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '步骤式弹窗',
-        description: 'StepModal 将多步骤流程封装在 Modal 中，自动管理步骤导航、标题切换和底部按钮（强制居中）',
+        description:
+          'StepModal 将多步骤流程封装在 Modal 中，自动管理步骤导航、标题切换和底部按钮（强制居中）',
         component: React.lazy(() => import('@/components/Modal/examples/StepModalDemo')),
         sourcePath: () => import('@/components/Modal/examples/StepModalDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'MarsunModalProps',
         rows: [
           { prop: 'title', desc: '弹窗标题（必填）', type: 'ReactNode', required: true },
-          { prop: 'actions', desc: '标题右侧 ButtonGroup listArray', type: 'Record<string, unknown>[]' },
-          { prop: 'size', desc: '宽度锚点 S/M/L（480/720/960），有效宽 = min(锚点, 100vw-64)', type: '\'S\' | \'M\' | \'L\'' },
+          {
+            prop: 'actions',
+            desc: '标题右侧 ButtonGroup listArray',
+            type: 'Record<string, unknown>[]',
+          },
+          {
+            prop: 'size',
+            desc: '宽度锚点 S/M/L（480/720/960），有效宽 = min(锚点, 100vw-64)',
+            type: "'S' | 'M' | 'L'",
+          },
           { prop: 'width', desc: '显式默认宽，优先于 size 作为锚点', type: 'number' },
-          { prop: 'scrollable', desc: 'body 内单层 VirtualScrollbar', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'scrollable',
+            desc: 'body 内单层 VirtualScrollbar',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'footer', desc: '底部区域', type: 'ReactNode | null' },
           { prop: 'open', desc: '是否打开', type: 'boolean', required: true },
-          { prop: 'onCancel', desc: '关闭回调', type: '() => void', required: true }
-        ]
+          { prop: 'onCancel', desc: '关闭回调', type: '() => void', required: true },
+        ],
       },
       {
         componentName: 'StepModalProps',
@@ -1730,10 +2449,20 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'open', desc: '弹窗是否打开', type: 'boolean', required: true },
           { prop: 'onCancel', desc: '取消/关闭回调', type: '() => void', required: true },
           { prop: 'onStepChange', desc: '切换步骤回调', type: '(key: string) => void' },
-          { prop: 'width', desc: '弹窗宽度锚点（经 resolveModalWidth cap）', type: 'number', defaultVal: '600' },
+          {
+            prop: 'width',
+            desc: '弹窗宽度锚点（经 resolveModalWidth cap）',
+            type: 'number',
+            defaultVal: '600',
+          },
           { prop: 'showSteps', desc: '是否显示 Steps 导航条', type: 'boolean', defaultVal: 'true' },
-          { prop: 'maskClosable', desc: '是否允许点击遮罩关闭', type: 'boolean', defaultVal: 'false' }
-        ]
+          {
+            prop: 'maskClosable',
+            desc: '是否允许点击遮罩关闭',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+        ],
       },
       {
         componentName: 'StepItem',
@@ -1741,13 +2470,26 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'key', desc: '步骤唯一标识', type: 'string', required: true },
           { prop: 'title', desc: '步骤标题', type: 'string', required: true },
           { prop: 'description', desc: '步骤描述', type: 'string' },
-          { prop: 'content', desc: '步骤内容，支持 JSX 或函数延迟求值', type: 'ReactNode | (() => ReactNode)', required: true },
-          { prop: 'footer', desc: '底部按钮区域，不传则自动渲染', type: 'ReactNode | (() => ReactNode)' },
+          {
+            prop: 'content',
+            desc: '步骤内容，支持 JSX 或函数延迟求值',
+            type: 'ReactNode | (() => ReactNode)',
+            required: true,
+          },
+          {
+            prop: 'footer',
+            desc: '底部按钮区域，不传则自动渲染',
+            type: 'ReactNode | (() => ReactNode)',
+          },
           { prop: 'allowBack', desc: '是否允许返回上一步', type: 'boolean', defaultVal: 'true' },
-          { prop: 'beforeEnter', desc: '进入该步骤前的校验', type: '() => boolean | Promise<boolean>' }
-        ]
-      }
-    ]
+          {
+            prop: 'beforeEnter',
+            desc: '进入该步骤前的校验',
+            type: '() => boolean | Promise<boolean>',
+          },
+        ],
+      },
+    ],
   },
   '/components/orgtree': {
     title: 'OrgTree 组织树',
@@ -1758,8 +2500,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: '可编辑树与节点操作回调（示例展开深度 2）',
         component: React.lazy(() => import('@/components/OrgTree/examples/BasicDemo')),
         sourcePath: () => import('@/components/OrgTree/examples/BasicDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -1768,269 +2510,387 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'nodes', desc: '树数据（id/name/parentId/children）', type: 'OrgTreeNode[]' },
           { prop: 'loading', desc: '加载态', type: 'boolean', defaultVal: 'false' },
           { prop: 'editable', desc: '是否展示节点操作区', type: 'boolean', defaultVal: 'false' },
-          { prop: 'defaultExpandDepth', desc: '初始展开深度：0=全折叠；1=展开根露出一级子（默认）；大数≈全展开', type: 'number', defaultVal: '1' },
-          { prop: 'virtualHeight', desc: '虚拟列表高度(px)；false 关闭；默认节点>80 时用 520', type: 'number | false' },
+          {
+            prop: 'defaultExpandDepth',
+            desc: '初始展开深度：0=全折叠；1=展开根露出一级子（默认）；大数≈全展开',
+            type: 'number',
+            defaultVal: '1',
+          },
+          {
+            prop: 'virtualHeight',
+            desc: '虚拟列表高度(px)；false 关闭；默认节点>80 时用 520',
+            type: 'number | false',
+          },
           { prop: 'onAdd', desc: '添加子节点', type: '(parentId: string) => void' },
           { prop: 'onEdit', desc: '编辑节点', type: '(node) => void' },
-          { prop: 'onDelete', desc: '确认删除后回调', type: '(node) => void | Promise<void>' }
-        ]
-      }
-    ]
+          { prop: 'onDelete', desc: '确认删除后回调', type: '(node) => void | Promise<void>' },
+        ],
+      },
+    ],
   },
   '/components/permissionbindpanel': {
     title: 'PermissionBindPanel 绑权三栏',
-    description: '角色绑权信息架构：页面模块 → 业务功能点分类 → 实际业务功能点；SYSTEM 入口门禁；RESOURCE 不展示。',
+    description:
+      '角色绑权信息架构：页面模块 → 业务功能点分类 → 实际业务功能点；SYSTEM 入口门禁；RESOURCE 不展示。',
     examples: [
       {
         title: '基础三栏勾选',
         description: '左栏页面模块，主区按分类分组；未勾入口时业务模块禁用',
         component: React.lazy(() => import('@/components/PermissionBindPanel/examples/BasicDemo')),
-        sourcePath: () => import('@/components/PermissionBindPanel/examples/BasicDemo/index.tsx?raw'),
-        block: true
-      }
+        sourcePath: () =>
+          import('@/components/PermissionBindPanel/examples/BasicDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'PermissionBindPanelProps',
         rows: [
-          { prop: 'catalog', desc: '三栏目录；缺省时按 code 前缀扁平分组', type: 'PermissionBindCatalog | null', defaultVal: 'undefined' },
-          { prop: 'permissions', desc: '可绑权限列表（id/code/name/layer）；RESOURCE 自动过滤', type: 'PermissionBindItem[]' },
+          {
+            prop: 'catalog',
+            desc: '三栏目录；缺省时按 code 前缀扁平分组',
+            type: 'PermissionBindCatalog | null',
+            defaultVal: 'undefined',
+          },
+          {
+            prop: 'permissions',
+            desc: '可绑权限列表（id/code/name/layer）；RESOURCE 自动过滤',
+            type: 'PermissionBindItem[]',
+          },
           { prop: 'value', desc: '已选 permissionId', type: 'string[]' },
           { prop: 'onChange', desc: '勾选变更', type: '(nextIds: string[]) => void' },
-          { prop: 'systemEntryCodes', desc: 'SYSTEM 入口码；未勾时禁用 requiresSystemEntry 模块', type: 'string[]', defaultVal: '[]' },
-          { prop: 'height', desc: '面板高度', type: 'number', defaultVal: '420' }
-        ]
-      }
-    ]
+          {
+            prop: 'systemEntryCodes',
+            desc: 'SYSTEM 入口码；未勾时禁用 requiresSystemEntry 模块',
+            type: 'string[]',
+            defaultVal: '[]',
+          },
+          { prop: 'height', desc: '面板高度', type: 'number', defaultVal: '420' },
+        ],
+      },
+    ],
   },
   '/components/permissions': {
     title: 'Permissions 权限控制',
-    description: '对照 kne-union Permissions：按权限码控制区域展示（hidden / tooltip / error），权限源为 MarsunCoreProvider.auth.permissions。',
+    description:
+      '对照 kne-union Permissions：按权限码控制区域展示（hidden / tooltip / error），权限源为 MarsunCoreProvider.auth.permissions。',
     examples: [
       {
         title: '基础权限控制',
         description: '切换 hidden / tooltip / error，对比有权限与无权限呈现',
         component: React.lazy(() => import('@/components/Permissions/examples/BasicDemo')),
         sourcePath: () => import('@/components/Permissions/examples/BasicDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'Hooks 使用',
         description: 'usePermissions、usePermissionsPass、computedIsPass',
         component: React.lazy(() => import('@/components/Permissions/examples/HooksDemo')),
         sourcePath: () => import('@/components/Permissions/examples/HooksDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '函数式子组件',
         description: 'children 为函数时根据 isPass 自定义渲染',
-        component: React.lazy(() => import('@/components/Permissions/examples/FunctionChildrenDemo')),
-        sourcePath: () => import('@/components/Permissions/examples/FunctionChildrenDemo/index.tsx?raw')
-      }
+        component: React.lazy(
+          () => import('@/components/Permissions/examples/FunctionChildrenDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Permissions/examples/FunctionChildrenDemo/index.tsx?raw'),
+      },
     ],
     apiDoc: [
       {
         componentName: 'PermissionsProps',
         rows: [
-          { prop: 'type', desc: '无权限呈现：hidden 隐藏 / tooltip 可见不可点 / error 展示 403', type: '\'hidden\' | \'tooltip\' | \'error\'', defaultVal: '\'hidden\'' },
-          { prop: 'tagName', desc: 'tooltip 模式下包裹节点的标签名', type: 'string', defaultVal: '\'span\'' },
-          { prop: 'message', desc: '无权限提示文案', type: 'string', defaultVal: '\'您暂无权限，请联系管理员\'' },
-          { prop: 'request', desc: '所需权限；string[] 为 OR；也可传 (permissions)=>boolean；空/未传视为通过', type: 'string[] | ((permissions: string[]) => boolean) | (() => boolean)', defaultVal: 'undefined' },
-          { prop: 'children', desc: '受保护内容，或函数 ({ isPass, type, request }) => ReactNode', type: 'ReactNode | ((props: PermissionsRenderProps) => ReactNode)' },
-          { prop: 'className', desc: 'tooltip 包裹层额外 className', type: 'string' }
-        ]
+          {
+            prop: 'type',
+            desc: '无权限呈现：hidden 隐藏 / tooltip 可见不可点 / error 展示 403',
+            type: "'hidden' | 'tooltip' | 'error'",
+            defaultVal: "'hidden'",
+          },
+          {
+            prop: 'tagName',
+            desc: 'tooltip 模式下包裹节点的标签名',
+            type: 'string',
+            defaultVal: "'span'",
+          },
+          {
+            prop: 'message',
+            desc: '无权限提示文案',
+            type: 'string',
+            defaultVal: "'您暂无权限，请联系管理员'",
+          },
+          {
+            prop: 'request',
+            desc: '所需权限；string[] 为 OR；也可传 (permissions)=>boolean；空/未传视为通过',
+            type: 'string[] | ((permissions: string[]) => boolean) | (() => boolean)',
+            defaultVal: 'undefined',
+          },
+          {
+            prop: 'children',
+            desc: '受保护内容，或函数 ({ isPass, type, request }) => ReactNode',
+            type: 'ReactNode | ((props: PermissionsRenderProps) => ReactNode)',
+          },
+          { prop: 'className', desc: 'tooltip 包裹层额外 className', type: 'string' },
+        ],
       },
       {
         componentName: 'Hooks / Utils',
         rows: [
-          { prop: 'usePermissions', desc: '读取 MarsunCoreProvider.auth.permissions', type: '() => { permissions: string[] }' },
-          { prop: 'usePermissionsPass', desc: '判断 request 是否通过；无 permissions 列表时回退 hasPermission', type: '({ request }) => boolean' },
-          { prop: 'computedIsPass', desc: '纯函数判定；数组为 OR', type: '({ permissions, request }) => boolean' }
-        ]
-      }
-    ]
+          {
+            prop: 'usePermissions',
+            desc: '读取 MarsunCoreProvider.auth.permissions',
+            type: '() => { permissions: string[] }',
+          },
+          {
+            prop: 'usePermissionsPass',
+            desc: '判断 request 是否通过；无 permissions 列表时回退 hasPermission',
+            type: '({ request }) => boolean',
+          },
+          {
+            prop: 'computedIsPass',
+            desc: '纯函数判定；数组为 OR',
+            type: '({ permissions, request }) => boolean',
+          },
+        ],
+      },
+    ],
   },
   '/components/reactfilter': {
     title: 'ReactFilter（kne）',
-    description: '厂商移植自 @kne/react-filter。**新页列表筛选 SSOT**；CommonFilter 为存量过渡。含 S3 质量分析 ReactFilter 示例。',
+    description:
+      '厂商移植自 @kne/react-filter。**新页列表筛选 SSOT**；CommonFilter 为存量过渡。含 S3 质量分析 ReactFilter 示例。',
     examples: [
       {
         title: '基础 Filter',
-        description: '最小示例：Filter + InputFilterItem；含 Segmented + ResponsiveProvider 桌面/移动预览',
+        description:
+          '最小示例：Filter + InputFilterItem；含 Segmented + ResponsiveProvider 桌面/移动预览',
         component: React.lazy(() => import('@/components/ReactFilter/examples/BaseDemo')),
         sourcePath: () => import('@/components/ReactFilter/examples/BaseDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'S3 质量分析 · ReactFilter',
-        description: '新页 SSOT：对标模式 + PopoverItem 壳 + Cascader.Panel（leafOnly 单选/多选）；含布局预览',
-        component: React.lazy(() => import('@/components/ReactFilter/examples/QualityAnalysisReactFilterDemo')),
-        sourcePath: () => import('@/components/ReactFilter/examples/QualityAnalysisReactFilterDemo.tsx?raw'),
-        block: true
+        description:
+          '新页 SSOT：对标模式 + PopoverItem 壳 + Cascader.Panel（leafOnly 单选/多选）；含布局预览',
+        component: React.lazy(
+          () => import('@/components/ReactFilter/examples/QualityAnalysisReactFilterDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactFilter/examples/QualityAnalysisReactFilterDemo.tsx?raw'),
+        block: true,
       },
       {
         title: '基础筛选',
         description: 'Filter 多字段组合；含桌面/移动布局预览（ResponsiveProvider container）',
         component: React.lazy(() => import('@/components/ReactFilter/examples/FilterComboDemo')),
         sourcePath: () => import('@/components/ReactFilter/examples/FilterComboDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'searchParamsValue',
-        description: 'useSearchParamsValue 从平铺 URL 参数解析筛选初始值，可选清理已消费 key；Filter value/onChange 由业务自行 seed',
-        component: React.lazy(() => import('@/components/ReactFilter/examples/SearchParamsValueDemo')),
+        description:
+          'useSearchParamsValue 从平铺 URL 参数解析筛选初始值，可选清理已消费 key；Filter value/onChange 由业务自行 seed',
+        component: React.lazy(
+          () => import('@/components/ReactFilter/examples/SearchParamsValueDemo'),
+        ),
         sourcePath: () => import('@/components/ReactFilter/examples/SearchParamsValueDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '定制 className',
-        description: '通过稳定全局类名（根 react-filter + 内部短类名）用 CSS 选择器定制 Filter 内部样式；可用 FILTER_CLASS 引用类名',
+        description:
+          '通过稳定全局类名（根 react-filter + 内部短类名）用 CSS 选择器定制 Filter 内部样式；可用 FILTER_CLASS 引用类名',
         component: React.lazy(() => import('@/components/ReactFilter/examples/ClassNameDemo')),
         sourcePath: () => import('@/components/ReactFilter/examples/ClassNameDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '高级筛选',
         description: 'AdvancedFilter 多行布局；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/ReactFilter/examples/AdvancedFilterDemo')),
         sourcePath: () => import('@/components/ReactFilter/examples/AdvancedFilterDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '筛选字段组件',
         description: '全字段 + SuperSelect / 业务选择器；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/ReactFilter/examples/FilterFieldsDemo')),
         sourcePath: () => import('@/components/ReactFilter/examples/FilterFieldsDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '搜索输入',
         description: 'SearchInput debounce + IME；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/ReactFilter/examples/SearchInputDemo')),
         sourcePath: () => import('@/components/ReactFilter/examples/SearchInputDemo.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '已选值展示',
         description: '使用 FilterValueDisplay 组件展示已选择的筛选条件，支持单独删除和清空全部',
-        component: React.lazy(() => import('@/components/ReactFilter/examples/FilterValueDisplayDemo')),
-        sourcePath: () => import('@/components/ReactFilter/examples/FilterValueDisplayDemo.tsx?raw')
+        component: React.lazy(
+          () => import('@/components/ReactFilter/examples/FilterValueDisplayDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactFilter/examples/FilterValueDisplayDemo.tsx?raw'),
       },
       {
         title: '弹出层筛选',
         description: 'PopoverItem 多种交互；含桌面/移动布局预览',
         component: React.lazy(() => import('@/components/ReactFilter/examples/PopoverItemDemo')),
         sourcePath: () => import('@/components/ReactFilter/examples/PopoverItemDemo.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'Filter',
         rows: [
-          { prop: 'list', desc: '筛选项行：FilterItemConfig[][]，项为 { type, props }', type: 'Array<Array<{ type: ComponentType; props: object }>>', required: true },
+          {
+            prop: 'list',
+            desc: '筛选项行：FilterItemConfig[][]，项为 { type, props }',
+            type: 'Array<Array<{ type: ComponentType; props: object }>>',
+            required: true,
+          },
           { prop: 'value', desc: '筛选值数组 FilterValueItem[]', type: 'FilterValue' },
-          { prop: 'onChange', desc: '值变更回调', type: '(value: FilterValue) => void' }
-        ]
+          { prop: 'onChange', desc: '值变更回调', type: '(value: FilterValue) => void' },
+        ],
       },
       {
         componentName: 'FilterValueItem',
         rows: [
           { prop: 'name', desc: '字段名', type: 'string', required: true },
           { prop: 'label', desc: '展示标签', type: 'ReactNode' },
-          { prop: 'value', desc: '字段值', type: 'unknown', required: true }
-        ]
-      }
-    ]
+          { prop: 'value', desc: '字段值', type: 'unknown', required: true },
+        ],
+      },
+    ],
   },
   '/components/reactmodal': {
     title: 'ReactModal 命令式弹层',
-    description: '命令式 Modal/Drawer（useModal/useDrawer/useConfirmModal）。业务默认非表单弹窗仍用 Marsun Modal（S/M/L）。FormModal / FormStepsModal + renderModal 示例已落地（M2）。',
+    description:
+      '命令式 Modal/Drawer（useModal/useDrawer/useConfirmModal）。业务默认非表单弹窗仍用 Marsun Modal（S/M/L）。FormModal / FormStepsModal + renderModal 示例已落地（M2）。',
     examples: [
       {
         title: '基础弹层',
         description: 'Modal / Drawer 切换：受控打开与异步 onConfirm',
         component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalBasicDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalBasicDemo/index.tsx?raw'),
-        block: true
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalBasicDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'footerButtons 与尺寸',
         description: 'size / footerButtons / 左侧 footer / noPadding',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalFooterSizeDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalFooterSizeDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalFooterSizeDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalFooterSizeDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '命令式打开（useModal / useDrawer）',
         description: 'useModal / useDrawer 命令式快览，children 函数可 close()',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalImperativeDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalImperativeDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalImperativeDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalImperativeDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'useConfirmModal 确认框',
         description: 'confirm / info / success / warning / error 命令式确认',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalConfirmDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalConfirmDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalConfirmDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalConfirmDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '长内容滚动',
         description: 'SimpleBar 与 bodyScroll=false 自管滚动对比',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalScrollDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalScrollDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalScrollDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalScrollDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '高度 CSS 变量',
         description: 'content-height 色块绑定与变量探针',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalCssVarsDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalCssVarsDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalCssVarsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalCssVarsDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'title / footer / noPadding 高度探针',
         description: 'title、footer、noPadding、bodyScroll 组合实测高度变量',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalHeightProbeDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalHeightProbeDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalHeightProbeDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalHeightProbeDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '高度受限 · 居中弹窗',
         description: '高度受限样式压低 body；声明式 / useModal 对比',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalHeightLimitedDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalHeightLimitedDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalHeightLimitedDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalHeightLimitedDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '批量候选人评估（Tabs + 分栏）',
         description: 'TabsLayout + ColumnsLayout + ScrollRegion',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalTabsColumnsDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalTabsColumnsDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalTabsColumnsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalTabsColumnsDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '嵌套弹层',
         description: '外层命令式 Modal/Drawer + 内层声明式 Modal',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalNestedDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalNestedDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalNestedDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalNestedDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'FormModal + renderModal',
         description: 'createModalRender / createDrawerRender + FormInfo 新栈 FormModal（已落地）',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalFormModalDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalFormModalDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalFormModalDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalFormModalDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: 'FormStepsModal + renderModal',
         description: 'createModalRender / createDrawerRender + FormStepsModal（已落地）',
-        component: React.lazy(() => import('@/components/ReactModal/examples/ReactModalFormStepsModalDemo')),
-        sourcePath: () => import('@/components/ReactModal/examples/ReactModalFormStepsModalDemo/index.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/ReactModal/examples/ReactModalFormStepsModalDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ReactModal/examples/ReactModalFormStepsModalDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -2040,19 +2900,31 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'title', desc: '标题', type: 'ReactNode' },
           { prop: 'onClose', desc: '关闭回调（映射 antd onCancel）', type: '() => void' },
           { prop: 'onConfirm', desc: '确认回调', type: '() => void | Promise<void>' },
-          { prop: 'size', desc: '尺寸', type: '\'small\' | \'default\' | \'large\'' },
-          { prop: 'footerButtons', desc: '底部按钮配置（可替代默认确认/取消）', type: 'FooterButton[]' },
+          { prop: 'size', desc: '尺寸', type: "'small' | 'default' | 'large'" },
+          {
+            prop: 'footerButtons',
+            desc: '底部按钮配置（可替代默认确认/取消）',
+            type: 'FooterButton[]',
+          },
           { prop: 'noPadding', desc: '内容区无内边距', type: 'boolean' },
-          { prop: 'bodyScroll', desc: '是否使用内置 SimpleBar（false 时自管滚动）', type: 'boolean' }
-        ]
+          {
+            prop: 'bodyScroll',
+            desc: '是否使用内置 SimpleBar（false 时自管滚动）',
+            type: 'boolean',
+          },
+        ],
       },
       {
         componentName: 'useConfirmModal',
         rows: [
-          { prop: '(options)', desc: '打开确认弹层；返回关闭函数', type: '(opts: ConfirmOptions) => () => void' }
-        ]
-      }
-    ]
+          {
+            prop: '(options)',
+            desc: '打开确认弹层；返回关闭函数',
+            type: '(opts: ConfirmOptions) => () => void',
+          },
+        ],
+      },
+    ],
   },
   '/components/sparkline': {
     title: 'Sparkline 微型趋势折线',
@@ -2062,9 +2934,10 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         title: '基础用法',
         description: '不同趋势与颜色的 Sparkline 展示',
         component: React.lazy(() => import('@/components/Sparkline/examples/SparklineBasicDemo')),
-        sourcePath: () => import('@/components/Sparkline/examples/SparklineBasicDemo/index.tsx?raw'),
-        block: true
-      }
+        sourcePath: () =>
+          import('@/components/Sparkline/examples/SparklineBasicDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -2073,11 +2946,11 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'data', desc: '数值序列', type: 'number[]', defaultVal: '[]' },
           { prop: 'width', desc: 'SVG viewBox 宽度', type: 'number', defaultVal: '200' },
           { prop: 'height', desc: 'SVG 高度', type: 'number', defaultVal: '28' },
-          { prop: 'color', desc: '折线与末点颜色', type: 'string', defaultVal: '\'#52525b\'' },
-          { prop: 'className', desc: '自定义 className', type: 'string' }
-        ]
-      }
-    ]
+          { prop: 'color', desc: '折线与末点颜色', type: 'string', defaultVal: "'#52525b'" },
+          { prop: 'className', desc: '自定义 className', type: 'string' },
+        ],
+      },
+    ],
   },
   '/components/stat': {
     title: 'Stat 统计卡片',
@@ -2088,14 +2961,14 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: 'StatCard 基础展示，带前缀图标和自定义颜色',
         component: React.lazy(() => import('@/components/Stat/examples/StatCardSingleDemo')),
         sourcePath: () => import('@/components/Stat/examples/StatCardSingleDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '卡片列表',
         description: 'StatCardList 网格布局，自动计算列数',
         component: React.lazy(() => import('@/components/Stat/examples/StatCardListDemo')),
-        sourcePath: () => import('@/components/Stat/examples/StatCardListDemo/index.tsx?raw')
-      }
+        sourcePath: () => import('@/components/Stat/examples/StatCardListDemo/index.tsx?raw'),
+      },
     ],
     apiDoc: [
       {
@@ -2107,8 +2980,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'color', desc: '数值颜色', type: 'string' },
           { prop: 'onClick', desc: '点击回调', type: '() => void' },
           { prop: 'inline', desc: '内联模式（无 Card 包裹）', type: 'boolean' },
-          { prop: 'fontSize', desc: '内联模式字体大小', type: 'number' }
-        ]
+          { prop: 'fontSize', desc: '内联模式字体大小', type: 'number' },
+        ],
       },
       {
         componentName: 'StatCardListProps',
@@ -2117,101 +2990,221 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'gutter', desc: '行列间距', type: '[number, number]' },
           { prop: 'className', desc: '容器 className', type: 'string' },
           { prop: 'inline', desc: '内联模式', type: 'boolean' },
-          { prop: 'fontSize', desc: '内联模式字体大小', type: 'number' }
-        ]
-      }
-    ]
+          { prop: 'fontSize', desc: '内联模式字体大小', type: 'number' },
+        ],
+      },
+    ],
   },
   '/components/statebar': {
     title: 'StateBar 状态栏',
-    description: '基于 antd Tabs 的状态切换条，支持 tab / radio / step；tabBarExtraContent 放域内主操作。',
+    description:
+      '基于 antd Tabs 的状态切换条，支持 tab / radio / step；tabBarExtraContent 放域内主操作。',
     examples: [
       {
         title: '基础用法',
         description: 'type、size、isInner、受控 activeKey 与右侧 extra',
         component: React.lazy(() => import('@/components/StateBar/examples/BasicDemo')),
         sourcePath: () => import('@/components/StateBar/examples/BasicDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'StateBarProps',
         rows: [
-          { prop: 'stateOption', desc: '状态项：key + tab/label；可带 children 展示面板；info 给标题旁加 Info + TooltipInfo', type: 'StateBarOption[]', defaultVal: '[]' },
-          { prop: 'StateBarOption.info', desc: '标题旁 Info icon + TooltipInfo（DescriptionItem[]，对齐 Modal/InteractiveBlock）；为空不展示', type: 'DescriptionItem[]' },
-          { prop: 'type', desc: '展示样式', type: '\'tab\' | \'radio\' | \'step\'', defaultVal: '\'tab\'' },
+          {
+            prop: 'stateOption',
+            desc: '状态项：key + tab/label；可带 children 展示面板；info 给标题旁加 Info + TooltipInfo',
+            type: 'StateBarOption[]',
+            defaultVal: '[]',
+          },
+          {
+            prop: 'StateBarOption.info',
+            desc: '标题旁 Info icon + TooltipInfo（DescriptionItem[]，对齐 Modal/InteractiveBlock）；为空不展示',
+            type: 'DescriptionItem[]',
+          },
+          { prop: 'type', desc: '展示样式', type: "'tab' | 'radio' | 'step'", defaultVal: "'tab'" },
           { prop: 'activeKey', desc: '当前激活 key（受控）', type: 'string' },
           { prop: 'onChange', desc: '切换回调', type: '(key: string) => void' },
           { prop: 'tabBarExtraContent', desc: '右侧额外内容（主操作按钮）', type: 'ReactNode' },
           { prop: 'isInner', desc: '底部线延展至容器全宽', type: 'boolean', defaultVal: 'false' },
-          { prop: 'size', desc: '尺寸（透传 antd Tabs）', type: '\'small\' | \'middle\' | \'large\'', defaultVal: '\'middle\'' }
-        ]
-      }
-    ]
+          {
+            prop: 'size',
+            desc: '尺寸（透传 antd Tabs）',
+            type: "'small' | 'middle' | 'large'",
+            defaultVal: "'middle'",
+          },
+        ],
+      },
+    ],
   },
   '/components/table': {
     title: 'Table 表格',
-    description: '基于 antd Table 的列表包装：默认横向滚动、受控分页、空态 Empty。支持单/多/三级表头、列配置与行隐藏（TablePrefs v2：columns + hiddenRowKeys）。',
+    description:
+      '基于 antd Table 的列表包装：默认横向滚动、受控分页、空态 Empty。支持单/多/三级表头、列配置与行隐藏；Fetch 模式（fetchData / fetchUrl）由 Table 接管 pageData 分页。',
     examples: [
       {
         title: '单表头',
         description: '单行表头 + 受控分页 + 默认滚动与空态',
         component: React.lazy(() => import('@/components/Table/examples/TableBasicDemo')),
         sourcePath: () => import('@/components/Table/examples/TableBasicDemo/index.tsx?raw'),
-        block: true
+        block: true,
+      },
+      {
+        title: 'Fetch 拉数',
+        description:
+          'fetchData（Marsun pageData）+ fetchUrl（Form 同构）；showcase 假数据非业务 mock；筛变回第 1 页、ref.reload',
+        component: React.lazy(() => import('@/components/Table/examples/TableFetchDemo')),
+        sourcePath: () => import('@/components/Table/examples/TableFetchDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '多表头',
         description: 'columns 带 children（指标 → 成品/半制品/原料），无列配置',
         component: React.lazy(() => import('@/components/Table/examples/TableMultiHeaderDemo')),
         sourcePath: () => import('@/components/Table/examples/TableMultiHeaderDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '列配置（编辑表格）',
         description: '基于多表头 + tableName；齿轮面板支持多级折叠；表头眼睛可直接隐藏列',
         component: React.lazy(() => import('@/components/Table/examples/TableColumnConfigDemo')),
         sourcePath: () => import('@/components/Table/examples/TableColumnConfigDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '三级表头列配置',
         description: '成纱在线 → 指标 → SAP；TablePrefs v2；表头眼睛 + 面板折叠',
-        component: React.lazy(() => import('@/components/Table/examples/TableThreeLevelHeaderDemo')),
-        sourcePath: () => import('@/components/Table/examples/TableThreeLevelHeaderDemo/index.tsx?raw'),
-        block: true
+        component: React.lazy(
+          () => import('@/components/Table/examples/TableThreeLevelHeaderDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Table/examples/TableThreeLevelHeaderDemo/index.tsx?raw'),
+        block: true,
       },
       {
         title: '行隐藏',
-        description: 'rowConfigEnabled + lockedRowKeys；勾选旁眼睛隐藏单行（会话 state，不进 user_key）',
+        description:
+          'rowConfigEnabled + lockedRowKeys；勾选旁眼睛隐藏单行（会话 state，不进 user_key）',
         component: React.lazy(() => import('@/components/Table/examples/TableRowHideDemo')),
         sourcePath: () => import('@/components/Table/examples/TableRowHideDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'TableProps',
         rows: [
-          { prop: 'pagination', desc: 'false 关闭；对象时合并默认 showSizeChanger、showTotal「共 n 项」', type: 'false | TablePaginationConfig', defaultVal: '合并默认' },
-          { prop: 'scroll', desc: '滚动配置；未传时默认 { x: \'max-content\' }', type: 'TableProps[\'scroll\']', defaultVal: '{ x: \'max-content\' }' },
-          { prop: 'locale', desc: '覆盖空态等；默认 emptyText 为 Empty simple「暂无数据」', type: 'TableProps[\'locale\']' },
+          {
+            prop: 'pagination',
+            desc: 'false 关闭；对象时合并默认 showSizeChanger、showTotal「共 n 项」；Fetch 模式下 current/pageSize/total/onChange 由 Table 接管',
+            type: 'false | TablePaginationConfig',
+            defaultVal: '合并默认',
+          },
+          {
+            prop: 'scroll',
+            desc: "滚动配置；未传时默认 { x: 'max-content' }",
+            type: "TableProps['scroll']",
+            defaultVal: "{ x: 'max-content' }",
+          },
+          {
+            prop: 'locale',
+            desc: '覆盖空态等；Fetch 失败且未传 emptyText 时用 error.message',
+            type: "TableProps['locale']",
+          },
+          {
+            prop: 'dataSource',
+            desc: 'props 模式数据；传了（含 []）则忽略 fetchData/fetchUrl',
+            type: 'RecordType[]',
+          },
+          {
+            prop: 'fetchData',
+            desc: 'Fetch 主路径：(query)=>Promise；优先于 fetchUrl；需 dataSource===undefined',
+            type: '(q: TableFetchQuery) => Promise<unknown>',
+          },
+          {
+            prop: 'fetchUrl',
+            desc: 'Form FetchSelect 同构辅路径；配合 fetchOptions/transformData；需 dataSource===undefined',
+            type: 'string',
+          },
+          {
+            prop: 'fetchOptions',
+            desc: 'RequestInit 或按 query 生成（可写入 currentPage/pageSize）',
+            type: 'RequestInit | ((q: TableFetchQuery) => RequestInit)',
+          },
+          {
+            prop: 'transformData',
+            desc: 'raw → { pageData, total, extra? }；默认解析 Marsun pageData',
+            type: '(raw: unknown) => TableFetchMapped<T>',
+          },
+          { prop: 'fetchParams', desc: '筛选项；稳定序列化变则回第 1 页再请求', type: 'unknown' },
+          {
+            prop: 'enabled',
+            desc: 'Tab 懒请求；false 不拉数',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
+          {
+            prop: 'defaultPageSize',
+            desc: 'Fetch 模式初始 pageSize',
+            type: 'number',
+            defaultVal: '20',
+          },
+          {
+            prop: 'onFetched',
+            desc: '每次拉数结束（成功或失败）；可取 extra/mapping',
+            type: '(r: TableFetchMapped & { error }) => void',
+          },
+          {
+            prop: 'ref',
+            desc: 'TableFetchHandle：{ reload() }，写后刷新',
+            type: 'Ref<TableFetchHandle>',
+          },
           { prop: 'tableName', desc: '稳定偏好 key；业务列表必填', type: 'string' },
-          { prop: 'columnConfigEnabled', desc: '是否启用列配置齿轮；默认 !!tableName', type: 'boolean', defaultVal: '!!tableName' },
-          { prop: 'fetchTablePrefs', desc: '拉取 TablePrefs v2（columns + hiddenRowKeys）；优先于 fetchColumnConfig', type: '(tableName: string) => Promise<TablePrefs | null | undefined>' },
-          { prop: 'saveTablePrefs', desc: '持久化 TablePrefs v2', type: '(tableName: string, prefs: TablePrefs) => Promise<void>' },
-          { prop: 'fetchColumnConfig', desc: '仅列配置（兼容旧调用）；无 fetchTablePrefs 时使用', type: '(tableName: string) => Promise<TableColumnConfigItem[] | null | undefined>' },
-          { prop: 'saveColumnConfig', desc: '仅持久化 columns（兼容）；有 saveTablePrefs 时优先 prefs', type: '(tableName: string, items: TableColumnConfigItem[]) => Promise<void>' },
-          { prop: 'rowConfigEnabled', desc: '启用行隐藏（过滤 dataSource + 默认工具条）', type: 'boolean', defaultVal: 'false' },
+          {
+            prop: 'columnConfigEnabled',
+            desc: '是否启用列配置齿轮；默认 !!tableName',
+            type: 'boolean',
+            defaultVal: '!!tableName',
+          },
+          {
+            prop: 'fetchTablePrefs',
+            desc: '拉取 TablePrefs v2（columns + hiddenRowKeys）；优先于 fetchColumnConfig',
+            type: '(tableName: string) => Promise<TablePrefs | null | undefined>',
+          },
+          {
+            prop: 'saveTablePrefs',
+            desc: '持久化 TablePrefs v2',
+            type: '(tableName: string, prefs: TablePrefs) => Promise<void>',
+          },
+          {
+            prop: 'fetchColumnConfig',
+            desc: '仅列配置（兼容旧调用）；无 fetchTablePrefs 时使用',
+            type: '(tableName: string) => Promise<TableColumnConfigItem[] | null | undefined>',
+          },
+          {
+            prop: 'saveColumnConfig',
+            desc: '仅持久化 columns（兼容）；有 saveTablePrefs 时优先 prefs',
+            type: '(tableName: string, items: TableColumnConfigItem[]) => Promise<void>',
+          },
+          {
+            prop: 'rowConfigEnabled',
+            desc: '启用行隐藏（过滤 dataSource + 默认工具条）',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
           { prop: 'lockedRowKeys', desc: '不可隐藏的行 key（如主对标）', type: 'Key[]' },
           { prop: 'rowHideSelectedKeys', desc: '当前勾选行；用于「隐藏选中行」', type: 'Key[]' },
           { prop: 'hiddenRowKeys', desc: '受控隐藏行；不传则用 prefs', type: 'Key[]' },
-          { prop: 'onHiddenRowKeysChange', desc: '隐藏行变更回调', type: '(keys: string[]) => void' },
-          { prop: '…rest', desc: '其余透传 antd TableProps', type: 'TableProps' }
-        ]
-      }
-    ]
+          {
+            prop: 'onHiddenRowKeysChange',
+            desc: '隐藏行变更回调',
+            type: '(keys: string[]) => void',
+          },
+          { prop: '…rest', desc: '其余透传 antd TableProps', type: 'TableProps' },
+        ],
+      },
+    ],
   },
   '/components/tag': {
     title: 'Tag 语义化标签',
@@ -2222,105 +3215,185 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: '所有预定义语义颜色的展示',
         component: React.lazy(() => import('@/components/Tag/examples/SemanticTagBasicDemo')),
         sourcePath: () => import('@/components/Tag/examples/SemanticTagBasicDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '选中态',
         description: 'selected 反白：实色背景 + 白字 + 加粗；点击切换，24px 高度不变',
         component: React.lazy(() => import('@/components/Tag/examples/SemanticTagSelectedDemo')),
         sourcePath: () => import('@/components/Tag/examples/SemanticTagSelectedDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '审核状态场景',
         description: '在列表页 Table、简历详情页等场景下的状态标签使用',
         component: React.lazy(() => import('@/components/Tag/examples/SemanticTagReviewDemo')),
         sourcePath: () => import('@/components/Tag/examples/SemanticTagReviewDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: '多标签组合场景',
         description: '多个标签并列展示，如已推荐简历+已退票等多状态并存',
         component: React.lazy(() => import('@/components/Tag/examples/SemanticTagMultiDemo')),
         sourcePath: () => import('@/components/Tag/examples/SemanticTagMultiDemo/index.tsx?raw'),
-        block: true
+        block: true,
       },
       {
         title: 'Tags 截断与长文案',
         description: 'showLength=2；超出 +N；长文案 ellipsis；hover 展示全部 Tag',
         component: React.lazy(() => import('@/components/Tag/examples/TagsShowLengthDemo')),
         sourcePath: () => import('@/components/Tag/examples/TagsShowLengthDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'TagsProps',
         rows: [
           { prop: 'tags', desc: '标签文案列表', type: 'string[]' },
-          { prop: 'showLength', desc: '最多展示数量；超出显示 +N。有长文案时即使未超限也 ellipsis + Tooltip', type: 'number' },
-          { prop: 'empty', desc: '无标签占位；传 null 不渲染', type: 'React.ReactNode', defaultVal: '\'-\'' },
-          { prop: 'color', desc: '语义色，默认 INFO', type: 'SemanticColor | string', defaultVal: 'SEMANTIC_COLORS.INFO' },
-          { prop: 'className', desc: '列表容器 class', type: 'string' }
-        ]
+          {
+            prop: 'showLength',
+            desc: '最多展示数量；超出显示 +N。有长文案时即使未超限也 ellipsis + Tooltip',
+            type: 'number',
+          },
+          {
+            prop: 'empty',
+            desc: '无标签占位；传 null 不渲染',
+            type: 'React.ReactNode',
+            defaultVal: "'-'",
+          },
+          {
+            prop: 'color',
+            desc: '语义色，默认 INFO',
+            type: 'SemanticColor | string',
+            defaultVal: 'SEMANTIC_COLORS.INFO',
+          },
+          { prop: 'className', desc: '列表容器 class', type: 'string' },
+        ],
       },
       {
         componentName: 'SemanticTagProps',
         rows: [
           { prop: 'children', desc: '标签文本', type: 'React.ReactNode', required: true },
-          { prop: 'color', desc: '语义化颜色（推荐使用 SEMANTIC_COLORS）', type: 'SemanticColor | string', defaultVal: '\'default\'' },
-          { prop: 'selected', desc: '选中态反白：背景取语义实色、文字反白、加粗；不改 24px 高度', type: 'boolean', defaultVal: 'false' },
-          { prop: '...Tag props', desc: '继承 antd Tag 其余属性（如 onClick 可作可点 Tag）', type: 'TagProps' }
-        ]
+          {
+            prop: 'color',
+            desc: '语义化颜色（推荐使用 SEMANTIC_COLORS）',
+            type: 'SemanticColor | string',
+            defaultVal: "'default'",
+          },
+          {
+            prop: 'selected',
+            desc: '选中态反白：背景取语义实色、文字反白、加粗；不改 24px 高度',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: '...Tag props',
+            desc: '继承 antd Tag 其余属性（如 onClick 可作可点 Tag）',
+            type: 'TagProps',
+          },
+        ],
       },
       {
         componentName: 'SEMANTIC_COLORS',
         rows: [
-          { prop: 'DEFAULT', desc: '默认/中性', type: '\'default\'' },
-          { prop: 'INFO', desc: '信息/提示', type: '\'blue\'' },
-          { prop: 'PROCESSING', desc: '进行中/处理中', type: '\'processing\'' },
-          { prop: 'SUCCESS', desc: '成功/已完成', type: '\'green\'' },
-          { prop: 'WARNING', desc: '警告/待处理', type: '\'orange\'' },
-          { prop: 'DANGER', desc: '危险/紧急', type: '\'red\'' },
-          { prop: 'SPECIAL', desc: '特殊/待复查', type: '\'purple\'' },
-          { prop: 'VOLCANO', desc: '火山/领导审批', type: '\'volcano\'' },
-          { prop: 'CYAN', desc: '青色/辅助', type: '\'cyan\'' },
-          { prop: 'GOLD', desc: '金色/高优先级', type: '\'gold\'' },
-          { prop: 'LIME', desc: '石灰/低优先级', type: '\'lime\'' }
-        ]
-      }
-    ]
+          { prop: 'DEFAULT', desc: '默认/中性', type: "'default'" },
+          { prop: 'INFO', desc: '信息/提示', type: "'blue'" },
+          { prop: 'PROCESSING', desc: '进行中/处理中', type: "'processing'" },
+          { prop: 'SUCCESS', desc: '成功/已完成', type: "'green'" },
+          { prop: 'WARNING', desc: '警告/待处理', type: "'orange'" },
+          { prop: 'DANGER', desc: '危险/紧急', type: "'red'" },
+          { prop: 'SPECIAL', desc: '特殊/待复查', type: "'purple'" },
+          { prop: 'VOLCANO', desc: '火山/领导审批', type: "'volcano'" },
+          { prop: 'CYAN', desc: '青色/辅助', type: "'cyan'" },
+          { prop: 'GOLD', desc: '金色/高优先级', type: "'gold'" },
+          { prop: 'LIME', desc: '石灰/低优先级', type: "'lime'" },
+        ],
+      },
+    ],
   },
   '/components/tooltipinfo': {
     title: 'TooltipInfo 详情提示',
-    description: '用于在 Tooltip 中展示结构化详情信息。descriptions 形态用 CommonDescriptions 渲染；note 形态用标题+描述分层（粗体标题 + 次级色描述）。',
+    description:
+      '用于在 Tooltip 中展示结构化详情信息。descriptions 形态用 CommonDescriptions 渲染；note 形态用标题+描述分层（粗体标题 + 次级色描述）。',
     examples: [
       {
         title: '基础用法',
         description: 'hover 触发元素展示 DescriptionItem 详情；含 note 形态与 bordered 表格形态',
         component: React.lazy(() => import('@/components/TooltipInfo/examples/TooltipInfoDemo')),
         sourcePath: () => import('@/components/TooltipInfo/examples/TooltipInfoDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'TooltipInfoProps',
         rows: [
-          { prop: 'type', desc: '展示形态：descriptions=结构化详情（默认）；note=标题+描述分层', type: '\'descriptions\' | \'note\'', defaultVal: '\'descriptions\'' },
-          { prop: 'content', desc: 'type=\'descriptions\' 的详情项，内部用 CommonDescriptions 渲染', type: 'DescriptionItem[]' },
-          { prop: 'note', desc: 'type=\'note\' 的标题与描述（title 粗体、description 次级色）', type: '{ title: ReactNode; description: ReactNode }' },
-          { prop: 'children', desc: '触发 Tooltip 的元素', type: 'React.ReactNode', required: true },
-          { prop: 'column', desc: 'CommonDescriptions 列数（仅 descriptions 形态）', type: 'number', defaultVal: '1' },
-          { prop: 'bordered', desc: 'descriptions 是否灰底表格；默认 false（气泡内 dl）；true 对齐页面 CommonDescriptions', type: 'boolean', defaultVal: 'false' },
-          { prop: 'hidden', desc: '为 true 时不展示 Tooltip；descriptions 形态下 content 为空也不展示', type: 'boolean', defaultVal: 'false' },
-          { prop: 'minWidth', desc: '气泡最小宽度，descriptions 默认 220 / note 默认 240', type: 'number' },
-          { prop: 'maxWidth', desc: '气泡最大宽度，descriptions 默认 320 / note 默认 380', type: 'number' },
-          { prop: 'placement', desc: 'Tooltip 位置', type: 'TooltipProps[\'placement\']', defaultVal: '\'top\'' },
-          { prop: 'mouseEnterDelay', desc: '鼠标移入后延时显示', type: 'number', defaultVal: '0.3' }
-        ]
-      }
-    ]
+          {
+            prop: 'type',
+            desc: '展示形态：descriptions=结构化详情（默认）；note=标题+描述分层',
+            type: "'descriptions' | 'note'",
+            defaultVal: "'descriptions'",
+          },
+          {
+            prop: 'content',
+            desc: "type='descriptions' 的详情项，内部用 CommonDescriptions 渲染",
+            type: 'DescriptionItem[]',
+          },
+          {
+            prop: 'note',
+            desc: "type='note' 的标题与描述（title 粗体、description 次级色）",
+            type: '{ title: ReactNode; description: ReactNode }',
+          },
+          {
+            prop: 'children',
+            desc: '触发 Tooltip 的元素',
+            type: 'React.ReactNode',
+            required: true,
+          },
+          {
+            prop: 'column',
+            desc: 'CommonDescriptions 列数（仅 descriptions 形态）',
+            type: 'number',
+            defaultVal: '1',
+          },
+          {
+            prop: 'bordered',
+            desc: 'descriptions 是否灰底表格；默认 false（气泡内 dl）；true 对齐页面 CommonDescriptions',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'hidden',
+            desc: '为 true 时不展示 Tooltip；descriptions 形态下 content 为空也不展示',
+            type: 'boolean',
+            defaultVal: 'false',
+          },
+          {
+            prop: 'minWidth',
+            desc: '气泡最小宽度，descriptions 默认 220 / note 默认 240',
+            type: 'number',
+          },
+          {
+            prop: 'maxWidth',
+            desc: '气泡最大宽度，descriptions 默认 320 / note 默认 380',
+            type: 'number',
+          },
+          {
+            prop: 'placement',
+            desc: 'Tooltip 位置',
+            type: "TooltipProps['placement']",
+            defaultVal: "'top'",
+          },
+          {
+            prop: 'mouseEnterDelay',
+            desc: '鼠标移入后延时显示',
+            type: 'number',
+            defaultVal: '0.3',
+          },
+        ],
+      },
+    ],
   },
   '/components/tour': {
     title: 'Tour 引导教程',
@@ -2331,8 +3404,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         description: '通过 steps + target 锚点定位，支持 storageKey 记录完成状态',
         component: React.lazy(() => import('@/components/Tour/examples/TourDemo')),
         sourcePath: () => import('@/components/Tour/examples/TourDemo/index.tsx?raw'),
-        block: true
-      }
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -2340,8 +3413,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         rows: [
           { prop: 'steps', desc: '引导步骤列表', type: 'AppTourStep[]', required: true },
           { prop: 'storageKey', desc: 'localStorage 键名，记录是否已完成', type: 'string' },
-          { prop: 'autoOpen', desc: '首次是否自动打开', type: 'boolean', defaultVal: 'true' }
-        ]
+          { prop: 'autoOpen', desc: '首次是否自动打开', type: 'boolean', defaultVal: 'true' },
+        ],
       },
       {
         componentName: 'AppTourStep',
@@ -2349,48 +3422,63 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'title', desc: '步骤标题', type: 'string', required: true },
           { prop: 'description', desc: '步骤说明', type: 'React.ReactNode', required: true },
           { prop: 'target', desc: '锚点元素获取函数', type: '() => HTMLElement' },
-          { prop: 'placement', desc: '气泡位置', type: 'TourPlacement' }
-        ]
-      }
-    ]
+          { prop: 'placement', desc: '气泡位置', type: 'TourPlacement' },
+        ],
+      },
+    ],
   },
   '/components/upload': {
     title: 'Upload 文件上传',
-    description: '通用文件上传组件，基于 antd Upload 封装，支持类型校验、大小限制、批量上传、OSS 上传等。',
+    description:
+      '通用文件上传组件，基于 antd Upload 封装，支持类型校验、大小限制、批量上传、OSS 上传等。',
     examples: [
       {
         title: '面板模式',
         description: 'variant=panel 拖拽上传面板',
         component: React.lazy(() => import('@/components/Upload/examples/UploadPanelDemo')),
-        sourcePath: () => import('@/components/Upload/examples/UploadPanelDemo/index.tsx?raw')
+        sourcePath: () => import('@/components/Upload/examples/UploadPanelDemo/index.tsx?raw'),
       },
       {
         title: '按钮模式',
         description: 'variant=button 按钮触发上传',
         component: React.lazy(() => import('@/components/Upload/examples/UploadButtonDemo')),
-        sourcePath: () => import('@/components/Upload/examples/UploadButtonDemo/index.tsx?raw')
-      }
+        sourcePath: () => import('@/components/Upload/examples/UploadButtonDemo/index.tsx?raw'),
+      },
     ],
     apiDoc: [
       {
         componentName: 'CommonUploadProps',
         rows: [
-          { prop: 'value / onChange', desc: 'Form 受控值与回调', type: 'UploadFile[] / (fileList)=>void' },
+          {
+            prop: 'value / onChange',
+            desc: 'Form 受控值与回调',
+            type: 'UploadFile[] / (fileList)=>void',
+          },
           { prop: 'fileSize', desc: '单文件大小限制(字节)', type: 'number', defaultVal: '500MB' },
           { prop: 'maxLength', desc: '最大上传数量', type: 'number' },
           { prop: 'accept', desc: '允许的文件类型', type: 'string' },
           { prop: 'multiple', desc: '是否允许多选', type: 'boolean' },
-          { prop: 'size', desc: '尺寸', type: '\'small\' | \'middle\' | \'large\'', defaultVal: '\'middle\'' },
-          { prop: 'variant', desc: 'UI 变体：panel 面板 / button 按钮', type: '\'panel\' | \'button\'', defaultVal: '\'button\'' },
+          {
+            prop: 'size',
+            desc: '尺寸',
+            type: "'small' | 'middle' | 'large'",
+            defaultVal: "'middle'",
+          },
+          {
+            prop: 'variant',
+            desc: 'UI 变体：panel 面板 / button 按钮',
+            type: "'panel' | 'button'",
+            defaultVal: "'button'",
+          },
           { prop: 'showFileList', desc: '是否展示文件列表', type: 'boolean', defaultVal: 'true' },
           { prop: 'renderTips', desc: '自定义提示区渲染', type: '() => ReactNode' },
           { prop: 'onSave', desc: '保存回调', type: '(fileList)=>void' },
           { prop: 'ossUpload', desc: '是否走 OSS 直传', type: 'boolean' },
           { prop: 'onUpload', desc: '自定义上传函数', type: '(options) => Promise<void>' },
-          { prop: 'concurrentCount', desc: '并发数', type: 'number' }
-        ]
-      }
-    ]
+          { prop: 'concurrentCount', desc: '并发数', type: 'number' },
+        ],
+      },
+    ],
   },
   '/components/virtualscrollbar': {
     title: 'VirtualScrollbar 虚拟滚动条',
@@ -2399,24 +3487,41 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: '基础用法',
         description: '纵向与双向滚动示例，悬停或滚动时显示自定义 thumb',
-        component: React.lazy(() => import('@/components/VirtualScrollbar/examples/VirtualScrollbarBasicDemo')),
-        sourcePath: () => import('@/components/VirtualScrollbar/examples/VirtualScrollbarBasicDemo/index.tsx?raw'),
-        block: true
-      }
+        component: React.lazy(
+          () => import('@/components/VirtualScrollbar/examples/VirtualScrollbarBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/VirtualScrollbar/examples/VirtualScrollbarBasicDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'VirtualScrollbarProps',
         rows: [
           { prop: 'children', desc: '滚动内容', type: 'React.ReactNode', required: true },
-          { prop: 'direction', desc: '滚动方向', type: '\'vertical\' | \'horizontal\' | \'both\'', defaultVal: '\'vertical\'' },
-          { prop: 'autoHide', desc: '滚动/悬停后自动隐藏 thumb', type: 'boolean', defaultVal: 'true' },
+          {
+            prop: 'direction',
+            desc: '滚动方向',
+            type: "'vertical' | 'horizontal' | 'both'",
+            defaultVal: "'vertical'",
+          },
+          {
+            prop: 'autoHide',
+            desc: '滚动/悬停后自动隐藏 thumb',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
           { prop: 'className', desc: 'viewport 容器 className', type: 'string' },
           { prop: 'wrapperClassName', desc: '外层容器 className', type: 'string' },
           { prop: 'style', desc: '外层容器 style', type: 'React.CSSProperties' },
-          { prop: 'onScroll', desc: 'viewport 滚动回调', type: 'React.UIEventHandler<HTMLDivElement>' }
-        ]
-      }
-    ]
-  }
+          {
+            prop: 'onScroll',
+            desc: 'viewport 滚动回调',
+            type: 'React.UIEventHandler<HTMLDivElement>',
+          },
+        ],
+      },
+    ],
+  },
 };
