@@ -6,8 +6,8 @@ import classNames from 'classnames';
 export interface StatCardProps {
   /** 标题 */
   title: string;
-  /** 数值 */
-  value: number;
+  /** 数值（未接指标可用「—」等字符串，禁假 0） */
+  value: number | string;
   /** 前缀图标 */
   prefix?: React.ReactNode;
   /** 后缀（如 %、单位） */
