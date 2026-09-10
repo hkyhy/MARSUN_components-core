@@ -223,6 +223,9 @@ export * from './components/OrgTree';
 
 export * from './components/StateBar';
 export * from './components/SegmentedRadio';
+export * from './components/Navigation';
+export { default as DispositionBar } from './components/DispositionBar';
+export type { DispositionBarProps } from './components/DispositionBar';
 export * from './components/Stat';
 export * from './components/Table';
 export * from './components/Tag';

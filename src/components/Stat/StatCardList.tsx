@@ -1,8 +1,10 @@
 import { Col, Row } from 'antd';
 import type { ColProps } from 'antd/es/grid';
+import classNames from 'classnames';
 import React from 'react';
 import type { StatCardProps } from './StatCard';
 import StatCard from './StatCard';
+import styles from './StatCardList.module.scss';
 
 export interface StatItem extends Omit<StatCardProps, 'inline' | 'fontSize'> {
   /** 卡片占列配置，不传则根据总 items 数自动计算 */
@@ -44,7 +46,10 @@ const StatCardList: React.FC<StatCardListProps> = ({
   const defaultCol = getDefaultCol(visibleItems.length);
 
   return (
-    <Row gutter={gutter} className={className}>
+    <Row
+      gutter={gutter}
+      className={classNames('stat-card-list', styles['stat-card-list'], className)}
+    >
       {visibleItems.map((item, idx) => {
         const { colProps, hidden, ...cardProps } = item;
         return (

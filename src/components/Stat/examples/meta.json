@@ -14,6 +14,13 @@
       "description": "StatCardList 网格布局，自动计算列数",
       "component": "@/components/Stat/examples/StatCardListDemo",
       "sourcePath": "@/components/Stat/examples/StatCardListDemo/index.tsx"
+    },
+    {
+      "title": "马卡龙 tone",
+      "description": "详情 KPI 用 tone；3→lg:8、4→lg:6 均分，勿拆 flex 旁路",
+      "component": "@/components/Stat/examples/MacaronToneDemo",
+      "sourcePath": "@/components/Stat/examples/MacaronToneDemo/index.tsx",
+      "block": true
     }
   ],
   "apiDoc": [
@@ -41,6 +48,16 @@
           "prop": "color",
           "desc": "数值颜色",
           "type": "string"
+        },
+        {
+          "prop": "suffix",
+          "desc": "后缀；string/number 自动小号单位（12px）；自定义 ReactNode 原样渲染",
+          "type": "React.ReactNode"
+        },
+        {
+          "prop": "tone",
+          "desc": "马卡龙底色（rose/lilac/mint/blue/peach/butter）；与 style 并存时显式 style 优先",
+          "type": "StatMacaronTone"
         },
         {
           "prop": "onClick",

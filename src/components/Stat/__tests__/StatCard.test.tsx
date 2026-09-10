@@ -34,4 +34,31 @@ describe('StatCard', () => {
     expect(container.textContent).toMatch(/55\.9/);
     expect(screen.getByText('%')).toBeInTheDocument();
   });
+
+  it('wraps string suffix in smaller unit span', () => {
+    const { container } = render(<StatCard title="寿命" value={72.5} inline suffix="%" />);
+    const unit = container.querySelector('.stat-card-suffix-unit');
+    expect(unit).toBeTruthy();
+    expect(unit?.textContent).toBe('%');
+  });
+
+  it('uses stacked label/value root layout', () => {
+    const { container } = render(<StatCard title="节电参考（年化·仅供参考）" value={0} inline />);
+    expect(container.querySelector('.stat-card-root')).toBeTruthy();
+  });
+
+  it('applies macaron tone background in inline mode', () => {
+    const { container } = render(<StatCard title="寿命" value={12} inline tone="rose" />);
+    const el = container.querySelector('[data-tone="rose"]') as HTMLElement;
+    expect(el).toBeTruthy();
+    expect(el.style.background).toBe('#FFEDEF');
+  });
+
+  it('explicit style overrides tone background', () => {
+    const { container } = render(
+      <StatCard title="寿命" value={12} inline tone="rose" style={{ background: '#000000' }} />,
+    );
+    const el = container.querySelector('[data-tone="rose"]') as HTMLElement;
+    expect(el.style.background).toBe('#000000');
+  });
 });

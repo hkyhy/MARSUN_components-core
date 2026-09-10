@@ -1,0 +1,52 @@
+{
+  "title": "DrillNav 下钻导航",
+  "description": "返回钮（可选）+ 步骤胶囊：当前蓝、已完成绿可点回、未到达 disabled。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "有/无返回钮；当前 / done / disabled",
+      "component": "@/components/Navigation/DrillNav/examples/BasicDemo",
+      "sourcePath": "@/components/Navigation/DrillNav/examples/BasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "DrillNavProps",
+      "rows": [
+        {
+          "prop": "steps",
+          "desc": "步骤：id + label；已走过可传 onClick 点回",
+          "type": "DrillStep[]",
+          "required": true
+        },
+        {
+          "prop": "currentId",
+          "desc": "当前步骤 id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "title",
+          "desc": "主标题（上下文）",
+          "type": "string"
+        },
+        {
+          "prop": "subtitle",
+          "desc": "副文案",
+          "type": "string"
+        },
+        {
+          "prop": "backLabel",
+          "desc": "与 onBack 成对才渲染返回钮",
+          "type": "string"
+        },
+        {
+          "prop": "onBack",
+          "desc": "返回回调",
+          "type": "() => void"
+        }
+      ]
+    }
+  ]
+}

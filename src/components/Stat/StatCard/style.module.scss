@@ -1,15 +1,54 @@
 @use '@/styles/mixins' as *;
 
-.stat-card-clickable {
-  cursor: pointer;
+/**
+ * label / value 固定上下结构（非自流）：
+ * 同行多卡等高时，长 title 换行也不把 value「顶」成乱流。
+ */
+.stat-card-root {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  :global(.ant-statistic) {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  :global(.ant-statistic-header) {
+    margin-bottom: 0;
+  }
+
+  :global(.ant-statistic-title) {
+    line-height: 1.35;
+    word-break: break-word;
+  }
 
   :global(.ant-statistic-content) {
     display: flex !important;
-    align-items: center;
+    align-items: baseline;
 
     :global(.ant-statistic-content-prefix) {
       display: flex !important;
       align-items: center;
     }
   }
+}
+
+.stat-card-clickable {
+  cursor: pointer;
+}
+
+/** 字符串 suffix（如 %、万kWh）默认小于主数字 */
+.stat-card-suffix-unit {
+  font-size: 12px;
+  margin-left: 2px;
+  font-weight: 400;
+  opacity: 0.85;
+  line-height: 1;
 }

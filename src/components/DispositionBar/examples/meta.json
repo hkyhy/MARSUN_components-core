@@ -1,0 +1,47 @@
+{
+  "title": "DispositionBar 处置条",
+  "description": "布局壳：左状态徽章 + 右操作区（业务钮由调用方注入；不绑 API/EP）。",
+  "examples": [
+    {
+      "title": "基础用法",
+      "description": "有 actions / statusLoading 藏钮 / 仅状态",
+      "component": "@/components/DispositionBar/examples/BasicDemo",
+      "sourcePath": "@/components/DispositionBar/examples/BasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "DispositionBarProps",
+      "rows": [
+        {
+          "prop": "label",
+          "desc": "左侧文案",
+          "type": "string",
+          "defaultVal": "'处置状态'"
+        },
+        {
+          "prop": "statusBadge",
+          "desc": "状态徽章（string 或 ReactNode）",
+          "type": "ReactNode",
+          "required": true
+        },
+        {
+          "prop": "actions",
+          "desc": "右侧操作区",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "statusLoading",
+          "desc": "true 时不渲染 actions",
+          "type": "boolean"
+        },
+        {
+          "prop": "className",
+          "desc": "根节点额外 class（如业务侧 margin）",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
