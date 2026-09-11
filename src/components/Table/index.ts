@@ -14,7 +14,15 @@ export type {
 export {
   columnsToConfig,
   applyColumnConfig,
+  applyLeafWidthOverrides,
+  clearColumnWidthAtPath,
+  clampColumnWidth,
+  columnsLeafPathSignature,
   COLUMN_CONFIG_COL_KEY,
+  COLUMN_RESIZE_MAX_WIDTH,
+  COLUMN_RESIZE_MIN_WIDTH,
+  configHasLeafWidths,
+  copyColumnWidths,
   FLEX_SPACER_COL_KEY,
   isInternalColumnKey,
   parseTablePrefs,
@@ -24,4 +32,5 @@ export {
   normalizeHiddenRowKeys,
   emptyTablePrefs,
   hideColumnAtPath,
+  setColumnWidthAtPath,
 } from './Table';

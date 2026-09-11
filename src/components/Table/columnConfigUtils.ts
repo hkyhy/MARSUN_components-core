@@ -11,6 +11,21 @@ export const COLUMN_CONFIG_COL_KEY = '__marsun_column_config';
 /** 弹性占位列：吃掉表宽多余空间，避免固定列被撑开；不进面板 / 持久化 */
 export const FLEX_SPACER_COL_KEY = '__marsun_flex_spacer';
 
+/** 列拖宽默认最小 / 最大（px） */
+export const COLUMN_RESIZE_MIN_WIDTH = 48;
+export const COLUMN_RESIZE_MAX_WIDTH = 480;
+
+export function clampColumnWidth(
+  w: number,
+  min: number = COLUMN_RESIZE_MIN_WIDTH,
+  max: number = COLUMN_RESIZE_MAX_WIDTH,
+): number {
+  if (!Number.isFinite(w)) return min;
+  const lo = Number.isFinite(min) ? min : COLUMN_RESIZE_MIN_WIDTH;
+  const hi = Number.isFinite(max) ? max : COLUMN_RESIZE_MAX_WIDTH;
+  return Math.min(hi, Math.max(lo, Math.round(w)));
+}
+
 function colKey(col: ColumnTypeAny, index: number): string {
   if (col.key != null && String(col.key) !== '') return String(col.key);
   if (col.dataIndex != null) {
@@ -113,13 +128,22 @@ function findChildCol(parent: ColumnTypeAny, childId: string): ColumnTypeAny | u
   });
 }
 
-/** 按配置重排列并过滤 hidden；子列相对父列解析 */
+export type ApplyColumnConfigOptions = {
+  minWidth?: number;
+  maxWidth?: number;
+};
+
+/** 按配置重排列并过滤 hidden；子列相对父列解析；叶子 width 写入并 clamp */
 export function applyColumnConfig<RecordType extends object>(
   columns: ColumnsType<RecordType> | undefined,
   config: TableColumnConfigItem[] | null | undefined,
+  options?: ApplyColumnConfigOptions,
 ): ColumnsType<RecordType> {
   if (!columns?.length) return columns || [];
   if (!config?.length) return columns;
+
+  const minW = options?.minWidth ?? COLUMN_RESIZE_MIN_WIDTH;
+  const maxW = options?.maxWidth ?? COLUMN_RESIZE_MAX_WIDTH;
 
   const topById = new Map<string, ColumnTypeAny>();
   (columns as ColumnTypeAny[]).forEach((col, i) => {
@@ -154,8 +178,8 @@ export function applyColumnConfig<RecordType extends object>(
         out.push({ ...src, children: childCols as ColumnsType<Record<string, unknown>> });
       } else {
         const next = { ...src };
-        if (!item.children) {
-          // keep children as-is when config leaf but source has group — strip if short ids only
+        if (typeof item.width === 'number' && Number.isFinite(item.width)) {
+          next.width = clampColumnWidth(item.width, minW, maxW);
         }
         out.push(next);
       }
@@ -174,6 +198,44 @@ export function applyColumnConfig<RecordType extends object>(
   };
 
   return buildLevel(config, columns as ColumnTypeAny[]) as ColumnsType<RecordType>;
+}
+
+/** 仅按 path 合并叶子 width（不改顺序/显隐）；overrides 优先 */
+export function applyLeafWidthOverrides<RecordType extends object>(
+  columns: ColumnsType<RecordType> | undefined,
+  widthByPath: Record<string, number> | null | undefined,
+  options?: ApplyColumnConfigOptions,
+  parentFullKey?: string,
+  path: string[] = [],
+): ColumnsType<RecordType> {
+  if (!columns?.length || !widthByPath || !Object.keys(widthByPath).length) {
+    return columns || [];
+  }
+  const minW = options?.minWidth ?? COLUMN_RESIZE_MIN_WIDTH;
+  const maxW = options?.maxWidth ?? COLUMN_RESIZE_MAX_WIDTH;
+
+  return (columns as ColumnTypeAny[]).map((col, i) => {
+    const full = colKey(col, i);
+    if (isInternalColumnKey(full)) return col as ColumnTypeAny;
+    const configId = parentFullKey ? shortChildId(parentFullKey, full) : full;
+    const nextPath = [...path, configId];
+    if (col.children?.length) {
+      return {
+        ...col,
+        children: applyLeafWidthOverrides(
+          col.children as ColumnsType<RecordType>,
+          widthByPath,
+          options,
+          full,
+          nextPath,
+        ),
+      } as ColumnTypeAny;
+    }
+    const key = nextPath.join('/');
+    const raw = widthByPath[key];
+    if (typeof raw !== 'number' || !Number.isFinite(raw)) return col as ColumnTypeAny;
+    return { ...col, width: clampColumnWidth(raw, minW, maxW) } as ColumnTypeAny;
+  }) as ColumnsType<RecordType>;
 }
 
 /** 找最右可见叶子列路径（用于挂齿轮） */
@@ -259,6 +321,123 @@ export function hideColumnAtPath(
     const allHidden = children?.length ? children.every(isConfigHidden) : it.hidden;
     return { ...it, children, hidden: allHidden || it.hidden };
   });
+}
+
+/** 按 path 写入叶子 width；path 不存在时原样返回 */
+export function setColumnWidthAtPath(
+  items: TableColumnConfigItem[],
+  path: string[],
+  width: number,
+  options?: ApplyColumnConfigOptions,
+): TableColumnConfigItem[] {
+  if (!path.length) return items;
+  const minW = options?.minWidth ?? COLUMN_RESIZE_MIN_WIDTH;
+  const maxW = options?.maxWidth ?? COLUMN_RESIZE_MAX_WIDTH;
+  const clamped = clampColumnWidth(width, minW, maxW);
+  const [head, ...rest] = path;
+  let hit = false;
+  const next = items.map((it) => {
+    if (it.id !== head) return it;
+    hit = true;
+    if (!rest.length) {
+      return { ...it, width: clamped };
+    }
+    if (!it.children?.length) return it;
+    return { ...it, children: setColumnWidthAtPath(it.children, rest, clamped, options) };
+  });
+  return hit ? next : items;
+}
+
+/** 按 path 清除叶子自定义 width（删字段，回到代码默认/弹性） */
+export function clearColumnWidthAtPath(
+  items: TableColumnConfigItem[],
+  path: string[],
+): TableColumnConfigItem[] {
+  if (!path.length) return items;
+  const [head, ...rest] = path;
+  let hit = false;
+  const next = items.map((it) => {
+    if (it.id !== head) return it;
+    hit = true;
+    if (!rest.length) {
+      if (it.width === undefined) return it;
+      const { width: _w, ...restItem } = it;
+      return restItem;
+    }
+    if (!it.children?.length) return it;
+    return { ...it, children: clearColumnWidthAtPath(it.children, rest) };
+  });
+  return hit ? next : items;
+}
+
+/** 面板确认后的 config 不含 width；从旧 prefs 按 path 拷回，避免拖宽被面板保存冲掉。 */
+export function copyColumnWidths(
+  target: TableColumnConfigItem[],
+  source: TableColumnConfigItem[] | null | undefined,
+): TableColumnConfigItem[] {
+  if (!source?.length) return target;
+  const widthByPath = new Map<string, number>();
+  const collect = (items: TableColumnConfigItem[], prefix: string) => {
+    for (const it of items) {
+      const key = prefix ? `${prefix}/${it.id}` : it.id;
+      if (typeof it.width === 'number' && Number.isFinite(it.width)) {
+        widthByPath.set(key, it.width);
+      }
+      if (it.children?.length) collect(it.children, key);
+    }
+  };
+  collect(source, '');
+  if (!widthByPath.size) return target;
+
+  const apply = (items: TableColumnConfigItem[], prefix: string): TableColumnConfigItem[] =>
+    items.map((it) => {
+      const key = prefix ? `${prefix}/${it.id}` : it.id;
+      const children = it.children?.length ? apply(it.children, key) : it.children;
+      const w = widthByPath.get(key);
+      if (w == null) return children !== it.children ? { ...it, children } : it;
+      return { ...it, width: w, children };
+    });
+  return apply(target, '');
+}
+
+/** prefs/config 是否含任意叶子自定义 width（用于挂弹性占位列） */
+export function configHasLeafWidths(items: TableColumnConfigItem[] | null | undefined): boolean {
+  if (!items?.length) return false;
+  for (const it of items) {
+    if (typeof it.width === 'number' && Number.isFinite(it.width)) return true;
+    if (it.children?.length && configHasLeafWidths(it.children)) return true;
+  }
+  return false;
+}
+
+/**
+ * 叶子 path 签名；columns 结构变时用于清空 widthOverrides。
+ * 例：`factory\0name\0TGCV/finished`
+ */
+export function columnsLeafPathSignature(
+  columns: ColumnsType<Record<string, unknown>> | undefined,
+  parentFullKey?: string,
+  path: string[] = [],
+): string {
+  if (!columns?.length) return '';
+  const parts: string[] = [];
+  (columns as ColumnTypeAny[]).forEach((col, i) => {
+    const full = colKey(col, i);
+    if (isInternalColumnKey(full)) return;
+    const configId = parentFullKey ? shortChildId(parentFullKey, full) : full;
+    const nextPath = [...path, configId];
+    if (col.children?.length) {
+      const sub = columnsLeafPathSignature(
+        col.children as ColumnsType<Record<string, unknown>>,
+        full,
+        nextPath,
+      );
+      if (sub) parts.push(sub);
+      return;
+    }
+    parts.push(nextPath.join('/'));
+  });
+  return parts.join('\0');
 }
 
 function hideConfigDeep(item: TableColumnConfigItem): TableColumnConfigItem {

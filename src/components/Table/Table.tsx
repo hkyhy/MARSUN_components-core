@@ -11,12 +11,15 @@ import {
   useMemo,
   useRef,
   useState,
+  type ComponentProps,
+  type ComponentType,
   type CSSProperties,
   type Key,
   type ReactElement,
   type ReactNode,
   type Ref,
 } from 'react';
+import { flushSync } from 'react-dom';
 import { Empty } from '../Empty';
 import { Eye } from '../Icons';
 import gearStyles from './columnConfig.module.scss';
@@ -28,15 +31,25 @@ import type {
 } from './columnConfigTypes';
 import {
   applyColumnConfig,
+  applyLeafWidthOverrides,
+  clearColumnWidthAtPath,
+  clampColumnWidth,
+  columnsLeafPathSignature,
   COLUMN_CONFIG_COL_KEY,
+  COLUMN_RESIZE_MAX_WIDTH,
+  COLUMN_RESIZE_MIN_WIDTH,
   columnsToConfig,
   columnsToPanelItems,
+  configHasLeafWidths,
+  copyColumnWidths,
   FLEX_SPACER_COL_KEY,
   hideColumnAtPath,
   isInternalColumnKey,
+  setColumnWidthAtPath,
   shortChildId,
   type ColumnTypeAny,
 } from './columnConfigUtils';
+import ResizableHeaderCell from './ResizableHeaderCell';
 import styles from './style.module.scss';
 import type { TablePrefs, TablePrefsFetcher, TablePrefsSaver } from './tablePrefsTypes';
 import { emptyTablePrefs } from './tablePrefsTypes';
@@ -86,6 +99,12 @@ export type TableProps<RecordType extends object = Record<string, unknown>> =
     rowHideSelectedKeys?: Key[];
     /** 自定义行隐藏工具条；默认内置按钮 */
     rowConfigToolbar?: ReactNode | false;
+    /** 叶子列拖宽；默认 !!tableName */
+    columnResizeEnabled?: boolean;
+    /** 拖宽最小 px；默认 48 */
+    columnResizeMinWidth?: number;
+    /** 拖宽最大 px；默认 480 */
+    columnResizeMaxWidth?: number;
     /**
      * Fetch 模式：`dataSource === undefined` 且提供本回调（或 fetchUrl）时由 Table 拉数。
      * 优先于 fetchUrl。Marsun typed list 主路径。
@@ -150,6 +169,68 @@ function resolveRecordKey<RecordType extends object>(
     if (v != null && v !== '') return String(v);
   }
   return String(index);
+}
+
+/** 叶子列 onHeaderCell 注入拖宽；与眼睛 merge */
+function injectLeafColumnResize<RecordType extends object>(
+  columns: ColumnsType<RecordType>,
+  opts: {
+    minWidth: number;
+    maxWidth: number;
+    widthByPath: Record<string, number>;
+    onResizeStartPath: (path: string[]) => void;
+    onResizePath: (path: string[], width: number) => void;
+    onResizeStopPath: (path: string[], width: number) => void;
+    onResetPath: (path: string[]) => void;
+  },
+  parentFullKey?: string,
+  path: string[] = [],
+): ColumnsType<RecordType> {
+  return (columns as ColumnTypeAny[]).map((col, i) => {
+    const full = colFullKey(col, i);
+    if (isInternalColumnKey(full)) return col as ColumnType<RecordType>;
+    const configId = parentFullKey ? shortChildId(parentFullKey, full) : full;
+    const nextPath = [...path, configId];
+    const prevOnHeaderCell = col.onHeaderCell;
+
+    if (col.children?.length) {
+      return {
+        ...col,
+        children: injectLeafColumnResize(
+          col.children as ColumnsType<RecordType>,
+          opts,
+          full,
+          nextPath,
+        ),
+      } as ColumnType<RecordType>;
+    }
+
+    const pathKey = nextPath.join('/');
+    const resolvedWidth =
+      opts.widthByPath[pathKey] ??
+      (typeof col.width === 'number' && Number.isFinite(col.width) ? col.width : undefined);
+
+    return {
+      ...col,
+      onHeaderCell: (c: ColumnTypeAny) => {
+        const prev =
+          typeof prevOnHeaderCell === 'function'
+            ? (prevOnHeaderCell as (col: ColumnTypeAny) => Record<string, unknown>)(c)
+            : (prevOnHeaderCell as Record<string, unknown> | undefined) || {};
+        return {
+          ...prev,
+          'data-marsun-col-path': pathKey,
+          width: resolvedWidth,
+          minWidth: opts.minWidth,
+          maxWidth: opts.maxWidth,
+          onResizeStart: () => opts.onResizeStartPath(nextPath),
+          onResize: (w: number) => opts.onResizePath(nextPath, w),
+          onResizeStop: (w: number) => opts.onResizeStopPath(nextPath, w),
+          onReset: () => opts.onResetPath(nextPath),
+        };
+      },
+    } as ColumnType<RecordType>;
+  }) as ColumnsType<RecordType>;
 }
 
 /** 一级组色带数量（与 SCSS headerGroup0..5 对齐） */
@@ -272,6 +353,9 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
     rowHideSelectedKeys,
     rowConfigToolbar,
     rowSelection,
+    columnResizeEnabled,
+    columnResizeMinWidth = COLUMN_RESIZE_MIN_WIDTH,
+    columnResizeMaxWidth = COLUMN_RESIZE_MAX_WIDTH,
     fetchData,
     fetchUrl,
     fetchOptions,
@@ -280,6 +364,7 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
     enabled = true,
     defaultPageSize = 20,
     onFetched,
+    components,
     ...rest
   }: TableProps<RecordType>,
   ref: Ref<TableFetchHandle>,
@@ -316,19 +401,42 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
   const resolvedLoading = Boolean(loadingProp) || (fetchMode && fetchLoading);
 
   const enableConfig = columnConfigEnabled ?? Boolean(tableName);
+  const enableResize = columnResizeEnabled ?? Boolean(tableName);
+  const resizeMin = columnResizeMinWidth;
+  const resizeMax = columnResizeMaxWidth;
+  const resizeOpts = useMemo(
+    () => ({ minWidth: resizeMin, maxWidth: resizeMax }),
+    [resizeMin, resizeMax],
+  );
+
   const defaultColumnsRef = useRef(columns);
+  const shellRef = useRef<HTMLDivElement>(null);
   const [prefs, setPrefs] = useState<TablePrefs | null>(null);
   const [configOpen, setConfigOpen] = useState(false);
   const [loaded, setLoaded] = useState(!enableConfig);
   /** 行隐藏：仅前端会话，不写 user_key */
   const [localHiddenRowKeys, setLocalHiddenRowKeys] = useState<string[]>([]);
+  /** 拖宽会话覆盖；mouseup 后仍保留直至 prefs 回写 */
+  const [widthOverrides, setWidthOverrides] = useState<Record<string, number>>({});
+  const widthOverridesRef = useRef(widthOverrides);
+  widthOverridesRef.current = widthOverrides;
 
   useEffect(() => {
     defaultColumnsRef.current = columns;
   }, [columns]);
 
+  const columnsStructureKey = useMemo(
+    () => columnsLeafPathSignature((columns || []) as ColumnsType<Record<string, unknown>>),
+    [columns],
+  );
+
   useEffect(() => {
-    if (!enableConfig || !tableName || !(fetchTablePrefs || fetchColumnConfig)) {
+    setWidthOverrides({});
+    widthOverridesRef.current = {};
+  }, [columnsStructureKey]);
+
+  useEffect(() => {
+    if ((!enableConfig && !enableResize) || !tableName || !(fetchTablePrefs || fetchColumnConfig)) {
       setLoaded(true);
       return;
     }
@@ -353,7 +461,7 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
     return () => {
       cancelled = true;
     };
-  }, [enableConfig, tableName, fetchTablePrefs, fetchColumnConfig]);
+  }, [enableConfig, enableResize, tableName, fetchTablePrefs, fetchColumnConfig]);
 
   const savedConfig = prefs?.columns?.length ? prefs.columns : null;
 
@@ -393,9 +501,30 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
 
   const appliedColumns = useMemo(() => {
     const base = (columns || []) as ColumnsType<RecordType>;
-    if (!enableConfig) return base;
-    return applyColumnConfig(base, savedConfig);
-  }, [columns, enableConfig, savedConfig]);
+    let cols: ColumnsType<RecordType>;
+    if (enableConfig) {
+      cols = applyColumnConfig(base, savedConfig, resizeOpts);
+    } else if (enableResize && savedConfig?.length) {
+      const widthMap: Record<string, number> = {};
+      const collect = (items: TableColumnConfigItem[], prefix: string) => {
+        for (const it of items) {
+          const key = prefix ? `${prefix}/${it.id}` : it.id;
+          if (typeof it.width === 'number' && Number.isFinite(it.width)) {
+            widthMap[key] = it.width;
+          }
+          if (it.children?.length) collect(it.children, key);
+        }
+      };
+      collect(savedConfig, '');
+      cols = applyLeafWidthOverrides(base, widthMap, resizeOpts);
+    } else {
+      cols = base;
+    }
+    if (enableResize && Object.keys(widthOverrides).length) {
+      cols = applyLeafWidthOverrides(cols, widthOverrides, resizeOpts);
+    }
+    return cols;
+  }, [columns, enableConfig, enableResize, savedConfig, resizeOpts, widthOverrides]);
 
   const defaultPanelItems = useMemo(
     () =>
@@ -408,9 +537,93 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
 
   const handleConfirm = useCallback(
     async (items: TableColumnConfigItem[]) => {
-      await persistColumnPrefs(mergeTablePrefs(prefs, { columns: items }));
+      const withWidths = copyColumnWidths(items, prefs?.columns);
+      await persistColumnPrefs(mergeTablePrefs(prefs, { columns: withWidths }));
     },
     [prefs, persistColumnPrefs],
+  );
+
+  const baseColumnConfig = useCallback(() => {
+    if (prefs?.columns?.length) return prefs.columns;
+    return columnsToConfig(
+      (defaultColumnsRef.current || columns) as ColumnsType<Record<string, unknown>>,
+    );
+  }, [prefs, columns]);
+
+  const handleResizePath = useCallback((path: string[], width: number) => {
+    const key = path.join('/');
+    setWidthOverrides((prev) => {
+      const next = { ...prev, [key]: width };
+      widthOverridesRef.current = next;
+      return next;
+    });
+  }, []);
+
+  /** 起拖时按 DOM 锁死所有叶子列宽，避免 table-layout:fixed + width:100% 把变化摊到其它列 */
+  const handleResizeStartPath = useCallback(
+    (_path: string[]) => {
+      const root = shellRef.current;
+      if (!root) return;
+      const nodes = root.querySelectorAll<HTMLElement>('[data-marsun-col-path]');
+      if (!nodes.length) return;
+      flushSync(() => {
+        setWidthOverrides((prev) => {
+          const next = { ...prev };
+          nodes.forEach((el) => {
+            const p = el.getAttribute('data-marsun-col-path');
+            if (!p) return;
+            const w = el.offsetWidth;
+            if (w > 0) next[p] = clampColumnWidth(w, resizeMin, resizeMax);
+          });
+          widthOverridesRef.current = next;
+          return next;
+        });
+      });
+    },
+    [resizeMin, resizeMax],
+  );
+
+  const handleResizeStopPath = useCallback(
+    async (path: string[], width: number) => {
+      const key = path.join('/');
+      const clamped = clampColumnWidth(width, resizeMin, resizeMax);
+      const root = shellRef.current;
+      const snapshot: Record<string, number> = { ...widthOverridesRef.current, [key]: clamped };
+      if (root) {
+        root.querySelectorAll<HTMLElement>('[data-marsun-col-path]').forEach((el) => {
+          const p = el.getAttribute('data-marsun-col-path');
+          if (!p || p === key) return;
+          if (snapshot[p] != null) return;
+          const w = el.offsetWidth;
+          if (w > 0) snapshot[p] = clampColumnWidth(w, resizeMin, resizeMax);
+        });
+      }
+      snapshot[key] = clamped;
+      widthOverridesRef.current = snapshot;
+      setWidthOverrides(snapshot);
+      let nextCols = baseColumnConfig();
+      for (const [p, w] of Object.entries(snapshot)) {
+        nextCols = setColumnWidthAtPath(nextCols, p.split('/'), w, resizeOpts);
+      }
+      await persistColumnPrefs(mergeTablePrefs(prefs, { columns: nextCols }));
+    },
+    [baseColumnConfig, persistColumnPrefs, prefs, resizeMax, resizeMin, resizeOpts],
+  );
+
+  const handleResetPath = useCallback(
+    async (path: string[]) => {
+      const key = path.join('/');
+      setWidthOverrides((prev) => {
+        if (!(key in prev)) return prev;
+        const next = { ...prev };
+        delete next[key];
+        widthOverridesRef.current = next;
+        return next;
+      });
+      const nextCols = clearColumnWidthAtPath(baseColumnConfig(), path);
+      await persistColumnPrefs(mergeTablePrefs(prefs, { columns: nextCols }));
+    },
+    [baseColumnConfig, persistColumnPrefs, prefs],
   );
 
   const handleHideColumnPath = useCallback(
@@ -453,6 +666,36 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
       cols = injectHeaderHideEyes(cols, (path) => {
         void handleHideColumnPath(path);
       });
+    }
+    if (enableResize) {
+      cols = injectLeafColumnResize(cols, {
+        minWidth: resizeMin,
+        maxWidth: resizeMax,
+        widthByPath: widthOverrides,
+        onResizeStartPath: handleResizeStartPath,
+        onResizePath: handleResizePath,
+        onResizeStopPath: (path, w) => {
+          void handleResizeStopPath(path, w);
+        },
+        onResetPath: (path) => {
+          void handleResetPath(path);
+        },
+      });
+    }
+    const needFlexSpacer =
+      enableResize && (Object.keys(widthOverrides).length > 0 || configHasLeafWidths(savedConfig));
+    if (needFlexSpacer) {
+      const spacerCol: ColumnType<RecordType> = {
+        key: FLEX_SPACER_COL_KEY,
+        title: '',
+        className: styles.flexSpacerCol,
+        onHeaderCell: () => ({ className: styles.flexSpacerCol }),
+        onCell: () => ({ className: styles.flexSpacerCol }),
+        render: () => null,
+      };
+      cols = [...cols, spacerCol] as ColumnsType<RecordType>;
+    }
+    if (enableConfig && loaded) {
       const gearCol: ColumnType<RecordType> = {
         key: COLUMN_CONFIG_COL_KEY,
         width: CONFIG_COL_WIDTH,
@@ -490,6 +733,7 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
     return cols;
   }, [
     enableConfig,
+    enableResize,
     loaded,
     appliedColumns,
     configOpen,
@@ -497,6 +741,13 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
     savedConfig,
     handleConfirm,
     handleHideColumnPath,
+    handleResizeStartPath,
+    handleResizePath,
+    handleResizeStopPath,
+    handleResetPath,
+    resizeMin,
+    resizeMax,
+    widthOverrides,
   ]);
 
   const displayDataSource = useMemo(() => {
@@ -624,8 +875,32 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
     return base;
   }, [scroll, fittedScrollX]);
 
+  const mergedComponents = useMemo(() => {
+    const userHeader = components?.header;
+    const UserCell = userHeader && 'cell' in userHeader ? userHeader.cell : undefined;
+    if (!enableResize) {
+      return components;
+    }
+    const HeaderCell = (props: Record<string, unknown>) => {
+      const hasResize = typeof props.onResize === 'function';
+      if (!hasResize && UserCell) {
+        const Comp = UserCell as ComponentType<Record<string, unknown>>;
+        return <Comp {...props} />;
+      }
+      // 拖宽开启时以 ResizableHeaderCell 为准；onHeaderCell 的 className/style/title 仍透传
+      return <ResizableHeaderCell {...(props as ComponentProps<typeof ResizableHeaderCell>)} />;
+    };
+    return {
+      ...components,
+      header: {
+        ...userHeader,
+        cell: HeaderCell,
+      },
+    };
+  }, [components, enableResize]);
+
   return (
-    <div className={classNames('marsun-table-shell', styles['marsun-table-shell'])}>
+    <div ref={shellRef} className={classNames('marsun-table-shell', styles['marsun-table-shell'])}>
       {toolbarNode ? <div className={styles['marsun-table-toolbar']}>{toolbarNode}</div> : null}
       <AntTable<RecordType>
         className={classNames('marsun-table', styles['marsun-table'], className)}
@@ -645,6 +920,7 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
         rowKey={rowKey}
         loading={resolvedLoading}
         rowSelection={mergedRowSelection}
+        components={mergedComponents}
         {...rest}
       />
     </div>
@@ -667,9 +943,18 @@ export {
 } from './tablePrefsUtils';
 export {
   applyColumnConfig,
+  applyLeafWidthOverrides,
+  clearColumnWidthAtPath,
+  clampColumnWidth,
+  columnsLeafPathSignature,
   COLUMN_CONFIG_COL_KEY,
+  COLUMN_RESIZE_MAX_WIDTH,
+  COLUMN_RESIZE_MIN_WIDTH,
   columnsToConfig,
+  configHasLeafWidths,
+  copyColumnWidths,
   FLEX_SPACER_COL_KEY,
   hideColumnAtPath,
   isInternalColumnKey,
+  setColumnWidthAtPath,
 };

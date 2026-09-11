@@ -138,6 +138,47 @@
   box-sizing: border-box;
 }
 
+.resizableHeaderCell {
+  /* 给右缘把手留出命中区，眼睛仍在 title 内 */
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  bottom: 0;
+  width: 8px;
+  z-index: 2;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    bottom: 20%;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    border-radius: 1px;
+    background: transparent;
+    transition: background 0.12s ease;
+  }
+
+  &:hover::after,
+  &:active::after {
+    background: var(--color-primary, #2563eb);
+  }
+}
+
+/** 拖宽锁列后吸收 width:100% 多余空间，避免其它列被撑开/压扁 */
+.flexSpacerCol {
+  padding: 0 !important;
+  border: none !important;
+  pointer-events: none;
+}
+
 .headerTitleText {
   min-width: 0;
   white-space: normal;

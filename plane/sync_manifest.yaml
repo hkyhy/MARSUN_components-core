@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.135
+  next_task_id: P6.3.136
 tasks:
+- id: P6.3.135
+  milestone: P6.3
+  name: Table 叶子列拖宽（锁兄弟+占位）并发版 0.1.81
+  status: 已完成
+  priority: P1
+  kind: feature
+  owner: 黄金芳
+  start_date: "2026-09-11"
+  target_date: "2026-09-11"
+  tags: [frontend, Table, resize, release]
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
+  note: |
+    Refs: P6.1.50 · Related: S4 Equipment 升 core
+    叶子列拖宽；起拖锁兄弟+弹性占位；48～480；双击重置；prefs.width；chore(release) v0.1.81；禁 G1
+
 - id: P6.3.134
   milestone: P6.3
   name: DrillNav + DispositionBar 壳 + Stat tone/单位/上下布局并发版 0.1.80
