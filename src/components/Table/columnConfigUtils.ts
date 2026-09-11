@@ -410,6 +410,26 @@ export function configHasLeafWidths(items: TableColumnConfigItem[] | null | unde
   return false;
 }
 
+/** 是否固定列（left / right / true / start / end）；固定列禁止拖宽，以免 header `position:relative` 冲掉 sticky */
+export function isFixedColumn(col: { fixed?: unknown } | null | undefined): boolean {
+  const f = col?.fixed;
+  return f === 'left' || f === 'right' || f === true || f === 'start' || f === 'end';
+}
+
+/**
+ * 将弹性占位插到首个右侧固定列 **之前**（`right` / `end`）。
+ * 若插在右侧固定列之后，antd 固定列栈会断，表现为操作列不再 sticky / 表头错位。
+ */
+export function insertBeforeFixedRight<T extends { fixed?: unknown }>(
+  columns: T[],
+  spacer: T,
+): T[] {
+  if (!columns.length) return [spacer];
+  const idx = columns.findIndex((c) => c.fixed === 'right' || c.fixed === 'end');
+  if (idx < 0) return [...columns, spacer];
+  return [...columns.slice(0, idx), spacer, ...columns.slice(idx)];
+}
+
 /**
  * 叶子 path 签名；columns 结构变时用于清空 widthOverrides。
  * 例：`factory\0name\0TGCV/finished`

@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.137
+  next_task_id: P6.3.138
 tasks:
+- id: P6.3.137
+  milestone: P6.3
+  name: fix Table 拖宽破坏 fixed 列并发版 0.1.82
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: "2026-09-11"
+  target_date: "2026-09-11"
+  tags: [frontend, Table, resize, fixed, release]
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
+  note: |
+    Refs: P6.3.135 · Related: S4 Equipment 升 core
+    fixed 列不注入拖宽；弹性占位 insertBeforeFixedRight；chore(release) v0.1.82；禁 G1
+
 - id: P6.3.136
   milestone: P6.3
   name: 重试发布 0.1.81（CI publish 绿但 npm 未见）

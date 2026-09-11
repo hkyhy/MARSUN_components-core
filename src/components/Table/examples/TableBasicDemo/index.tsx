@@ -21,13 +21,14 @@ const TABLE_NAME = 'showcase_table_basic_resize';
 
 /**
  * 列宽拖拽验收（可当场验）：
- * 1. 叶子列表头右缘可拖；齿轮 / 分组表头不可拖
+ * 1. 叶子列表头右缘可拖；齿轮 / 分组表头 / **fixed 列**不可拖
  * 2. 宽度落在 48～480；拖过界停在边界
  * 3. 有 saveTablePrefs：松手后点「模拟刷新」仍保持（内存 Map）
  * 4. 无 save 时仅会话（本 Demo 始终有 save；可关 save 对照）
  * 5. 拖「状态」列把手不触发排序；点标题文字才排序
  * 6. 双击把手重置该列自定义 width
  * 7. 拖 A 时 B/C 视觉宽度不变（起拖锁兄弟 + 弹性占位）
+ * 8. 有 fixed:right 时拖宽后操作列仍 sticky、表头不错位（占位在 fixed 前）
  */
 const TableBasicDemo: React.FC = () => {
   const [page, setPage] = useState(1);

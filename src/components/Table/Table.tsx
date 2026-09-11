@@ -44,6 +44,8 @@ import {
   copyColumnWidths,
   FLEX_SPACER_COL_KEY,
   hideColumnAtPath,
+  insertBeforeFixedRight,
+  isFixedColumn,
   isInternalColumnKey,
   setColumnWidthAtPath,
   shortChildId,
@@ -203,6 +205,11 @@ function injectLeafColumnResize<RecordType extends object>(
           nextPath,
         ),
       } as ColumnType<RecordType>;
+    }
+
+    // 固定列禁止拖宽：ResizableHeaderCell 会写 position:relative，冲掉 antd sticky
+    if (isFixedColumn(col)) {
+      return col as ColumnType<RecordType>;
     }
 
     const pathKey = nextPath.join('/');
@@ -693,7 +700,11 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
         onCell: () => ({ className: styles.flexSpacerCol }),
         render: () => null,
       };
-      cols = [...cols, spacerCol] as ColumnsType<RecordType>;
+      // 必须插在 fixed:right 之前，否则操作列 / 齿轮列 sticky 会断
+      cols = insertBeforeFixedRight(
+        cols as ColumnType<RecordType>[],
+        spacerCol,
+      ) as ColumnsType<RecordType>;
     }
     if (enableConfig && loaded) {
       const gearCol: ColumnType<RecordType> = {
@@ -955,6 +966,8 @@ export {
   copyColumnWidths,
   FLEX_SPACER_COL_KEY,
   hideColumnAtPath,
+  insertBeforeFixedRight,
+  isFixedColumn,
   isInternalColumnKey,
   setColumnWidthAtPath,
 };

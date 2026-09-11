@@ -85,12 +85,19 @@ export default function ResizableHeaderCell({
     document.addEventListener('mouseup', onUp);
   };
 
+  // 勿覆盖已有 sticky（固定列表头）；无 position 时才补 relative 给把手定位
+  const mergedStyle = {
+    ...style,
+    position: style?.position ?? 'relative',
+    overflow: style?.overflow ?? 'visible',
+  };
+
   return (
     <th
       {...rest}
       ref={thRef}
       className={classNames(className, styles.resizableHeaderCell)}
-      style={{ ...style, position: 'relative', overflow: 'visible' }}
+      style={mergedStyle}
     >
       {children}
       <span

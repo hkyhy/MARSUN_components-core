@@ -24,6 +24,8 @@ export {
   configHasLeafWidths,
   copyColumnWidths,
   FLEX_SPACER_COL_KEY,
+  insertBeforeFixedRight,
+  isFixedColumn,
   isInternalColumnKey,
   parseTablePrefs,
   serializeTablePrefs,

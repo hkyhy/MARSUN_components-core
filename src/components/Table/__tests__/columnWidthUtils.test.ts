@@ -10,6 +10,9 @@ import {
   COLUMN_RESIZE_MIN_WIDTH,
   configHasLeafWidths,
   copyColumnWidths,
+  FLEX_SPACER_COL_KEY,
+  insertBeforeFixedRight,
+  isFixedColumn,
   setColumnWidthAtPath,
 } from '../columnConfigUtils';
 import type { TableColumnConfigItem } from '../columnConfigTypes';
@@ -146,5 +149,37 @@ describe('lock siblings / spacer gate', () => {
     expect(columnsLeafPathSignature(a)).toBe('factory\0name');
     expect(columnsLeafPathSignature(b)).toBe('factory\0status');
     expect(columnsLeafPathSignature(a)).not.toBe(columnsLeafPathSignature(b));
+  });
+});
+
+describe('fixed column + flex spacer placement', () => {
+  it('isFixedColumn covers left/right/true', () => {
+    expect(isFixedColumn({ fixed: 'left' })).toBe(true);
+    expect(isFixedColumn({ fixed: 'right' })).toBe(true);
+    expect(isFixedColumn({ fixed: true })).toBe(true);
+    expect(isFixedColumn({ fixed: false })).toBe(false);
+    expect(isFixedColumn({})).toBe(false);
+  });
+
+  it('insertBeforeFixedRight inserts spacer before first fixed:right', () => {
+    const cols = [
+      { key: 'a' },
+      { key: 'b' },
+      { key: 'actions', fixed: 'right' as const },
+      { key: 'gear', fixed: 'right' as const },
+    ];
+    const spacer = { key: FLEX_SPACER_COL_KEY };
+    const next = insertBeforeFixedRight(cols, spacer);
+    expect(next.map((c) => c.key)).toEqual(['a', 'b', FLEX_SPACER_COL_KEY, 'actions', 'gear']);
+  });
+
+  it('insertBeforeFixedRight appends when no fixed:right', () => {
+    const cols = [{ key: 'a' }, { key: 'b', fixed: 'left' as const }];
+    const spacer = { key: FLEX_SPACER_COL_KEY };
+    expect(insertBeforeFixedRight(cols, spacer).map((c) => c.key)).toEqual([
+      'a',
+      'b',
+      FLEX_SPACER_COL_KEY,
+    ]);
   });
 });
