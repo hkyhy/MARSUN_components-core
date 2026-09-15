@@ -410,7 +410,7 @@ export function configHasLeafWidths(items: TableColumnConfigItem[] | null | unde
   return false;
 }
 
-/** 是否固定列（left / right / true / start / end）；固定列禁止拖宽，以免 header `position:relative` 冲掉 sticky */
+/** 是否固定列（left / right / true / start / end） */
 export function isFixedColumn(col: { fixed?: unknown } | null | undefined): boolean {
   const f = col?.fixed;
   return f === 'left' || f === 'right' || f === true || f === 'start' || f === 'end';

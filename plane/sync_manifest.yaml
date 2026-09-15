@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.138
+  next_task_id: P6.3.139
 tasks:
+- id: P6.3.138
+  milestone: P6.3
+  name: Table 固定列可拖宽且不冲 sticky 并发版 0.1.89
+  status: 进行中
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: "2026-09-15"
+  target_date: "2026-09-15"
+  tags: [frontend, Table, resize, fixed, release]
+  parent_issue: a6026f96-c056-4e45-9a8a-cc1bc1ba0fcf
+  note: |
+    Refs: P6.3.137 · Related: S3 PlantMetricMatrix
+    ResizableHeaderCell 不写 inline relative；固定列可拖宽；chore(release) v0.1.89；禁 G1
+
 - id: P6.3.137
   milestone: P6.3
   name: fix Table 拖宽破坏 fixed 列并发版 0.1.82

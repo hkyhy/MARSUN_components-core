@@ -207,11 +207,6 @@ function injectLeafColumnResize<RecordType extends object>(
       } as ColumnType<RecordType>;
     }
 
-    // 固定列禁止拖宽：ResizableHeaderCell 会写 position:relative，冲掉 antd sticky
-    if (isFixedColumn(col)) {
-      return col as ColumnType<RecordType>;
-    }
-
     const pathKey = nextPath.join('/');
     const resolvedWidth =
       opts.widthByPath[pathKey] ??

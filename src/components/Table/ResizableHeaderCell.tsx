@@ -85,10 +85,11 @@ export default function ResizableHeaderCell({
     document.addEventListener('mouseup', onUp);
   };
 
-  // 勿覆盖已有 sticky（固定列表头）；无 position 时才补 relative 给把手定位
+  // 勿写 inline position:relative——会覆盖 .ant-table-cell-fix 的 sticky，导致固定列分裂。
+  // 普通列的定位上下文由 .resizableHeaderCell 的 CSS :not(.ant-table-cell-fix*) 提供；
+  // sticky 自身可作为 absolute 把手的 containing block。
   const mergedStyle = {
     ...style,
-    position: style?.position ?? 'relative',
     overflow: style?.overflow ?? 'visible',
   };
 

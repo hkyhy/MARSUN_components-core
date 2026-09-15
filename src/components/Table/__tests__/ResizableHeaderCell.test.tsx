@@ -82,4 +82,25 @@ describe('ResizableHeaderCell', () => {
     fireEvent.doubleClick(screen.getByRole('separator'));
     expect(onReset).toHaveBeenCalledTimes(1);
   });
+
+  it('does not set inline position:relative (preserves ant sticky on fixed cols)', () => {
+    const onResize = vi.fn();
+    render(
+      <table>
+        <thead>
+          <tr>
+            <ResizableHeaderCell
+              className="ant-table-cell-fix ant-table-cell-fix-left"
+              width={72}
+              onResize={onResize}
+            >
+              分厂
+            </ResizableHeaderCell>
+          </tr>
+        </thead>
+      </table>,
+    );
+    const th = screen.getByText('分厂').closest('th');
+    expect(th?.style.position).toBe('');
+  });
 });

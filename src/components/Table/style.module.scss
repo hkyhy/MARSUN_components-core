@@ -139,7 +139,14 @@
 }
 
 .resizableHeaderCell {
-  /* 给右缘把手留出命中区，眼睛仍在 title 内 */
+  /* 非固定列：给 absolute 把手提供定位上下文。
+   * 固定列（.ant-table-cell-fix*）保持 CSS sticky，勿写 relative（会冲掉 sticky）。
+   * sticky 元素本身可作为 absolute 子元素的 containing block。 */
+  &:not(:global(.ant-table-cell-fix)):not(:global(.ant-table-cell-fix-left)):not(
+      :global(.ant-table-cell-fix-right)
+    ):not(:global(.ant-table-cell-fix-start)):not(:global(.ant-table-cell-fix-end)) {
+    position: relative;
+  }
 }
 
 .resizeHandle {
