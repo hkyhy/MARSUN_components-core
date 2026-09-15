@@ -26,6 +26,7 @@ export {
   type Visibility,
 } from './utils/resolveMaybeFn';
 export { formatFileSize } from './utils/format';
+export { copyText } from './utils/copyText';
 export {
   toDateRange,
   toDateTimeRange,
@@ -226,6 +227,7 @@ export * from './components/SegmentedRadio';
 export * from './components/Navigation';
 export { default as DispositionBar } from './components/DispositionBar';
 export type { DispositionBarProps } from './components/DispositionBar';
+export * from './components/Audit';
 export * from './components/Stat';
 export * from './components/Table';
 export * from './components/Tag';

@@ -1,0 +1,76 @@
+.wrap {
+  width: 100%;
+}
+
+.filter {
+  margin-bottom: 12px;
+}
+
+.detail {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
+.actionCode {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+}
+
+.flowWrap {
+  min-width: 0;
+}
+
+.stepBody {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.stepMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.blockLabel {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--font-color-grey, #666666);
+}
+
+.jsonWrap {
+  width: 100%;
+  min-width: 0;
+}
+
+.jsonScroll {
+  width: 100%;
+  max-height: 360px;
+}
+
+.jsonBlock {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 12px;
+  border-radius: 6px;
+  /* 必须用背景 token；勿用 --font-color-grey-*（那是字色，会整块变灰看不见字） */
+  background: var(--bg-color-grey-1, #f8f8f8);
+  color: var(--font-color, #1f1f1f);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.truncateHint {
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--font-color-grey, #666666);
+}

@@ -1,11 +1,24 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.139
+  next_task_id: P6.3.140
 tasks:
+- id: P6.3.139
+  milestone: P6.3
+  name: Audit 列表组件与导出入口（设备审计复用）
+  status: 已完成
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-15"
+  target_date: "2026-09-15"
+  tags: [frontend, audit, components]
+  note: |
+    Related: S4.30.2016 · P6.11.1141
+    src/components/Audit + copyText；dev 示例路由；skills 同步另包
 - id: P6.3.138
   milestone: P6.3
   name: Table 固定列可拖宽且不冲 sticky 并发版 0.1.89
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: fix
   owner: 黄金芳

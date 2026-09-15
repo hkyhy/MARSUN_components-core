@@ -1,0 +1,48 @@
+{
+  "title": "Audit 业务审计",
+  "description": "操作审计列表展开 → InfoPage.Flow 步骤 + 复制脱敏 curl。mode=app|platform。",
+  "examples": [
+    {
+      "title": "AuditLogList",
+      "description": "App / 平台列 / 无明细权限空态",
+      "component": "@/components/Audit/examples/AuditLogListBasicDemo",
+      "sourcePath": "@/components/Audit/examples/AuditLogListBasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "AuditLogListProps",
+      "rows": [
+        {
+          "prop": "mode",
+          "desc": "app=本系统；platform=多系统（多系统列）",
+          "type": "'app' | 'platform'",
+          "defaultVal": "'app'"
+        },
+        {
+          "prop": "dataSource",
+          "desc": "列表行（操作头）",
+          "type": "AuditEventListItem[]",
+          "required": true
+        },
+        {
+          "prop": "loadDetail",
+          "desc": "展开懒加载 steps + requestCurl",
+          "type": "(id: string) => Promise<AuditEventDetail>"
+        },
+        {
+          "prop": "canReadTrace",
+          "desc": "false 时展开区提示无明细权限",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "filterSlot",
+          "desc": "筛选区插槽（时间窗等由业务页提供）",
+          "type": "ReactNode"
+        }
+      ]
+    }
+  ]
+}

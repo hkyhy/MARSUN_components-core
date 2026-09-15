@@ -76,6 +76,7 @@ export * from './SegmentedRadio';
 export * from './Navigation';
 export { default as DispositionBar } from './DispositionBar';
 export type { DispositionBarProps } from './DispositionBar';
+export * from './Audit';
 export * from './Stat';
 export * from './Table';
 export * from './Tag';
