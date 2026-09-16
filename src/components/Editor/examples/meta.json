@@ -1,0 +1,25 @@
+{
+  "title": "Editor 富文本",
+  "description": "CKEditor 5 封装：消息正文等场景；仅基础格式，禁脚本扩展。",
+  "examples": [
+    {
+      "title": "RichTextEditor 基础",
+      "description": "粗体 / 斜体 / 列表；受控 value/onChange",
+      "component": "@/components/Editor/examples/RichTextBasicDemo",
+      "sourcePath": "@/components/Editor/examples/RichTextBasicDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "RichTextEditorProps",
+      "rows": [
+        { "prop": "value", "desc": "HTML 内容", "type": "string" },
+        { "prop": "onChange", "desc": "内容变更", "type": "(html: string) => void" },
+        { "prop": "disabled", "desc": "只读", "type": "boolean" },
+        { "prop": "placeholder", "desc": "占位", "type": "string" },
+        { "prop": "minHeight", "desc": "编辑区最小高度 px", "type": "number" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+.root {
+  :global(.ck-editor__editable) {
+    min-height: var(--rte-min-height, 140px);
+  }
+
+  &[data-disabled='1'] {
+    opacity: 0.65;
+    pointer-events: none;
+  }
+}

@@ -2,6 +2,7 @@ export * from './Auth';
 export * from './Alert';
 export * from './Descriptions';
 export * from './Empty';
+export * from './Editor';
 export * from './File';
 export * from './Filter';
 export * from './Form';

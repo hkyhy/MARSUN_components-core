@@ -1,7 +1,9 @@
-import { Badge, Button, Drawer, Empty, Space, Spin, message } from 'antd';
+import { Badge, Button, Drawer, Space, message } from 'antd';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Empty } from '@/components/Empty';
 import { Bell } from '@/components/Icons';
+import { PageSpin } from '@/components/Layout';
 import { SegmentedRadio } from '@/components/SegmentedRadio';
 import { StateBar } from '@/components/StateBar';
 import styles from './style.module.scss';
@@ -208,7 +210,7 @@ const InboxBell: React.FC<InboxBellProps> = ({
           />
         </div>
         {error ? <p className={styles.error}>{error}</p> : null}
-        <Spin spinning={loading}>
+        <PageSpin spinning={loading}>
           {!loading && !error && items.length === 0 ? (
             <Empty description="暂无站内信" />
           ) : (
@@ -220,7 +222,7 @@ const InboxBell: React.FC<InboxBellProps> = ({
                     className={classNames(styles.item, !item.read && styles.itemUnread)}
                     onClick={() => void handleOpenItem(item)}
                   >
-                    <Space direction="vertical" size={2} style={{ width: '100%' }}>
+                    <Space orientation="vertical" size={2} style={{ width: '100%' }}>
                       <span className={styles.itemTitle}>{item.title || '（无标题）'}</span>
                       {item.summary ? (
                         <span className={styles.itemSummary}>{item.summary}</span>
@@ -234,7 +236,7 @@ const InboxBell: React.FC<InboxBellProps> = ({
               ))}
             </ul>
           )}
-        </Spin>
+        </PageSpin>
       </Drawer>
     </div>
   );

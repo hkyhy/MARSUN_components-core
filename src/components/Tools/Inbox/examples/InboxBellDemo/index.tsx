@@ -63,7 +63,7 @@ const InboxBellDemo: React.FC = () => {
   const pollMs = useMemo(() => (poll ? 30_000 : 0), [poll]);
 
   return (
-    <Space direction="vertical" size={12}>
+    <Space orientation="vertical" size={12}>
       <Space>
         <span>轮询角标</span>
         <Switch checked={poll} onChange={setPoll} size="small" />

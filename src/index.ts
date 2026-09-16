@@ -128,6 +128,8 @@ export * from './components/Auth';
 export * from './components/Alert';
 export * from './components/Descriptions';
 export * from './components/Empty';
+/** @deprecated 请改用 `@hkyhy/marsun-components-core/editor`（L2，含 CKEditor） */
+export * from './components/Editor';
 export * from './components/Tools';
 export * from './components/Filter';
 // ReactFilter (@kne/react-filter port). FilterProvider aliased to avoid clash with Common FilterProvider.
