@@ -94,6 +94,7 @@ export default defineConfig({
         file: resolve(__dirname, 'src/file.ts'),
         llm: resolve(__dirname, 'src/llm.ts'),
         'form-info': resolve(__dirname, 'src/form-info.ts'),
+        editor: resolve(__dirname, 'src/editor.ts'),
         iam: resolve(__dirname, 'src/iam.ts'),
       },
       formats: ['es'],
