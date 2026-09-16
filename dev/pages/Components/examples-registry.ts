@@ -706,6 +706,50 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/audit': {
+    title: 'Audit 业务审计',
+    description: '操作审计列表展开 → InfoPage.Flow 步骤 + 复制脱敏 curl。mode=app|platform。',
+    examples: [
+      {
+        title: 'AuditLogList',
+        description: 'App / 平台列 / 无明细权限空态',
+        component: React.lazy(() => import('@/components/Audit/examples/AuditLogListBasicDemo')),
+        sourcePath: () => import('@/components/Audit/examples/AuditLogListBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'AuditLogListProps',
+        rows: [
+          {
+            prop: 'mode',
+            desc: 'app=本系统；platform=多系统（多系统列）',
+            type: "'app' | 'platform'",
+            defaultVal: "'app'",
+          },
+          {
+            prop: 'dataSource',
+            desc: '列表行（操作头）',
+            type: 'AuditEventListItem[]',
+            required: true,
+          },
+          {
+            prop: 'loadDetail',
+            desc: '展开懒加载 steps + requestCurl',
+            type: '(id: string) => Promise<AuditEventDetail>',
+          },
+          {
+            prop: 'canReadTrace',
+            desc: 'false 时展开区提示无明细权限',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
+          { prop: 'filterSlot', desc: '筛选区插槽（时间窗等由业务页提供）', type: 'ReactNode' },
+        ],
+      },
+    ],
+  },
   '/components/auth': {
     title: 'Auth 权限控制',
     description:
@@ -756,6 +800,11 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'collapsed', desc: '侧栏折叠时仅显示头像', type: 'boolean' },
           { prop: 'menuItems', desc: '自定义下拉菜单项', type: "MenuProps['items']" },
           { prop: 'onLogout', desc: '默认「退出登录」回调（无 menuItems 时）', type: '() => void' },
+          {
+            prop: 'extra',
+            desc: '右侧扩展区（如 InboxBell）；点击不打开用户菜单',
+            type: 'React.ReactNode',
+          },
           { prop: 'className', desc: '卡片按钮额外 className', type: 'string' },
         ],
       },
@@ -803,6 +852,36 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'label', desc: '标签文本', type: 'string', required: true },
           { prop: 'value', desc: '值内容', type: 'React.ReactNode', required: true },
           { prop: 'span', desc: '占列数', type: 'number', defaultVal: '1' },
+        ],
+      },
+    ],
+  },
+  '/components/dispositionbar': {
+    title: 'DispositionBar 处置条',
+    description: '布局壳：左状态徽章 + 右操作区（业务钮由调用方注入；不绑 API/EP）。',
+    examples: [
+      {
+        title: '基础用法',
+        description: '有 actions / statusLoading 藏钮 / 仅状态',
+        component: React.lazy(() => import('@/components/DispositionBar/examples/BasicDemo')),
+        sourcePath: () => import('@/components/DispositionBar/examples/BasicDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'DispositionBarProps',
+        rows: [
+          { prop: 'label', desc: '左侧文案', type: 'string', defaultVal: "'处置状态'" },
+          {
+            prop: 'statusBadge',
+            desc: '状态徽章（string 或 ReactNode）',
+            type: 'ReactNode',
+            required: true,
+          },
+          { prop: 'actions', desc: '右侧操作区', type: 'ReactNode' },
+          { prop: 'statusLoading', desc: 'true 时不渲染 actions', type: 'boolean' },
+          { prop: 'className', desc: '根节点额外 class（如业务侧 margin）', type: 'string' },
         ],
       },
     ],
@@ -2491,6 +2570,38 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/navigation/drillnav': {
+    title: 'DrillNav 下钻导航',
+    description: '返回钮（可选）+ 步骤胶囊：当前蓝、已完成绿可点回、未到达 disabled。',
+    examples: [
+      {
+        title: '基础用法',
+        description: '有/无返回钮；当前 / done / disabled',
+        component: React.lazy(() => import('@/components/Navigation/DrillNav/examples/BasicDemo')),
+        sourcePath: () =>
+          import('@/components/Navigation/DrillNav/examples/BasicDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'DrillNavProps',
+        rows: [
+          {
+            prop: 'steps',
+            desc: '步骤：id + label；已走过可传 onClick 点回',
+            type: 'DrillStep[]',
+            required: true,
+          },
+          { prop: 'currentId', desc: '当前步骤 id', type: 'string', required: true },
+          { prop: 'title', desc: '主标题（上下文）', type: 'string' },
+          { prop: 'subtitle', desc: '副文案', type: 'string' },
+          { prop: 'backLabel', desc: '与 onBack 成对才渲染返回钮', type: 'string' },
+          { prop: 'onBack', desc: '返回回调', type: '() => void' },
+        ],
+      },
+    ],
+  },
   '/components/orgtree': {
     title: 'OrgTree 组织树',
     description: '组织树：默认展开深度 1、大树 virtual；节点 hover 增删改；纯 UI，业务自行接 API。',
@@ -2969,6 +3080,13 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         component: React.lazy(() => import('@/components/Stat/examples/StatCardListDemo')),
         sourcePath: () => import('@/components/Stat/examples/StatCardListDemo/index.tsx?raw'),
       },
+      {
+        title: '马卡龙 tone',
+        description: '详情 KPI 用 tone；3→lg:8、4→lg:6 均分，勿拆 flex 旁路',
+        component: React.lazy(() => import('@/components/Stat/examples/MacaronToneDemo')),
+        sourcePath: () => import('@/components/Stat/examples/MacaronToneDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -2978,6 +3096,16 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'value', desc: '数值', type: 'number', required: true },
           { prop: 'prefix', desc: '前缀图标', type: 'React.ReactNode' },
           { prop: 'color', desc: '数值颜色', type: 'string' },
+          {
+            prop: 'suffix',
+            desc: '后缀；string/number 自动小号单位（12px）；自定义 ReactNode 原样渲染',
+            type: 'React.ReactNode',
+          },
+          {
+            prop: 'tone',
+            desc: '马卡龙底色（rose/lilac/mint/blue/peach/butter）；与 style 并存时显式 style 优先',
+            type: 'StatMacaronTone',
+          },
           { prop: 'onClick', desc: '点击回调', type: '() => void' },
           { prop: 'inline', desc: '内联模式（无 Card 包裹）', type: 'boolean' },
           { prop: 'fontSize', desc: '内联模式字体大小', type: 'number' },
@@ -3308,6 +3436,45 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'CYAN', desc: '青色/辅助', type: "'cyan'" },
           { prop: 'GOLD', desc: '金色/高优先级', type: "'gold'" },
           { prop: 'LIME', desc: '石灰/低优先级', type: "'lime'" },
+        ],
+      },
+    ],
+  },
+  '/components/tools/inbox': {
+    title: 'Inbox 站内信',
+    description: '通用站内信铃铛：列表 / 已读 / Tab / 角标；业务注入 fetchInbox，不含认领/行动。',
+    examples: [
+      {
+        title: 'InboxBell 铃铛',
+        description: '角标未读数；Drawer 内按类型与已读筛选；点击条目 markRead + onNavigate',
+        component: React.lazy(() => import('@/components/Tools/Inbox/examples/InboxBellDemo')),
+        sourcePath: () => import('@/components/Tools/Inbox/examples/InboxBellDemo/index.tsx?raw'),
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'InboxBellProps',
+        rows: [
+          {
+            prop: 'fetchInbox',
+            desc: '拉取站内信列表（须按当前用户过滤）',
+            type: '(params) => Promise<InboxBellListResult>',
+            required: true,
+          },
+          {
+            prop: 'markRead',
+            desc: '标记已读',
+            type: '(id: string) => Promise<void>',
+            required: true,
+          },
+          {
+            prop: 'onNavigate',
+            desc: '点击条目跳转；不传则用 href 直接跳',
+            type: '(href: string, item: InboxBellItem) => void',
+          },
+          { prop: 'pollMs', desc: '角标轮询间隔；≤0 关闭', type: 'number' },
+          { prop: 'pageSize', desc: '列表页大小', type: 'number' },
+          { prop: 'title', desc: 'Drawer 标题', type: 'string' },
         ],
       },
     ],

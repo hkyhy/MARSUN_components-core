@@ -1,7 +1,8 @@
+import { DrawerContextHolder } from '@/components';
+import { FormDrawer, FormInfo, Input, useFormDrawer } from '@/form-info';
 import { App, Button, message } from 'antd';
 import classNames from 'classnames';
 import React, { useState } from 'react';
-import { FormDrawer, FormInfo, Input, useFormDrawer } from '@/form-info';
 import styles from './style.module.scss';
 
 const HookOpen: React.FC = () => {
@@ -34,6 +35,7 @@ const NewFormInfoDrawerDemo: React.FC = () => {
   const [open, setOpen] = useState(false);
   return (
     <App>
+      <DrawerContextHolder />
       <div className={classNames('new-form-info-drawer-demo', styles['new-form-info-drawer-demo'])}>
         <Button type="primary" onClick={() => setOpen(true)} style={{ marginRight: 8 }}>
           受控 FormDrawer

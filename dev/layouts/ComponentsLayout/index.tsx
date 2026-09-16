@@ -17,7 +17,11 @@ const ComponentsLayout: React.FC = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
 
-  const defaultOpenKeys = location.pathname.startsWith('/components/agenthub') ? ['agenthub'] : [];
+  const defaultOpenKeys = [
+    location.pathname.startsWith('/components/agenthub') ? 'agenthub' : null,
+    location.pathname.startsWith('/components/navigation') ? 'navigation' : null,
+    location.pathname.startsWith('/components/tools') ? 'tools' : null,
+  ].filter(Boolean) as string[];
 
   return (
     <div className={classNames('components-layout-root', styles['components-layout-root'])}>

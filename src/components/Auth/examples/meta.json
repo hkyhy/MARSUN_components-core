@@ -51,6 +51,11 @@
           "desc": "默认「退出登录」回调（无 menuItems 时）",
           "type": "() => void"
         },
+        {
+          "prop": "extra",
+          "desc": "右侧扩展区（如 InboxBell）；点击不打开用户菜单",
+          "type": "React.ReactNode"
+        },
         { "prop": "className", "desc": "卡片按钮额外 className", "type": "string" }
       ]
     }

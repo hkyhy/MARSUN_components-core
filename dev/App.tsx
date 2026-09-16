@@ -1,5 +1,7 @@
+import { DrawerContextHolder } from '@/components';
 import MarsunCoreProvider from '@/provider/MarsunCoreProvider';
 import { applyThemeToCssVariables } from '@/theme';
+import { App as AntdApp } from 'antd';
 import React, { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import ComponentsLayout from './layouts/ComponentsLayout';
@@ -21,15 +23,18 @@ const App: React.FC = () => {
         hasPermission: (key) => key === 'user:edit',
       }}
     >
-      <BrowserRouter basename={routerBasename || undefined}>
-        <Routes>
-          <Route path="/components" element={<ComponentsLayout />}>
-            <Route index element={<Navigate to="/components/tag" replace />} />
-            {showcaseRoutes}
-          </Route>
-          <Route path="*" element={<Navigate to="/components" replace />} />
-        </Routes>
-      </BrowserRouter>
+      <AntdApp>
+        <DrawerContextHolder />
+        <BrowserRouter basename={routerBasename || undefined}>
+          <Routes>
+            <Route path="/components" element={<ComponentsLayout />}>
+              <Route index element={<Navigate to="/components/tag" replace />} />
+              {showcaseRoutes}
+            </Route>
+            <Route path="*" element={<Navigate to="/components" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AntdApp>
     </MarsunCoreProvider>
   );
 };
