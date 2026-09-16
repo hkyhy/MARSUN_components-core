@@ -1,0 +1,39 @@
+{
+  "title": "Inbox 站内信",
+  "description": "通用站内信铃铛：列表 / 已读 / Tab / 角标；业务注入 fetchInbox，不含认领/行动。",
+  "examples": [
+    {
+      "title": "InboxBell 铃铛",
+      "description": "角标未读数；Drawer 内按类型与已读筛选；点击条目 markRead + onNavigate",
+      "component": "@/components/Tools/Inbox/examples/InboxBellDemo",
+      "sourcePath": "@/components/Tools/Inbox/examples/InboxBellDemo/index.tsx"
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "InboxBellProps",
+      "rows": [
+        {
+          "prop": "fetchInbox",
+          "desc": "拉取站内信列表（须按当前用户过滤）",
+          "type": "(params) => Promise<InboxBellListResult>",
+          "required": true
+        },
+        {
+          "prop": "markRead",
+          "desc": "标记已读",
+          "type": "(id: string) => Promise<void>",
+          "required": true
+        },
+        {
+          "prop": "onNavigate",
+          "desc": "点击条目跳转；不传则用 href 直接跳",
+          "type": "(href: string, item: InboxBellItem) => void"
+        },
+        { "prop": "pollMs", "desc": "角标轮询间隔；≤0 关闭", "type": "number" },
+        { "prop": "pageSize", "desc": "列表页大小", "type": "number" },
+        { "prop": "title", "desc": "Drawer 标题", "type": "string" }
+      ]
+    }
+  ]
+}

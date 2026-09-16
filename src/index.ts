@@ -128,6 +128,7 @@ export * from './components/Auth';
 export * from './components/Alert';
 export * from './components/Descriptions';
 export * from './components/Empty';
+export * from './components/Tools';
 export * from './components/Filter';
 // ReactFilter (@kne/react-filter port). FilterProvider aliased to avoid clash with Common FilterProvider.
 export {

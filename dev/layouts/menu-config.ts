@@ -11,6 +11,11 @@ export const MENU_ITEMS: MenuProps['items'] = [
       { key: '/components/agenthub/report', label: 'Report' },
     ],
   },
+  {
+    key: 'tools',
+    label: 'Tools',
+    children: [{ key: '/components/tools/inbox', label: 'Inbox' }],
+  },
   { key: '/components/alert', label: 'Alert' },
   { key: '/components/auth', label: 'Auth' },
   { key: '/components/descriptions', label: 'Descriptions' },
