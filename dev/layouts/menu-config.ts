@@ -19,13 +19,17 @@ export const MENU_ITEMS: MenuProps['items'] = [
   {
     key: 'tools',
     label: 'Tools',
-    children: [{ key: '/components/tools/inbox', label: 'Inbox' }],
+    children: [
+      { key: '/components/tools/inbox', label: 'Inbox' },
+      { key: '/components/tools/messagecenter', label: 'MessageCenter' },
+    ],
   },
   { key: '/components/alert', label: 'Alert' },
   { key: '/components/audit', label: 'Audit' },
   { key: '/components/auth', label: 'Auth' },
   { key: '/components/descriptions', label: 'Descriptions' },
   { key: '/components/dispositionbar', label: 'DispositionBar' },
+  { key: '/components/editor', label: 'Editor' },
   { key: '/components/empty', label: 'Empty' },
   { key: '/components/file', label: 'File' },
   { key: '/components/filter', label: 'Filter' },

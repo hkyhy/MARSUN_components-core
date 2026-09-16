@@ -886,6 +886,31 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/editor': {
+    title: 'Editor 富文本',
+    description: 'CKEditor 5 封装：消息正文等场景；仅基础格式，禁脚本扩展。',
+    examples: [
+      {
+        title: 'RichTextEditor 基础',
+        description: '粗体 / 斜体 / 列表；受控 value/onChange',
+        component: React.lazy(() => import('@/components/Editor/examples/RichTextBasicDemo')),
+        sourcePath: () => import('@/components/Editor/examples/RichTextBasicDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'RichTextEditorProps',
+        rows: [
+          { prop: 'value', desc: 'HTML 内容', type: 'string' },
+          { prop: 'onChange', desc: '内容变更', type: '(html: string) => void' },
+          { prop: 'disabled', desc: '只读', type: 'boolean' },
+          { prop: 'placeholder', desc: '占位', type: 'string' },
+          { prop: 'minHeight', desc: '编辑区最小高度 px', type: 'number' },
+        ],
+      },
+    ],
+  },
   '/components/empty': {
     title: 'Empty 空态',
     description: '基于 antd Empty 的空态展示，支持可选图标、预设图标类型与可选描述文案。',
@@ -3450,6 +3475,15 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         component: React.lazy(() => import('@/components/Tools/Inbox/examples/InboxBellDemo')),
         sourcePath: () => import('@/components/Tools/Inbox/examples/InboxBellDemo/index.tsx?raw'),
       },
+      {
+        title: '同源 fixture 故事',
+        description: '与 MessageCenter fixture 联动：emit 条目 → 已读 → href',
+        component: React.lazy(
+          () => import('@/components/Tools/Inbox/examples/InboxFixtureStoryDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Tools/Inbox/examples/InboxFixtureStoryDemo/index.tsx?raw'),
+      },
     ],
     apiDoc: [
       {
@@ -3475,6 +3509,92 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'pollMs', desc: '角标轮询间隔；≤0 关闭', type: 'number' },
           { prop: 'pageSize', desc: '列表页大小', type: 'number' },
           { prop: 'title', desc: 'Drawer 标题', type: 'string' },
+        ],
+      },
+    ],
+  },
+  '/components/tools/messagecenter': {
+    title: 'MessageCenter 消息中心',
+    description:
+      '事件目录 → 模板 CRUD（自动编号/中文事件/默认停用/SSO 角色/变量+CKEditor）→ dryRun/emit → InboxBell → 权限 → 空错加载。',
+    examples: [
+      {
+        title: '1. 事件目录',
+        description: 'energy.gap / maintenance.overdue 与默认 href',
+        component: React.lazy(
+          () => import('@/components/Tools/MessageCenter/examples/EventCatalogDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Tools/MessageCenter/examples/EventCatalogDemo/index.tsx?raw'),
+      },
+      {
+        title: '2. 消息模板 CRUD',
+        description: '可写态：列表 / 新建 / 启用 / 受众角色；推送 Tab 冻结',
+        component: React.lazy(
+          () => import('@/components/Tools/MessageCenter/examples/TemplateCrudDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Tools/MessageCenter/examples/TemplateCrudDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '3. emit / dryRun 预览',
+        description: '同一 fixture 渲染 title/summary；emit 写入 inbox',
+        component: React.lazy(
+          () => import('@/components/Tools/MessageCenter/examples/EmitDryRunDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Tools/MessageCenter/examples/EmitDryRunDemo/index.tsx?raw'),
+      },
+      {
+        title: '4. InboxBell 故事',
+        description: '同源条目 → 已读 → onNavigate(href)',
+        component: React.lazy(
+          () => import('@/components/Tools/MessageCenter/examples/InboxStoryDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Tools/MessageCenter/examples/InboxStoryDemo/index.tsx?raw'),
+      },
+      {
+        title: '5. 权限对照',
+        description: 'canWrite 开/关：只读 vs 可写（不硬编码业务权限码）',
+        component: React.lazy(
+          () => import('@/components/Tools/MessageCenter/examples/PermissionsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Tools/MessageCenter/examples/PermissionsDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '6. 空 / 错 / 加载',
+        description: 'core Empty / Alert、PageSpin 加载态',
+        component: React.lazy(
+          () => import('@/components/Tools/MessageCenter/examples/EmptyErrorLoadingDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Tools/MessageCenter/examples/EmptyErrorLoadingDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'MessageTemplateAdminProps',
+        rows: [
+          {
+            prop: 'fetchTemplates',
+            desc: '拉取模板列表',
+            type: '() => Promise<MessageTemplateAdminItem[]>',
+            required: true,
+          },
+          { prop: 'saveTemplate', desc: '保存模板', type: '(item) => Promise<void>' },
+          {
+            prop: 'fetchEventCatalog',
+            desc: '事件目录',
+            type: '() => Promise<MessageEventCatalogItem[]>',
+          },
+          { prop: 'canWrite', desc: '业务注入写权限；core 不硬编码权限码', type: 'boolean' },
+          { prop: 'renderAudienceField', desc: '受众树插槽', type: '(ctx) => ReactNode' },
+          { prop: 'pushRulesSlot', desc: '推送规则 Tab；默认冻结说明', type: 'ReactNode' },
         ],
       },
     ],
