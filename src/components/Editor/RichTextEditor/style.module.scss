@@ -33,4 +33,9 @@
 
 .rich-text-editor {
   box-sizing: border-box;
+  position: relative;
+}
+
+.editor-host {
+  width: 100%;
 }

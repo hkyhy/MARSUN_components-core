@@ -93,6 +93,7 @@ const VariableMentionControl: FC<
           onClick: () => pick(o.key),
         })),
       }}
+      dropdownRender={(menu) => <div onMouseDown={(e) => e.preventDefault()}>{menu}</div>}
       trigger={[]}
     >
       <Input

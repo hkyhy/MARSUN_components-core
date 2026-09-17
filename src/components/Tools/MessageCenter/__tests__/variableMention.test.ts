@@ -7,6 +7,7 @@ import {
   toVarToken,
   wrapVarTokensForDisplay,
 } from '../../../Editor/variableMention';
+import { matchSlashQuery } from '../../../Editor/variableSlash';
 import { listFixtureCatalog, resetMsgCenterFixture } from '../doc/msgCenter.fixture';
 import { applyTemplateVars, normalizeTemplatePlaceholders } from '../utils/templateCode';
 import { previewVarsFromVariables, variablesFromCatalog } from '../MessageTemplateAdmin/types';
@@ -40,6 +41,11 @@ describe('variableMention utils', () => {
     expect(up).toContain('msg-var-token');
     expect(up).toContain('{{machine}}');
     expect(up).not.toContain('data-mention');
+  });
+
+  it('matchSlashQuery detects trailing /query', () => {
+    expect(matchSlashQuery('hello /fac')).toEqual({ query: 'fac', matchLen: 4 });
+    expect(matchSlashQuery('hello')).toBeNull();
   });
 });
 
