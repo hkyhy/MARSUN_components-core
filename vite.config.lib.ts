@@ -46,6 +46,10 @@ function isExternal(id: string): boolean {
   if (id.startsWith('@ant-design/icons')) return true;
   if (id === 'simplebar' || id.startsWith('simplebar/')) return true;
   if (id === 'simplebar-react' || id.startsWith('simplebar-react/')) return true;
+  // CKEditor 必须 external：打进 dist/node_modules 后，消费方 Vite 会二次变换并丢掉
+  // toWidget 等 named export，导致任意 import 主入口白屏（主入口仍 re-export Editor）。
+  if (id === 'ckeditor5' || id.startsWith('ckeditor5/')) return true;
+  if (id.startsWith('@ckeditor/')) return true;
   return false;
 }
 
