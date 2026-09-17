@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.143
+  next_task_id: P6.3.144
 tasks:
+- id: P6.3.143
+  milestone: P6.3
+  name: MsgCenterAppSwitcher 运行时 appKey 切换并发版 0.1.103
+  status: 已完成
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-17"
+  target_date: "2026-09-17"
+  tags: [frontend, message-center, release]
+  note: |
+    Related: platform-消息中心真正通用 W5/D2
+    MsgCenterAppSwitcher + useMsgCenterAppKey；InboxBell 切换条；DOMPurify；chore(release) v0.1.103；仍≠G1
 - id: P6.3.142
   milestone: P6.3
   name: MessageCenter 推送/变量真 CRUD 并发版 0.1.100
