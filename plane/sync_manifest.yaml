@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.140
+  next_task_id: P6.3.141
 tasks:
+- id: P6.3.140
+  milestone: P6.3
+  name: MessageCenter 插入变量原子色块并发版 0.1.98
+  status: 已完成
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-17"
+  target_date: "2026-09-17"
+  tags: [frontend, message-center, editor, release]
+  note: |
+    Related: S4.30.2031
+    取消 / Mention；VariablePicker + MsgVarWidget；chore(release) v0.1.98；禁 G1
 - id: P6.3.139
   milestone: P6.3
   name: Audit 列表组件与导出入口（设备审计复用）
