@@ -125,12 +125,13 @@ npm run typecheck
 包名为 **`@hkyhy/marsun-components-core`**（npm scope 与 GitHub 发布账号 `hkyhy` 对齐）。
 
 1. 在 GitHub 仓库 **Settings → Secrets → Actions** 配置 `HKYHY_PACKAGE_PUBLISH`（npm Automation Token，对 `@hkyhy` 有 publish 权限）
-2. **发版**：先将 `package.json` version 升到待发布号，再提交并 push 首行形如 `chore(release): vX.Y.Z …` 的 commit；`release.yml` 校验版本 → 打 tag → `npm publish`（仅该消息前缀触发，feat push 不发版）
-3. 示例：
+2. **顺号**：日常 `package.json` = npm latest；本地 `npm pack` **不要**每次 bump。发版前 `node scripts/version-check.mjs --apply`（= npm+1；**0.1.98 之后下一版为 0.1.99**）
+3. **发版**：再提交并 push 首行形如 `chore(release): vX.Y.Z …` 的 commit；`release.yml` 校验版本 → 打 tag → `npm publish`（仅该消息前缀触发，feat push 不发版）
 
 ```bash
-# version 已为 0.1.53 时
-git push origin main   # 含 chore(release): v0.1.53 …
+# 当前 npm latest=0.1.98 时
+node scripts/version-check.mjs --apply   # → 0.1.99
+# 再 commit chore(release): v0.1.99 … 并 push main
 ```
 
 也可在 Actions 中手动运行 **Publish npm**，填写已有 tag 重新发布。

@@ -8,6 +8,11 @@
  *
  * 发布：chore(release): vX.Y.Z commit + push main → CI release.yml 打 tag 并 npm publish。
  * 禁止本地 npm publish。
+ *
+ * 顺号硬约定（2026-09-17 · 0.1.98 已发，下次须 0.1.99）：
+ * - WIP / 本地 `npm pack`：保持 = npm latest，**禁止**每次试装 patch+1（会跳号）
+ * - 仅发版前执行一次 `--apply`（= npm latest + 1），再 `chore(release): vX.Y.Z`
+ * - 工作区只允许：已发布号，或「下一 patch」；其它一律失败
  */
 import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
