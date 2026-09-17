@@ -1,9 +1,9 @@
-import { FormInfo, FormItem, FormModal, Input, Select } from '@/components/FormInfo';
+import { FormInfo, FormModal, Input, InputNumber, Select } from '@/components/FormInfo';
 import { Alert } from '@/components/Alert';
 import { Empty } from '@/components/Empty';
 import { PageSpin } from '@/components/Layout';
 import { Table } from '@/components/Table';
-import { Button, InputNumber, Space, Switch, message } from 'antd';
+import { Button, Select as AntSelect, Space, Switch, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
@@ -125,7 +125,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
           message.warning('当前为只读');
           return false;
         }
-        const eventKey = String(data.eventKey || '').trim();
+        const eventKey = String(editing.eventKey || data.eventKey || '').trim();
         const templateCode = String(data.templateCode || '').trim();
         if (!eventKey) {
           message.warning('请选择事件');
@@ -272,66 +272,82 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
         autoClose={false}
         formProps={formProps}
       >
+        {/* 事件用 antd Select：FormInfo Select + onChange 在 CI tsc 下与 kne 重载冲突 */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 8 }}>事件</div>
+          <AntSelect
+            style={{ width: '100%' }}
+            disabled={!canWrite}
+            value={editing?.eventKey || undefined}
+            options={catalog.map((c) => ({
+              value: c.eventKey,
+              label: c.label || c.eventKey,
+            }))}
+            onChange={(ek) => {
+              const next = String(ek || '');
+              const opts = templatesForEvent(next);
+              setEditing((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      eventKey: next,
+                      templateCode: resolveTemplateCodeAfterEventChange(prev.templateCode, opts),
+                      label: catalog.find((c) => c.eventKey === next)?.label || prev.label,
+                    }
+                  : prev,
+              );
+            }}
+            showSearch
+            optionFilterProp="label"
+          />
+        </div>
         <FormInfo
           column={1}
           list={[
-            <FormItem key="label" name="label" label="名称" rule="REQ">
-              <Input disabled={!canWrite} />
-            </FormItem>,
-            <FormItem key="eventKey" name="eventKey" label="事件" rule="REQ">
-              <Select
-                disabled={!canWrite}
-                options={catalog.map((c) => ({
-                  value: c.eventKey,
-                  label: c.label || c.eventKey,
-                }))}
-                onChange={(v) => {
-                  const ek = String(v || '');
-                  const opts = templatesForEvent(ek);
-                  const nextCode = resolveTemplateCodeAfterEventChange(editing?.templateCode, opts);
-                  setEditing((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          eventKey: ek,
-                          templateCode: nextCode,
-                          label: catalog.find((c) => c.eventKey === ek)?.label || prev.label,
-                        }
-                      : prev,
-                  );
-                }}
-              />
-            </FormItem>,
-            <FormItem key="templateCode" name="templateCode" label="关联模板" rule="REQ">
-              <Select
-                disabled={!canWrite}
-                key={`tpl-${editing?.eventKey || ''}`}
-                options={templatesForEvent(editing?.eventKey)}
-                showSearch
-                optionFilterProp="label"
-              />
-            </FormItem>,
-            <FormItem key="levels" name="levels" label="级别">
-              <Select
-                mode="multiple"
-                disabled={!canWrite}
-                options={['L1', 'L2', 'L3'].map((x) => ({ value: x, label: x }))}
-              />
-            </FormItem>,
-            <FormItem key="audienceRoles" name="audienceRoles" label="受众角色">
-              <Select
-                mode="multiple"
-                disabled={!canWrite}
-                options={roleOptions.map((r) => ({ value: r.code, label: r.name || r.code }))}
-                optionFilterProp="label"
-              />
-            </FormItem>,
-            <FormItem key="slaHours" name="slaHours" label="SLA(小时)">
-              <InputNumber disabled={!canWrite} min={0} style={{ width: '100%' }} />
-            </FormItem>,
-            <FormItem key="scanLookbackDays" name="scanLookbackDays" label="回看(天)">
-              <InputNumber disabled={!canWrite} min={0} style={{ width: '100%' }} />
-            </FormItem>,
+            <Input key="label" name="label" label="名称" rule="REQ" disabled={!canWrite} />,
+            <Select
+              key={`tpl-${editing?.eventKey || ''}`}
+              name="templateCode"
+              label="关联模板"
+              rule="REQ"
+              disabled={!canWrite}
+              options={templatesForEvent(editing?.eventKey)}
+              showSearch
+              optionFilterProp="label"
+            />,
+            <Select
+              key="levels"
+              name="levels"
+              label="级别"
+              mode="multiple"
+              disabled={!canWrite}
+              options={['L1', 'L2', 'L3'].map((x) => ({ value: x, label: x }))}
+            />,
+            <Select
+              key="audienceRoles"
+              name="audienceRoles"
+              label="受众角色"
+              mode="multiple"
+              disabled={!canWrite}
+              options={roleOptions.map((r) => ({ value: r.code, label: r.name || r.code }))}
+              optionFilterProp="label"
+            />,
+            <InputNumber
+              key="slaHours"
+              name="slaHours"
+              label="SLA(小时)"
+              disabled={!canWrite}
+              min={0}
+              style={{ width: '100%' }}
+            />,
+            <InputNumber
+              key="scanLookbackDays"
+              name="scanLookbackDays"
+              label="回看(天)"
+              disabled={!canWrite}
+              min={0}
+              style={{ width: '100%' }}
+            />,
           ]}
         />
       </FormModal>
