@@ -3680,7 +3680,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
       {
         title: '2. 消息模板 CRUD',
-        description: 'StateBar 右 Plus 新建；「插入变量」原子色块；推送 InteractiveBlock 冻结',
+        description:
+          'StateBar 右 Plus 新建；「插入变量」原子色块；推送/变量真 CRUD（eventKey+templateCode）',
         component: React.lazy(
           () => import('@/components/Tools/MessageCenter/examples/TemplateCrudDemo'),
         ),
@@ -3747,7 +3748,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'renderAudienceField', desc: '受众树插槽', type: '(ctx) => ReactNode' },
           {
             prop: 'pushRulesSlot',
-            desc: '推送规则 Tab；默认 InteractiveBlock 冻结说明',
+            desc: '推送规则 Tab；优先 fetchPushRules DI；未接线时可 pushRulesSlot',
             type: 'ReactNode',
           },
           {
