@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.98",
+  "version": "0.1.99",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -101,6 +101,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
+    "@ckeditor/ckeditor5-mention": "48.5.1",
     "@ckeditor/ckeditor5-react": "^11.2.0",
     "@js-preview/excel": "^1.7.14",
     "@kne/button-group": "^0.1.24",
@@ -130,10 +131,10 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "simplebar": "^6.3.3",
-    "simplebar-react": "^3.3.2",
-    "@ckeditor/ckeditor5-mention": "48.5.1"
+    "simplebar-react": "^3.3.2"
   },
   "devDependencies": {
+    "@ant-design/plots": "^2.6.8",
     "@eslint/js": "^9.14.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
