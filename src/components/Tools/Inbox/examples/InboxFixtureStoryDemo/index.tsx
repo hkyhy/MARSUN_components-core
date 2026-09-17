@@ -21,6 +21,7 @@ const InboxFixtureStoryDemo: React.FC = () => {
       id: x.id,
       title: x.title,
       summary: x.summary,
+      bodyHtml: x.bodyHtml,
       messageType: x.messageType as InboxBellItem['messageType'],
       read: x.read,
       href: x.href,

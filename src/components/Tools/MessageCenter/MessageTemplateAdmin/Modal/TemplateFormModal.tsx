@@ -117,20 +117,21 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
     if (!isCreate) {
       fields.push(<Input key="code" name="code" label="编号" disabled />);
     }
+    // 适用场景 = catalog 中文下拉（value=eventKey）；禁自由输入英文 key
     fields.push(
       <Select
         key="eventKey"
         name="eventKey"
-        label="事件"
+        label="适用场景"
         rule="REQ"
         disabled={!canWrite}
         optionLabelProp="label"
         options={catalog.map((c) => ({
           value: c.eventKey,
-          label: c.label,
+          label: c.label || c.eventKey,
         }))}
+        placeholder={catalog.length ? '选择场景' : '暂无事件目录'}
       />,
-      <Input key="scenario" name="scenario" label="适用场景" rule="REQ" disabled={!canWrite} />,
       <Input
         key="titleTemplate"
         name="titleTemplate"
@@ -160,7 +161,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       />,
     );
     return fields;
-  }, [editorReady, isCreate, canWrite, catalog, variables, editorKey]);
+  }, [editorReady, isCreate, canWrite, catalog, variables, editorKey, catalogError]);
 
   const formProps = useMemo(
     () => ({
@@ -170,17 +171,13 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
           message.warning('当前为只读（业务未授予写权限）');
           return false;
         }
-        const scenario = String(data.scenario || '').trim();
         const eventKey = String(data.eventKey || '').trim();
-        if (!scenario) {
-          message.warning('请填写适用场景');
-          return false;
-        }
         if (!eventKey) {
-          message.warning('请选择事件');
+          message.warning('请选择适用场景');
           return false;
         }
         const hit = catalog.find((c) => c.eventKey === eventKey);
+        const scenario = String(hit?.label || data.scenario || eventKey).trim();
         try {
           await onSubmit({
             ...(initial || {}),
@@ -254,15 +251,18 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         ) : (
           <AntSelect
             mode="multiple"
+            allowClear
+            showSearch
             style={{ width: '100%', marginTop: 8 }}
             value={roles}
             disabled={!canWrite}
-            placeholder={roleOptions.length ? '选择角色' : '暂无角色数据'}
+            placeholder={roleOptions.length ? '下拉选择角色（可多选）' : '暂无角色数据'}
             options={roleOptions.map((r) => ({
               value: r.code,
               label: r.name || r.code,
             }))}
             optionFilterProp="label"
+            maxTagCount="responsive"
             onChange={(v) => setRoles(v || [])}
             notFoundContent="暂无角色"
           />

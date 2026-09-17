@@ -7,6 +7,8 @@ const SEED: InboxBellItem[] = [
     id: '1',
     title: '用能缺口巡检命中',
     summary: '业务日 2026-09-16 · 共 3 台',
+    bodyHtml:
+      '<p><strong>加粗</strong> · 业务日 2026-09-16 · 共 3 台</p><ul><li>一厂</li><li>细纱001</li></ul><p><span style="color:#c00">请关注缺口</span></p>',
     messageType: 'alert',
     read: false,
     href: '/energy',
@@ -20,6 +22,16 @@ const SEED: InboxBellItem[] = [
     read: true,
     href: '/maintenance',
     createdAt: '2026-09-15 18:00',
+  },
+  {
+    id: '3',
+    title: 'XSS 负向样例（应被消毒）',
+    summary: '不应执行脚本',
+    bodyHtml: '<p>安全段落</p><script>window.__xss=1</script><img src=x onerror="alert(1)">',
+    messageType: 'alert',
+    read: false,
+    href: '/energy',
+    createdAt: '2026-09-16 09:00',
   },
 ];
 

@@ -14,6 +14,19 @@ import {
 const here = dirname(fileURLToPath(import.meta.url));
 
 describe('msgCenter.fixture', () => {
+  it('emits bodyHtml rich text and plain summary', () => {
+    resetMsgCenterFixture();
+    const r = emitFixtureByEventKey('energy.gap', {
+      bizDate: '2026-09-16',
+      count: '2',
+    });
+    expect(r.bodyHtml).toContain('<strong>');
+    expect(r.bodyHtml).toContain('2026-09-16');
+    expect(r.summary).not.toMatch(/</);
+    expect(r.summary).toContain('2026-09-16');
+    expect(listFixtureInbox()[0].bodyHtml).toContain('<ul>');
+  });
+
   it('emits inbox with href from event catalog', () => {
     resetMsgCenterFixture();
     const r = emitFixtureByEventKey('energy.gap', { bizDate: '2026-09-16', count: '2' });

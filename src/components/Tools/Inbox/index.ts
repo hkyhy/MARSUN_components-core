@@ -6,3 +6,4 @@ export type {
   InboxBellProps,
   InboxBellMessageType,
 } from './InboxBell';
+export { sanitizeInboxHtml } from './sanitizeInboxHtml';

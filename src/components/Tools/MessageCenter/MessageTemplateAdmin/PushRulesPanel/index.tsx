@@ -288,11 +288,12 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
       >
         {/* 事件用 antd Select：FormInfo Select + onChange 在 CI tsc 下与 kne 重载冲突 */}
         <div style={{ marginBottom: 16 }}>
-          <div style={{ marginBottom: 8 }}>事件</div>
+          <div style={{ marginBottom: 8 }}>适用场景</div>
           <AntSelect
             style={{ width: '100%' }}
-            disabled={!canUpdate}
+            disabled={!formWritable(isCreate)}
             value={editing?.eventKey || undefined}
+            placeholder={catalog.length ? '选择场景（中文）' : '暂无事件目录'}
             options={catalog.map((c) => ({
               value: c.eventKey,
               label: c.label || c.eventKey,
@@ -348,9 +349,10 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               name="audienceRoles"
               label="受众角色"
               mode="multiple"
-              disabled={!canUpdate}
+              disabled={!formWritable(isCreate)}
               options={roleOptions.map((r) => ({ value: r.code, label: r.name || r.code }))}
               optionFilterProp="label"
+              placeholder="下拉选择角色（可多选）"
             />,
             <FiInputNumber
               key="slaHours"

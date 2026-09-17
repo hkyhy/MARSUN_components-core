@@ -40,6 +40,12 @@
       "component": "@/components/Tools/MessageCenter/examples/EmptyErrorLoadingDemo",
       "sourcePath": "@/components/Tools/MessageCenter/examples/EmptyErrorLoadingDemo/index.tsx",
       "block": true
+    },
+    {
+      "title": "7. App 切换（Phase B）",
+      "description": "MsgCenterAppSwitcher：仅有权+可切换对；展示名取 SSO name；单权不渲染",
+      "component": "@/components/Tools/MessageCenter/examples/AppSwitchDemo",
+      "sourcePath": "@/components/Tools/MessageCenter/examples/AppSwitchDemo/index.tsx"
     }
   ],
   "apiDoc": [

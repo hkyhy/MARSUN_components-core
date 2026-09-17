@@ -105,6 +105,29 @@
   line-height: 1.5;
 }
 
+.itemBodyHtml {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--font-color-grey-1, #64748b);
+  line-height: 1.5;
+  text-align: left;
+
+  :global(p) {
+    margin: 0 0 4px;
+  }
+
+  :global(ul),
+  :global(ol) {
+    margin: 0 0 4px;
+    padding-left: 1.25em;
+  }
+
+  :global(li) {
+    margin: 0;
+  }
+}
+
 .itemMeta {
   display: block;
   font-size: 12px;

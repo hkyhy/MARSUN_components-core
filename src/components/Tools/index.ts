@@ -24,4 +24,22 @@ export {
   normalizeTemplatePlaceholders,
   applyTemplateVars,
   resolveMessageAdminPermissions,
+  MSG_CENTER_APP_SWITCH_STORAGE_KEY,
+  SYSTEM_APP_TO_MSG_CENTER_APP_KEY,
+  MSG_CENTER_SWITCHABLE_APP_KEYS,
+  msgCenterAppKeyFromSystemAppCode,
+  filterMsgCenterSwitchableApps,
+  getMsgCenterAppKey,
+  setMsgCenterAppKey,
+  subscribeMsgCenterAppKey,
+  bindMsgCenterAppKeyStorageSync,
+  resolveMsgCenterSwitchState,
+  useMsgCenterAppKey,
+  MsgCenterAppSwitcher,
+} from './MessageCenter';
+export type {
+  MsgCenterAppSwitchState,
+  MsgCenterSwitchableApp,
+  MsgCenterSwitchableAppKey,
+  MsgCenterAppSwitcherProps,
 } from './MessageCenter';

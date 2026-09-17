@@ -25,6 +25,8 @@ export type MsgInboxItem = {
   id: string;
   title: string;
   summary: string;
+  /** 已渲染 HTML；Showcase / 对齐 mc bodyHtml */
+  bodyHtml?: string;
   messageType: string;
   read: boolean;
   href: string;
@@ -79,7 +81,8 @@ export const MSG_TEMPLATES_SEED: MsgTemplateItem[] = [
     scenario: '用能缺口汇总',
     messageType: 'alert',
     titleTemplate: '用能缺口巡检命中',
-    bodyTemplate: '<p>业务日 {{bizDate}} · 共 {{count}} 台</p>',
+    bodyTemplate:
+      '<p><strong>加粗</strong> · 业务日 {{bizDate}} · 共 {{count}} 台</p><ul><li>一厂</li><li>细纱001</li></ul><p><span style="color:#c00">请关注缺口</span></p>',
     audienceRoles: ['EQUIPMENT_ADMIN'],
     enabled: true,
     channel: 'in_app',
@@ -267,18 +270,30 @@ export function emitFixtureByEventKey(
     throw new Error(`无启用模板：${eventKey}`);
   }
   const ev = MSG_EVENTS.find((e) => e.eventKey === eventKey);
-  const fill = (s: string) =>
+  const fillKeepHtml = (s: string) =>
     s
-      .replace(/\{\{(\w+)\}\}/g, (_, k: string) => vars[k] ?? `{{${k}}}`)
-      .replace(/(?<!\{)\{(\w+)\}(?!\})/g, (_, k: string) => vars[k] ?? `{${k}}`)
-      .replace(/<[^>]+>/g, '');
-  const title = fill(tpl.titleTemplate);
-  const summary = fill(tpl.bodyTemplate);
+      .replace(/\{\{(\w+)\}\}/g, (_, k: string) => (vars[k] != null ? String(vars[k]) : ''))
+      .replace(/(?<!\{)\{(\w+)\}(?!\})/g, (_, k: string) =>
+        vars[k] != null ? String(vars[k]) : '',
+      );
+  const stripTags = (s: string) =>
+    s
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\n+/g, ' ')
+      .trim();
+  const title = fillKeepHtml(tpl.titleTemplate)
+    .replace(/<[^>]+>/g, '')
+    .trim();
+  const bodyHtml = fillKeepHtml(tpl.bodyTemplate);
+  const summary = stripTags(bodyHtml);
   const href = ev?.defaultHref || '/';
   const row: MsgInboxItem = {
     id: `inbox-${seq++}`,
     title,
     summary,
+    bodyHtml,
     messageType: tpl.messageType,
     read: false,
     href,
@@ -292,6 +307,7 @@ export function emitFixtureByEventKey(
     dryRun: Boolean(opts?.dryRun),
     title,
     summary,
+    bodyHtml,
     href,
     recipientCount: 1,
     message: row,

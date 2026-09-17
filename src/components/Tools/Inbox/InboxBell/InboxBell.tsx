@@ -6,6 +6,7 @@ import { Bell } from '@/components/Icons';
 import { PageSpin } from '@/components/Layout';
 import { SegmentedRadio } from '@/components/SegmentedRadio';
 import { StateBar } from '@/components/StateBar';
+import { sanitizeInboxHtml } from '../sanitizeInboxHtml';
 import styles from './style.module.scss';
 
 export type InboxBellMessageType = 'alert' | 'action' | 'remind' | string;
@@ -13,7 +14,10 @@ export type InboxBellMessageType = 'alert' | 'action' | 'remind' | string;
 export type InboxBellItem = {
   id: string;
   title?: string;
+  /** 纯文本摘要（列表兼容） */
   summary?: string;
+  /** 已渲染 HTML 正文；空则主摘要位回落 summary */
+  bodyHtml?: string | null;
   read?: boolean;
   messageType?: InboxBellMessageType;
   href?: string;
@@ -224,9 +228,20 @@ const InboxBell: React.FC<InboxBellProps> = ({
                   >
                     <Space orientation="vertical" size={2} style={{ width: '100%' }}>
                       <span className={styles.itemTitle}>{item.title || '（无标题）'}</span>
-                      {item.summary ? (
-                        <span className={styles.itemSummary}>{item.summary}</span>
-                      ) : null}
+                      {(() => {
+                        const safeHtml = sanitizeInboxHtml(item.bodyHtml);
+                        if (safeHtml) {
+                          return (
+                            <div
+                              className={styles.itemBodyHtml}
+                              dangerouslySetInnerHTML={{ __html: safeHtml }}
+                            />
+                          );
+                        }
+                        return item.summary ? (
+                          <span className={styles.itemSummary}>{item.summary}</span>
+                        ) : null;
+                      })()}
                       <span className={styles.itemMeta}>
                         {[item.messageType, item.createdAt].filter(Boolean).join(' · ') || '—'}
                       </span>
