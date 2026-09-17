@@ -1,4 +1,4 @@
-import { FormInfo, FormItem, FormModal, Input, Select } from '@/components/FormInfo';
+import { FormInfo, FormModal, Input, Select } from '@/components/FormInfo';
 import { Alert } from '@/components/Alert';
 import { Empty } from '@/components/Empty';
 import { PageSpin } from '@/components/Layout';
@@ -8,6 +8,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MessageTemplateVariableAdmin } from '../types';
 import { canDeleteTenantVariable } from '../../utils/adminGuards';
 import styles from '../style.module.scss';
+
+/** CI tsc：kne Field 重载误匹配 FormItem children */
+const FiSelect = Select as unknown as React.ComponentType<Record<string, unknown>>;
+const FiInput = Input as unknown as React.ComponentType<Record<string, unknown>>;
 
 export type VariablesPanelProps = {
   canWrite: boolean;
@@ -186,24 +190,25 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
         <FormInfo
           column={1}
           list={[
-            <FormItem key="key" name="key" label="key" rule="REQ">
-              <Input
-                disabled={!canWrite || (!isCreate && Boolean(editing?.key))}
-                placeholder="如 customField"
-              />
-            </FormItem>,
-            <FormItem key="label" name="label" label="中文名">
-              <Input disabled={!canWrite} />
-            </FormItem>,
-            <FormItem key="type" name="type" label="类型">
-              <Select
-                disabled={!canWrite}
-                options={[
-                  { value: 'string', label: 'string' },
-                  { value: 'number', label: 'number' },
-                ]}
-              />
-            </FormItem>,
+            <FiInput
+              key="key"
+              name="key"
+              label="key"
+              rule="REQ"
+              disabled={!canWrite || (!isCreate && Boolean(editing?.key))}
+              placeholder="如 customField"
+            />,
+            <FiInput key="label" name="label" label="中文名" disabled={!canWrite} />,
+            <FiSelect
+              key="type"
+              name="type"
+              label="类型"
+              disabled={!canWrite}
+              options={[
+                { value: 'string', label: 'string' },
+                { value: 'number', label: 'number' },
+              ]}
+            />,
           ]}
         />
       </FormModal>

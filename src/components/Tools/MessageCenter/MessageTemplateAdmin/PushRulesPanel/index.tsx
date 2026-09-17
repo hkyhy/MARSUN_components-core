@@ -14,6 +14,11 @@ import type {
 import { resolveTemplateCodeAfterEventChange } from '../../utils/adminGuards';
 import styles from '../style.module.scss';
 
+/** CI tsc：kne Select 重载与 FieldProps 交叉时误匹配 FormItem children；宽化为任意 props */
+const FiSelect = Select as unknown as React.ComponentType<Record<string, unknown>>;
+const FiInput = Input as unknown as React.ComponentType<Record<string, unknown>>;
+const FiInputNumber = InputNumber as unknown as React.ComponentType<Record<string, unknown>>;
+
 export type PushRulesPanelProps = {
   canWrite: boolean;
   catalog: MessageEventCatalogItem[];
@@ -304,8 +309,8 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
         <FormInfo
           column={1}
           list={[
-            <Input key="label" name="label" label="名称" rule="REQ" disabled={!canWrite} />,
-            <Select
+            <FiInput key="label" name="label" label="名称" rule="REQ" disabled={!canWrite} />,
+            <FiSelect
               key={`tpl-${editing?.eventKey || ''}`}
               name="templateCode"
               label="关联模板"
@@ -315,7 +320,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               showSearch
               optionFilterProp="label"
             />,
-            <Select
+            <FiSelect
               key="levels"
               name="levels"
               label="级别"
@@ -323,7 +328,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               disabled={!canWrite}
               options={['L1', 'L2', 'L3'].map((x) => ({ value: x, label: x }))}
             />,
-            <Select
+            <FiSelect
               key="audienceRoles"
               name="audienceRoles"
               label="受众角色"
@@ -332,7 +337,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               options={roleOptions.map((r) => ({ value: r.code, label: r.name || r.code }))}
               optionFilterProp="label"
             />,
-            <InputNumber
+            <FiInputNumber
               key="slaHours"
               name="slaHours"
               label="SLA(小时)"
@@ -340,7 +345,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               min={0}
               style={{ width: '100%' }}
             />,
-            <InputNumber
+            <FiInputNumber
               key="scanLookbackDays"
               name="scanLookbackDays"
               label="回看(天)"

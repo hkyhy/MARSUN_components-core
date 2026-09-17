@@ -10,3 +10,5 @@
 - **Fix**：fixture catalog variables 允许 `tenant` source（typecheck）
 
 - **Fix**：PushRulesPanel 事件选择改 antd Select，避开 CI FormInfo Select+onChange 重载错误
+
+- **Fix**：PushRules/Variables Panel FormInfo 字段宽化，绕开 CI kne Select 重载
