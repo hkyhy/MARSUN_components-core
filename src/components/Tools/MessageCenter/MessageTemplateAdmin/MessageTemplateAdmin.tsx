@@ -9,6 +9,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { generateTemplateCode } from '../utils/templateCode';
 import { buildTemplateColumns } from './List/columns';
 import { TemplateFormModal } from './Modal/TemplateFormModal';
+import { PushRulesPanel } from './PushRulesPanel';
+import { VariablesPanel } from './VariablesPanel';
 import type {
   MessageAudienceRoleOption,
   MessageEventCatalogItem,
@@ -46,6 +48,13 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   canWrite = false,
   renderAudienceField,
   pushRulesSlot,
+  fetchPushRules,
+  savePushRule,
+  setPushRuleEnabled,
+  deletePushRule,
+  fetchVariables,
+  saveVariable,
+  deleteVariable,
   emptyText = '暂无消息模板',
   className,
   codePrefix = 'MEQ',
@@ -60,6 +69,8 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   const [editing, setEditing] = useState<MessageTemplateAdminItem | null>(null);
   const [isCreate, setIsCreate] = useState(false);
   const [tab, setTab] = useState('template');
+  const [pushCreateNonce, setPushCreateNonce] = useState(0);
+  const [varCreateNonce, setVarCreateNonce] = useState(0);
 
   const variables = useMemo(() => {
     if (catalogVars.length) return catalogVars;
@@ -103,12 +114,12 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
       } else {
         setCatalog([]);
         setCatalogVars([]);
-        setCatalogError(catSettled.error || '事件目录加载失败');
+        setCatalogError(catSettled.error);
       }
-      setRoleOptions(Array.isArray(rolesSettled.raw) ? rolesSettled.raw : []);
+      setRoleOptions(rolesSettled.ok ? rolesSettled.raw : []);
     } catch (e) {
-      setRows([]);
       setError(e instanceof Error ? e.message : String(e));
+      setRows([]);
     } finally {
       setLoading(false);
     }
@@ -119,39 +130,35 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   }, [reload]);
 
   const eventLabel = useCallback(
-    (eventKey?: string) => catalog.find((c) => c.eventKey === eventKey)?.label || eventKey || '—',
+    (ek?: string) => catalog.find((c) => c.eventKey === ek)?.label || ek || '—',
     [catalog],
   );
 
   const openCreate = () => {
-    if (!canWrite) {
-      message.warning('当前为只读（业务未授予写权限）');
-      return;
-    }
     const first = catalog[0];
     setIsCreate(true);
     setEditing({
       code: generateTemplateCode(codePrefix),
-      eventKey: first?.eventKey || '',
-      scenario: first?.label || '',
+      eventKey: first?.eventKey,
+      scenario: first?.label,
+      label: first?.label,
       messageType: first?.messageType || 'alert',
-      titleTemplate: '【预警】{{factory}} {{machine}}',
-      bodyTemplate: '<p>业务日 {{bizDate}}：{{machine}}（{{machineId}}）</p>',
+      titleTemplate: '',
+      bodyTemplate: '',
       audienceRoles: [],
-      roles: [],
       enabled: false,
       channel: 'in_app',
     });
   };
 
-  const openEdit = (row: MessageTemplateAdminItem) => {
+  const openEdit = (item: MessageTemplateAdminItem) => {
     setIsCreate(false);
-    setEditing({ ...row });
+    setEditing({ ...item });
   };
 
   const onSave = async (item: MessageTemplateAdminItem) => {
     if (!saveTemplate) {
-      message.warning('未注入 saveTemplate');
+      message.warning('未配置保存接口');
       return;
     }
     await saveTemplate(item);
@@ -160,13 +167,13 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
     await reload();
   };
 
-  const onToggleEnabled = async (row: MessageTemplateAdminItem, enabled: boolean) => {
+  const onToggleEnabled = async (item: MessageTemplateAdminItem, enabled: boolean) => {
     if (!setTemplateEnabled) {
-      message.warning('未注入 setTemplateEnabled');
+      message.warning('未配置启用接口');
       return;
     }
     try {
-      await setTemplateEnabled(row, enabled);
+      await setTemplateEnabled(item, enabled);
       message.success(enabled ? '已启用' : '已停用');
       await reload();
     } catch (e) {
@@ -185,14 +192,41 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
     [canWrite, eventLabel],
   );
 
-  const freezeSlot = pushRulesSlot ?? (
-    <InteractiveBlock
-      title="消息推送（冻结）"
-      info={[{ label: '说明', value: '推送规则本窗仅展示；开通 CRUD 请另开任务。' }]}
-      description="本 Tab 冻结：不提供推送规则增删改；模板与站内信仍可用。"
-      surface="inset"
+  const pushEnabled = Boolean(fetchPushRules && savePushRule);
+  const varsEnabled = Boolean(fetchVariables && saveVariable);
+
+  const pushPane = pushEnabled ? (
+    <PushRulesPanel
+      canWrite={canWrite}
+      catalog={catalog}
+      templates={rows}
+      roleOptions={roleOptions}
+      fetchPushRules={fetchPushRules!}
+      savePushRule={savePushRule!}
+      setPushRuleEnabled={setPushRuleEnabled}
+      deletePushRule={deletePushRule}
+      createNonce={pushCreateNonce}
     />
+  ) : (
+    (pushRulesSlot ?? (
+      <InteractiveBlock
+        title="消息推送"
+        info={[{ label: '说明', value: '未接线 fetchPushRules：请业务注入推送规则 API。' }]}
+        description="推送规则 CRUD 须由业务 DI 提供。"
+        surface="inset"
+      />
+    ))
   );
+
+  const variablesPane = varsEnabled ? (
+    <VariablesPanel
+      canWrite={canWrite}
+      fetchVariables={fetchVariables!}
+      saveVariable={saveVariable!}
+      deleteVariable={deleteVariable}
+      createNonce={varCreateNonce}
+    />
+  ) : null;
 
   const templatePane = (
     <div className={styles.pane}>
@@ -244,30 +278,65 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
     [canWrite],
   );
 
+  const primaryAction = useMemo(() => {
+    if (tab === 'push' && pushEnabled) {
+      return {
+        variant: 'button' as const,
+        buttonType: 'primary' as const,
+        label: '新建推送规则',
+        disabled: !canWrite,
+        onClick: () => setPushCreateNonce((n) => n + 1),
+      };
+    }
+    if (tab === 'variables' && varsEnabled) {
+      return {
+        variant: 'button' as const,
+        buttonType: 'primary' as const,
+        label: '新建变量',
+        disabled: !canWrite,
+        onClick: () => setVarCreateNonce((n) => n + 1),
+      };
+    }
+    return {
+      variant: 'button' as const,
+      buttonType: 'primary' as const,
+      label: '新建模板',
+      disabled: !canWrite || tab !== 'template',
+      onClick: () => openCreate(),
+    };
+  }, [tab, pushEnabled, varsEnabled, canWrite, catalog, codePrefix]);
+
+  const stateOption = [
+    {
+      key: 'template',
+      label: '消息模板',
+      info: templateTabInfo,
+      children: templatePane,
+    },
+    {
+      key: 'push',
+      label: '消息推送',
+      children: pushPane,
+    },
+    ...(varsEnabled
+      ? [
+          {
+            key: 'variables',
+            label: '变量',
+            children: variablesPane,
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className={className ? `${styles.root} ${className}` : styles.root}>
       <StateBar
         type="tab"
         activeKey={tab}
         onChange={(k) => setTab(String(k))}
-        actions={[
-          {
-            variant: 'button',
-            buttonType: 'primary',
-            label: '新建模板',
-            disabled: !canWrite || tab !== 'template',
-            onClick: () => openCreate(),
-          },
-        ]}
-        stateOption={[
-          {
-            key: 'template',
-            label: '消息模板',
-            info: templateTabInfo,
-            children: templatePane,
-          },
-          { key: 'push', label: '消息推送（冻结）', children: freezeSlot },
-        ]}
+        actions={[primaryAction]}
+        stateOption={stateOption}
       />
       <TemplateFormModal
         open={Boolean(editing)}

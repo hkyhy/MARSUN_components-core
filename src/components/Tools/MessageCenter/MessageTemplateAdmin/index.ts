@@ -6,5 +6,7 @@ export type {
   MessageEventCatalogPayload,
   MessageAudienceRoleOption,
   MessageTemplateVariable,
+  MessageTemplateVariableAdmin,
+  PushRuleAdminItem,
 } from './types';
 export { variablesFromCatalog, previewVarsFromVariables } from './types';

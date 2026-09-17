@@ -6,6 +6,8 @@ export type {
   MessageEventCatalogPayload,
   MessageAudienceRoleOption,
   MessageTemplateVariable,
+  MessageTemplateVariableAdmin,
+  PushRuleAdminItem,
 } from './MessageTemplateAdmin';
 export {
   generateTemplateCode,

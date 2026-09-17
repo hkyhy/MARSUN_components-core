@@ -42,6 +42,26 @@ export type MessageTemplateVariable = {
   /** 可选中文说明；无则下拉只显示 code */
   label?: string;
   type?: string;
+  source?: 'catalog' | 'tenant';
+  baseline?: boolean;
+};
+
+/** 变量管理行 */
+export type MessageTemplateVariableAdmin = MessageTemplateVariable;
+
+export type PushRuleAdminItem = {
+  id?: string;
+  code?: string;
+  label?: string;
+  eventKey?: string;
+  levels?: string[];
+  templateCode?: string;
+  audienceRoles?: string[];
+  audienceUserIds?: string[];
+  channels?: string[];
+  slaHours?: number;
+  scanLookbackDays?: number;
+  enabled?: boolean;
 };
 
 export type MessageTemplateAdminProps = {
@@ -69,7 +89,15 @@ export type MessageTemplateAdminProps = {
     roles: string[];
     onChange: (roles: string[]) => void;
   }) => ReactNode;
+  /** @deprecated 优先传 fetchPushRules */
   pushRulesSlot?: ReactNode;
+  fetchPushRules?: () => Promise<PushRuleAdminItem[]>;
+  savePushRule?: (item: PushRuleAdminItem) => Promise<void>;
+  setPushRuleEnabled?: (item: PushRuleAdminItem, enabled: boolean) => Promise<void>;
+  deletePushRule?: (item: PushRuleAdminItem) => Promise<void>;
+  fetchVariables?: () => Promise<MessageTemplateVariableAdmin[]>;
+  saveVariable?: (item: MessageTemplateVariableAdmin) => Promise<void>;
+  deleteVariable?: (item: MessageTemplateVariableAdmin) => Promise<void>;
   emptyText?: string;
   className?: string;
   /** 自动编号前缀，默认 MEQ */
@@ -86,6 +114,8 @@ export function variablesFromCatalog(
         key: String(v.key || '').trim(),
         label: v.label,
         type: v.type,
+        source: v.source,
+        baseline: v.baseline,
       }))
       .filter((v) => v.key);
   }

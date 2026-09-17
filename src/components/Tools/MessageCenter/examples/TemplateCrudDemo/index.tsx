@@ -1,17 +1,24 @@
 import { MessageTemplateAdmin } from '@/components/Tools/MessageCenter';
 import {
+  deleteFixturePushRule,
+  deleteFixtureVariable,
   listFixtureCatalog,
+  listFixturePushRules,
   listFixtureRoles,
   listFixtureTemplates,
+  listFixtureVariablesAdmin,
   resetMsgCenterFixture,
+  saveFixturePushRule,
   saveFixtureTemplate,
+  saveFixtureVariable,
+  setFixturePushRuleEnabled,
   setFixtureTemplateEnabled,
 } from '@/components/Tools/MessageCenter/doc/msgCenter.fixture';
 import React, { useCallback } from 'react';
 
 resetMsgCenterFixture();
 
-/** 2. 模板 CRUD（可写）：自动编号 / 中文事件 / 默认停用 / SSO 角色名 / catalog「插入变量」色块 */
+/** 模板 + 推送规则 + 变量 CRUD（Showcase；fixture 非运行时 mock） */
 const TemplateCrudDemo: React.FC = () => {
   const fetchTemplates = useCallback(async () => listFixtureTemplates(), []);
   const fetchEventCatalog = useCallback(async () => listFixtureCatalog(), []);
@@ -39,6 +46,35 @@ const TemplateCrudDemo: React.FC = () => {
       saveTemplate={saveTemplate}
       setTemplateEnabled={async (item, enabled) => {
         if (item.id) setFixtureTemplateEnabled(item.id, enabled);
+      }}
+      fetchPushRules={async () => listFixturePushRules()}
+      savePushRule={async (item) => {
+        saveFixturePushRule({
+          id: item.id,
+          code: item.code,
+          label: item.label,
+          eventKey: String(item.eventKey || ''),
+          templateCode: item.templateCode,
+          levels: item.levels,
+          audienceRoles: item.audienceRoles,
+          channels: item.channels,
+          slaHours: item.slaHours,
+          scanLookbackDays: item.scanLookbackDays,
+          enabled: item.enabled !== false,
+        });
+      }}
+      setPushRuleEnabled={async (item, enabled) => {
+        if (item.id) setFixturePushRuleEnabled(item.id, enabled);
+      }}
+      deletePushRule={async (item) => {
+        if (item.id) deleteFixturePushRule(item.id);
+      }}
+      fetchVariables={async () => listFixtureVariablesAdmin()}
+      saveVariable={async (item) => {
+        saveFixtureVariable(item);
+      }}
+      deleteVariable={async (item) => {
+        deleteFixtureVariable(item.key);
       }}
     />
   );
