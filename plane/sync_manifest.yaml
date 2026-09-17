@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.141
+  next_task_id: P6.3.142
 tasks:
+- id: P6.3.141
+  milestone: P6.3
+  name: Disposition 域折叠 + AlertDispositionPanel 等级目录并发版 0.1.99
+  status: 已完成
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-17"
+  target_date: "2026-09-17"
+  tags: [frontend, Disposition, AlertDisposition, release]
+  note: |
+    Related: S4.30.2032
+    Disposition/* 折叠；AlertDispositionPanel + LevelCatalog；Showcase 折线色点；chore(release) v0.1.99；禁 G1
 - id: P6.3.140
   milestone: P6.3
   name: MessageCenter 插入变量原子色块并发版 0.1.98
@@ -2004,7 +2017,7 @@ tasks:
 - id: P6.3.115
   milestone: P6.3
   name: StateBar 项级 actions（icon/Tooltip）
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feat
   owner: 黄金芳
