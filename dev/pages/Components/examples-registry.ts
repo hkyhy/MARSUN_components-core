@@ -3727,6 +3727,16 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           import('@/components/Tools/MessageCenter/examples/EmptyErrorLoadingDemo/index.tsx?raw'),
         block: true,
       },
+      {
+        title: '7. App 切换（Phase B）',
+        description: 'MsgCenterAppSwitcher：仅有权+可切换对；展示名取 SSO name；单权不渲染',
+        component: React.lazy(
+          () => import('@/components/Tools/MessageCenter/examples/AppSwitchDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Tools/MessageCenter/examples/AppSwitchDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
