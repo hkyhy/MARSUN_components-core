@@ -1,5 +1,5 @@
 import { AuditEventDetailView, AuditLogList } from '../../AuditLogList';
-import type { AuditEventListItem } from '../../types';
+import type { AuditEventDetail, AuditEventListItem } from '../../types';
 import { Space, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -23,8 +23,8 @@ const mockRows: AuditEventListItem[] = [
   },
 ];
 
-const mockDetail = {
-  ...mockRows[0],
+const mockDetail: AuditEventDetail = {
+  ...mockRows[0]!,
   requestCurl: "curl -X POST 'http://example' -H 'Authorization: ***REDACTED***'",
   steps: [
     {
