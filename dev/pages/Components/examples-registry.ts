@@ -888,14 +888,33 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/editor': {
     title: 'Editor 富文本',
-    description: 'CKEditor 5 封装：消息正文等场景；仅基础格式，禁脚本扩展。',
+    description: 'CKEditor 5：基础格式 + 可选变量 Mention（/`{key}` 色块）；L2 `/editor`。',
     examples: [
       {
-        title: 'RichTextEditor 基础',
+        title: '1. RichTextEditor 基础',
         description: '粗体 / 斜体 / 列表；受控 value/onChange',
         component: React.lazy(() => import('@/components/Editor/examples/RichTextBasicDemo')),
         sourcePath: () => import('@/components/Editor/examples/RichTextBasicDemo/index.tsx?raw'),
         block: true,
+      },
+      {
+        title: '2. Mention 着色',
+        description: '/ 触发插入 {key}；色块 token；预览已替换',
+        component: React.lazy(() => import('@/components/Editor/examples/RichTextMentionDemo')),
+        sourcePath: () => import('@/components/Editor/examples/RichTextMentionDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '3. disabled',
+        description: 'disabled 不可编辑',
+        component: React.lazy(() => import('@/components/Editor/examples/RichTextDisabledDemo')),
+        sourcePath: () => import('@/components/Editor/examples/RichTextDisabledDemo/index.tsx?raw'),
+      },
+      {
+        title: '4. 只读',
+        description: 'readOnly 只读展示',
+        component: React.lazy(() => import('@/components/Editor/examples/RichTextReadOnlyDemo')),
+        sourcePath: () => import('@/components/Editor/examples/RichTextReadOnlyDemo/index.tsx?raw'),
       },
     ],
     apiDoc: [
@@ -903,10 +922,21 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         componentName: 'RichTextEditorProps',
         rows: [
           { prop: 'value', desc: 'HTML 内容', type: 'string' },
-          { prop: 'onChange', desc: '内容变更', type: '(html: string) => void' },
-          { prop: 'disabled', desc: '只读', type: 'boolean' },
+          {
+            prop: 'onChange',
+            desc: '内容变更（Mention 开启时存 {key} token）',
+            type: '(html: string) => void',
+          },
+          { prop: 'disabled', desc: '禁用', type: 'boolean' },
+          { prop: 'readOnly', desc: '只读', type: 'boolean' },
           { prop: 'placeholder', desc: '占位', type: 'string' },
           { prop: 'minHeight', desc: '编辑区最小高度 px', type: 'number' },
+          { prop: 'enableVariableMention', desc: '开启 / 变量 Mention', type: 'boolean' },
+          {
+            prop: 'variables',
+            desc: 'catalog 变量列表（禁 FE DEFAULT_VARS）',
+            type: 'VariableMentionItem[]',
+          },
         ],
       },
     ],
@@ -3516,11 +3546,11 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   '/components/tools/messagecenter': {
     title: 'MessageCenter 消息中心',
     description:
-      '事件目录 → 模板 CRUD（自动编号/中文事件/默认停用/SSO 角色/变量+CKEditor）→ dryRun/emit → InboxBell → 权限 → 空错加载。',
+      '事件目录（variables SSOT）→ 模板 CRUD（StateBar actions / Mention / 预览替换）→ dryRun/emit → InboxBell → 权限 → 空错加载。',
     examples: [
       {
         title: '1. 事件目录',
-        description: 'energy.gap / maintenance.overdue 与默认 href',
+        description: 'events + catalog variables（SSOT）',
         component: React.lazy(
           () => import('@/components/Tools/MessageCenter/examples/EventCatalogDemo'),
         ),
@@ -3529,7 +3559,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
       {
         title: '2. 消息模板 CRUD',
-        description: '可写态：列表 / 新建 / 启用 / 受众角色；推送 Tab 冻结',
+        description: 'StateBar 右 Plus 新建；/ Mention；推送 InteractiveBlock 冻结',
         component: React.lazy(
           () => import('@/components/Tools/MessageCenter/examples/TemplateCrudDemo'),
         ),
@@ -3589,12 +3619,21 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'saveTemplate', desc: '保存模板', type: '(item) => Promise<void>' },
           {
             prop: 'fetchEventCatalog',
-            desc: '事件目录',
-            type: '() => Promise<MessageEventCatalogItem[]>',
+            desc: '事件目录；须回 payload（events+variables/contextSchema），禁只回数组',
+            type: '() => Promise<MessageEventCatalogItem[] | MessageEventCatalogPayload>',
           },
           { prop: 'canWrite', desc: '业务注入写权限；core 不硬编码权限码', type: 'boolean' },
           { prop: 'renderAudienceField', desc: '受众树插槽', type: '(ctx) => ReactNode' },
-          { prop: 'pushRulesSlot', desc: '推送规则 Tab；默认冻结说明', type: 'ReactNode' },
+          {
+            prop: 'pushRulesSlot',
+            desc: '推送规则 Tab；默认 InteractiveBlock 冻结说明',
+            type: 'ReactNode',
+          },
+          {
+            prop: 'templateVariables',
+            desc: '已废弃：仅 fixture；业务须走 catalog variables',
+            type: 'MessageTemplateVariable[]',
+          },
         ],
       },
     ],

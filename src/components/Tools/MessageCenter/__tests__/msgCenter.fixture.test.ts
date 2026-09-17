@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import {
   countFixtureExamplesMetaMin,
   emitFixtureByEventKey,
+  listFixtureCatalog,
   listFixtureEvents,
   listFixtureInbox,
   resetMsgCenterFixture,
@@ -31,6 +32,13 @@ describe('msgCenter.fixture', () => {
     const keys = listFixtureEvents().map((e) => e.eventKey);
     expect(keys).toEqual(expect.arrayContaining(['energy.gap', 'maintenance.overdue']));
   });
+
+  it('listFixtureCatalog includes variables SSOT', () => {
+    const cat = listFixtureCatalog();
+    expect(cat.events.length).toBeGreaterThan(0);
+    expect(cat.variables.some((v) => v.key === 'factory')).toBe(true);
+    expect(cat.contextSchema.factory.label).toBe('分厂');
+  });
 });
 
 describe('MessageCenter examples meta gate', () => {
@@ -39,5 +47,14 @@ describe('MessageCenter examples meta gate', () => {
       examples: unknown[];
     };
     expect(meta.examples.length).toBeGreaterThanOrEqual(countFixtureExamplesMetaMin());
+  });
+});
+
+describe('Editor examples meta gate', () => {
+  it('meta.json has at least 4 examples', () => {
+    const meta = JSON.parse(
+      readFileSync(join(here, '../../../Editor/examples/meta.json'), 'utf8'),
+    ) as { examples: unknown[] };
+    expect(meta.examples.length).toBeGreaterThanOrEqual(4);
   });
 });

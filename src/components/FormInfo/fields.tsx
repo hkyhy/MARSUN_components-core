@@ -1,5 +1,5 @@
 /**
- * 字段包装：withNormalizedLabelTips；引擎按钮再导出。
+ * FormInfo Input 扩展：enableVariableMention 时走 VariableMention 字段（/`{key}`）。
  */
 import {
   CancelButton as BaseCancelButton,
@@ -13,8 +13,10 @@ import {
   TextArea as BaseTextArea,
   TreeSelect as BaseTreeSelect,
 } from '@kne/react-form-antd';
-import type { ComponentType, ReactNode } from 'react';
+import { type ComponentType, type ReactNode } from 'react';
 import { withNormalizedLabelTips } from '@/components/Form/normalizeLabelTips';
+import { VariableMentionField } from './VariableMentionInput';
+import type { VariableMentionItem } from '@/components/Editor/variableMention';
 
 type FieldProps = {
   name: string;
@@ -26,6 +28,9 @@ type FieldProps = {
   block?: boolean;
   rows?: number;
   options?: unknown[];
+  /** 开启 `/` 变量 Mention；与 variables 联用 */
+  enableVariableMention?: boolean;
+  variables?: VariableMentionItem[];
   [key: string]: unknown;
 };
 
@@ -37,11 +42,22 @@ type ButtonProps = {
 };
 
 type InputType = ComponentType<FieldProps> & { Password: ComponentType<FieldProps> };
+
 const InputBase = BaseInput as unknown as InputType;
-const InputWrapped = withNormalizedLabelTips(InputBase);
-export const Input = Object.assign(InputWrapped, {
-  Password: withNormalizedLabelTips(InputBase.Password),
-}) as InputType;
+
+function InputSwitch(props: FieldProps) {
+  if (props.enableVariableMention) {
+    return <VariableMentionField {...props} />;
+  }
+  return <InputBase {...props} />;
+}
+
+export const Input = Object.assign(
+  withNormalizedLabelTips(InputSwitch as ComponentType<FieldProps>),
+  {
+    Password: withNormalizedLabelTips(InputBase.Password),
+  },
+) as InputType;
 
 export const TextArea = withNormalizedLabelTips(
   BaseTextArea as ComponentType<FieldProps>,

@@ -2,7 +2,7 @@ import { RichTextEditor } from '@/components/Editor';
 import { Space, Typography } from 'antd';
 import React, { useState } from 'react';
 
-/** RichTextEditor（CKEditor）基础示例。业务：`@hkyhy/marsun-components-core/editor`（L2） */
+/** RichTextEditor 基础：粗体/斜体/列表；受控 value/onChange */
 const RichTextBasicDemo: React.FC = () => {
   const [html, setHtml] = useState('<p>业务日 <strong>{bizDate}</strong>：{machine}</p>');
   return (

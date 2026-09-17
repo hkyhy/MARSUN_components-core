@@ -1,6 +1,6 @@
 import { MessageTemplateAdmin } from '@/components/Tools/MessageCenter';
 import {
-  listFixtureEvents,
+  listFixtureCatalog,
   listFixtureRoles,
   listFixtureTemplates,
   resetMsgCenterFixture,
@@ -14,7 +14,7 @@ resetMsgCenterFixture();
 const PermissionsDemo: React.FC = () => {
   const [canWrite, setCanWrite] = useState(false);
   const fetchTemplates = useCallback(async () => listFixtureTemplates(), []);
-  const fetchEventCatalog = useCallback(async () => listFixtureEvents(), []);
+  const fetchEventCatalog = useCallback(async () => listFixtureCatalog(), []);
   const fetchAudienceRoles = useCallback(async () => listFixtureRoles(), []);
 
   return (

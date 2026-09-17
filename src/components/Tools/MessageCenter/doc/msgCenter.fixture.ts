@@ -34,6 +34,23 @@ export type MsgInboxItem = {
 
 export type MsgRoleItem = { code: string; name: string };
 
+export type MsgVariableItem = { key: string; label?: string; type?: string };
+
+/** 对齐 equipment-agent catalog contextSchema（Showcase SSOT；禁 FE DEFAULT_VARS 平行表） */
+export const MSG_CONTEXT_SCHEMA: Record<string, { type: string; label: string }> = {
+  factory: { type: 'string', label: '分厂' },
+  machine: { type: 'string', label: '机台' },
+  machineId: { type: 'string', label: '机台ID' },
+  bizDate: { type: 'string', label: '业务日' },
+  count: { type: 'number', label: '台数' },
+  metric: { type: 'string', label: '指标' },
+  gapPct: { type: 'number', label: '缺口%' },
+};
+
+export const MSG_VARIABLES: MsgVariableItem[] = Object.entries(MSG_CONTEXT_SCHEMA).map(
+  ([key, meta]) => ({ key, type: meta.type, label: meta.label }),
+);
+
 export const MSG_EVENTS: MsgEventItem[] = [
   {
     eventKey: 'energy.gap',
@@ -93,6 +110,15 @@ export function resetMsgCenterFixture() {
 
 export function listFixtureEvents() {
   return [...MSG_EVENTS];
+}
+
+/** 完整 catalog payload（events + variables/contextSchema）；Admin Demo 须用此，禁只回 events 数组 */
+export function listFixtureCatalog() {
+  return {
+    events: [...MSG_EVENTS],
+    contextSchema: { ...MSG_CONTEXT_SCHEMA },
+    variables: MSG_VARIABLES.map((v) => ({ ...v })),
+  };
 }
 
 export function listFixtureRoles() {

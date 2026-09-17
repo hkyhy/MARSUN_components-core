@@ -1,11 +1,10 @@
-import { Alert } from '@/components/Alert';
 import { FormInfo, FormItem, FormModal, Input, Select } from '@/components/FormInfo';
 import {
   applyTemplateVars,
   normalizeTemplatePlaceholders,
   stripHtmlToText,
 } from '../../utils/templateCode';
-import { Button, Select as AntSelect, Space, Tag, Typography, message } from 'antd';
+import { Button, Select as AntSelect, Typography, message } from 'antd';
 import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
@@ -26,6 +25,8 @@ export type TemplateFormModalProps = {
   catalog: MessageEventCatalogItem[];
   roleOptions: MessageAudienceRoleOption[];
   variables: MessageTemplateVariable[];
+  /** catalog 请求失败时的短文案（与「变量为空」区分） */
+  catalogError?: string;
   previewVars: Record<string, string>;
   canWrite: boolean;
   onCancel: () => void;
@@ -44,8 +45,6 @@ type FormShape = {
 };
 
 type FormApiLike = {
-  setField?: (name: string, value: unknown) => void;
-  setFields?: (fields: Array<{ name: string; value: unknown }>) => void;
   formData?: FormShape;
   getFormData?: () => FormShape;
 };
@@ -60,6 +59,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   catalog,
   roleOptions,
   variables,
+  catalogError,
   previewVars,
   canWrite,
   onCancel,
@@ -87,22 +87,11 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
     };
   }, [initial]);
 
-  const appendTitleVar = (key: string, api: FormApiLike) => {
-    const token = `{${key}}`;
-    const cur =
-      (typeof api.getFormData === 'function' ? api.getFormData()?.titleTemplate : undefined) ??
-      api.formData?.titleTemplate ??
-      formData.titleTemplate ??
-      '';
-    const next = `${cur}${token}`;
-    if (typeof api.setField === 'function') {
-      api.setField('titleTemplate', next);
-      return;
-    }
-    if (typeof api.setFields === 'function') {
-      api.setFields([{ name: 'titleTemplate', value: next }]);
-    }
-  };
+  const varsEmptyHint = catalogError
+    ? `目录加载失败，无法插入变量（${catalogError}）`
+    : variables.length === 0
+      ? '暂无 catalog 变量'
+      : '';
 
   const fieldList = useMemo(() => {
     const fields = [];
@@ -123,10 +112,23 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         }))}
       />,
       <Input key="scenario" name="scenario" label="适用场景" rule="REQ" disabled={!canWrite} />,
-      <Input key="titleTemplate" name="titleTemplate" label="标题模板" disabled={!canWrite} />,
+      <Input
+        key="titleTemplate"
+        name="titleTemplate"
+        label="标题模板"
+        disabled={!canWrite}
+        enableVariableMention
+        variables={variables}
+        placeholder="输入 / 插入变量"
+        labelTips={
+          isCreate
+            ? '新建默认停用；保存后可在列表中开启「启用」。输入 / 从 catalog 插入 {key}。'
+            : '输入 / 从 catalog 插入变量 {key}。'
+        }
+      />,
     );
     return fields;
-  }, [isCreate, canWrite, catalog]);
+  }, [isCreate, canWrite, catalog, variables]);
 
   return (
     <FormModal
@@ -180,61 +182,31 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       <FormInfo column={1} list={fieldList} />
       <FormItem>
         {(api: FormApiLike) => (
-          <div className={styles.varBar}>
-            <Space size={[4, 4]} wrap>
-              <Typography.Text type="secondary">插入变量（标题）：</Typography.Text>
-              {variables.length === 0 ? (
-                <Typography.Text type="secondary">暂无 catalog 变量</Typography.Text>
-              ) : (
-                variables.map((v) => (
-                  <Tag
-                    key={`t-${v.key}`}
-                    style={{ cursor: canWrite ? 'pointer' : 'default' }}
-                    onClick={() => canWrite && appendTitleVar(v.key, api)}
-                  >
-                    {v.label || v.key} <code>{`{${v.key}}`}</code>
-                  </Tag>
-                ))
-              )}
-            </Space>
-            <Typography.Paragraph type="secondary" className={styles.preview}>
-              预览：
-              {applyTemplateVars(
-                String(
-                  (typeof api.getFormData === 'function'
-                    ? api.getFormData()?.titleTemplate
-                    : undefined) ??
-                    api.formData?.titleTemplate ??
-                    formData.titleTemplate ??
-                    '',
-                ),
-                previewVars,
-              ) || '—'}
-            </Typography.Paragraph>
-          </div>
+          <Typography.Paragraph type="secondary" className={styles.preview}>
+            预览：
+            {applyTemplateVars(
+              String(
+                (typeof api.getFormData === 'function'
+                  ? api.getFormData()?.titleTemplate
+                  : undefined) ??
+                  api.formData?.titleTemplate ??
+                  formData.titleTemplate ??
+                  '',
+              ),
+              previewVars,
+            ) || '—'}
+          </Typography.Paragraph>
         )}
       </FormItem>
       <div className={styles.varBar}>
-        <Space size={[4, 4]} wrap>
-          <Typography.Text type="secondary">插入变量（正文）：</Typography.Text>
-          {variables.map((v) => (
-            <Tag
-              key={`b-${v.key}`}
-              style={{ cursor: canWrite ? 'pointer' : 'default' }}
-              onClick={() => {
-                if (!canWrite) return;
-                setBodyHtml((prev) => `${prev}{${v.key}}`);
-              }}
-            >
-              {v.label || v.key} <code>{`{${v.key}}`}</code>
-            </Tag>
-          ))}
-        </Space>
+        {varsEmptyHint ? <Typography.Text type="secondary">{varsEmptyHint}</Typography.Text> : null}
         <Suspense fallback={<Button loading disabled type="text" />}>
           <RichTextEditor
             value={bodyHtml}
             disabled={!canWrite}
-            placeholder="编辑正文，可插入变量"
+            enableVariableMention
+            variables={variables}
+            placeholder="编辑正文，输入 / 插入变量"
             onChange={setBodyHtml}
           />
         </Suspense>
@@ -244,15 +216,12 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       </div>
       <div style={{ marginTop: 12 }}>
         <Typography.Text>受众角色</Typography.Text>
-        <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
-          从本系统 SSO 角色选择（展示名称，写入角色码）
-        </Typography.Paragraph>
         {renderAudienceField ? (
           renderAudienceField({ roles, onChange: setRoles })
         ) : (
           <AntSelect
             mode="multiple"
-            style={{ width: '100%' }}
+            style={{ width: '100%', marginTop: 8 }}
             value={roles}
             disabled={!canWrite}
             placeholder={roleOptions.length ? '选择角色' : '暂无角色数据'}
@@ -266,14 +235,6 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
           />
         )}
       </div>
-      {isCreate ? (
-        <Alert
-          type="info"
-          showIcon
-          message="新建默认停用；保存后可在列表中开启「启用」。"
-          style={{ marginTop: 12 }}
-        />
-      ) : null}
     </FormModal>
   );
 };

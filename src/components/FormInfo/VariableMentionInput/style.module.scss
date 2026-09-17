@@ -1,0 +1,30 @@
+.var-mention-input {
+  width: 100%;
+  box-sizing: border-box;
+
+  :global(.ant-mentions) {
+    width: 100%;
+  }
+}
+
+.var-mention-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.var-mention-token {
+  display: inline;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--primary-color, #2563eb);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.var-mention-label {
+  color: var(--font-color-grey-1, #8c8c8c);
+  font-size: 12px;
+}

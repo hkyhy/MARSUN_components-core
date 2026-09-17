@@ -1,6 +1,6 @@
 {
   "name": "@hkyhy/marsun-components-core",
-  "version": "0.1.92",
+  "version": "0.1.93",
   "description": "Marsun pure UI component library",
   "type": "module",
   "repository": {
@@ -130,7 +130,8 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "simplebar": "^6.3.3",
-    "simplebar-react": "^3.3.2"
+    "simplebar-react": "^3.3.2",
+    "@ckeditor/ckeditor5-mention": "48.5.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",

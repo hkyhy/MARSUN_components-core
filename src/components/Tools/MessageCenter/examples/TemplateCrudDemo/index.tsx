@@ -1,6 +1,6 @@
 import { MessageTemplateAdmin } from '@/components/Tools/MessageCenter';
 import {
-  listFixtureEvents,
+  listFixtureCatalog,
   listFixtureRoles,
   listFixtureTemplates,
   resetMsgCenterFixture,
@@ -11,10 +11,10 @@ import React, { useCallback } from 'react';
 
 resetMsgCenterFixture();
 
-/** 2. 模板 CRUD（可写）：自动编号 / 中文事件 / 默认停用 / SSO 角色名 / 变量+富文本 */
+/** 2. 模板 CRUD（可写）：自动编号 / 中文事件 / 默认停用 / SSO 角色名 / catalog 变量+Mention */
 const TemplateCrudDemo: React.FC = () => {
   const fetchTemplates = useCallback(async () => listFixtureTemplates(), []);
-  const fetchEventCatalog = useCallback(async () => listFixtureEvents(), []);
+  const fetchEventCatalog = useCallback(async () => listFixtureCatalog(), []);
   const fetchAudienceRoles = useCallback(async () => listFixtureRoles(), []);
   const saveTemplate = useCallback(async (item: Record<string, unknown>) => {
     saveFixtureTemplate({

@@ -1,13 +1,32 @@
 {
   "title": "Editor 富文本",
-  "description": "CKEditor 5 封装：消息正文等场景；仅基础格式，禁脚本扩展。",
+  "description": "CKEditor 5：基础格式 + 可选变量 Mention（/`{key}` 色块）；L2 `/editor`。",
   "examples": [
     {
-      "title": "RichTextEditor 基础",
+      "title": "1. RichTextEditor 基础",
       "description": "粗体 / 斜体 / 列表；受控 value/onChange",
       "component": "@/components/Editor/examples/RichTextBasicDemo",
       "sourcePath": "@/components/Editor/examples/RichTextBasicDemo/index.tsx",
       "block": true
+    },
+    {
+      "title": "2. Mention 着色",
+      "description": "/ 触发插入 {key}；色块 token；预览已替换",
+      "component": "@/components/Editor/examples/RichTextMentionDemo",
+      "sourcePath": "@/components/Editor/examples/RichTextMentionDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "3. disabled",
+      "description": "disabled 不可编辑",
+      "component": "@/components/Editor/examples/RichTextDisabledDemo",
+      "sourcePath": "@/components/Editor/examples/RichTextDisabledDemo/index.tsx"
+    },
+    {
+      "title": "4. 只读",
+      "description": "readOnly 只读展示",
+      "component": "@/components/Editor/examples/RichTextReadOnlyDemo",
+      "sourcePath": "@/components/Editor/examples/RichTextReadOnlyDemo/index.tsx"
     }
   ],
   "apiDoc": [
@@ -15,10 +34,21 @@
       "componentName": "RichTextEditorProps",
       "rows": [
         { "prop": "value", "desc": "HTML 内容", "type": "string" },
-        { "prop": "onChange", "desc": "内容变更", "type": "(html: string) => void" },
-        { "prop": "disabled", "desc": "只读", "type": "boolean" },
+        {
+          "prop": "onChange",
+          "desc": "内容变更（Mention 开启时存 {key} token）",
+          "type": "(html: string) => void"
+        },
+        { "prop": "disabled", "desc": "禁用", "type": "boolean" },
+        { "prop": "readOnly", "desc": "只读", "type": "boolean" },
         { "prop": "placeholder", "desc": "占位", "type": "string" },
-        { "prop": "minHeight", "desc": "编辑区最小高度 px", "type": "number" }
+        { "prop": "minHeight", "desc": "编辑区最小高度 px", "type": "number" },
+        { "prop": "enableVariableMention", "desc": "开启 / 变量 Mention", "type": "boolean" },
+        {
+          "prop": "variables",
+          "desc": "catalog 变量列表（禁 FE DEFAULT_VARS）",
+          "type": "VariableMentionItem[]"
+        }
       ]
     }
   ]

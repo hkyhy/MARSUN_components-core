@@ -181,7 +181,7 @@ const InboxBell: React.FC<InboxBellProps> = ({
         title={title}
         open={open}
         onClose={() => setOpen(false)}
-        width={420}
+        size={420}
         destroyOnClose={false}
         className={styles.drawer}
         styles={{
