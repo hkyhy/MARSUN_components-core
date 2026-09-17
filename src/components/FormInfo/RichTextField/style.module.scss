@@ -4,7 +4,8 @@
   border: 1px solid var(--font-color-grey-4, #d9d9d9);
   border-radius: 6px;
   background: #fff;
-  overflow: hidden;
+  /* visible：hidden 会裁切 CK 面板，且部分浏览器下 contenteditable 易失焦 */
+  overflow: visible;
   transition:
     border-color 0.2s,
     box-shadow 0.2s;

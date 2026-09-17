@@ -66,13 +66,14 @@ const RichTextControl: FC<
   id,
 }) => (
   <div
-    id={id}
     className={classNames(
       'marsun-form-rich-text',
       styles['form-rich-text'],
       disabled && styles['form-rich-text-disabled'],
       className,
     )}
+    // id 挂在可聚焦控件上；挂 wrapper 会让 label 抢焦点，CK 立刻 blur
+    data-field-id={id}
   >
     <Suspense fallback={<div className={styles['form-rich-text-loading']}>加载编辑器…</div>}>
       <RichTextEditor

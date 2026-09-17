@@ -148,6 +148,8 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       width={720}
       okText="保存"
       autoClose={false}
+      // CKEditor contenteditable 与 Modal focus trap 冲突：点进编辑区会立刻 blur
+      focusable={{ trap: false }}
       formProps={{
         data: formData,
         onSubmit: async (data: FormShape) => {

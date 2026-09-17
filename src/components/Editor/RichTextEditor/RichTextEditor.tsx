@@ -41,7 +41,7 @@ export type RichTextEditorProps = {
 };
 
 /**
- * CKEditor 5：不传受控 `data`；仅 onReady / 外部 value 变化时 setData，键入保持光标。
+ * CKEditor 5：不传受控 `data`；仅 onReady / 外部 value 变化且未聚焦时 setData。
  * 换文档请用 key 强制 remount。
  */
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
@@ -61,6 +61,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const lastEmittedRef = useRef<string | null>(null);
   const mentionRef = useRef(enableVariableMention);
   mentionRef.current = enableVariableMention;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   const toOutgoing = (raw: string, mention = enableVariableMention) =>
     mention ? normalizeMentionHtmlToVarTokens(raw) : raw;
@@ -72,20 +74,18 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     const editor = editorRef.current;
     if (!editor) return;
     const mention = mentionRef.current;
-    const incoming = toIncoming(value || '', mention);
-    const outgoingFromEditor = toOutgoing(editor.getData(), mention);
-    // 刚由本组件发出 → 跳过，避免打乱光标
+    // 编辑中禁止 setData：否则会立刻失焦 / 光标跳首位
+    if (editor.editing.view.document.isFocused) {
+      return;
+    }
     if (lastEmittedRef.current != null && semanticEqual(value || '', lastEmittedRef.current)) {
       return;
     }
+    const outgoingFromEditor = toOutgoing(editor.getData(), mention);
     if (semanticEqual(outgoingFromEditor, value || '')) {
       return;
     }
-    const sel = editor.model.document.selection;
-    const wasCollapsed = sel.isCollapsed;
-    editor.setData(incoming);
-    // setData 后光标通常在文档首；若仅外部重置则接受；本分支已排除自发出的 value
-    void wasCollapsed;
+    editor.setData(toIncoming(value || '', mention));
   }, [value, enableVariableMention]);
 
   const config = useMemo(() => {
@@ -139,6 +139,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       data-disabled={disabled ? '1' : '0'}
       data-readonly={readOnly ? '1' : '0'}
       data-var-mention={enableVariableMention ? '1' : '0'}
+      onMouseDown={(e) => {
+        // 避免外层 label/Form 抢焦点导致 contenteditable 立刻 blur
+        e.stopPropagation();
+      }}
     >
       <CKEditor
         editor={ClassicEditor}
@@ -155,7 +159,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         onChange={(_evt, editor) => {
           const outgoing = toOutgoing(editor.getData());
           lastEmittedRef.current = outgoing;
-          onChange?.(outgoing);
+          onChangeRef.current?.(outgoing);
         }}
       />
     </div>
