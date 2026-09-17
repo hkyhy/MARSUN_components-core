@@ -28,9 +28,10 @@ type FieldProps = {
   block?: boolean;
   rows?: number;
   options?: unknown[];
-  /** 开启 `/` 变量 Mention；与 variables 联用 */
+  /** 开启「插入变量」；与 variables 联用 */
   enableVariableMention?: boolean;
   variables?: VariableMentionItem[];
+  catalogError?: string;
   [key: string]: unknown;
 };
 
