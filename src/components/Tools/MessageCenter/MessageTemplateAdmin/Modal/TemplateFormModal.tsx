@@ -6,7 +6,7 @@ import {
   stripHtmlToText,
 } from '../../utils/templateCode';
 import { Select as AntSelect, Typography, message } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
   MessageEventCatalogItem,
@@ -48,7 +48,8 @@ type FormApiLike = {
 };
 
 /**
- * 模板新建/编辑：FormModal + FormInfo；正文 RichTextField（Form 字段样式）。
+ * 模板新建/编辑：FormModal + FormInfo；正文 RichTextField。
+ * CKEditor 在 open 后微任务挂载，避免与 Modal focus/动画互抢；禁 mention uplift 死循环。
  */
 export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   open,
@@ -65,10 +66,17 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   renderAudienceField,
 }) => {
   const [roles, setRoles] = useState<string[]>([]);
+  const [editorReady, setEditorReady] = useState(false);
 
   useEffect(() => {
-    if (!open || !initial) return;
+    if (!open || !initial) {
+      setEditorReady(false);
+      return;
+    }
     setRoles(initial.audienceRoles || initial.roles || []);
+    // 打开后再挂编辑器（afterOpenChange 兜底 + rAF）
+    const id = window.requestAnimationFrame(() => setEditorReady(true));
+    return () => window.cancelAnimationFrame(id);
   }, [open, initial]);
 
   const editorKey = initial?.id || initial?.code || (isCreate ? 'create' : 'edit');
@@ -92,8 +100,20 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       ? '暂无 catalog 变量'
       : '';
 
+  const handleAfterOpenChange = useCallback((nextOpen: boolean) => {
+    if (nextOpen) setEditorReady(true);
+    else setEditorReady(false);
+  }, []);
+
   const fieldList = useMemo(() => {
-    const fields = [];
+    if (!editorReady) {
+      return [
+        <Typography.Text key="loading" type="secondary">
+          加载编辑器…
+        </Typography.Text>,
+      ];
+    }
+    const fields: React.ReactNode[] = [];
     if (!isCreate) {
       fields.push(<Input key="code" name="code" label="编号" disabled />);
     }
@@ -138,7 +158,51 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       />,
     );
     return fields;
-  }, [isCreate, canWrite, catalog, variables, editorKey]);
+  }, [editorReady, isCreate, canWrite, catalog, variables, editorKey]);
+
+  const formProps = useMemo(
+    () => ({
+      data: formData,
+      onSubmit: async (data: FormShape) => {
+        if (!canWrite) {
+          message.warning('当前为只读（业务未授予写权限）');
+          return false;
+        }
+        const scenario = String(data.scenario || '').trim();
+        const eventKey = String(data.eventKey || '').trim();
+        if (!scenario) {
+          message.warning('请填写适用场景');
+          return false;
+        }
+        if (!eventKey) {
+          message.warning('请选择事件');
+          return false;
+        }
+        const hit = catalog.find((c) => c.eventKey === eventKey);
+        try {
+          await onSubmit({
+            ...(initial || {}),
+            code: data.code || initial?.code,
+            eventKey,
+            scenario,
+            label: scenario,
+            messageType: hit?.messageType || initial?.messageType || 'alert',
+            titleTemplate: normalizeTemplatePlaceholders(String(data.titleTemplate || '')),
+            bodyTemplate: normalizeTemplatePlaceholders(String(data.bodyTemplate || '')),
+            audienceRoles: roles,
+            roles,
+            enabled: isCreate ? false : initial?.enabled !== false,
+            channel: initial?.channel || 'in_app',
+          });
+          onCancel();
+        } catch (e) {
+          message.error(e instanceof Error ? e.message : String(e));
+          return false;
+        }
+      },
+    }),
+    [formData, canWrite, catalog, onSubmit, initial, roles, isCreate, onCancel],
+  );
 
   return (
     <FormModal
@@ -148,76 +212,39 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       width={720}
       okText="保存"
       autoClose={false}
-      // CKEditor contenteditable 与 Modal focus trap 冲突：点进编辑区会立刻 blur
       focusable={{ trap: false }}
-      formProps={{
-        data: formData,
-        onSubmit: async (data: FormShape) => {
-          if (!canWrite) {
-            message.warning('当前为只读（业务未授予写权限）');
-            return false;
-          }
-          const scenario = String(data.scenario || '').trim();
-          const eventKey = String(data.eventKey || '').trim();
-          if (!scenario) {
-            message.warning('请填写适用场景');
-            return false;
-          }
-          if (!eventKey) {
-            message.warning('请选择事件');
-            return false;
-          }
-          const hit = catalog.find((c) => c.eventKey === eventKey);
-          try {
-            await onSubmit({
-              ...(initial || {}),
-              code: data.code || initial?.code,
-              eventKey,
-              scenario,
-              label: scenario,
-              messageType: hit?.messageType || initial?.messageType || 'alert',
-              titleTemplate: normalizeTemplatePlaceholders(String(data.titleTemplate || '')),
-              bodyTemplate: normalizeTemplatePlaceholders(String(data.bodyTemplate || '')),
-              audienceRoles: roles,
-              roles,
-              enabled: isCreate ? false : initial?.enabled !== false,
-              channel: initial?.channel || 'in_app',
-            });
-            onCancel();
-          } catch (e) {
-            message.error(e instanceof Error ? e.message : String(e));
-            return false;
-          }
-        },
-      }}
+      afterOpenChange={handleAfterOpenChange}
+      formProps={formProps}
     >
       <FormInfo column={1} list={fieldList} />
-      <FormItem>
-        {(api: FormApiLike) => {
-          const data =
-            (typeof api.getFormData === 'function' ? api.getFormData() : undefined) ??
-            api.formData ??
-            formData;
-          const titlePreview = applyTemplateVars(String(data.titleTemplate || ''), previewVars);
-          const bodyPreview = applyTemplateVars(
-            stripHtmlToText(String(data.bodyTemplate || '')),
-            previewVars,
-          );
-          return (
-            <>
-              {varsEmptyHint ? (
-                <Typography.Text type="secondary">{varsEmptyHint}</Typography.Text>
-              ) : null}
-              <Typography.Paragraph type="secondary" className={styles.preview}>
-                标题预览：{titlePreview || '—'}
-              </Typography.Paragraph>
-              <Typography.Paragraph type="secondary" className={styles.preview}>
-                正文预览：{bodyPreview || '—'}
-              </Typography.Paragraph>
-            </>
-          );
-        }}
-      </FormItem>
+      {editorReady ? (
+        <FormItem>
+          {(api: FormApiLike) => {
+            const data =
+              (typeof api.getFormData === 'function' ? api.getFormData() : undefined) ??
+              api.formData ??
+              formData;
+            const titlePreview = applyTemplateVars(String(data.titleTemplate || ''), previewVars);
+            const bodyPreview = applyTemplateVars(
+              stripHtmlToText(String(data.bodyTemplate || '')),
+              previewVars,
+            );
+            return (
+              <>
+                {varsEmptyHint ? (
+                  <Typography.Text type="secondary">{varsEmptyHint}</Typography.Text>
+                ) : null}
+                <Typography.Paragraph type="secondary" className={styles.preview}>
+                  标题预览：{titlePreview || '—'}
+                </Typography.Paragraph>
+                <Typography.Paragraph type="secondary" className={styles.preview}>
+                  正文预览：{bodyPreview || '—'}
+                </Typography.Paragraph>
+              </>
+            );
+          }}
+        </FormItem>
+      ) : null}
       <div style={{ marginTop: 12 }}>
         <Typography.Text>受众角色</Typography.Text>
         {renderAudienceField ? (

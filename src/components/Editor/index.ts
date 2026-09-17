@@ -8,6 +8,7 @@ export {
   formatVariableOptionLabel,
   toMentionFeedItem,
   normalizeMentionHtmlToVarTokens,
+  wrapVarTokensForDisplay,
   upliftVarTokensToMentions,
   insertVarTokenAt,
 } from './variableMention';

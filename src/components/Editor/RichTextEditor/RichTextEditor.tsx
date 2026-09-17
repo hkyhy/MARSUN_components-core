@@ -11,13 +11,13 @@ import {
   type Editor,
 } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   filterVariableFeed,
   formatVariableOptionLabel,
   normalizeMentionHtmlToVarTokens,
   toMentionFeedItem,
-  upliftVarTokensToMentions,
+  wrapVarTokensForDisplay,
   type VariableMentionItem,
 } from '../variableMention';
 import styles from './style.module.scss';
@@ -41,7 +41,7 @@ export type RichTextEditorProps = {
 };
 
 /**
- * CKEditor 5：不传受控 `data`；仅 onReady / 外部 value 变化且未聚焦时 setData。
+ * CKEditor 5：挂载时写一次初始 HTML；键入不回写 setData（杜绝卡死/失焦）。
  * 换文档请用 key 强制 remount。
  */
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
@@ -58,35 +58,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const variablesRef = useRef(variables);
   variablesRef.current = variables;
   const editorRef = useRef<Editor | null>(null);
-  const lastEmittedRef = useRef<string | null>(null);
-  const mentionRef = useRef(enableVariableMention);
-  mentionRef.current = enableVariableMention;
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
-
-  const toOutgoing = (raw: string, mention = enableVariableMention) =>
-    mention ? normalizeMentionHtmlToVarTokens(raw) : raw;
-
-  const toIncoming = (html: string, mention = enableVariableMention) =>
-    mention ? upliftVarTokensToMentions(html) : html;
-
-  useEffect(() => {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const mention = mentionRef.current;
-    // 编辑中禁止 setData：否则会立刻失焦 / 光标跳首位
-    if (editor.editing.view.document.isFocused) {
-      return;
-    }
-    if (lastEmittedRef.current != null && semanticEqual(value || '', lastEmittedRef.current)) {
-      return;
-    }
-    const outgoingFromEditor = toOutgoing(editor.getData(), mention);
-    if (semanticEqual(outgoingFromEditor, value || '')) {
-      return;
-    }
-    editor.setData(toIncoming(value || '', mention));
-  }, [value, enableVariableMention]);
+  /** 程序性 setData 期间吞掉 change，避免 Form 回写死循环 */
+  const suppressChangeRef = useRef(false);
+  const initialHtmlRef = useRef(
+    enableVariableMention ? wrapVarTokensForDisplay(value || '') : value || '',
+  );
 
   const config = useMemo(() => {
     const base = {
@@ -110,14 +88,14 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           {
             marker: '/',
             minimumCharacters: 0,
+            dropdownLimit: 12,
             feed: (queryText: string) =>
               filterVariableFeed(variablesRef.current, queryText).map(toMentionFeedItem),
-            itemRenderer: (item: { key?: string; label?: string; id?: string; text?: string }) => {
+            itemRenderer: (item: { key?: string; label?: string; id?: string }) => {
               const key = String(item.key || String(item.id || '').replace(/^\//, ''));
-              const label = item.label;
               const el = document.createElement('span');
               el.classList.add('msg-var-mention-item');
-              el.textContent = formatVariableOptionLabel({ key, label });
+              el.textContent = formatVariableOptionLabel({ key, label: item.label });
               return el;
             },
           },
@@ -139,10 +117,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       data-disabled={disabled ? '1' : '0'}
       data-readonly={readOnly ? '1' : '0'}
       data-var-mention={enableVariableMention ? '1' : '0'}
-      onMouseDown={(e) => {
-        // 避免外层 label/Form 抢焦点导致 contenteditable 立刻 blur
-        e.stopPropagation();
-      }}
     >
       <CKEditor
         editor={ClassicEditor}
@@ -150,31 +124,25 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         disabled={locked}
         onReady={(editor) => {
           editorRef.current = editor;
-          const incoming = toIncoming(value || '');
-          if (incoming) {
-            editor.setData(incoming);
+          suppressChangeRef.current = true;
+          try {
+            editor.setData(initialHtmlRef.current);
+          } finally {
+            // 等 CK 同步派发完 change:data 再放开
+            queueMicrotask(() => {
+              suppressChangeRef.current = false;
+            });
           }
-          lastEmittedRef.current = toOutgoing(editor.getData());
         }}
         onChange={(_evt, editor) => {
-          const outgoing = toOutgoing(editor.getData());
-          lastEmittedRef.current = outgoing;
+          if (suppressChangeRef.current) return;
+          const raw = editor.getData();
+          const outgoing = enableVariableMention ? normalizeMentionHtmlToVarTokens(raw) : raw;
           onChangeRef.current?.(outgoing);
         }}
       />
     </div>
   );
 };
-
-/** 比较模板 HTML 语义：去标签/空白后看占位与文本是否一致 */
-function semanticEqual(a: string, b: string): boolean {
-  const norm = (html: string) =>
-    String(html || '')
-      .replace(/<[^>]+>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-  return norm(a) === norm(b);
-}
 
 export default RichTextEditor;

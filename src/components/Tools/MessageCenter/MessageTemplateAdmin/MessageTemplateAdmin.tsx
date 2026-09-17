@@ -251,7 +251,8 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
         onChange={(k) => setTab(String(k))}
         actions={[
           {
-            iconType: 'Plus',
+            variant: 'button',
+            buttonType: 'primary',
             label: '新建模板',
             disabled: !canWrite || tab !== 'template',
             onClick: () => openCreate(),

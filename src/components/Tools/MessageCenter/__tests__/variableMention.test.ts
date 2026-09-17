@@ -5,7 +5,7 @@ import {
   insertVarTokenAt,
   normalizeMentionHtmlToVarTokens,
   toVarToken,
-  upliftVarTokensToMentions,
+  wrapVarTokensForDisplay,
 } from '../../../Editor/variableMention';
 import { listFixtureCatalog, resetMsgCenterFixture } from '../doc/msgCenter.fixture';
 import { applyTemplateVars, normalizeTemplatePlaceholders } from '../utils/templateCode';
@@ -35,9 +35,11 @@ describe('variableMention utils', () => {
     expect(normalizeMentionHtmlToVarTokens(html)).toContain('{{factory}}');
   });
 
-  it('upliftVarTokensToMentions wraps double tokens', () => {
-    const up = upliftVarTokensToMentions('<p>{{machine}}</p>');
-    expect(up).toContain('data-mention="/machine"');
+  it('wrapVarTokensForDisplay wraps double tokens as color span not mention widget', () => {
+    const up = wrapVarTokensForDisplay('<p>{{machine}}</p>');
+    expect(up).toContain('msg-var-token');
+    expect(up).toContain('{{machine}}');
+    expect(up).not.toContain('data-mention');
   });
 });
 

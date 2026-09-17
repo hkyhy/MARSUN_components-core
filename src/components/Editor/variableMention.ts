@@ -1,6 +1,8 @@
 /**
  * 变量 Mention 共用工具：触发符 `/`，存盘占位 `{{key}}`（与 marsun_msg_center render 对齐）。
  * Input / RichTextEditor 共用，禁止平行 DEFAULT_VARS。
+ *
+ * 注意：禁止把 `{{key}}` uplift 成 CKEditor mention widget 再回写——会触发 setData/onChange 死循环卡死。
  */
 
 export type VariableMentionItem = {
@@ -61,7 +63,7 @@ export function toMentionFeedItem(v: VariableMentionItem): {
 }
 
 /**
- * 将 CKEditor mention 节点规范为字面 `{{key}}`（可带色块 span）。
+ * 将 CKEditor mention 节点规范为字面 `{{key}}` 色块 span（存盘/预览用）。
  */
 export function normalizeMentionHtmlToVarTokens(html: string): string {
   return String(html || '').replace(
@@ -70,25 +72,35 @@ export function normalizeMentionHtmlToVarTokens(html: string): string {
   );
 }
 
-/** 读入编辑器前：token span / 纯文本 `{{key}}` → mention（仅初始化用，勿每键受控回写） */
-export function upliftVarTokensToMentions(html: string): string {
+/**
+ * 读入编辑器：把裸 `{{key}}` 包成色块 span（非 CK mention widget，避免回写死循环）。
+ */
+export function wrapVarTokensForDisplay(html: string): string {
   let s = String(html || '');
   const tokenSpanRe = new RegExp(
     `<span\\b[^>]*\\bclass="[^"]*${MSG_VAR_TOKEN_CLASS}[^"]*"[^>]*>\\{\\{(\\w+)\\}\\}<\\/span>`,
     'gi',
   );
+  // 已是色块则保持
   s = s.replace(
     tokenSpanRe,
-    (_m, key: string) => `<span class="mention" data-mention="/${key}">{{${key}}}</span>`,
+    (_m, key: string) => `<span class="${MSG_VAR_TOKEN_CLASS}">{{${key}}}</span>`,
   );
+  // 先剥残留 mention widget
+  s = normalizeMentionHtmlToVarTokens(s);
   s = s.replace(/(^|>)([^<]*)/g, (_full, prefix: string, text: string) => {
     const next = text.replace(
       /\{\{(\w+)\}\}/g,
-      (_m, key: string) => `<span class="mention" data-mention="/${key}">{{${key}}}</span>`,
+      (_m, key: string) => `<span class="${MSG_VAR_TOKEN_CLASS}">{{${key}}}</span>`,
     );
     return `${prefix}${next}`;
   });
   return s;
+}
+
+/** @deprecated 易触发卡死；保留给单测兼容，新代码用 wrapVarTokensForDisplay */
+export function upliftVarTokensToMentions(html: string): string {
+  return wrapVarTokensForDisplay(html);
 }
 
 /** 在纯文本光标处插入 `{{key}}` */

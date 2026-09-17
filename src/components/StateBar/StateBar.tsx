@@ -1,5 +1,5 @@
-import { Tabs, Tooltip } from 'antd';
-import type { TabsProps } from 'antd';
+import { Tabs, Tooltip, Button } from 'antd';
+import type { TabsProps, ButtonProps } from 'antd';
 import classNames from 'classnames';
 import type { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { Info, ICON_REGISTRY, type IconName } from '../Icons';
@@ -9,17 +9,25 @@ import styles from './style.module.scss';
 
 export type StateBarType = 'tab' | 'radio' | 'step';
 
-/** Tab 项旁操作（icon + 可选文案提示 + 点击） */
+/** Tab 项旁 / 整体右侧操作 */
 export type StateBarActionItem = {
-  /** Icons 注册表名，如 `Info` / `Plus` / `Pencil` */
-  iconType: IconName;
-  /** Tooltip 文案；缺省不包 Tooltip */
+  /**
+   * 展示形态：
+   * - `icon`：仅图标（默认，适合 Tab 旁轻操作）
+   * - `button`：antd Button（适合整体右侧主操作，如「新建模板」）
+   */
+  variant?: 'icon' | 'button';
+  /** Icons 注册表名；variant=icon 必填；button 时可作前缀图标 */
+  iconType?: IconName;
+  /** 文案：icon 时作 Tooltip；button 时作按钮文字 */
   label?: string;
   onClick?: (e: MouseEvent<HTMLElement>) => void;
   disabled?: boolean;
   className?: string;
   /** 图标尺寸，默认 14 */
   size?: number;
+  /** variant=button 时的 antd type，默认 primary */
+  buttonType?: ButtonProps['type'];
 };
 
 export type StateBarOption = {
@@ -29,7 +37,7 @@ export type StateBarOption = {
   label?: ReactNode;
   /** 标题旁 Info + TooltipInfo（对齐 Modal/InteractiveBlock）；为空不展示 */
   info?: DescriptionItem[];
-  /** 标题旁额外操作图标（可与 info 并存） */
+  /** 标题旁额外操作图标（可与 info 并存）；仅同组切片 Tab 使用 */
   actions?: StateBarActionItem[];
   children?: ReactNode;
   disabled?: boolean;
@@ -53,7 +61,34 @@ export type StateBarProps = Omit<TabsProps, 'items' | 'type'> & {
 };
 
 function renderActionItem(action: StateBarActionItem, key: string): ReactNode {
-  const Icon = ICON_REGISTRY[action.iconType];
+  const variant = action.variant ?? 'icon';
+
+  if (variant === 'button') {
+    const Icon = action.iconType ? ICON_REGISTRY[action.iconType] : null;
+    return (
+      <Button
+        key={key}
+        type={action.buttonType ?? 'primary'}
+        size="small"
+        disabled={action.disabled}
+        className={classNames(
+          'marsun-state-bar-action-btn',
+          styles['state-bar-action-btn'],
+          action.className,
+        )}
+        icon={Icon ? <Icon size={action.size ?? 14} aria-hidden /> : undefined}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (action.disabled) return;
+          action.onClick?.(e);
+        }}
+      >
+        {action.label || '操作'}
+      </Button>
+    );
+  }
+
+  const Icon = action.iconType ? ICON_REGISTRY[action.iconType] : null;
   if (!Icon) return null;
 
   const node = (
@@ -125,7 +160,7 @@ function renderTabLabel(
         </TooltipInfo>
       ) : null}
       {hasActions
-        ? actions!.map((action, i) => renderActionItem(action, `${action.iconType}-${i}`))
+        ? actions!.map((action, i) => renderActionItem(action, `${action.iconType || 'act'}-${i}`))
         : null}
     </span>
   );
@@ -152,7 +187,9 @@ const StateBar: React.FC<StateBarProps> = ({
       <span
         className={classNames('marsun-state-bar-extra-actions', styles['state-bar-extra-actions'])}
       >
-        {actions.map((action, i) => renderActionItem(action, `extra-${action.iconType}-${i}`))}
+        {actions.map((action, i) =>
+          renderActionItem(action, `extra-${action.iconType || action.variant || 'act'}-${i}`),
+        )}
       </span>
     ) : null;
 
@@ -160,7 +197,6 @@ const StateBar: React.FC<StateBarProps> = ({
     extraActions && tabBarExtraContent != null ? (
       <span className={styles['state-bar-extra-wrap']}>
         {extraActions}
-        {/* antd 允许 position map；与 actions 同用时按 ReactNode 并排 */}
         {tabBarExtraContent as ReactNode}
       </span>
     ) : (
