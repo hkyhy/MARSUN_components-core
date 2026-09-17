@@ -146,12 +146,20 @@ export function listFixtureEvents() {
   return [...MSG_EVENTS];
 }
 
+type CatalogVariableRow = MsgVariableItem & {
+  source: 'catalog' | 'tenant';
+  baseline?: boolean;
+};
+
 /** 完整 catalog payload（events + variables/contextSchema）；Admin Demo 须用此，禁只回 events 数组 */
 export function listFixtureCatalog() {
-  const merged = MSG_VARIABLES.map((v) => ({ ...v, source: 'catalog' as const }));
+  const merged: CatalogVariableRow[] = MSG_VARIABLES.map((v) => ({
+    ...v,
+    source: 'catalog' as const,
+  }));
   for (const tv of tenantVars) {
     const i = merged.findIndex((x) => x.key === tv.key);
-    const row = { ...tv, source: 'tenant' as const, baseline: i >= 0 };
+    const row: CatalogVariableRow = { ...tv, source: 'tenant', baseline: i >= 0 };
     if (i >= 0) merged[i] = row;
     else merged.push(row);
   }

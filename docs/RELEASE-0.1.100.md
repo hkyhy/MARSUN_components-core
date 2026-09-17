@@ -6,3 +6,5 @@
 - InteractiveBlock 仅「未接线」降级提示（非冻结文案）
 
 - **Build**：CKEditor / `@ckeditor/*` 标为 vite lib external，避免消费方二次变换丢 named export
+
+- **Fix**：fixture catalog variables 允许 `tenant` source（typecheck）
