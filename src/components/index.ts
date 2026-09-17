@@ -75,8 +75,23 @@ export * from './OrgTree';
 export * from './StateBar';
 export * from './SegmentedRadio';
 export * from './Navigation';
-export { default as DispositionBar } from './DispositionBar';
-export type { DispositionBarProps } from './DispositionBar';
+export {
+  DispositionBar,
+  AlertDispositionPanel,
+  DispositionAlertLevelLegend,
+  formatDispositionTriggerText,
+  getDispositionAlertLevel,
+  buildDispositionAlertContext,
+} from './Disposition';
+export type {
+  DispositionBarProps,
+  AlertDispositionPanelProps,
+  DispositionAlertContext,
+  DispositionAlertKind,
+  DispositionAlertLevelSpec,
+  DispositionAlertLevelCatalog,
+  DispositionAlertLevelLegendProps,
+} from './Disposition';
 export * from './Audit';
 export * from './Stat';
 export * from './Table';

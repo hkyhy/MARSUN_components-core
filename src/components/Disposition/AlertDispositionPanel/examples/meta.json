@@ -1,0 +1,99 @@
+{
+  "title": "AlertDispositionPanel 预警展开壳",
+  "description": "等级展示由项目注入 DispositionAlertLevelCatalog（key/label/tone）；core 不写死级数与文案。点色点展开「触发：」+ DispositionBar；可收起。",
+  "examples": [
+    {
+      "title": "1. 可切换等级目录 + 折线",
+      "description": "Radio 切换「三级制 / 预警·报警」两套 catalog；同一折线点选展开",
+      "component": "@/components/Disposition/AlertDispositionPanel/examples/RevealCollapseDemo",
+      "sourcePath": "@/components/Disposition/AlertDispositionPanel/examples/RevealCollapseDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "2. 目录驱动切换上下文",
+      "description": "buildDispositionAlertContext(catalog, key) 更新触发条",
+      "component": "@/components/Disposition/AlertDispositionPanel/examples/ReclickUpdateDemo",
+      "sourcePath": "@/components/Disposition/AlertDispositionPanel/examples/ReclickUpdateDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "3. 关闭 / 空 context",
+      "description": "open=false 或 context=null → 不渲染",
+      "component": "@/components/Disposition/AlertDispositionPanel/examples/ClosedEmptyDemo",
+      "sourcePath": "@/components/Disposition/AlertDispositionPanel/examples/ClosedEmptyDemo/index.tsx"
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "DispositionAlertLevelSpec",
+      "rows": [
+        {
+          "prop": "key",
+          "desc": "等级键（与契约 alertLevel 对齐）",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "label",
+          "desc": "展示名（项目配置）",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "tone",
+          "desc": "色标 hex/色名",
+          "type": "string",
+          "required": true
+        },
+        {
+          "prop": "kind",
+          "desc": "写入 context.kind；缺省=key",
+          "type": "string"
+        },
+        {
+          "prop": "pointSize",
+          "desc": "图点大小（可选）",
+          "type": "number"
+        },
+        {
+          "prop": "shape",
+          "desc": "图点形状（可选；默认 point）",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "componentName": "AlertDispositionPanelProps",
+      "rows": [
+        {
+          "prop": "open",
+          "desc": "是否展开",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "prop": "context",
+          "desc": "触发上下文；建议 buildDispositionAlertContext(catalog, key)",
+          "type": "DispositionAlertContext | null",
+          "required": true
+        },
+        {
+          "prop": "children",
+          "desc": "展开区内容（通常 DispositionBar）",
+          "type": "ReactNode",
+          "required": true
+        },
+        {
+          "prop": "onCollapse",
+          "desc": "收起回调",
+          "type": "() => void"
+        },
+        {
+          "prop": "className",
+          "desc": "根节点额外 class",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

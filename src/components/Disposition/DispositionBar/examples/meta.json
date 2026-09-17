@@ -1,0 +1,78 @@
+{
+  "title": "DispositionBar 处置条",
+  "description": "布局壳：左状态徽章 + 右操作区（业务钮由调用方注入；不绑 API/EP）。点预警展开见同域 AlertDispositionPanel。",
+  "examples": [
+    {
+      "title": "1. 基础用法",
+      "description": "默认 label「处置状态」+ string 徽章 + 操作钮",
+      "component": "@/components/Disposition/DispositionBar/examples/BasicDemo",
+      "sourcePath": "@/components/Disposition/DispositionBar/examples/BasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "2. 加载中藏钮",
+      "description": "statusLoading=true 时不渲染 actions",
+      "component": "@/components/Disposition/DispositionBar/examples/StatusLoadingDemo",
+      "sourcePath": "@/components/Disposition/DispositionBar/examples/StatusLoadingDemo/index.tsx"
+    },
+    {
+      "title": "3. 仅状态",
+      "description": "无 actions（如已关闭）",
+      "component": "@/components/Disposition/DispositionBar/examples/StatusOnlyDemo",
+      "sourcePath": "@/components/Disposition/DispositionBar/examples/StatusOnlyDemo/index.tsx"
+    },
+    {
+      "title": "4. 自定义 label",
+      "description": "label 覆盖默认「处置状态」",
+      "component": "@/components/Disposition/DispositionBar/examples/CustomLabelDemo",
+      "sourcePath": "@/components/Disposition/DispositionBar/examples/CustomLabelDemo/index.tsx"
+    },
+    {
+      "title": "5. 自定义徽章",
+      "description": "statusBadge 传 ReactNode（如 antd Tag）",
+      "component": "@/components/Disposition/DispositionBar/examples/CustomBadgeDemo",
+      "sourcePath": "@/components/Disposition/DispositionBar/examples/CustomBadgeDemo/index.tsx"
+    },
+    {
+      "title": "6. 多操作钮",
+      "description": "右侧注入多个业务操作",
+      "component": "@/components/Disposition/DispositionBar/examples/DenseActionsDemo",
+      "sourcePath": "@/components/Disposition/DispositionBar/examples/DenseActionsDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "DispositionBarProps",
+      "rows": [
+        {
+          "prop": "label",
+          "desc": "左侧文案",
+          "type": "string",
+          "defaultVal": "'处置状态'"
+        },
+        {
+          "prop": "statusBadge",
+          "desc": "状态徽章（string 或 ReactNode）",
+          "type": "ReactNode",
+          "required": true
+        },
+        {
+          "prop": "actions",
+          "desc": "右侧操作区",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "statusLoading",
+          "desc": "true 时不渲染 actions",
+          "type": "boolean"
+        },
+        {
+          "prop": "className",
+          "desc": "根节点额外 class（如业务侧 margin）",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

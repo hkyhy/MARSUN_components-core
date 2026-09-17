@@ -1,0 +1,27 @@
+.marsun-disposition-alert-level-legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  font-size: 12px;
+  color: #595959;
+  line-height: 1.4;
+}
+
+.marsun-disposition-alert-level-legend-title {
+  color: #8c8c8c;
+}
+
+.marsun-disposition-alert-level-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.marsun-disposition-alert-level-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}

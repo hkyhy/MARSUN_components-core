@@ -1,0 +1,40 @@
+.marsun-alert-disposition-panel {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.marsun-alert-disposition-trigger-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.marsun-alert-disposition-trigger {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ant-color-text-secondary, #8c8c8c);
+  min-width: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.marsun-alert-disposition-tone {
+  margin: 0;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.marsun-alert-disposition-collapse {
+  flex-shrink: 0;
+  padding: 0;
+  height: auto;
+  font-size: 12px;
+}
