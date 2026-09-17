@@ -9,6 +9,10 @@ export const showcaseRoutes = (
       <Route path="knowledgebase" element={<ExamplePage />} />
       <Route path="report" element={<ExamplePage />} />
     </Route>
+    <Route path="disposition">
+      <Route path="alertdispositionpanel" element={<ExamplePage />} />
+      <Route path="dispositionbar" element={<ExamplePage />} />
+    </Route>
     <Route path="navigation">
       <Route path="drillnav" element={<ExamplePage />} />
     </Route>
@@ -20,7 +24,6 @@ export const showcaseRoutes = (
     <Route path="audit" element={<ExamplePage />} />
     <Route path="auth" element={<ExamplePage />} />
     <Route path="descriptions" element={<ExamplePage />} />
-    <Route path="dispositionbar" element={<ExamplePage />} />
     <Route path="editor" element={<ExamplePage />} />
     <Route path="empty" element={<ExamplePage />} />
     <Route path="file" element={<ExamplePage />} />

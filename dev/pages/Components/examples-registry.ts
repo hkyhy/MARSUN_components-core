@@ -856,15 +856,135 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
-  '/components/dispositionbar': {
-    title: 'DispositionBar 处置条',
-    description: '布局壳：左状态徽章 + 右操作区（业务钮由调用方注入；不绑 API/EP）。',
+  '/components/disposition/alertdispositionpanel': {
+    title: 'AlertDispositionPanel 预警展开壳',
+    description:
+      '等级展示由项目注入 DispositionAlertLevelCatalog（key/label/tone）；core 不写死级数与文案。点色点展开「触发：」+ DispositionBar；可收起。',
     examples: [
       {
-        title: '基础用法',
-        description: '有 actions / statusLoading 藏钮 / 仅状态',
-        component: React.lazy(() => import('@/components/DispositionBar/examples/BasicDemo')),
-        sourcePath: () => import('@/components/DispositionBar/examples/BasicDemo/index.tsx?raw'),
+        title: '1. 可切换等级目录 + 折线',
+        description: 'Radio 切换「三级制 / 预警·报警」两套 catalog；同一折线点选展开',
+        component: React.lazy(
+          () =>
+            import('@/components/Disposition/AlertDispositionPanel/examples/RevealCollapseDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/AlertDispositionPanel/examples/RevealCollapseDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '2. 目录驱动切换上下文',
+        description: 'buildDispositionAlertContext(catalog, key) 更新触发条',
+        component: React.lazy(
+          () => import('@/components/Disposition/AlertDispositionPanel/examples/ReclickUpdateDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/AlertDispositionPanel/examples/ReclickUpdateDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '3. 关闭 / 空 context',
+        description: 'open=false 或 context=null → 不渲染',
+        component: React.lazy(
+          () => import('@/components/Disposition/AlertDispositionPanel/examples/ClosedEmptyDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/AlertDispositionPanel/examples/ClosedEmptyDemo/index.tsx?raw'),
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'DispositionAlertLevelSpec',
+        rows: [
+          { prop: 'key', desc: '等级键（与契约 alertLevel 对齐）', type: 'string', required: true },
+          { prop: 'label', desc: '展示名（项目配置）', type: 'string', required: true },
+          { prop: 'tone', desc: '色标 hex/色名', type: 'string', required: true },
+          { prop: 'kind', desc: '写入 context.kind；缺省=key', type: 'string' },
+          { prop: 'pointSize', desc: '图点大小（可选）', type: 'number' },
+          { prop: 'shape', desc: '图点形状（可选；默认 point）', type: 'string' },
+        ],
+      },
+      {
+        componentName: 'AlertDispositionPanelProps',
+        rows: [
+          { prop: 'open', desc: '是否展开', type: 'boolean', required: true },
+          {
+            prop: 'context',
+            desc: '触发上下文；建议 buildDispositionAlertContext(catalog, key)',
+            type: 'DispositionAlertContext | null',
+            required: true,
+          },
+          {
+            prop: 'children',
+            desc: '展开区内容（通常 DispositionBar）',
+            type: 'ReactNode',
+            required: true,
+          },
+          { prop: 'onCollapse', desc: '收起回调', type: '() => void' },
+          { prop: 'className', desc: '根节点额外 class', type: 'string' },
+        ],
+      },
+    ],
+  },
+  '/components/disposition/dispositionbar': {
+    title: 'DispositionBar 处置条',
+    description:
+      '布局壳：左状态徽章 + 右操作区（业务钮由调用方注入；不绑 API/EP）。点预警展开见同域 AlertDispositionPanel。',
+    examples: [
+      {
+        title: '1. 基础用法',
+        description: '默认 label「处置状态」+ string 徽章 + 操作钮',
+        component: React.lazy(
+          () => import('@/components/Disposition/DispositionBar/examples/BasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/DispositionBar/examples/BasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '2. 加载中藏钮',
+        description: 'statusLoading=true 时不渲染 actions',
+        component: React.lazy(
+          () => import('@/components/Disposition/DispositionBar/examples/StatusLoadingDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/DispositionBar/examples/StatusLoadingDemo/index.tsx?raw'),
+      },
+      {
+        title: '3. 仅状态',
+        description: '无 actions（如已关闭）',
+        component: React.lazy(
+          () => import('@/components/Disposition/DispositionBar/examples/StatusOnlyDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/DispositionBar/examples/StatusOnlyDemo/index.tsx?raw'),
+      },
+      {
+        title: '4. 自定义 label',
+        description: 'label 覆盖默认「处置状态」',
+        component: React.lazy(
+          () => import('@/components/Disposition/DispositionBar/examples/CustomLabelDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/DispositionBar/examples/CustomLabelDemo/index.tsx?raw'),
+      },
+      {
+        title: '5. 自定义徽章',
+        description: 'statusBadge 传 ReactNode（如 antd Tag）',
+        component: React.lazy(
+          () => import('@/components/Disposition/DispositionBar/examples/CustomBadgeDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/DispositionBar/examples/CustomBadgeDemo/index.tsx?raw'),
+      },
+      {
+        title: '6. 多操作钮',
+        description: '右侧注入多个业务操作',
+        component: React.lazy(
+          () => import('@/components/Disposition/DispositionBar/examples/DenseActionsDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/DispositionBar/examples/DenseActionsDemo/index.tsx?raw'),
         block: true,
       },
     ],
@@ -888,18 +1008,18 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/editor': {
     title: 'Editor 富文本',
-    description: 'CKEditor 5：基础格式 + 可选变量 Mention（/ → {{key}} 色块）；L2 `/editor`。',
+    description: 'CKEditor 5：基础格式 +「插入变量」原子色块 {{key}}；L2 `/editor`。',
     examples: [
       {
         title: '1. RichTextEditor 基础',
-        description: '粗体 / 斜体 / 列表；外部写入时 setData，键入不刷光标',
+        description: '粗体 / 斜体 / 列表；挂载写一次，键入不刷光标',
         component: React.lazy(() => import('@/components/Editor/examples/RichTextBasicDemo')),
         sourcePath: () => import('@/components/Editor/examples/RichTextBasicDemo/index.tsx?raw'),
         block: true,
       },
       {
-        title: '2. Mention 着色',
-        description: '/ 触发插入 {{key}}；下拉中文+code；预览已替换',
+        title: '2. 插入变量色块',
+        description: '按钮插入 {{key}}；原子色块不可改字、整颗删；预览已替换',
         component: React.lazy(() => import('@/components/Editor/examples/RichTextMentionDemo')),
         sourcePath: () => import('@/components/Editor/examples/RichTextMentionDemo/index.tsx?raw'),
         block: true,
@@ -924,23 +1044,20 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'value', desc: 'HTML 内容', type: 'string' },
           {
             prop: 'onChange',
-            desc: '内容变更（Mention 开启时存 {{key}} token）',
+            desc: '内容变更（变量开启时含 {{key}} / msg-var-token）',
             type: '(html: string) => void',
           },
           { prop: 'disabled', desc: '禁用', type: 'boolean' },
           { prop: 'readOnly', desc: '只读', type: 'boolean' },
           { prop: 'placeholder', desc: '占位', type: 'string' },
           { prop: 'minHeight', desc: '编辑区最小高度 px', type: 'number' },
-          {
-            prop: 'enableVariableMention',
-            desc: '开启 / 变量 Mention，插入 {{key}}',
-            type: 'boolean',
-          },
+          { prop: 'enableVariableMention', desc: '开启「插入变量」+ 原子色块', type: 'boolean' },
           {
             prop: 'variables',
-            desc: 'catalog 变量（下拉展示中文+code；禁 FE DEFAULT_VARS）',
+            desc: 'catalog 变量（下拉中文+code；禁 FE DEFAULT_VARS）',
             type: 'VariableMentionItem[]',
           },
+          { prop: 'catalogError', desc: '目录失败文案（按钮 disabled 提示）', type: 'string' },
         ],
       },
     ],
@@ -3550,7 +3667,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   '/components/tools/messagecenter': {
     title: 'MessageCenter 消息中心',
     description:
-      '事件目录（variables SSOT）→ 模板 CRUD（StateBar actions / Mention / 预览替换）→ dryRun/emit → InboxBell → 权限 → 空错加载。',
+      '事件目录（variables SSOT）→ 模板 CRUD（StateBar actions / 插入变量色块 / 预览替换）→ dryRun/emit → InboxBell → 权限 → 空错加载。',
     examples: [
       {
         title: '1. 事件目录',
@@ -3563,7 +3680,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
       {
         title: '2. 消息模板 CRUD',
-        description: 'StateBar 右 Plus 新建；/ Mention；推送 InteractiveBlock 冻结',
+        description: 'StateBar 右 Plus 新建；「插入变量」原子色块；推送 InteractiveBlock 冻结',
         component: React.lazy(
           () => import('@/components/Tools/MessageCenter/examples/TemplateCrudDemo'),
         ),

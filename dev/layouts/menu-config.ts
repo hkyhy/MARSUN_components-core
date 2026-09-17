@@ -12,6 +12,14 @@ export const MENU_ITEMS: MenuProps['items'] = [
     ],
   },
   {
+    key: 'disposition',
+    label: 'Disposition',
+    children: [
+      { key: '/components/disposition/alertdispositionpanel', label: 'AlertDispositionPanel' },
+      { key: '/components/disposition/dispositionbar', label: 'DispositionBar' },
+    ],
+  },
+  {
     key: 'navigation',
     label: 'Navigation',
     children: [{ key: '/components/navigation/drillnav', label: 'DrillNav' }],
@@ -28,7 +36,6 @@ export const MENU_ITEMS: MenuProps['items'] = [
   { key: '/components/audit', label: 'Audit' },
   { key: '/components/auth', label: 'Auth' },
   { key: '/components/descriptions', label: 'Descriptions' },
-  { key: '/components/dispositionbar', label: 'DispositionBar' },
   { key: '/components/editor', label: 'Editor' },
   { key: '/components/empty', label: 'Empty' },
   { key: '/components/file', label: 'File' },
