@@ -1,5 +1,60 @@
 import type { ReactNode } from 'react';
 
+export type MessageCrudFlags = {
+  create: boolean;
+  read: boolean;
+  update: boolean;
+  delete: boolean;
+};
+
+export type MessageAdminPermissions = {
+  template?: Partial<MessageCrudFlags>;
+  push?: Partial<MessageCrudFlags>;
+  variable?: Partial<MessageCrudFlags>;
+};
+
+const ALL_CRUD_OFF: MessageCrudFlags = {
+  create: false,
+  read: false,
+  update: false,
+  delete: false,
+};
+
+const ALL_CRUD_ON: MessageCrudFlags = {
+  create: true,
+  read: true,
+  update: true,
+  delete: true,
+};
+
+function mergeCrud(
+  partial: Partial<MessageCrudFlags> | undefined,
+  fallback: MessageCrudFlags,
+): MessageCrudFlags {
+  return {
+    create: partial?.create ?? fallback.create,
+    read: partial?.read ?? fallback.read,
+    update: partial?.update ?? fallback.update,
+    delete: partial?.delete ?? fallback.delete,
+  };
+}
+
+/** 解析 Admin 门禁：有 permissions 用细粒度；否则 canWrite 作 Showcase 全开/全关。 */
+export function resolveMessageAdminPermissions(
+  permissions: MessageAdminPermissions | undefined,
+  canWrite: boolean | undefined,
+): { template: MessageCrudFlags; push: MessageCrudFlags; variable: MessageCrudFlags } {
+  const fallback = canWrite ? ALL_CRUD_ON : ALL_CRUD_OFF;
+  if (!permissions) {
+    return { template: fallback, push: fallback, variable: fallback };
+  }
+  return {
+    template: mergeCrud(permissions.template, ALL_CRUD_OFF),
+    push: mergeCrud(permissions.push, ALL_CRUD_OFF),
+    variable: mergeCrud(permissions.variable, ALL_CRUD_OFF),
+  };
+}
+
 export type MessageTemplateAdminItem = {
   id?: string;
   code?: string;
@@ -84,7 +139,16 @@ export type MessageTemplateAdminProps = {
   templateVariables?: MessageTemplateVariable[];
   /** 预览用示例值；未传则按 variables 生成 */
   previewVars?: Record<string, string>;
+  /**
+   * Showcase 快捷：true→十二项全开，false→全关。
+   * 业务仓须传 permissions，禁止只靠 canWrite 当真门禁。
+   */
   canWrite?: boolean;
+  /**
+   * 细粒度 CRUD 门禁（模板 / 推送 / 变量 × create|read|update|delete）。
+   * 传入后优先于 canWrite。
+   */
+  permissions?: MessageAdminPermissions;
   renderAudienceField?: (ctx: {
     roles: string[];
     onChange: (roles: string[]) => void;

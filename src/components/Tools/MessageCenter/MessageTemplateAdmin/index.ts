@@ -8,5 +8,11 @@ export type {
   MessageTemplateVariable,
   MessageTemplateVariableAdmin,
   PushRuleAdminItem,
+  MessageCrudFlags,
+  MessageAdminPermissions,
 } from './types';
-export { variablesFromCatalog, previewVarsFromVariables } from './types';
+export {
+  variablesFromCatalog,
+  previewVarsFromVariables,
+  resolveMessageAdminPermissions,
+} from './types';

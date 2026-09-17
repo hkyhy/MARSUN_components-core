@@ -9,12 +9,12 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export function buildTemplateColumns(opts: {
-  canWrite: boolean;
+  canUpdate: boolean;
   eventLabel: (eventKey?: string) => string;
   onEdit: (row: MessageTemplateAdminItem) => void;
   onToggleEnabled: (row: MessageTemplateAdminItem, enabled: boolean) => void;
 }): ColumnsType<MessageTemplateAdminItem> {
-  const { canWrite, eventLabel, onEdit, onToggleEnabled } = opts;
+  const { canUpdate, eventLabel, onEdit, onToggleEnabled } = opts;
   return [
     {
       title: '编号',
@@ -45,7 +45,7 @@ export function buildTemplateColumns(opts: {
         <Switch
           size="small"
           checked={r.enabled !== false}
-          disabled={!canWrite}
+          disabled={!canUpdate}
           onChange={(checked) => onToggleEnabled(r, checked)}
         />
       ),
@@ -54,7 +54,7 @@ export function buildTemplateColumns(opts: {
       title: '操作',
       width: 100,
       render: (_, r) => (
-        <Button type="link" size="small" disabled={!canWrite} onClick={() => onEdit(r)}>
+        <Button type="link" size="small" disabled={!canUpdate} onClick={() => onEdit(r)}>
           编辑
         </Button>
       ),

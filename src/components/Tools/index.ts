@@ -11,11 +11,17 @@ export type {
   MessageTemplateAdminProps,
   MessageTemplateAdminItem,
   MessageEventCatalogItem,
+  MessageEventCatalogPayload,
   MessageAudienceRoleOption,
   MessageTemplateVariable,
+  MessageTemplateVariableAdmin,
+  PushRuleAdminItem,
+  MessageCrudFlags,
+  MessageAdminPermissions,
 } from './MessageCenter';
 export {
   generateTemplateCode,
   normalizeTemplatePlaceholders,
   applyTemplateVars,
+  resolveMessageAdminPermissions,
 } from './MessageCenter';

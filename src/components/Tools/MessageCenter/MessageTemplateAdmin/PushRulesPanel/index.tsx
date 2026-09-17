@@ -7,6 +7,7 @@ import { Button, Select as AntSelect, Space, Switch, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
+  MessageCrudFlags,
   MessageEventCatalogItem,
   MessageTemplateAdminItem,
   PushRuleAdminItem,
@@ -20,7 +21,7 @@ const FiInput = Input as unknown as React.ComponentType<Record<string, unknown>>
 const FiInputNumber = InputNumber as unknown as React.ComponentType<Record<string, unknown>>;
 
 export type PushRulesPanelProps = {
-  canWrite: boolean;
+  crud: MessageCrudFlags;
   catalog: MessageEventCatalogItem[];
   templates: MessageTemplateAdminItem[];
   roleOptions: MessageAudienceRoleOption[];
@@ -45,7 +46,7 @@ type FormShape = {
  * 推送规则 CRUD：必含 eventKey + templateCode；channels 默认 in_app。
  */
 export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
-  canWrite,
+  crud,
   catalog,
   templates,
   roleOptions,
@@ -55,6 +56,12 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   deletePushRule,
   createNonce = 0,
 }) => {
+  const canCreate = crud.create;
+  const canUpdate = crud.update;
+  const canDelete = crud.delete;
+  const canRead = crud.read;
+  const formWritable = (creating: boolean) => (creating ? canCreate : canUpdate);
+
   const [rows, setRows] = useState<PushRuleAdminItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -80,7 +87,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   }, [reload]);
 
   useEffect(() => {
-    if (!createNonce || !canWrite) return;
+    if (!createNonce || !canCreate) return;
     const first = catalog[0];
     const tplForEvent = templates.find((t) => t.eventKey === first?.eventKey);
     setIsCreate(true);
@@ -95,7 +102,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
       scanLookbackDays: 7,
       enabled: true,
     });
-  }, [createNonce, canWrite, catalog, templates]);
+  }, [createNonce, canCreate, catalog, templates]);
 
   const templatesForEvent = useCallback(
     (eventKey?: string) =>
@@ -126,7 +133,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
     () => ({
       data: formData,
       onSubmit: async (data: FormShape) => {
-        if (!canWrite || !editing) {
+        if (!formWritable(isCreate) || !editing) {
           message.warning('当前为只读');
           return false;
         }
@@ -162,7 +169,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
         }
       },
     }),
-    [canWrite, editing, formData, isCreate, reload, savePushRule],
+    [canCreate, canUpdate, editing, formData, isCreate, reload, savePushRule],
   );
 
   const columns = useMemo(
@@ -191,7 +198,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
           <Switch
             size="small"
             checked={r.enabled !== false}
-            disabled={!canWrite || !setPushRuleEnabled}
+            disabled={!canUpdate || !setPushRuleEnabled}
             onChange={(checked) => {
               void (async () => {
                 try {
@@ -215,7 +222,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
             <Button
               type="link"
               size="small"
-              disabled={!canWrite}
+              disabled={!canUpdate}
               onClick={() => {
                 setIsCreate(false);
                 setEditing({ ...r });
@@ -227,7 +234,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               type="link"
               size="small"
               danger
-              disabled={!canWrite || !deletePushRule}
+              disabled={!canDelete || !deletePushRule}
               onClick={() => {
                 void (async () => {
                   try {
@@ -246,14 +253,16 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
         ),
       },
     ],
-    [canWrite, catalog, deletePushRule, reload, setPushRuleEnabled],
+    [canUpdate, canDelete, catalog, deletePushRule, reload, setPushRuleEnabled],
   );
 
   return (
     <div className={styles.pane}>
       {error ? <Alert type="error" showIcon message={error} style={{ marginBottom: 12 }} /> : null}
       <PageSpin spinning={loading}>
-        {rows.length === 0 && !loading ? (
+        {!canRead ? (
+          <Empty description="无推送规则读取权限" />
+        ) : rows.length === 0 && !loading ? (
           <Empty description="暂无推送规则" />
         ) : (
           <Table<PushRuleAdminItem>
@@ -282,7 +291,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
           <div style={{ marginBottom: 8 }}>事件</div>
           <AntSelect
             style={{ width: '100%' }}
-            disabled={!canWrite}
+            disabled={!canUpdate}
             value={editing?.eventKey || undefined}
             options={catalog.map((c) => ({
               value: c.eventKey,
@@ -309,13 +318,19 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
         <FormInfo
           column={1}
           list={[
-            <FiInput key="label" name="label" label="名称" rule="REQ" disabled={!canWrite} />,
+            <FiInput
+              key="label"
+              name="label"
+              label="名称"
+              rule="REQ"
+              disabled={!formWritable(isCreate)}
+            />,
             <FiSelect
               key={`tpl-${editing?.eventKey || ''}`}
               name="templateCode"
               label="关联模板"
               rule="REQ"
-              disabled={!canWrite}
+              disabled={!canUpdate}
               options={templatesForEvent(editing?.eventKey)}
               showSearch
               optionFilterProp="label"
@@ -325,7 +340,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               name="levels"
               label="级别"
               mode="multiple"
-              disabled={!canWrite}
+              disabled={!canUpdate}
               options={['L1', 'L2', 'L3'].map((x) => ({ value: x, label: x }))}
             />,
             <FiSelect
@@ -333,7 +348,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               name="audienceRoles"
               label="受众角色"
               mode="multiple"
-              disabled={!canWrite}
+              disabled={!canUpdate}
               options={roleOptions.map((r) => ({ value: r.code, label: r.name || r.code }))}
               optionFilterProp="label"
             />,
@@ -341,7 +356,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               key="slaHours"
               name="slaHours"
               label="SLA(小时)"
-              disabled={!canWrite}
+              disabled={!canUpdate}
               min={0}
               style={{ width: '100%' }}
             />,
@@ -349,7 +364,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               key="scanLookbackDays"
               name="scanLookbackDays"
               label="回看(天)"
-              disabled={!canWrite}
+              disabled={!canUpdate}
               min={0}
               style={{ width: '100%' }}
             />,

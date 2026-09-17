@@ -5,7 +5,7 @@ import { PageSpin } from '@/components/Layout';
 import { Table } from '@/components/Table';
 import { Button, Space, Tag, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import type { MessageTemplateVariableAdmin } from '../types';
+import type { MessageCrudFlags, MessageTemplateVariableAdmin } from '../types';
 import { canDeleteTenantVariable } from '../../utils/adminGuards';
 import styles from '../style.module.scss';
 
@@ -14,7 +14,7 @@ const FiSelect = Select as unknown as React.ComponentType<Record<string, unknown
 const FiInput = Input as unknown as React.ComponentType<Record<string, unknown>>;
 
 export type VariablesPanelProps = {
-  canWrite: boolean;
+  crud: MessageCrudFlags;
   fetchVariables: () => Promise<MessageTemplateVariableAdmin[]>;
   saveVariable: (item: MessageTemplateVariableAdmin) => Promise<void>;
   deleteVariable?: (item: MessageTemplateVariableAdmin) => Promise<void>;
@@ -27,12 +27,18 @@ type FormShape = { key?: string; label?: string; type?: string };
  * 租户变量管理：可增改；基线 key 不可删（source=catalog 或 baseline）。
  */
 export const VariablesPanel: React.FC<VariablesPanelProps> = ({
-  canWrite,
+  crud,
   fetchVariables,
   saveVariable,
   deleteVariable,
   createNonce = 0,
 }) => {
+  const canCreate = crud.create;
+  const canUpdate = crud.update;
+  const canDelete = crud.delete;
+  const canRead = crud.read;
+  const formWritable = (creating: boolean) => (creating ? canCreate : canUpdate);
+
   const [rows, setRows] = useState<MessageTemplateVariableAdmin[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -58,10 +64,10 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
   }, [reload]);
 
   useEffect(() => {
-    if (!createNonce || !canWrite) return;
+    if (!createNonce || !canCreate) return;
     setIsCreate(true);
     setEditing({ key: '', label: '', type: 'string', source: 'tenant' });
-  }, [createNonce, canWrite]);
+  }, [createNonce, canCreate]);
 
   const formData = useMemo(
     () => ({
@@ -76,7 +82,7 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
     () => ({
       data: formData,
       onSubmit: async (data: FormShape) => {
-        if (!canWrite || !editing) return false;
+        if (!formWritable(isCreate) || !editing) return false;
         const key = String(data.key || editing.key || '').trim();
         if (!key) {
           message.warning('请填写变量 key');
@@ -99,7 +105,7 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
         }
       },
     }),
-    [canWrite, editing, formData, reload, saveVariable],
+    [canCreate, canUpdate, editing, formData, isCreate, reload, saveVariable],
   );
 
   const columns = useMemo(
@@ -125,7 +131,7 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
             <Button
               type="link"
               size="small"
-              disabled={!canWrite}
+              disabled={!canUpdate}
               onClick={() => {
                 setIsCreate(false);
                 setEditing({ ...r });
@@ -137,7 +143,7 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
               type="link"
               size="small"
               danger
-              disabled={!canWrite || !deleteVariable || !canDeleteTenantVariable(r)}
+              disabled={!canDelete || !deleteVariable || !canDeleteTenantVariable(r)}
               onClick={() => {
                 void (async () => {
                   try {
@@ -156,14 +162,16 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
         ),
       },
     ],
-    [canWrite, deleteVariable, reload],
+    [canUpdate, canDelete, deleteVariable, reload],
   );
 
   return (
     <div className={styles.pane}>
       {error ? <Alert type="error" showIcon message={error} style={{ marginBottom: 12 }} /> : null}
       <PageSpin spinning={loading}>
-        {rows.length === 0 && !loading ? (
+        {!canRead ? (
+          <Empty description="无消息变量读取权限" />
+        ) : rows.length === 0 && !loading ? (
           <Empty description="暂无变量。基线来自 catalog；可新建租户变量。catalog 为空时模板「插入变量」不可用。" />
         ) : (
           <Table<MessageTemplateVariableAdmin>
@@ -195,15 +203,15 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
               name="key"
               label="key"
               rule="REQ"
-              disabled={!canWrite || (!isCreate && Boolean(editing?.key))}
+              disabled={!formWritable(isCreate) || (!isCreate && Boolean(editing?.key))}
               placeholder="如 customField"
             />,
-            <FiInput key="label" name="label" label="中文名" disabled={!canWrite} />,
+            <FiInput key="label" name="label" label="中文名" disabled={!formWritable(isCreate)} />,
             <FiSelect
               key="type"
               name="type"
               label="类型"
-              disabled={!canWrite}
+              disabled={!formWritable(isCreate)}
               options={[
                 { value: 'string', label: 'string' },
                 { value: 'number', label: 'number' },

@@ -19,7 +19,11 @@ import type {
   MessageTemplateAdminProps,
   MessageTemplateVariable,
 } from './types';
-import { previewVarsFromVariables, variablesFromCatalog } from './types';
+import {
+  previewVarsFromVariables,
+  resolveMessageAdminPermissions,
+  variablesFromCatalog,
+} from './types';
 import styles from './style.module.scss';
 
 function normalizeCatalogResult(
@@ -46,6 +50,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   templateVariables,
   previewVars: previewVarsProp,
   canWrite = false,
+  permissions,
   renderAudienceField,
   pushRulesSlot,
   fetchPushRules,
@@ -59,6 +64,14 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   className,
   codePrefix = 'MEQ',
 }) => {
+  const perms = useMemo(
+    () => resolveMessageAdminPermissions(permissions, canWrite),
+    [permissions, canWrite],
+  );
+  const tpl = perms.template;
+  const pushPerm = perms.push;
+  const varPerm = perms.variable;
+
   const [rows, setRows] = useState<MessageTemplateAdminItem[]>([]);
   const [catalog, setCatalog] = useState<MessageEventCatalogItem[]>([]);
   const [catalogVars, setCatalogVars] = useState<MessageTemplateVariable[]>([]);
@@ -135,6 +148,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   );
 
   const openCreate = () => {
+    if (!tpl.create) return;
     const first = catalog[0];
     setIsCreate(true);
     setEditing({
@@ -152,6 +166,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   };
 
   const openEdit = (item: MessageTemplateAdminItem) => {
+    if (!tpl.update) return;
     setIsCreate(false);
     setEditing({ ...item });
   };
@@ -184,12 +199,12 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   const columns = useMemo(
     () =>
       buildTemplateColumns({
-        canWrite,
+        canUpdate: tpl.update,
         eventLabel,
         onEdit: openEdit,
         onToggleEnabled: (r, enabled) => void onToggleEnabled(r, enabled),
       }),
-    [canWrite, eventLabel],
+    [tpl.update, eventLabel],
   );
 
   const pushEnabled = Boolean(fetchPushRules && savePushRule);
@@ -197,7 +212,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
 
   const pushPane = pushEnabled ? (
     <PushRulesPanel
-      canWrite={canWrite}
+      crud={pushPerm}
       catalog={catalog}
       templates={rows}
       roleOptions={roleOptions}
@@ -220,7 +235,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
 
   const variablesPane = varsEnabled ? (
     <VariablesPanel
-      canWrite={canWrite}
+      crud={varPerm}
       fetchVariables={fetchVariables!}
       saveVariable={saveVariable!}
       deleteVariable={deleteVariable}
@@ -240,7 +255,9 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
         />
       ) : null}
       <PageSpin spinning={loading}>
-        {rows.length === 0 && !loading ? (
+        {!tpl.read ? (
+          <Empty description="无消息模板读取权限" />
+        ) : rows.length === 0 && !loading ? (
           <Empty description={emptyText} />
         ) : (
           <Table<MessageTemplateAdminItem>
@@ -273,9 +290,12 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
         value:
           '点「插入变量」从 catalog 选择（中文+code）。标题为明文可手改；正文为原子色块（不可改字、整颗删）。禁止 FE 平行变量表。',
       },
-      ...(!canWrite ? [{ label: '权限', value: '当前只读：无写权限，无法新建或保存。' }] : []),
+      ...(!tpl.create && !tpl.update
+        ? [{ label: '权限', value: '当前只读：无新建/编辑权限。' }]
+        : []),
+      ...(!tpl.read ? [{ label: '读取', value: '无消息模板读取权限。' }] : []),
     ],
-    [canWrite],
+    [tpl.create, tpl.update, tpl.read],
   );
 
   const primaryAction = useMemo(() => {
@@ -284,7 +304,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
         variant: 'button' as const,
         buttonType: 'primary' as const,
         label: '新建推送规则',
-        disabled: !canWrite,
+        disabled: !pushPerm.create,
         onClick: () => setPushCreateNonce((n) => n + 1),
       };
     }
@@ -293,7 +313,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
         variant: 'button' as const,
         buttonType: 'primary' as const,
         label: '新建变量',
-        disabled: !canWrite,
+        disabled: !varPerm.create,
         onClick: () => setVarCreateNonce((n) => n + 1),
       };
     }
@@ -301,10 +321,19 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
       variant: 'button' as const,
       buttonType: 'primary' as const,
       label: '新建模板',
-      disabled: !canWrite || tab !== 'template',
+      disabled: !tpl.create || tab !== 'template',
       onClick: () => openCreate(),
     };
-  }, [tab, pushEnabled, varsEnabled, canWrite, catalog, codePrefix]);
+  }, [
+    tab,
+    pushEnabled,
+    varsEnabled,
+    pushPerm.create,
+    varPerm.create,
+    tpl.create,
+    catalog,
+    codePrefix,
+  ]);
 
   const stateOption = [
     {
@@ -347,7 +376,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
         variables={variables}
         catalogError={catalogError}
         previewVars={previewVars}
-        canWrite={canWrite}
+        canWrite={isCreate ? tpl.create : tpl.update}
         onCancel={() => setEditing(null)}
         onSubmit={onSave}
         renderAudienceField={renderAudienceField}
