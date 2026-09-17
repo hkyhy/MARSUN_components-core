@@ -1,11 +1,12 @@
 import { FormInfo, FormItem, FormModal, Input, Select } from '@/components/FormInfo';
+import { RichTextField } from '@/components/FormInfo/RichTextField';
 import {
   applyTemplateVars,
   normalizeTemplatePlaceholders,
   stripHtmlToText,
 } from '../../utils/templateCode';
-import { Button, Select as AntSelect, Typography, message } from 'antd';
-import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { Select as AntSelect, Typography, message } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
   MessageEventCatalogItem,
@@ -13,10 +14,6 @@ import type {
   MessageTemplateVariable,
 } from '../types';
 import styles from '../style.module.scss';
-
-const RichTextEditor = lazy(() =>
-  import('@/components/Editor').then((m) => ({ default: m.RichTextEditor })),
-);
 
 export type TemplateFormModalProps = {
   open: boolean;
@@ -42,6 +39,7 @@ type FormShape = {
   eventKey?: string;
   scenario?: string;
   titleTemplate?: string;
+  bodyTemplate?: string;
 };
 
 type FormApiLike = {
@@ -50,7 +48,7 @@ type FormApiLike = {
 };
 
 /**
- * 模板新建/编辑：FormModal + FormInfo；正文 RichText 经 Editor 懒加载（L2 /editor）。
+ * 模板新建/编辑：FormModal + FormInfo；正文 RichTextField（Form 字段样式）。
  */
 export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   open,
@@ -66,14 +64,14 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   onSubmit,
   renderAudienceField,
 }) => {
-  const [bodyHtml, setBodyHtml] = useState('');
   const [roles, setRoles] = useState<string[]>([]);
 
   useEffect(() => {
     if (!open || !initial) return;
-    setBodyHtml(normalizeTemplatePlaceholders(initial.bodyTemplate || ''));
     setRoles(initial.audienceRoles || initial.roles || []);
   }, [open, initial]);
+
+  const editorKey = initial?.id || initial?.code || (isCreate ? 'create' : 'edit');
 
   const formData = useMemo<FormShape>(() => {
     if (!initial) return {};
@@ -84,6 +82,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       titleTemplate: normalizeTemplatePlaceholders(
         initial.titleTemplate || initial.titlePreview || '',
       ),
+      bodyTemplate: normalizeTemplatePlaceholders(initial.bodyTemplate || ''),
     };
   }, [initial]);
 
@@ -119,16 +118,27 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         disabled={!canWrite}
         enableVariableMention
         variables={variables}
-        placeholder="输入 / 插入变量"
+        placeholder="输入 / 插入变量（中文 + code）"
         labelTips={
           isCreate
-            ? '新建默认停用；保存后可在列表中开启「启用」。输入 / 从 catalog 插入 {key}。'
-            : '输入 / 从 catalog 插入变量 {key}。'
+            ? '新建默认停用；保存后可在列表中开启「启用」。输入 / 插入 {{key}}。'
+            : '输入 / 从 catalog 插入变量 {{key}}。'
         }
+      />,
+      <RichTextField
+        key="bodyTemplate"
+        name="bodyTemplate"
+        label="正文模板"
+        disabled={!canWrite}
+        enableVariableMention
+        variables={variables}
+        editorKey={editorKey}
+        placeholder="编辑正文，输入 / 插入变量"
+        minHeight={160}
       />,
     );
     return fields;
-  }, [isCreate, canWrite, catalog, variables]);
+  }, [isCreate, canWrite, catalog, variables, editorKey]);
 
   return (
     <FormModal
@@ -165,7 +175,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
               label: scenario,
               messageType: hit?.messageType || initial?.messageType || 'alert',
               titleTemplate: normalizeTemplatePlaceholders(String(data.titleTemplate || '')),
-              bodyTemplate: normalizeTemplatePlaceholders(bodyHtml),
+              bodyTemplate: normalizeTemplatePlaceholders(String(data.bodyTemplate || '')),
               audienceRoles: roles,
               roles,
               enabled: isCreate ? false : initial?.enabled !== false,
@@ -181,39 +191,31 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
     >
       <FormInfo column={1} list={fieldList} />
       <FormItem>
-        {(api: FormApiLike) => (
-          <Typography.Paragraph type="secondary" className={styles.preview}>
-            预览：
-            {applyTemplateVars(
-              String(
-                (typeof api.getFormData === 'function'
-                  ? api.getFormData()?.titleTemplate
-                  : undefined) ??
-                  api.formData?.titleTemplate ??
-                  formData.titleTemplate ??
-                  '',
-              ),
-              previewVars,
-            ) || '—'}
-          </Typography.Paragraph>
-        )}
+        {(api: FormApiLike) => {
+          const data =
+            (typeof api.getFormData === 'function' ? api.getFormData() : undefined) ??
+            api.formData ??
+            formData;
+          const titlePreview = applyTemplateVars(String(data.titleTemplate || ''), previewVars);
+          const bodyPreview = applyTemplateVars(
+            stripHtmlToText(String(data.bodyTemplate || '')),
+            previewVars,
+          );
+          return (
+            <>
+              {varsEmptyHint ? (
+                <Typography.Text type="secondary">{varsEmptyHint}</Typography.Text>
+              ) : null}
+              <Typography.Paragraph type="secondary" className={styles.preview}>
+                标题预览：{titlePreview || '—'}
+              </Typography.Paragraph>
+              <Typography.Paragraph type="secondary" className={styles.preview}>
+                正文预览：{bodyPreview || '—'}
+              </Typography.Paragraph>
+            </>
+          );
+        }}
       </FormItem>
-      <div className={styles.varBar}>
-        {varsEmptyHint ? <Typography.Text type="secondary">{varsEmptyHint}</Typography.Text> : null}
-        <Suspense fallback={<Button loading disabled type="text" />}>
-          <RichTextEditor
-            value={bodyHtml}
-            disabled={!canWrite}
-            enableVariableMention
-            variables={variables}
-            placeholder="编辑正文，输入 / 插入变量"
-            onChange={setBodyHtml}
-          />
-        </Suspense>
-        <Typography.Paragraph type="secondary" className={styles.preview}>
-          预览：{applyTemplateVars(stripHtmlToText(bodyHtml), previewVars) || '—'}
-        </Typography.Paragraph>
-      </div>
       <div style={{ marginTop: 12 }}>
         <Typography.Text>受众角色</Typography.Text>
         {renderAudienceField ? (

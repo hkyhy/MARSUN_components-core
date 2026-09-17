@@ -888,18 +888,18 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/editor': {
     title: 'Editor 富文本',
-    description: 'CKEditor 5：基础格式 + 可选变量 Mention（/`{key}` 色块）；L2 `/editor`。',
+    description: 'CKEditor 5：基础格式 + 可选变量 Mention（/ → {{key}} 色块）；L2 `/editor`。',
     examples: [
       {
         title: '1. RichTextEditor 基础',
-        description: '粗体 / 斜体 / 列表；受控 value/onChange',
+        description: '粗体 / 斜体 / 列表；外部写入时 setData，键入不刷光标',
         component: React.lazy(() => import('@/components/Editor/examples/RichTextBasicDemo')),
         sourcePath: () => import('@/components/Editor/examples/RichTextBasicDemo/index.tsx?raw'),
         block: true,
       },
       {
         title: '2. Mention 着色',
-        description: '/ 触发插入 {key}；色块 token；预览已替换',
+        description: '/ 触发插入 {{key}}；下拉中文+code；预览已替换',
         component: React.lazy(() => import('@/components/Editor/examples/RichTextMentionDemo')),
         sourcePath: () => import('@/components/Editor/examples/RichTextMentionDemo/index.tsx?raw'),
         block: true,
@@ -924,17 +924,21 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'value', desc: 'HTML 内容', type: 'string' },
           {
             prop: 'onChange',
-            desc: '内容变更（Mention 开启时存 {key} token）',
+            desc: '内容变更（Mention 开启时存 {{key}} token）',
             type: '(html: string) => void',
           },
           { prop: 'disabled', desc: '禁用', type: 'boolean' },
           { prop: 'readOnly', desc: '只读', type: 'boolean' },
           { prop: 'placeholder', desc: '占位', type: 'string' },
           { prop: 'minHeight', desc: '编辑区最小高度 px', type: 'number' },
-          { prop: 'enableVariableMention', desc: '开启 / 变量 Mention', type: 'boolean' },
+          {
+            prop: 'enableVariableMention',
+            desc: '开启 / 变量 Mention，插入 {{key}}',
+            type: 'boolean',
+          },
           {
             prop: 'variables',
-            desc: 'catalog 变量列表（禁 FE DEFAULT_VARS）',
+            desc: 'catalog 变量（下拉展示中文+code；禁 FE DEFAULT_VARS）',
             type: 'VariableMentionItem[]',
           },
         ],

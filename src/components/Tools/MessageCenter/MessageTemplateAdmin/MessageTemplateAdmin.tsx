@@ -135,8 +135,8 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
       eventKey: first?.eventKey || '',
       scenario: first?.label || '',
       messageType: first?.messageType || 'alert',
-      titleTemplate: '【预警】{factory} {machine}',
-      bodyTemplate: '<p>业务日 {bizDate}：{machine}（{machineId}）</p>',
+      titleTemplate: '【预警】{{factory}} {{machine}}',
+      bodyTemplate: '<p>业务日 {{bizDate}}：{{machine}}（{{machineId}}）</p>',
       audienceRoles: [],
       roles: [],
       enabled: false,
@@ -236,7 +236,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
       },
       {
         label: '变量',
-        value: '标题/正文输入 / 从 catalog 插入 {key}；禁止 FE 平行变量表。',
+        value: '标题/正文输入 / 从 catalog 插入 {{key}}；禁止 FE 平行变量表。',
       },
       ...(!canWrite ? [{ label: '权限', value: '当前只读：无写权限，无法新建或保存。' }] : []),
     ],
@@ -249,19 +249,19 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
         type="tab"
         activeKey={tab}
         onChange={(k) => setTab(String(k))}
+        actions={[
+          {
+            iconType: 'Plus',
+            label: '新建模板',
+            disabled: !canWrite || tab !== 'template',
+            onClick: () => openCreate(),
+          },
+        ]}
         stateOption={[
           {
             key: 'template',
             label: '消息模板',
             info: templateTabInfo,
-            actions: [
-              {
-                iconType: 'Plus',
-                label: '新建模板',
-                disabled: !canWrite,
-                onClick: () => openCreate(),
-              },
-            ],
             children: templatePane,
           },
           { key: 'push', label: '消息推送（冻结）', children: freezeSlot },

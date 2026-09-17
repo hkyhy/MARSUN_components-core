@@ -79,7 +79,7 @@ export const MSG_TEMPLATES_SEED: MsgTemplateItem[] = [
     scenario: '用能缺口汇总',
     messageType: 'alert',
     titleTemplate: '用能缺口巡检命中',
-    bodyTemplate: '<p>业务日 {bizDate} · 共 {count} 台</p>',
+    bodyTemplate: '<p>业务日 {{bizDate}} · 共 {{count}} 台</p>',
     audienceRoles: ['EQUIPMENT_ADMIN'],
     enabled: true,
     channel: 'in_app',
@@ -91,7 +91,7 @@ export const MSG_TEMPLATES_SEED: MsgTemplateItem[] = [
     scenario: '保养超期提醒',
     messageType: 'remind',
     titleTemplate: '保养超期提醒',
-    bodyTemplate: '<p>机台 {machineId} 已超期</p>',
+    bodyTemplate: '<p>机台 {{machineId}} 已超期</p>',
     audienceRoles: ['EQUIPMENT_ADMIN'],
     enabled: false,
     channel: 'in_app',
@@ -165,7 +165,10 @@ export function emitFixtureByEventKey(
   }
   const ev = MSG_EVENTS.find((e) => e.eventKey === eventKey);
   const fill = (s: string) =>
-    s.replace(/\{(\w+)\}/g, (_, k: string) => vars[k] ?? `{${k}}`).replace(/<[^>]+>/g, '');
+    s
+      .replace(/\{\{(\w+)\}\}/g, (_, k: string) => vars[k] ?? `{{${k}}}`)
+      .replace(/(?<!\{)\{(\w+)\}(?!\})/g, (_, k: string) => vars[k] ?? `{${k}}`)
+      .replace(/<[^>]+>/g, '');
   const title = fill(tpl.titleTemplate);
   const summary = fill(tpl.bodyTemplate);
   const href = ev?.defaultHref || '/';

@@ -45,6 +45,11 @@ export type StateBarProps = Omit<TabsProps, 'items' | 'type'> & {
   /** 底部线延展至容器全宽 */
   isInner?: boolean;
   className?: string;
+  /**
+   * 整体右侧操作（tabBarExtraContent）。
+   * 跨 Tab 的页面级操作放这里；仅当各 Tab 为同组切片（如模板1/2/3）时才用 option.actions。
+   */
+  actions?: StateBarActionItem[];
 };
 
 function renderActionItem(action: StateBarActionItem, key: string): ReactNode {
@@ -136,13 +141,36 @@ const StateBar: React.FC<StateBarProps> = ({
   stateOption = [],
   isInner,
   style,
+  actions,
+  tabBarExtraContent,
   ...props
 }) => {
   const hasChildren = stateOption.some((item) => item.children != null);
 
+  const extraActions =
+    actions && actions.length > 0 ? (
+      <span
+        className={classNames('marsun-state-bar-extra-actions', styles['state-bar-extra-actions'])}
+      >
+        {actions.map((action, i) => renderActionItem(action, `extra-${action.iconType}-${i}`))}
+      </span>
+    ) : null;
+
+  const mergedExtra: TabsProps['tabBarExtraContent'] =
+    extraActions && tabBarExtraContent != null ? (
+      <span className={styles['state-bar-extra-wrap']}>
+        {extraActions}
+        {/* antd 允许 position map；与 actions 同用时按 ReactNode 并排 */}
+        {tabBarExtraContent as ReactNode}
+      </span>
+    ) : (
+      (extraActions ?? tabBarExtraContent)
+    );
+
   return (
     <Tabs
       {...props}
+      tabBarExtraContent={mergedExtra}
       data-testid="components-core-state-bar"
       animated={false}
       className={classNames(
@@ -159,9 +187,9 @@ const StateBar: React.FC<StateBarProps> = ({
           ...style,
         } as CSSProperties
       }
-      items={stateOption.map(({ tab, label, info, actions, key, ...rest }) => ({
+      items={stateOption.map(({ tab, label, info, actions: tabActions, key, ...rest }) => ({
         key,
-        label: renderTabLabel(tab ?? label, info, actions),
+        label: renderTabLabel(tab ?? label, info, tabActions),
         ...rest,
       }))}
     />

@@ -12,9 +12,9 @@ const VARS = [
   { key: 'bizDate', label: '业务日' },
 ];
 
-/** Mention 着色：`/` 插入 `{key}`，编辑区色块；预览须替换变量 */
+/** Mention 着色：`/` 插入 `{{key}}`，下拉中文+code；预览须替换变量 */
 const RichTextMentionDemo: React.FC = () => {
-  const [html, setHtml] = useState('<p>分厂 {factory} · 机台 {machine}</p>');
+  const [html, setHtml] = useState('<p>分厂 {{factory}} · 机台 {{machine}}</p>');
   const previewVars = useMemo(
     () => Object.fromEntries(VARS.map((v) => [v.key, v.label || v.key])),
     [],

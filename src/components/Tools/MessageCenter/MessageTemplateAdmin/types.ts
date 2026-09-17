@@ -39,7 +39,7 @@ export type MessageAudienceRoleOption = {
 
 export type MessageTemplateVariable = {
   key: string;
-  /** 可选中文说明；无则只显示 {key} */
+  /** 可选中文说明；无则下拉只显示 code */
   label?: string;
   type?: string;
 };

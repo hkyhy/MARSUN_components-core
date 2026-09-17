@@ -33,6 +33,8 @@ export {
   isSuperSelectAllValue,
 } from './fields';
 export type { SuperSelectProps, SuperSelectOption } from './fields';
+export { RichTextField } from './RichTextField';
+export type { RichTextFieldProps } from './RichTextField';
 
 export type {
   FormInfoProps,

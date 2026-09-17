@@ -1,5 +1,5 @@
 /**
- * FormInfo Input 扩展：enableVariableMention 时走 VariableMention 字段（/`{key}`）。
+ * FormInfo Input 扩展：enableVariableMention 时走 VariableMention 字段（/ → {{key}}）。
  */
 import {
   CancelButton as BaseCancelButton,

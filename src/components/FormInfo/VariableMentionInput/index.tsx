@@ -1,11 +1,11 @@
 import * as ReactFormAntd from '@kne/react-form-antd';
-import { Mentions } from 'antd';
+import { Dropdown, Input } from 'antd';
 import classNames from 'classnames';
 import type { ComponentType, FC, ReactNode } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
-  VAR_PLACEHOLDER_RE,
   filterVariableFeed,
+  insertVarTokenAt,
   toVarToken,
   type VariableMentionItem,
 } from '@/components/Editor/variableMention';
@@ -37,6 +37,9 @@ type KneHooks = {
   ) => (Comp: ComponentType<FieldRenderProps>) => ReactNode;
 };
 
+/**
+ * 标题变量：普通 Input + `/` 下拉（中文 + code，无前导 /）；存盘 `{{key}}`。
+ */
 const VariableMentionControl: FC<
   FieldRenderProps & {
     variables?: VariableMentionItem[];
@@ -44,42 +47,91 @@ const VariableMentionControl: FC<
     className?: string;
   }
 > = ({ value = '', onChange, disabled, variables, placeholder, className, id }) => {
-  const options = useMemo(
-    () =>
-      filterVariableFeed(variables, '').map((v) => ({
-        value: v.key,
-        label: (
-          <span className={styles['var-mention-option']}>
-            <span className={styles['var-mention-token']}>{toVarToken(v.key)}</span>
-            {v.label ? <span className={styles['var-mention-label']}>{v.label}</span> : null}
-          </span>
-        ),
-      })),
-    [variables],
-  );
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const caretRef = useRef(-1);
+  const slashStartRef = useRef(-1);
 
-  const mentionsValue = useMemo(
-    () => String(value || '').replace(VAR_PLACEHOLDER_RE, '/$1'),
-    [value],
-  );
+  const options = useMemo(() => {
+    return filterVariableFeed(variables, query).map((v) => ({
+      key: v.key,
+      label: (
+        <span className={styles['var-mention-option']}>
+          {v.label ? <span className={styles['var-mention-label']}>{v.label}</span> : null}
+          <span className={styles['var-mention-token']}>{v.key}</span>
+        </span>
+      ),
+    }));
+  }, [variables, query]);
+
+  const pick = (key: string) => {
+    const src = String(value || '');
+    const slashAt = slashStartRef.current;
+    const caret = caretRef.current;
+    let next: string;
+    if (slashAt >= 0 && caret >= slashAt) {
+      next = `${src.slice(0, slashAt)}${toVarToken(key)}${src.slice(caret)}`;
+    } else {
+      next = insertVarTokenAt(src, key, caret);
+    }
+    onChange?.(next);
+    setOpen(false);
+    setQuery('');
+    slashStartRef.current = -1;
+  };
 
   return (
-    <Mentions
-      id={id}
-      prefix="/"
-      value={mentionsValue}
-      disabled={disabled}
-      placeholder={placeholder || '输入 / 插入变量'}
-      className={classNames('marsun-var-mention-input', styles['var-mention-input'], className)}
-      options={options}
-      onChange={(next) => {
-        const normalized = String(next || '').replace(/\/(\w+)/g, (m, key: string) => {
-          const hit = (variables || []).some((v) => v.key === key);
-          return hit ? `{${key}}` : m;
-        });
-        onChange?.(normalized);
+    <Dropdown
+      open={open && !disabled && options.length > 0}
+      onOpenChange={(v) => {
+        if (!v) setOpen(false);
       }}
-    />
+      menu={{
+        items: options.map((o) => ({
+          key: o.key,
+          label: o.label,
+          onClick: () => pick(o.key),
+        })),
+      }}
+      trigger={[]}
+    >
+      <Input
+        id={id}
+        value={value}
+        disabled={disabled}
+        placeholder={placeholder || '输入 / 插入变量（中文 + code）'}
+        className={classNames('marsun-var-mention-input', styles['var-mention-input'], className)}
+        onChange={(e) => {
+          const next = e.target.value;
+          const caret = e.target.selectionStart ?? next.length;
+          caretRef.current = caret;
+          onChange?.(next);
+          const before = next.slice(0, caret);
+          const m = before.match(/\/([^\s/{}]*)$/);
+          if (m) {
+            slashStartRef.current = caret - m[0].length;
+            setQuery(m[1] || '');
+            setOpen(true);
+          } else {
+            slashStartRef.current = -1;
+            setOpen(false);
+            setQuery('');
+          }
+        }}
+        onSelect={(e) => {
+          const t = e.target as HTMLInputElement;
+          caretRef.current = t.selectionStart ?? -1;
+        }}
+        onClick={(e) => {
+          const t = e.target as HTMLInputElement;
+          caretRef.current = t.selectionStart ?? -1;
+        }}
+        onKeyUp={(e) => {
+          const t = e.target as HTMLInputElement;
+          caretRef.current = t.selectionStart ?? -1;
+        }}
+      />
+    </Dropdown>
   );
 };
 

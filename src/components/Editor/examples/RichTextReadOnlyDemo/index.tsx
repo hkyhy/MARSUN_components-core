@@ -6,7 +6,7 @@ import React from 'react';
 const RichTextReadOnlyDemo: React.FC = () => (
   <Space orientation="vertical" style={{ width: '100%' }} size={12}>
     <RichTextEditor
-      value="<p>只读正文：{factory} / {machine}</p>"
+      value="<p>只读正文：{{factory}} / {{machine}}</p>"
       readOnly
       enableVariableMention
       variables={[

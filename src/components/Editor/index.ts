@@ -5,6 +5,7 @@ export {
   VAR_PLACEHOLDER_RE,
   toVarToken,
   filterVariableFeed,
+  formatVariableOptionLabel,
   toMentionFeedItem,
   normalizeMentionHtmlToVarTokens,
   upliftVarTokensToMentions,

@@ -28,6 +28,13 @@
   gap: 4px;
 }
 
+.state-bar-extra-actions,
+.state-bar-extra-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .state-bar-info,
 .state-bar-action {
   display: inline-flex;
@@ -38,6 +45,12 @@
   transition:
     color 0.15s ease,
     opacity 0.15s ease;
+}
+
+.state-bar-extra-actions {
+  .state-bar-action {
+    color: var(--primary-color, #1677ff);
+  }
 }
 
 .state-bar-action-disabled {

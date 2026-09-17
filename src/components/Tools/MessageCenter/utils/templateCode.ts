@@ -8,9 +8,14 @@ export function generateTemplateCode(prefix = 'MEQ'): string {
   return `${prefix}${y}${m}${d}${rand}`;
 }
 
-/** 占位符统一 `{var}`；兼容旧 `{{var}}` 读入 */
+/**
+ * 占位符统一 `{{var}}`；兼容读入旧 `{var}`（不把已是双括号的再包一层）。
+ */
 export function normalizeTemplatePlaceholders(text: string): string {
-  return String(text || '').replace(/\{\{(\w+)\}\}/g, '{$1}');
+  return String(text || '')
+    .replace(/\{\{(\w+)\}\}/g, '\u0000$1\u0000')
+    .replace(/\{(\w+)\}/g, '{{$1}}')
+    .replace(/\u0000(\w+)\u0000/g, '{{$1}}');
 }
 
 export function applyTemplateVars(
@@ -18,9 +23,9 @@ export function applyTemplateVars(
   vars: Record<string, string | number | undefined>,
 ): string {
   const src = normalizeTemplatePlaceholders(text);
-  return src.replace(/\{(\w+)\}/g, (_, key: string) => {
+  return src.replace(/\{\{(\w+)\}\}/g, (_, key: string) => {
     const v = vars[key];
-    return v === undefined || v === null ? `{${key}}` : String(v);
+    return v === undefined || v === null ? `{{${key}}}` : String(v);
   });
 }
 
