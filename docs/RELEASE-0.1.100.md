@@ -4,3 +4,5 @@
 - 推送规则真 CRUD：`eventKey` + `templateCode`；切换事件过滤模板并清脏关联
 - 「插入变量」+ `{{key}}` 原子色块；空 catalog 按钮禁用
 - InteractiveBlock 仅「未接线」降级提示（非冻结文案）
+
+- **Build**：CKEditor / `@ckeditor/*` 标为 vite lib external，避免消费方二次变换丢 named export
