@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.142
+  next_task_id: P6.3.143
 tasks:
+- id: P6.3.142
+  milestone: P6.3
+  name: MessageCenter 推送/变量真 CRUD 并发版 0.1.100
+  status: 进行中
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-17"
+  target_date: "2026-09-17"
+  tags: [frontend, message-center, release]
+  note: |
+    Related: S4.30.2033
+    PushRulesPanel + VariablesPanel；eventKey 级联清脏 templateCode；adminGuards vitest；chore(release) v0.1.100；禁 G1
 - id: P6.3.141
   milestone: P6.3
   name: Disposition 域折叠 + AlertDispositionPanel 等级目录并发版 0.1.99
