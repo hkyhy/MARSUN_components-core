@@ -16,8 +16,8 @@
   }
 
   &[data-var-mention='1'] {
-    :global(.ck-content .mention),
-    :global(.ck-content .msg-var-token) {
+    :global(.ck-content .msg-var-token),
+    :global(.ck-content .msg-var-token.ck-widget) {
       display: inline;
       padding: 0 4px;
       margin: 0 1px;
@@ -27,6 +27,8 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.95em;
       box-sizing: border-box;
+      cursor: default;
+      user-select: none;
     }
   }
 }
@@ -34,6 +36,12 @@
 .rich-text-editor {
   box-sizing: border-box;
   position: relative;
+}
+
+.var-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
 }
 
 .editor-host {

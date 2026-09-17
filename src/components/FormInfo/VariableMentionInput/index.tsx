@@ -1,14 +1,10 @@
 import * as ReactFormAntd from '@kne/react-form-antd';
-import { Dropdown, Input } from 'antd';
+import { Input, Space } from 'antd';
 import classNames from 'classnames';
 import type { ComponentType, FC, ReactNode } from 'react';
-import { useMemo, useRef, useState } from 'react';
-import {
-  filterVariableFeed,
-  insertVarTokenAt,
-  toVarToken,
-  type VariableMentionItem,
-} from '@/components/Editor/variableMention';
+import { useRef } from 'react';
+import { insertVarTokenAt, type VariableMentionItem } from '@/components/Editor/variableMention';
+import { VariablePicker } from '@/components/Editor/VariablePicker';
 import styles from './style.module.scss';
 
 export type VariableMentionFieldProps = {
@@ -20,6 +16,7 @@ export type VariableMentionFieldProps = {
   placeholder?: string;
   enableVariableMention?: boolean;
   variables?: VariableMentionItem[];
+  catalogError?: string;
   className?: string;
   [key: string]: unknown;
 };
@@ -38,107 +35,67 @@ type KneHooks = {
 };
 
 /**
- * 标题变量：普通 Input + `/` 下拉（中文 + code，无前导 /）；存盘 `{{key}}`。
+ * 标题变量：Input +「插入变量」按钮（明文 {{key}}，可手改；无 `/` 触发）。
  */
 const VariableMentionControl: FC<
   FieldRenderProps & {
     variables?: VariableMentionItem[];
+    catalogError?: string;
     placeholder?: string;
     className?: string;
   }
-> = ({ value = '', onChange, disabled, variables, placeholder, className, id }) => {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const caretRef = useRef(-1);
-  const slashStartRef = useRef(-1);
-
-  const options = useMemo(() => {
-    return filterVariableFeed(variables, query).map((v) => ({
-      key: v.key,
-      label: (
-        <span className={styles['var-mention-option']}>
-          {v.label ? <span className={styles['var-mention-label']}>{v.label}</span> : null}
-          <span className={styles['var-mention-token']}>{v.key}</span>
-        </span>
-      ),
-    }));
-  }, [variables, query]);
+> = ({ value = '', onChange, disabled, variables, catalogError, placeholder, className, id }) => {
+  const caretRef = useRef(String(value || '').length);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const pick = (key: string) => {
-    const src = String(value || '');
-    const slashAt = slashStartRef.current;
-    const caret = caretRef.current;
-    let next: string;
-    if (slashAt >= 0 && caret >= slashAt) {
-      next = `${src.slice(0, slashAt)}${toVarToken(key)}${src.slice(caret)}`;
-    } else {
-      next = insertVarTokenAt(src, key, caret);
-    }
+    const next = insertVarTokenAt(String(value || ''), key, caretRef.current);
     onChange?.(next);
-    setOpen(false);
-    setQuery('');
-    slashStartRef.current = -1;
+    caretRef.current = caretRef.current + `{{${key}}}`.length;
   };
 
   return (
-    <Dropdown
-      open={open && !disabled && options.length > 0}
-      onOpenChange={(v) => {
-        if (!v) setOpen(false);
-      }}
-      menu={{
-        items: options.map((o) => ({
-          key: o.key,
-          label: o.label,
-          onClick: () => pick(o.key),
-        })),
-      }}
-      dropdownRender={(menu) => <div onMouseDown={(e) => e.preventDefault()}>{menu}</div>}
-      trigger={[]}
-    >
-      <Input
-        id={id}
-        value={value}
-        disabled={disabled}
-        placeholder={placeholder || '输入 / 插入变量（中文 + code）'}
-        className={classNames('marsun-var-mention-input', styles['var-mention-input'], className)}
-        onChange={(e) => {
-          const next = e.target.value;
-          const caret = e.target.selectionStart ?? next.length;
-          caretRef.current = caret;
-          onChange?.(next);
-          const before = next.slice(0, caret);
-          const m = before.match(/\/([^\s/{}]*)$/);
-          if (m) {
-            slashStartRef.current = caret - m[0].length;
-            setQuery(m[1] || '');
-            setOpen(true);
-          } else {
-            slashStartRef.current = -1;
-            setOpen(false);
-            setQuery('');
-          }
-        }}
-        onSelect={(e) => {
-          const t = e.target as HTMLInputElement;
-          caretRef.current = t.selectionStart ?? -1;
-        }}
-        onClick={(e) => {
-          const t = e.target as HTMLInputElement;
-          caretRef.current = t.selectionStart ?? -1;
-        }}
-        onKeyUp={(e) => {
-          const t = e.target as HTMLInputElement;
-          caretRef.current = t.selectionStart ?? -1;
-        }}
-      />
-    </Dropdown>
+    <div ref={rootRef} className={styles['var-mention-wrap']}>
+      <Space.Compact style={{ width: '100%' }}>
+        <Input
+          id={id}
+          value={value}
+          disabled={disabled}
+          placeholder={placeholder || '点右侧「插入变量」，或手打 {{key}}'}
+          className={classNames('marsun-var-mention-input', styles['var-mention-input'], className)}
+          onChange={(e) => {
+            const next = e.target.value;
+            caretRef.current = e.target.selectionStart ?? next.length;
+            onChange?.(next);
+          }}
+          onSelect={(e) => {
+            const t = e.target as HTMLInputElement;
+            caretRef.current = t.selectionStart ?? -1;
+          }}
+          onClick={(e) => {
+            const t = e.target as HTMLInputElement;
+            caretRef.current = t.selectionStart ?? -1;
+          }}
+          onKeyUp={(e) => {
+            const t = e.target as HTMLInputElement;
+            caretRef.current = t.selectionStart ?? -1;
+          }}
+        />
+        <VariablePicker
+          variables={variables}
+          catalogError={catalogError}
+          disabled={disabled}
+          getPopupContainer={() => rootRef.current || document.body}
+          onPick={pick}
+        />
+      </Space.Compact>
+    </div>
   );
 };
 
 const VariableMentionInner: FC<VariableMentionFieldProps> = (props) => {
   const { useDecorator } = (ReactFormAntd as unknown as { hooks: KneHooks }).hooks;
-  const { variables, placeholder, className, ...rest } = props;
+  const { variables, catalogError, placeholder, className, ...rest } = props;
   const render = useDecorator({
     fieldName: 'variableMentionInput',
     ...rest,
@@ -147,6 +104,7 @@ const VariableMentionInner: FC<VariableMentionFieldProps> = (props) => {
     <VariableMentionControl
       {...fieldProps}
       variables={variables}
+      catalogError={catalogError}
       placeholder={placeholder}
       className={className}
     />

@@ -1,8 +1,7 @@
 /**
- * 变量 Mention 共用工具：触发符 `/`，存盘占位 `{{key}}`（与 marsun_msg_center render 对齐）。
- * Input / RichTextEditor 共用，禁止平行 DEFAULT_VARS。
- *
- * 注意：禁止把 `{{key}}` uplift 成 CKEditor mention widget 再回写——会触发 setData/onChange 死循环卡死。
+ * 变量占位工具：存盘 `{{key}}`（与 marsun_msg_center render 对齐）。
+ * 插入走「插入变量」按钮（VariablePicker）；正文为原子 widget。
+ * 禁止 FE DEFAULT_VARS。
  */
 
 export type VariableMentionItem = {
@@ -68,37 +67,35 @@ export function toMentionFeedItem(v: VariableMentionItem): {
 export function normalizeMentionHtmlToVarTokens(html: string): string {
   return String(html || '').replace(
     /<span\b[^>]*\bdata-mention="\/(\w+)"[^>]*>[\s\S]*?<\/span>/gi,
-    (_m, key: string) => `<span class="${MSG_VAR_TOKEN_CLASS}">{{${key}}}</span>`,
+    (_m, key: string) => `<span class="${MSG_VAR_TOKEN_CLASS}" data-var="${key}">{{${key}}}</span>`,
   );
 }
 
 /**
- * 读入编辑器：把裸 `{{key}}` 包成色块 span（非 CK mention widget，避免回写死循环）。
+ * 读入编辑器前：裸 `{{key}}` / 旧色块 → 带 data-var 的 span，供 MsgVarWidget upcast。
  */
 export function wrapVarTokensForDisplay(html: string): string {
-  let s = String(html || '');
+  let s = normalizeMentionHtmlToVarTokens(String(html || ''));
   const tokenSpanRe = new RegExp(
-    `<span\\b[^>]*\\bclass="[^"]*${MSG_VAR_TOKEN_CLASS}[^"]*"[^>]*>\\{\\{(\\w+)\\}\\}<\\/span>`,
+    `<span\\b([^>]*\\bclass="[^"]*${MSG_VAR_TOKEN_CLASS}[^"]*"[^>]*)>\\{\\{(\\w+)\\}\\}<\\/span>`,
     'gi',
   );
-  // 已是色块则保持
-  s = s.replace(
-    tokenSpanRe,
-    (_m, key: string) => `<span class="${MSG_VAR_TOKEN_CLASS}">{{${key}}}</span>`,
-  );
-  // 先剥残留 mention widget
-  s = normalizeMentionHtmlToVarTokens(s);
+  s = s.replace(tokenSpanRe, (_m, attrs: string, key: string) => {
+    if (/\bdata-var=/.test(attrs)) return `<span${attrs}>{{${key}}}</span>`;
+    return `<span class="${MSG_VAR_TOKEN_CLASS}" data-var="${key}">{{${key}}}</span>`;
+  });
   s = s.replace(/(^|>)([^<]*)/g, (_full, prefix: string, text: string) => {
     const next = text.replace(
       /\{\{(\w+)\}\}/g,
-      (_m, key: string) => `<span class="${MSG_VAR_TOKEN_CLASS}">{{${key}}}</span>`,
+      (_m, key: string) =>
+        `<span class="${MSG_VAR_TOKEN_CLASS}" data-var="${key}">{{${key}}}</span>`,
     );
     return `${prefix}${next}`;
   });
   return s;
 }
 
-/** @deprecated 易触发卡死；保留给单测兼容，新代码用 wrapVarTokensForDisplay */
+/** @deprecated 兼容旧名；等同 wrapVarTokensForDisplay */
 export function upliftVarTokensToMentions(html: string): string {
   return wrapVarTokensForDisplay(html);
 }

@@ -1,17 +1,17 @@
 {
   "title": "Editor 富文本",
-  "description": "CKEditor 5：基础格式 + 可选变量 Mention（/ → {{key}} 色块）；L2 `/editor`。",
+  "description": "CKEditor 5：基础格式 +「插入变量」原子色块 {{key}}；L2 `/editor`。",
   "examples": [
     {
       "title": "1. RichTextEditor 基础",
-      "description": "粗体 / 斜体 / 列表；外部写入时 setData，键入不刷光标",
+      "description": "粗体 / 斜体 / 列表；挂载写一次，键入不刷光标",
       "component": "@/components/Editor/examples/RichTextBasicDemo",
       "sourcePath": "@/components/Editor/examples/RichTextBasicDemo/index.tsx",
       "block": true
     },
     {
-      "title": "2. Mention 着色",
-      "description": "/ 触发插入 {{key}}；下拉中文+code；预览已替换",
+      "title": "2. 插入变量色块",
+      "description": "按钮插入 {{key}}；原子色块不可改字、整颗删；预览已替换",
       "component": "@/components/Editor/examples/RichTextMentionDemo",
       "sourcePath": "@/components/Editor/examples/RichTextMentionDemo/index.tsx",
       "block": true
@@ -36,7 +36,7 @@
         { "prop": "value", "desc": "HTML 内容", "type": "string" },
         {
           "prop": "onChange",
-          "desc": "内容变更（Mention 开启时存 {{key}} token）",
+          "desc": "内容变更（变量开启时含 {{key}} / msg-var-token）",
           "type": "(html: string) => void"
         },
         { "prop": "disabled", "desc": "禁用", "type": "boolean" },
@@ -45,13 +45,18 @@
         { "prop": "minHeight", "desc": "编辑区最小高度 px", "type": "number" },
         {
           "prop": "enableVariableMention",
-          "desc": "开启 / 变量 Mention，插入 {{key}}",
+          "desc": "开启「插入变量」+ 原子色块",
           "type": "boolean"
         },
         {
           "prop": "variables",
-          "desc": "catalog 变量（下拉展示中文+code；禁 FE DEFAULT_VARS）",
+          "desc": "catalog 变量（下拉中文+code；禁 FE DEFAULT_VARS）",
           "type": "VariableMentionItem[]"
+        },
+        {
+          "prop": "catalogError",
+          "desc": "目录失败文案（按钮 disabled 提示）",
+          "type": "string"
         }
       ]
     }

@@ -20,6 +20,7 @@ export type RichTextFieldProps = {
   minHeight?: number;
   enableVariableMention?: boolean;
   variables?: VariableMentionItem[];
+  catalogError?: string;
   className?: string;
   /** remount 键（换文档时传入） */
   editorKey?: string;
@@ -40,7 +41,7 @@ type KneHooks = {
 };
 
 /**
- * FormInfo 富文本字段：外观对齐 Input 控件边框；L2 Editor 懒加载。
+ * FormInfo 富文本字段：外观对齐 Input；L2 Editor 懒加载；「插入变量」+ 原子色块。
  */
 const RichTextControl: FC<
   FieldRenderProps & {
@@ -49,6 +50,7 @@ const RichTextControl: FC<
     minHeight?: number;
     enableVariableMention?: boolean;
     variables?: VariableMentionItem[];
+    catalogError?: string;
     className?: string;
     editorKey?: string;
   }
@@ -61,6 +63,7 @@ const RichTextControl: FC<
   minHeight = 140,
   enableVariableMention,
   variables,
+  catalogError,
   className,
   editorKey,
   id,
@@ -72,7 +75,6 @@ const RichTextControl: FC<
       disabled && styles['form-rich-text-disabled'],
       className,
     )}
-    // id 挂在可聚焦控件上；挂 wrapper 会让 label 抢焦点，CK 立刻 blur
     data-field-id={id}
   >
     <Suspense fallback={<div className={styles['form-rich-text-loading']}>加载编辑器…</div>}>
@@ -86,6 +88,7 @@ const RichTextControl: FC<
         minHeight={minHeight}
         enableVariableMention={enableVariableMention}
         variables={variables}
+        catalogError={catalogError}
       />
     </Suspense>
   </div>
@@ -95,6 +98,7 @@ const RichTextFieldInner: FC<RichTextFieldProps> = (props) => {
   const { useDecorator } = (ReactFormAntd as unknown as { hooks: KneHooks }).hooks;
   const {
     variables,
+    catalogError,
     placeholder,
     className,
     enableVariableMention,
@@ -111,6 +115,7 @@ const RichTextFieldInner: FC<RichTextFieldProps> = (props) => {
     <RichTextControl
       {...fieldProps}
       variables={variables}
+      catalogError={catalogError}
       placeholder={placeholder}
       className={className}
       enableVariableMention={enableVariableMention}

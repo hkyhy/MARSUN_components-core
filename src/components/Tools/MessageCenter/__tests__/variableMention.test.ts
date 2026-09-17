@@ -7,7 +7,6 @@ import {
   toVarToken,
   wrapVarTokensForDisplay,
 } from '../../../Editor/variableMention';
-import { matchSlashQuery } from '../../../Editor/variableSlash';
 import { listFixtureCatalog, resetMsgCenterFixture } from '../doc/msgCenter.fixture';
 import { applyTemplateVars, normalizeTemplatePlaceholders } from '../utils/templateCode';
 import { previewVarsFromVariables, variablesFromCatalog } from '../MessageTemplateAdmin/types';
@@ -31,21 +30,19 @@ describe('variableMention utils', () => {
     expect(filterVariableFeed(vars, '厂').map((v) => v.key)).toEqual(['factory']);
   });
 
-  it('normalizeMentionHtmlToVarTokens keeps {{key}}', () => {
+  it('normalizeMentionHtmlToVarTokens keeps {{key}} with data-var', () => {
     const html = '<p><span class="mention" data-mention="/factory">/factory</span></p>';
-    expect(normalizeMentionHtmlToVarTokens(html)).toContain('{{factory}}');
+    const out = normalizeMentionHtmlToVarTokens(html);
+    expect(out).toContain('{{factory}}');
+    expect(out).toContain('data-var="factory"');
   });
 
-  it('wrapVarTokensForDisplay wraps double tokens as color span not mention widget', () => {
+  it('wrapVarTokensForDisplay wraps bare {{key}} with data-var for widget upcast', () => {
     const up = wrapVarTokensForDisplay('<p>{{machine}}</p>');
     expect(up).toContain('msg-var-token');
+    expect(up).toContain('data-var="machine"');
     expect(up).toContain('{{machine}}');
     expect(up).not.toContain('data-mention');
-  });
-
-  it('matchSlashQuery detects trailing /query', () => {
-    expect(matchSlashQuery('hello /fac')).toEqual({ query: 'fac', matchLen: 4 });
-    expect(matchSlashQuery('hello')).toBeNull();
   });
 });
 

@@ -236,7 +236,8 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
       },
       {
         label: '变量',
-        value: '标题/正文输入 / 从 catalog 插入 {{key}}；禁止 FE 平行变量表。',
+        value:
+          '点「插入变量」从 catalog 选择（中文+code）。标题为明文可手改；正文为原子色块（不可改字、整颗删）。禁止 FE 平行变量表。',
       },
       ...(!canWrite ? [{ label: '权限', value: '当前只读：无写权限，无法新建或保存。' }] : []),
     ],

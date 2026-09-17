@@ -1,6 +1,6 @@
 {
   "title": "MessageCenter 消息中心",
-  "description": "事件目录（variables SSOT）→ 模板 CRUD（StateBar actions / Mention / 预览替换）→ dryRun/emit → InboxBell → 权限 → 空错加载。",
+  "description": "事件目录（variables SSOT）→ 模板 CRUD（StateBar actions / 插入变量色块 / 预览替换）→ dryRun/emit → InboxBell → 权限 → 空错加载。",
   "examples": [
     {
       "title": "1. 事件目录",
@@ -10,7 +10,7 @@
     },
     {
       "title": "2. 消息模板 CRUD",
-      "description": "StateBar 右 Plus 新建；/ Mention；推送 InteractiveBlock 冻结",
+      "description": "StateBar 右 Plus 新建；「插入变量」原子色块；推送 InteractiveBlock 冻结",
       "component": "@/components/Tools/MessageCenter/examples/TemplateCrudDemo",
       "sourcePath": "@/components/Tools/MessageCenter/examples/TemplateCrudDemo/index.tsx",
       "block": true

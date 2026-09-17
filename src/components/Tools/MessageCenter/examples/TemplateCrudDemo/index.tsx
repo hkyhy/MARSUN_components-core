@@ -11,7 +11,7 @@ import React, { useCallback } from 'react';
 
 resetMsgCenterFixture();
 
-/** 2. 模板 CRUD（可写）：自动编号 / 中文事件 / 默认停用 / SSO 角色名 / catalog 变量+Mention */
+/** 2. 模板 CRUD（可写）：自动编号 / 中文事件 / 默认停用 / SSO 角色名 / catalog「插入变量」色块 */
 const TemplateCrudDemo: React.FC = () => {
   const fetchTemplates = useCallback(async () => listFixtureTemplates(), []);
   const fetchEventCatalog = useCallback(async () => listFixtureCatalog(), []);

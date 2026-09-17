@@ -13,5 +13,6 @@ export {
   insertVarTokenAt,
 } from './variableMention';
 export type { VariableMentionItem } from './variableMention';
-export { matchSlashQuery } from './variableSlash';
-export { MsgVarToken } from './msgVarTokenPlugin';
+export { MsgVarWidget, insertMsgVar } from './msgVarTokenPlugin';
+export { VariablePicker } from './VariablePicker';
+export type { VariablePickerProps } from './VariablePicker';

@@ -138,11 +138,12 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         disabled={!canWrite}
         enableVariableMention
         variables={variables}
-        placeholder="输入 / 插入变量（中文 + code）"
+        catalogError={catalogError}
+        placeholder="点「插入变量」选择 catalog 变量"
         labelTips={
           isCreate
-            ? '新建默认停用；保存后可在列表中开启「启用」。输入 / 插入 {{key}}。'
-            : '输入 / 从 catalog 插入变量 {{key}}。'
+            ? '新建默认停用。标题：点「插入变量」插入明文 {{key}}（可手改）。正文：原子色块，不可改字，整颗删除。'
+            : '标题可手改 {{key}}；正文为原子色块（不可改字、Backspace 整颗删）。'
         }
       />,
       <RichTextField
@@ -152,8 +153,9 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         disabled={!canWrite}
         enableVariableMention
         variables={variables}
+        catalogError={catalogError}
         editorKey={editorKey}
-        placeholder="编辑正文，输入 / 插入变量"
+        placeholder="编辑正文，点「插入变量」"
         minHeight={160}
       />,
     );
