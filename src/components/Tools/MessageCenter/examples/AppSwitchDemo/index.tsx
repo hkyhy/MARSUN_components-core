@@ -1,8 +1,8 @@
 import { Space, Typography } from 'antd';
 import React, { useCallback, useState } from 'react';
-import { MsgCenterAppSwitcher } from '../MsgCenterAppSwitcher';
-import { getMsgCenterAppKey } from '../msgCenterAppSwitch';
-import { useMsgCenterAppKey } from '../useMsgCenterAppKey';
+import { MsgCenterAppSwitcher } from '@/components/Tools/MessageCenter/MsgCenterAppSwitcher';
+import { getMsgCenterAppKey } from '@/components/Tools/MessageCenter/msgCenterAppSwitch';
+import { useMsgCenterAppKey } from '@/components/Tools/MessageCenter/useMsgCenterAppKey';
 
 /**
  * Phase B：双权用户可见切换器；单权返回 null（PB-01）。
@@ -30,7 +30,7 @@ const AppSwitchDemo: React.FC = () => {
       <MsgCenterAppSwitcher
         fallbackAppKey={fallback}
         listAuthorizedSystemApps={listAuthorizedSystemApps}
-        onAppKeyChange={(k) => setLog(`switched → ${k}`)}
+        onAppKeyChange={(k: string) => setLog(`switched → ${k}`)}
       />
       {log ? <Typography.Text type="success">{log}</Typography.Text> : null}
     </Space>
