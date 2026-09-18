@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.148
+  next_task_id: P6.3.149
 tasks:
+- id: P6.3.148
+  plane_issue_id: 0b5017eb-d669-4056-a703-cf0b219d4b26
+  milestone: P6.3
+  name: 消息受众槽位 UI 并发版 0.1.113
+  status: 已完成
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-18"
+  target_date: "2026-09-18"
+  tags: [frontend, message-center, release, audience-slots]
+  note: |
+    Related: S4.30.2046 · S3.3.2003 · P3.17.1004
+    AUDIENCE_SLOT_OPTIONS；模板/推送槽位多选；org.tenant 确认；真装 0.1.113；仍≠G1
 - id: P6.3.147
   plane_issue_id: 0b5017eb-d669-4056-a703-cf0b219d4b26
   milestone: P6.3
