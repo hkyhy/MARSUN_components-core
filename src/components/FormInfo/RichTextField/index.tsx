@@ -32,6 +32,14 @@ type FieldRenderProps = {
   onChange?: (v: string) => void;
   disabled?: boolean;
   id?: string;
+  readOnly?: boolean;
+  placeholder?: string;
+  minHeight?: number;
+  enableVariableMention?: boolean;
+  variables?: VariableMentionItem[];
+  catalogError?: string;
+  className?: string;
+  editorKey?: string;
 };
 
 type KneHooks = {
@@ -42,19 +50,9 @@ type KneHooks = {
 
 /**
  * FormInfo 富文本字段：外观对齐 Input；L2 Editor 懒加载；「插入变量」+ 原子色块。
+ * 须作为稳定组件类型交给 useDecorator（禁内联函数，否则每键 remount 丢焦）。
  */
-const RichTextControl: FC<
-  FieldRenderProps & {
-    readOnly?: boolean;
-    placeholder?: string;
-    minHeight?: number;
-    enableVariableMention?: boolean;
-    variables?: VariableMentionItem[];
-    catalogError?: string;
-    className?: string;
-    editorKey?: string;
-  }
-> = ({
+const RichTextControl: FC<FieldRenderProps> = ({
   value = '',
   onChange,
   disabled,
@@ -96,34 +94,11 @@ const RichTextControl: FC<
 
 const RichTextFieldInner: FC<RichTextFieldProps> = (props) => {
   const { useDecorator } = (ReactFormAntd as unknown as { hooks: KneHooks }).hooks;
-  const {
-    variables,
-    catalogError,
-    placeholder,
-    className,
-    enableVariableMention,
-    readOnly,
-    minHeight,
-    editorKey,
-    ...rest
-  } = props;
   const render = useDecorator({
     fieldName: 'richTextEditor',
-    ...rest,
+    ...props,
   });
-  return render((fieldProps) => (
-    <RichTextControl
-      {...fieldProps}
-      variables={variables}
-      catalogError={catalogError}
-      placeholder={placeholder}
-      className={className}
-      enableVariableMention={enableVariableMention}
-      readOnly={readOnly}
-      minHeight={minHeight}
-      editorKey={editorKey}
-    />
-  ));
+  return render(RichTextControl);
 };
 
 RichTextFieldInner.displayName = 'RichTextField';

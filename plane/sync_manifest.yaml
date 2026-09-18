@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.144
+  next_task_id: P6.3.145
 tasks:
+- id: P6.3.144
+  milestone: P6.3
+  name: VariableMention 输入失焦与插入变量高度并发版 0.1.102
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: "2026-09-18"
+  target_date: "2026-09-18"
+  tags: [frontend, message-center, FormInfo, release]
+  note: |
+    Related: S4.30.2031 · Task UUID 737d37b4-d927-4e95-ba1e-764f185a534c
+    useDecorator 禁内联 render 防 remount 丢焦；VariablePicker middle 与 Input 对齐；chore(release) v0.1.102（npm 仍 0.1.101，纠正本地 0.1.103 跳号）
 - id: P6.3.143
   milestone: P6.3
   name: MsgCenterAppSwitcher 运行时 appKey 切换并发版 0.1.103

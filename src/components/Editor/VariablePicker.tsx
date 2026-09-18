@@ -26,7 +26,7 @@ export const VariablePicker: React.FC<VariablePickerProps> = ({
   catalogError,
   onPick,
   buttonText = '插入变量',
-  size = 'small',
+  size = 'middle',
   className,
   getPopupContainer,
 }) => {
