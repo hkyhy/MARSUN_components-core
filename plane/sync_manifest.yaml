@@ -6,7 +6,7 @@ tasks:
   plane_issue_id: 0b5017eb-d669-4056-a703-cf0b219d4b26
   milestone: P6.3
   name: 消息中心例外抄送/变量类型中文/按部门选人并发版 0.1.111
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feat
   owner: 黄金芳
