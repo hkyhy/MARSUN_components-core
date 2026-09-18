@@ -2,7 +2,7 @@ import { FormInfo, FormItem, FormModal, Input, Select } from '@/components/FormI
 import { RichTextField } from '@/components/FormInfo/RichTextField';
 import { sanitizeInboxHtml } from '@/components/Tools/Inbox/sanitizeInboxHtml';
 import { applyTemplateVars, normalizeTemplatePlaceholders } from '../../utils/templateCode';
-import { Collapse, Typography, message } from 'antd';
+import { Collapse, Modal, Typography, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
@@ -10,6 +10,12 @@ import type {
   MessageTemplateAdminItem,
   MessageTemplateVariable,
 } from '../types';
+import {
+  AUDIENCE_SLOT_OPTIONS,
+  ORG_TENANT_SLOT,
+  hasAudienceSelection,
+  normalizeAudienceSlots,
+} from '../audienceSlots';
 import styles from '../style.module.scss';
 
 /** ReactModal 内 Select 弹出层须高于 Modal（≈1100） */
@@ -44,6 +50,7 @@ type FormShape = {
   titleTemplate?: string;
   bodyTemplate?: string;
   audienceRoles?: string[];
+  audienceSlots?: string[];
 };
 
 type FormApiLike = {
@@ -96,6 +103,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       ),
       bodyTemplate: normalizeTemplatePlaceholders(initial.bodyTemplate || ''),
       audienceRoles: initial.audienceRoles || initial.roles || [],
+      audienceSlots: initial.audienceSlots || [],
     };
   }, [initial]);
 
@@ -172,7 +180,6 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
           key="audienceRoles"
           name="audienceRoles"
           label="受众角色"
-          rule="REQ"
           mode="multiple"
           allowClear
           disabled={!canWrite}
@@ -184,6 +191,25 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
           maxTagCount="responsive"
           placeholder={roleOptions.length ? '下拉选择角色（可多选）' : '暂无角色数据'}
           notFoundContent="暂无角色"
+          labelTips="可与「通知范围」并存；至少选角色或槽位之一。emit 与显式 userIds 并集送达。"
+          {...selectInModalPopupProps}
+        />,
+        <Select
+          key="audienceSlots"
+          name="audienceSlots"
+          label="通知范围"
+          mode="multiple"
+          allowClear
+          disabled={!canWrite}
+          options={AUDIENCE_SLOT_OPTIONS.map((o) => ({
+            value: o.value,
+            label: o.label,
+          }))}
+          optionFilterProp="label"
+          maxTagCount="responsive"
+          placeholder="可选：本人/领导/部门/分厂/租户或任务当事人"
+          notFoundContent="暂无槽位"
+          labelTips="依赖业务 emit.audienceContext；无上下文的槽不会发出。选「本租户」保存前会确认。"
           {...selectInModalPopupProps}
         />,
       );
@@ -224,9 +250,29 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
           : Array.isArray(data.audienceRoles)
             ? data.audienceRoles
             : [];
-        if (!audienceRoles.length) {
-          message.warning('请选择受众角色');
+        const audienceSlots = normalizeAudienceSlots(data.audienceSlots || []);
+        if (
+          !hasAudienceSelection({
+            roles: audienceRoles,
+            slots: audienceSlots,
+            userIds: null,
+          })
+        ) {
+          message.warning('请选择受众角色或通知范围（至少一个）');
           return false;
+        }
+        if (audienceSlots.includes(ORG_TENANT_SLOT)) {
+          const ok = await new Promise<boolean>((resolve) => {
+            Modal.confirm({
+              title: '确认通知本租户全员？',
+              content: '已选「本租户（全公司）」：将向当前租户内用户展开（≠跨租户）。确认保存？',
+              okText: '确认保存',
+              cancelText: '取消',
+              onOk: () => resolve(true),
+              onCancel: () => resolve(false),
+            });
+          });
+          if (!ok) return false;
         }
         const hit = catalog.find((c) => c.eventKey === eventKey);
         const scenario = String(hit?.label || data.scenario || eventKey).trim();
@@ -242,6 +288,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
             bodyTemplate: normalizeTemplatePlaceholders(String(data.bodyTemplate || '')),
             audienceRoles,
             roles: audienceRoles,
+            audienceSlots,
             enabled: isCreate ? false : initial?.enabled !== false,
             channel: initial?.channel || 'in_app',
           });

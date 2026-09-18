@@ -31,6 +31,13 @@ export {
   bindMsgCenterAppKeyStorageSync,
   resolveMsgCenterSwitchState,
 } from './msgCenterAppSwitch';
+export {
+  AUDIENCE_SLOT_OPTIONS,
+  ORG_TENANT_SLOT,
+  normalizeAudienceSlots,
+  hasAudienceSelection,
+} from './MessageTemplateAdmin';
+export type { AudienceSlotOption } from './MessageTemplateAdmin';
 export type {
   MsgCenterAppSwitchState,
   MsgCenterSwitchableApp,

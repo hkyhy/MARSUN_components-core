@@ -3,7 +3,7 @@ import { Alert } from '@/components/Alert';
 import { Empty } from '@/components/Empty';
 import { PageSpin } from '@/components/Layout';
 import { Table } from '@/components/Table';
-import { Button, Space, Switch, message } from 'antd';
+import { Button, Modal, Space, Switch, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
@@ -13,6 +13,12 @@ import type {
   MessageTemplateAdminItem,
   PushRuleAdminItem,
 } from '../types';
+import {
+  AUDIENCE_SLOT_OPTIONS,
+  ORG_TENANT_SLOT,
+  hasAudienceSelection,
+  normalizeAudienceSlots,
+} from '../audienceSlots';
 import { resolveTemplateCodeAfterEventChange } from '../../utils/adminGuards';
 import { buildAudienceUserSelectGroups } from '../../utils/audienceUserSelectOptions';
 import styles from '../style.module.scss';
@@ -52,14 +58,15 @@ type FormShape = {
   levels?: string[];
   audienceRoles?: string[];
   audienceUserIds?: string[];
+  audienceSlots?: string[];
   slaHours?: number;
   scanLookbackDays?: number;
 };
 
 /**
  * 推送规则 CRUD：必含 eventKey + templateCode；channels 默认 in_app。
- * 受众：角色多选（主路径）+ 例外抄送静态人（禁 Tree 盖壳）；roles∪userIds 至少一个。
- * 任务认领人/分配人等当事人由业务 emit 传 userIds，勿在配置面点名。
+ * 受众：角色多选 + 通知范围（audienceSlots）+ 例外抄送；roles∪slots∪userIds 至少一个。
+ * 任务当事人/组织槽依赖 emit.audienceContext；禁 Tree 盖壳。
  */
 export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   crud,
@@ -117,6 +124,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
       levels: ['L2'],
       audienceRoles: [],
       audienceUserIds: [],
+      audienceSlots: [],
       channels: ['in_app'],
       slaHours: 36,
       scanLookbackDays: 7,
@@ -159,6 +167,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
       levels: editing?.levels || [],
       audienceRoles: editing?.audienceRoles || [],
       audienceUserIds: editing?.audienceUserIds || [],
+      audienceSlots: editing?.audienceSlots || [],
       slaHours: editing?.slaHours ?? 0,
       scanLookbackDays: editing?.scanLookbackDays ?? 0,
     }),
@@ -189,9 +198,30 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
         }
         const audienceRoles = data.audienceRoles || [];
         const audienceUserIds = data.audienceUserIds || [];
-        if (!audienceRoles.length && !audienceUserIds.length) {
-          message.warning('请选择受众角色或例外抄送（至少一个）');
+        const audienceSlots = normalizeAudienceSlots(data.audienceSlots || []);
+        if (
+          !hasAudienceSelection({
+            roles: audienceRoles,
+            slots: audienceSlots,
+            userIds: audienceUserIds,
+          })
+        ) {
+          message.warning('请选择受众角色、通知范围或例外抄送（至少一个）');
           return false;
+        }
+        if (audienceSlots.includes(ORG_TENANT_SLOT)) {
+          const ok = await new Promise<boolean>((resolve) => {
+            Modal.confirm({
+              title: '确认通知本租户全员？',
+              content:
+                '已选「本租户（全公司）」：将向当前租户内用户展开（≠跨租户）。emit 时按页拉取，可能人数较多。确认保存？',
+              okText: '确认保存',
+              cancelText: '取消',
+              onOk: () => resolve(true),
+              onCancel: () => resolve(false),
+            });
+          });
+          if (!ok) return false;
         }
         try {
           await savePushRule({
@@ -202,6 +232,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
             levels: data.levels || [],
             audienceRoles,
             audienceUserIds,
+            audienceSlots,
             channels: ['in_app'],
             slaHours: Number(data.slaHours ?? 0),
             scanLookbackDays: Number(data.scanLookbackDays ?? 0),
@@ -275,6 +306,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
                   ...r,
                   audienceRoles: r.audienceRoles || [],
                   audienceUserIds: r.audienceUserIds || [],
+                  audienceSlots: r.audienceSlots || [],
                 });
               }}
             >
@@ -449,7 +481,24 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               notFoundContent={
                 audienceRolesError ? `加载失败：${audienceRolesError}` : '暂无角色数据'
               }
-              labelTips="主路径：本系统 SSO 角色（这类事常驻通知谁）。可与「例外抄送」二选一或同时选，至少填一类。任务认领人/分配人/领导请在业务 emit 时传 userIds，勿指望在此点名。"
+              labelTips="主路径：本系统 SSO 角色（这类事常驻通知谁）。可与「通知范围」「例外抄送」并存；emit 时与显式 userIds **并集**（不再互相覆盖）。至少填角色/槽位/例外抄送之一。"
+              {...selectInModalPopupProps}
+            />,
+            <FiSelect
+              key="audienceSlots"
+              name="audienceSlots"
+              label="通知范围"
+              mode="multiple"
+              disabled={!formWritable(isCreate)}
+              options={AUDIENCE_SLOT_OPTIONS.map((o) => ({
+                value: o.value,
+                label: o.label,
+              }))}
+              optionFilterProp="label"
+              maxTagCount="responsive"
+              placeholder="可选：本人/领导/部门/分厂/租户或任务当事人"
+              notFoundContent="暂无槽位"
+              labelTips="相对关系与组织范围依赖业务 emit 的 audienceContext；无上下文的槽不会发出。选「本租户（全公司）」保存前会二次确认。与角色、例外抄送并集送达。"
               {...selectInModalPopupProps}
             />,
             <FiSelect
@@ -494,7 +543,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               notFoundContent={
                 audienceUsersError ? `加载失败：${audienceUsersError}` : '暂无人员数据'
               }
-              labelTips="非常驻名单：仅管理员例外通知等场景使用。按 SSO 主部门分组；副文案为角色·工号。任务当事人（认领人/分配人/本人及领导）须由业务 emit 传 userIds，勿在此点名。"
+              labelTips="非常驻名单：仅管理员例外通知等场景。与角色、通知范围并集送达；任务当事人优先用槽位 + emit.audienceContext。"
               {...selectInModalPopupProps}
             />,
             <FiInputNumber

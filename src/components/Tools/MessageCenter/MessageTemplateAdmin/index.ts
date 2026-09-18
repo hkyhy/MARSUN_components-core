@@ -17,3 +17,10 @@ export {
   previewVarsFromVariables,
   resolveMessageAdminPermissions,
 } from './types';
+export {
+  AUDIENCE_SLOT_OPTIONS,
+  ORG_TENANT_SLOT,
+  normalizeAudienceSlots,
+  hasAudienceSelection,
+} from './audienceSlots';
+export type { AudienceSlotOption } from './audienceSlots';

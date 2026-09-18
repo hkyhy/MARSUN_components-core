@@ -67,6 +67,8 @@ export type MessageTemplateAdminItem = {
   bodyTemplate?: string;
   audienceRoles?: string[];
   roles?: string[];
+  /** 受众槽位码（与 mc audienceSlots 对齐） */
+  audienceSlots?: string[];
   enabled?: boolean;
   channel?: string;
 };
@@ -83,6 +85,8 @@ export type MessageEventCatalogPayload = {
   /** 原始 schema；优先用 variables */
   contextSchema?: Record<string, string | { type?: string; label?: string }>;
   variables?: MessageTemplateVariable[];
+  /** 受众槽位 options（与 core AUDIENCE_SLOT_OPTIONS 对齐；有则优先） */
+  audienceSlotOptions?: { value: string; label: string }[];
 };
 
 export type MessageAudienceRoleOption = {
@@ -126,6 +130,7 @@ export type PushRuleAdminItem = {
   templateCode?: string;
   audienceRoles?: string[];
   audienceUserIds?: string[];
+  audienceSlots?: string[];
   channels?: string[];
   slaHours?: number;
   scanLookbackDays?: number;
