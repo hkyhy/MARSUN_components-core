@@ -10,6 +10,7 @@ import '@kne/super-select/dist/index.css';
 import '@kne/super-select-plus/dist/index.css';
 /** SuperSelect / SelectTree 弹层全局修补（选项撑满、checkbox、叶子 switcher-noop） */
 import '../superSelectPopup.scss';
+import { renderSelectListItemContent } from '../renderSelectListItemContent';
 
 const withInputDefaultPlaceholder = (WrappedComponent) =>
   withLocale(({ placeholder, label, ...props }) => {
@@ -23,6 +24,13 @@ const withInputDefaultPlaceholder = (WrappedComponent) =>
     );
   });
 
+/** 默认超长省略 + title hover；业务可传 renderItemContent 覆盖 */
+function SuperSelectWithLabelEllipsis({ renderItemContent, ...props }) {
+  return (
+    <SuperSelect {...props} renderItemContent={renderItemContent || renderSelectListItemContent} />
+  );
+}
+
 export const InputFilterItem = withInputDefaultPlaceholder(InputFilterItemField);
 export const NumberRangeFilterItem = withInputDefaultPlaceholder(NumberRangeFilterItemField);
 
@@ -30,7 +38,9 @@ export { default as DatePickerFilterItem } from './DatePickerFilterItem';
 export { default as DateRangePickerFilterItem } from './DateRangePickerFilterItem';
 export { default as TypeDateRangePickerFilterItem } from './TypeDateRangePickerFilterItem';
 
-export const SuperSelectFilterItem = withFieldItem(SuperSelect, { forcePopup: true });
+export const SuperSelectFilterItem = withFieldItem(SuperSelectWithLabelEllipsis, {
+  forcePopup: true,
+});
 export const SelectTableListFilterItem = withFieldItem(SelectTableList, { forcePopup: true });
 export { default as SelectTreeFilterItem } from './SelectTreeFilterItem';
 export const SelectCascaderFilterItem = withFieldItem(SelectCascader, { forcePopup: true });

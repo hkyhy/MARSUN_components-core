@@ -19,6 +19,7 @@ import {
   type MarsunSelectValue,
 } from '@/components/Filter/kneValueAdapter';
 import styles from './SuperSelect.module.scss';
+import { renderSelectListItemContent } from '@/components/ReactFilter/renderSelectListItemContent';
 
 /** 与 @kne/super-select 默认 `selectedAllValue.value` 对齐 */
 export const SUPER_SELECT_ALL_VALUE = 'all';
@@ -116,6 +117,7 @@ const SuperSelectField: FC<
   className,
   api,
   getSearchProps: getSearchPropsProp,
+  renderItemContent,
   ...kneRest
 }) => {
   const mapsRef = useRef({
@@ -166,6 +168,7 @@ const SuperSelectField: FC<
         {...kneRest}
         value={kneValue}
         onChange={handleChange}
+        renderItemContent={renderItemContent || renderSelectListItemContent}
         {...(useApi
           ? {
               api,

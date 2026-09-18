@@ -40,6 +40,39 @@
   box-sizing: border-box !important;
 }
 
+/*
+ * 禁横向滚动条：kne `.simplebar-content-wrapper { overflow: auto !important }` 会盖掉仅设
+ * overflow-x 的弱规则；此处显式 overflow-x/y，并压过竖条占宽多出的数 px。
+ * 长文案：.select-list-item-label ellipsis + renderItemContent 挂 title hover。
+ */
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list,
+.ant-popover .select-list-scroll-list {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .simplebar-content-wrapper,
+.ant-popover .select-list-scroll-list .simplebar-content-wrapper {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.ant-dropdown[class*='kne-super-select']
+  .select-list-scroll-list
+  .simplebar-track.simplebar-horizontal,
+.ant-popover .select-list-scroll-list .simplebar-track.simplebar-horizontal {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* 单选行：content Flex + 右侧勾选，须 min-width:0 才能触发 label ellipsis */
+.ant-dropdown[class*='kne-super-select'] .select-list-item > .ant-flex,
+.ant-popover .select-list-item > .ant-flex {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
 .ant-dropdown[class*='kne-super-select'] .select-list-scroll-list .ant-space,
 .ant-popover .select-list-scroll-list .ant-space {
   display: flex !important;
@@ -105,6 +138,7 @@
 .ant-popover .select-list-item .select-list-item-label {
   display: block !important;
   min-width: 0 !important;
+  max-width: 100% !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;

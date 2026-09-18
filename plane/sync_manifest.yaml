@@ -1,7 +1,34 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.145
+  next_task_id: P6.3.148
 tasks:
+- id: P6.3.147
+  milestone: P6.3
+  name: 消息中心例外抄送/变量类型中文/按部门选人并发版 0.1.111
+  status: 进行中
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-18"
+  target_date: "2026-09-18"
+  tags: [frontend, message-center, release]
+  note: |
+    Related: S4.30.2033 · S4.30.2042
+    例外抄送文案；变量类型中文；OptGroup 按部门；fetchAudienceUsers DI；chore(release) v0.1.111；仍≠G1
+- id: P6.3.146
+  plane_issue_id: cf4f29e7-d12c-42a3-a82b-3970d7c2ebe6
+  milestone: P6.3
+  name: SuperSelect 选项省略号 + title hover 并发版 0.1.110
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: "2026-09-18"
+  target_date: "2026-09-18"
+  tags: [frontend, SuperSelect, ReactFilter, release]
+  note: |
+    Related: S4.30.2043 · P6.11.1161
+    renderSelectListItemContent + superSelectPopup ellipsis/title；Filter/Form SuperSelect；chore(release) v0.1.110；≠G1
 - id: P6.3.144
   milestone: P6.3
   name: VariableMention 输入失焦与插入变量高度并发版 0.1.102
