@@ -112,7 +112,14 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
     () => [
       { title: 'key', dataIndex: 'key', key: 'key', width: 140 },
       { title: '中文', dataIndex: 'label', key: 'label', ellipsis: true },
-      { title: '类型', dataIndex: 'type', key: 'type', width: 90 },
+      {
+        title: '类型',
+        dataIndex: 'type',
+        key: 'type',
+        width: 110,
+        render: (t: string | undefined) =>
+          t === 'number' ? '数字（number）' : t === 'string' || !t ? '文本（string）' : t,
+      },
       {
         title: '来源',
         dataIndex: 'source',
@@ -191,6 +198,8 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
         open={Boolean(editing)}
         onCancel={() => setEditing(null)}
         width={480}
+        size="small"
+        className="msg-center-form-modal"
         okText="保存"
         autoClose={false}
         formProps={formProps}
@@ -213,9 +222,12 @@ export const VariablesPanel: React.FC<VariablesPanelProps> = ({
               label="类型"
               disabled={!formWritable(isCreate)}
               options={[
-                { value: 'string', label: 'string' },
-                { value: 'number', label: 'number' },
+                { value: 'string', label: '文本（string）' },
+                { value: 'number', label: '数字（number）' },
               ]}
+              labelTips="仅影响模板「效果预览」示例值（数字用 1，文本用中文名）；非通用配置类型系统。本期仅支持 string / number。"
+              getPopupContainer={() => document.body}
+              styles={{ popup: { root: { zIndex: 2000 } } }}
             />,
           ]}
         />

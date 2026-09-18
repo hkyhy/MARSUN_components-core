@@ -13,6 +13,7 @@ export type {
   MessageEventCatalogItem,
   MessageEventCatalogPayload,
   MessageAudienceRoleOption,
+  MessageAudienceUserOption,
   MessageTemplateVariable,
   MessageTemplateVariableAdmin,
   PushRuleAdminItem,

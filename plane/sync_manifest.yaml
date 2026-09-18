@@ -3,6 +3,7 @@ meta:
   next_task_id: P6.3.148
 tasks:
 - id: P6.3.147
+  plane_issue_id: 0b5017eb-d669-4056-a703-cf0b219d4b26
   milestone: P6.3
   name: 消息中心例外抄送/变量类型中文/按部门选人并发版 0.1.111
   status: 进行中

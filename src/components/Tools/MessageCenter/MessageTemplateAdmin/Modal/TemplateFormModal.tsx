@@ -1,11 +1,8 @@
 import { FormInfo, FormItem, FormModal, Input, Select } from '@/components/FormInfo';
 import { RichTextField } from '@/components/FormInfo/RichTextField';
-import {
-  applyTemplateVars,
-  normalizeTemplatePlaceholders,
-  stripHtmlToText,
-} from '../../utils/templateCode';
-import { Select as AntSelect, Typography, message } from 'antd';
+import { sanitizeInboxHtml } from '@/components/Tools/Inbox/sanitizeInboxHtml';
+import { applyTemplateVars, normalizeTemplatePlaceholders } from '../../utils/templateCode';
+import { Collapse, Typography, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
@@ -14,6 +11,12 @@ import type {
   MessageTemplateVariable,
 } from '../types';
 import styles from '../style.module.scss';
+
+/** ReactModal 内 Select 弹出层须高于 Modal（≈1100） */
+const selectInModalPopupProps = {
+  getPopupContainer: () => document.body,
+  styles: { popup: { root: { zIndex: 2000 } } },
+} as const;
 
 export type TemplateFormModalProps = {
   open: boolean;
@@ -40,6 +43,7 @@ type FormShape = {
   scenario?: string;
   titleTemplate?: string;
   bodyTemplate?: string;
+  audienceRoles?: string[];
 };
 
 type FormApiLike = {
@@ -65,6 +69,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   onSubmit,
   renderAudienceField,
 }) => {
+  /** 仅业务 DI 自定义受众插槽时使用；默认走 FormInfo Select */
   const [roles, setRoles] = useState<string[]>([]);
   const [editorReady, setEditorReady] = useState(false);
 
@@ -74,7 +79,6 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       return;
     }
     setRoles(initial.audienceRoles || initial.roles || []);
-    // 打开后再挂编辑器（afterOpenChange 兜底 + rAF）
     const id = window.requestAnimationFrame(() => setEditorReady(true));
     return () => window.cancelAnimationFrame(id);
   }, [open, initial]);
@@ -91,6 +95,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         initial.titleTemplate || initial.titlePreview || '',
       ),
       bodyTemplate: normalizeTemplatePlaceholders(initial.bodyTemplate || ''),
+      audienceRoles: initial.audienceRoles || initial.roles || [],
     };
   }, [initial]);
 
@@ -117,7 +122,6 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
     if (!isCreate) {
       fields.push(<Input key="code" name="code" label="编号" disabled />);
     }
-    // 适用场景 = catalog 中文下拉（value=eventKey）；禁自由输入英文 key
     fields.push(
       <Select
         key="eventKey"
@@ -131,11 +135,13 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
           label: c.label || c.eventKey,
         }))}
         placeholder={catalog.length ? '选择场景' : '暂无事件目录'}
+        {...selectInModalPopupProps}
       />,
       <Input
         key="titleTemplate"
         name="titleTemplate"
         label="标题模板"
+        rule="REQ"
         disabled={!canWrite}
         enableVariableMention
         variables={variables}
@@ -160,8 +166,40 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         minHeight={160}
       />,
     );
+    if (!renderAudienceField) {
+      fields.push(
+        <Select
+          key="audienceRoles"
+          name="audienceRoles"
+          label="受众角色"
+          rule="REQ"
+          mode="multiple"
+          allowClear
+          disabled={!canWrite}
+          options={roleOptions.map((r) => ({
+            value: r.code,
+            label: r.name || r.code,
+          }))}
+          optionFilterProp="label"
+          maxTagCount="responsive"
+          placeholder={roleOptions.length ? '下拉选择角色（可多选）' : '暂无角色数据'}
+          notFoundContent="暂无角色"
+          {...selectInModalPopupProps}
+        />,
+      );
+    }
     return fields;
-  }, [editorReady, isCreate, canWrite, catalog, variables, editorKey, catalogError]);
+  }, [
+    editorReady,
+    isCreate,
+    canWrite,
+    catalog,
+    variables,
+    editorKey,
+    catalogError,
+    renderAudienceField,
+    roleOptions,
+  ]);
 
   const formProps = useMemo(
     () => ({
@@ -176,6 +214,20 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
           message.warning('请选择适用场景');
           return false;
         }
+        const titleTemplate = normalizeTemplatePlaceholders(String(data.titleTemplate || ''));
+        if (!titleTemplate.trim()) {
+          message.warning('请填写标题模板');
+          return false;
+        }
+        const audienceRoles = renderAudienceField
+          ? roles
+          : Array.isArray(data.audienceRoles)
+            ? data.audienceRoles
+            : [];
+        if (!audienceRoles.length) {
+          message.warning('请选择受众角色');
+          return false;
+        }
         const hit = catalog.find((c) => c.eventKey === eventKey);
         const scenario = String(hit?.label || data.scenario || eventKey).trim();
         try {
@@ -186,10 +238,10 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
             scenario,
             label: scenario,
             messageType: hit?.messageType || initial?.messageType || 'alert',
-            titleTemplate: normalizeTemplatePlaceholders(String(data.titleTemplate || '')),
+            titleTemplate,
             bodyTemplate: normalizeTemplatePlaceholders(String(data.bodyTemplate || '')),
-            audienceRoles: roles,
-            roles,
+            audienceRoles,
+            roles: audienceRoles,
             enabled: isCreate ? false : initial?.enabled !== false,
             channel: initial?.channel || 'in_app',
           });
@@ -200,7 +252,17 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         }
       },
     }),
-    [formData, canWrite, catalog, onSubmit, initial, roles, isCreate, onCancel],
+    [
+      formData,
+      canWrite,
+      catalog,
+      onSubmit,
+      initial,
+      roles,
+      isCreate,
+      onCancel,
+      renderAudienceField,
+    ],
   );
 
   return (
@@ -209,6 +271,8 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       open={open}
       onCancel={onCancel}
       width={720}
+      size="small"
+      className="msg-center-form-modal"
       okText="保存"
       autoClose={false}
       focusable={{ trap: false }}
@@ -216,6 +280,15 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       formProps={formProps}
     >
       <FormInfo column={1} list={fieldList} />
+      {renderAudienceField ? (
+        <div className={styles.audienceBlock}>
+          <Typography.Text className={styles.audienceLabel}>
+            <span style={{ color: '#ff4d4f', marginRight: 4 }}>*</span>
+            受众角色
+          </Typography.Text>
+          {renderAudienceField({ roles, onChange: setRoles })}
+        </div>
+      ) : null}
       {editorReady ? (
         <FormItem>
           {(api: FormApiLike) => {
@@ -224,50 +297,47 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
               api.formData ??
               formData;
             const titlePreview = applyTemplateVars(String(data.titleTemplate || ''), previewVars);
-            const bodyPreview = applyTemplateVars(
-              stripHtmlToText(String(data.bodyTemplate || '')),
-              previewVars,
-            );
+            const bodyRaw = applyTemplateVars(String(data.bodyTemplate || ''), previewVars);
+            const bodyHtml = sanitizeInboxHtml(bodyRaw);
             return (
-              <>
+              <div className={styles.previewCollapse}>
                 {varsEmptyHint ? (
                   <Typography.Text type="secondary">{varsEmptyHint}</Typography.Text>
                 ) : null}
-                <Typography.Paragraph type="secondary" className={styles.preview}>
-                  标题预览：{titlePreview || '—'}
-                </Typography.Paragraph>
-                <Typography.Paragraph type="secondary" className={styles.preview}>
-                  正文预览：{bodyPreview || '—'}
-                </Typography.Paragraph>
-              </>
+                <Collapse
+                  ghost
+                  size="small"
+                  items={[
+                    {
+                      key: 'preview',
+                      label: '效果预览',
+                      children: (
+                        <div className={styles.previewCard}>
+                          <div className={styles.previewTitle}>
+                            {titlePreview.trim() || (
+                              <span className={styles.previewEmpty}>（无标题）</span>
+                            )}
+                          </div>
+                          {bodyHtml ? (
+                            <div
+                              className={styles.previewBody}
+                              dangerouslySetInnerHTML={{ __html: bodyHtml }}
+                            />
+                          ) : (
+                            <div className={`${styles.previewBody} ${styles.previewEmpty}`}>
+                              （无正文）
+                            </div>
+                          )}
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
+              </div>
             );
           }}
         </FormItem>
       ) : null}
-      <div style={{ marginTop: 12 }}>
-        <Typography.Text>受众角色</Typography.Text>
-        {renderAudienceField ? (
-          renderAudienceField({ roles, onChange: setRoles })
-        ) : (
-          <AntSelect
-            mode="multiple"
-            allowClear
-            showSearch
-            style={{ width: '100%', marginTop: 8 }}
-            value={roles}
-            disabled={!canWrite}
-            placeholder={roleOptions.length ? '下拉选择角色（可多选）' : '暂无角色数据'}
-            options={roleOptions.map((r) => ({
-              value: r.code,
-              label: r.name || r.code,
-            }))}
-            optionFilterProp="label"
-            maxTagCount="responsive"
-            onChange={(v) => setRoles(v || [])}
-            notFoundContent="暂无角色"
-          />
-        )}
-      </div>
     </FormModal>
   );
 };

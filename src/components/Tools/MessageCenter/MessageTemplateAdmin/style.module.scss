@@ -15,6 +15,77 @@
   margin-bottom: 8px;
 }
 
-.preview {
-  margin: 8px 0 0 !important;
+/* MessageCenter 短表单：内容自适应，避免 ReactModal 视口 calc 撑满 */
+:global(.msg-center-form-modal) {
+  --kne-modal-body-min-height: 0px !important;
+  --kne-modal-body-height: auto !important;
+  --kne-modal-body-max-height: min(
+    72vh,
+    calc(
+      var(--kne-modal-viewport-height, 100vh) - var(--kne-modal-title-height, 48px) - var(
+          --kne-modal-footer-height,
+          58px
+        ) -
+        48px
+    )
+  ) !important;
+  --kne-modal-content-height: auto !important;
+  --kne-modal-content-min-height: 0px !important;
+}
+
+:global(.msg-center-form-modal) :global(.modal-body) {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: var(--kne-modal-body-max-height);
+}
+
+:global(.msg-center-form-modal) :global(.modal-body-inner) {
+  min-height: 0 !important;
+}
+
+.previewCollapse {
+  margin-top: 12px;
+}
+
+.previewCard {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--color-border-secondary, #f0f0f0);
+  border-radius: 6px;
+  background: var(--color-fill-quaternary, #fafafa);
+}
+
+.previewTitle {
+  margin: 0 0 8px;
+  font-weight: 600;
+  color: var(--color-text, rgba(0, 0, 0, 0.88));
+}
+
+.previewBody {
+  margin: 0;
+  line-height: 1.6;
+  word-break: break-word;
+
+  :global(p) {
+    margin: 0 0 0.5em;
+  }
+
+  :global(ul),
+  :global(ol) {
+    margin: 0 0 0.5em;
+    padding-left: 1.25em;
+  }
+}
+
+.previewEmpty {
+  color: var(--color-text-secondary, rgba(0, 0, 0, 0.45));
+}
+
+.audienceBlock {
+  margin-top: 12px;
+}
+
+.audienceLabel {
+  display: block;
+  margin-bottom: 8px;
 }

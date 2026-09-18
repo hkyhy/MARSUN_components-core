@@ -92,6 +92,19 @@ export type MessageAudienceRoleOption = {
   name: string;
 };
 
+/** 推送规则例外抄送选项（SSO 本租户用户；展示名取自接口） */
+export type MessageAudienceUserOption = {
+  id: string;
+  /** displayName 优先 */
+  name: string;
+  /** 工号（SSO employeeId） */
+  employeeId?: string;
+  /** 主部门 / 首个组织名（SSO orgs） */
+  departmentName?: string;
+  /** 角色展示名，顿号拼接（SSO roles.name） */
+  roleNames?: string;
+};
+
 export type MessageTemplateVariable = {
   key: string;
   /** 可选中文说明；无则下拉只显示 code */
@@ -134,6 +147,12 @@ export type MessageTemplateAdminProps = {
    */
   fetchAudienceRoles?: () => Promise<MessageAudienceRoleOption[]>;
   /**
+   * 推送规则「例外抄送」多选 options（SSO 本租户用户；静态 userIds）。
+   * 未传则例外抄送 Select 为空（禁手输 id）；展示名须来自接口 displayName。
+   * 任务认领人/分配人等当事人由业务 emit 传 userIds，勿靠配置面点名。
+   */
+  fetchAudienceUsers?: () => Promise<MessageAudienceUserOption[]>;
+  /**
    * @deprecated 变量须来自 catalog；仅联调 fixture 可传。业务页勿硬编码平行表。
    */
   templateVariables?: MessageTemplateVariable[];
@@ -149,6 +168,7 @@ export type MessageTemplateAdminProps = {
    * 传入后优先于 canWrite。
    */
   permissions?: MessageAdminPermissions;
+  /** 模板受众角色插槽；须保持多选下拉语义，禁止 Tree 盖壳默认 Select */
   renderAudienceField?: (ctx: {
     roles: string[];
     onChange: (roles: string[]) => void;
