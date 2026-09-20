@@ -52,11 +52,25 @@ export interface FormOverlaySharedProps {
 
 export interface FormModalProps extends FormOverlaySharedProps {
   open?: boolean;
+  /**
+   * antd Modal 宽；默认 520。
+   * 未传 width 时：size=large → 800；size=small|default|缺省 → 520（F-width-token）。
+   */
   width?: string | number;
+  /** 兼容旧 ReactModal size；antd 壳仅用于映射默认 width，见上 */
   size?: string;
   destroyOnHidden?: boolean;
-  /** 宿主渲染：createModalRender / createDrawerRender 或自定义 */
+  zIndex?: number;
+  /**
+   * 逃生口：仍可挂 ReactModal/Drawer（hostProps 为 buildFormOverlayProps 形状）。
+   * 默认宿主为 antd Modal + FormInfo，不再走 ReactModal。
+   */
   renderModal?: (hostProps: Record<string, unknown>) => ReactNode;
+  /**
+   * @deprecated ReactModal 专属；antd 默认壳忽略（F-props-compat）。
+   * 需 bodyScroll 时请用 renderModal 挂回 ReactModal。
+   */
+  bodyScroll?: boolean;
 }
 
 export interface FormDrawerProps extends FormOverlaySharedProps {

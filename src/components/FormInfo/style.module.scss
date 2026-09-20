@@ -1464,3 +1464,15 @@ $nest-radius: var(--radius-default, 8px);
   /* flex-box 量宽前占位，避免布局跳动 */
   visibility: hidden;
 }
+
+/* FormModal 默认壳 = antd Modal：随内容高度，禁 ReactModal 视口空高 */
+.marsun-form-info-modal-body {
+  max-height: min(70vh, 640px);
+  overflow: auto;
+}
+
+.marsun-form-info-modal-footer {
+  margin-top: 24px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(5, 5, 5, 0.06);
+}

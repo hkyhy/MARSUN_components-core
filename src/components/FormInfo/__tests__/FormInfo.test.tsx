@@ -77,7 +77,7 @@ describe('FormInfo useFlexBox path', () => {
 });
 
 describe('FormModal / useFormModal', () => {
-  it('opens controlled FormModal', () => {
+  it('opens controlled FormModal on antd Modal host', () => {
     render(
       <FormModal open title="弹层表单" onCancel={() => undefined} formProps={{}}>
         <FormInfo column={1} list={[<Input key="n" name="n" label="姓名" />]} />
@@ -85,6 +85,9 @@ describe('FormModal / useFormModal', () => {
     );
     expect(screen.getByText('弹层表单')).toBeInTheDocument();
     expect(screen.getByText('姓名')).toBeInTheDocument();
+    expect(document.querySelector('.ant-modal')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /取\s*消/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /提\s*交/ })).toBeInTheDocument();
   });
 
   it('useFormModal is callable under App', () => {
@@ -99,6 +102,27 @@ describe('FormModal / useFormModal', () => {
       </App>,
     );
     expect(openFn).toBeTypeOf('function');
+  });
+});
+
+describe('FormInfo field errMsg pitfall', () => {
+  it('string errMsg paints immediately; omit errMsg → no that text', () => {
+    const { rerender } = render(
+      <Form onSubmit={() => undefined}>
+        <FormInfo
+          column={1}
+          list={[<Input key="a" name="a" label="A" rule="REQ" errMsg="永远出现的红字占位" />]}
+        />
+      </Form>,
+    );
+    expect(screen.getByText('永远出现的红字占位')).toBeInTheDocument();
+
+    rerender(
+      <Form onSubmit={() => undefined}>
+        <FormInfo column={1} list={[<Input key="a" name="a" label="A" rule="REQ" />]} />
+      </Form>,
+    );
+    expect(screen.queryByText('永远出现的红字占位')).not.toBeInTheDocument();
   });
 });
 

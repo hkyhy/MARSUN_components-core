@@ -40,9 +40,10 @@ const NewFormInfoModalDemo: React.FC = () => {
         </Button>
         <HookOpen />
         <FormModal
-          title="编辑（新栈）"
+          title="编辑（antd 壳 + FormInfo）"
           open={open}
           onCancel={() => setOpen(false)}
+          width={520}
           formProps={{
             data: { name: '李四' },
             onSubmit: async () => {
