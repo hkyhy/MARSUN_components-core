@@ -9,7 +9,7 @@ export type AuditEventListItem = {
   category?: string;
   actorName?: string | null;
   action: string;
-  /** 中文动作名；旧数据可空，展示用 actionLabel || action */
+  /** 中文动作名；旧数据可空，展示用 actionLabel || labels || action */
   actionLabel?: string | null;
   summary?: string | null;
   status: string;
@@ -40,4 +40,38 @@ export type AuditStep = {
 export type AuditEventDetail = AuditEventListItem & {
   requestCurl?: string | null;
   steps?: AuditStep[];
+  /** steps 超上限截断 */
+  stepsTruncated?: boolean;
+  stepsTotal?: number;
+};
+
+export type AuditDayStats = {
+  day: string;
+  total: number;
+  byStatus: Record<string, number>;
+  byCategory?: Record<string, number>;
+  avgDurationMs: number | null;
+  maxDurationMs: number | null;
+};
+
+export type AuditDashboardDaily = {
+  day: string;
+  count: number;
+  avgDurationMs: number | null;
+};
+
+export type AuditDashboardTopAction = {
+  action: string;
+  actionLabel: string | null;
+  count: number;
+  avgDurationMs: number | null;
+};
+
+export type AuditDashboardData = {
+  from: string;
+  to: string;
+  maxRangeDays: number;
+  topN: number;
+  daily: AuditDashboardDaily[];
+  topActions: AuditDashboardTopAction[];
 };

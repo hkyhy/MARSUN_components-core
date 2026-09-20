@@ -1,0 +1,19 @@
+{
+  "alertClaim": "认领告警",
+  "alertAssign": "分配告警",
+  "alertFollow": "跟进告警",
+  "actionRcaStart": "发起根因",
+  "actionClose": "关闭",
+  "actionDefer": "暂缓",
+  "maintenanceCycleBatchCreate": "批量创建整机周期",
+  "maintenanceCycleUpdate": "更新整机周期",
+  "maintenanceCycleDelete": "删除整机周期",
+  "componentCycleBatchCreate": "批量创建专件周期",
+  "componentCycleUpdate": "更新专件周期",
+  "componentCycleDelete": "删除专件周期",
+  "evalRulesPut": "保存评价规则",
+  "evalRulesReset": "重置评价规则",
+  "alertRulesPut": "保存报警规则",
+  "inspectSchedulePut": "保存巡检排程",
+  "inspectScheduleRun": "执行巡检排程"
+}

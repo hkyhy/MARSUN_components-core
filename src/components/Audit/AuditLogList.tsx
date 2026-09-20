@@ -1,18 +1,23 @@
 import { CommonDescriptions } from '@/components/Descriptions';
-import InfoPage, { Flow } from '@/components/InfoPage';
+import InfoPage from '@/components/InfoPage';
+import { StatCardList, type StatItem } from '@/components/Stat';
 import { Table } from '@/components/Table';
 import { SEMANTIC_COLORS, SemanticTag } from '@/components/Tag';
 import { VirtualScrollbar } from '@/components/VirtualScrollbar';
 import { copyText } from '@/utils/copyText';
-import { Button, Empty, Space, Typography, message } from 'antd';
+import { Button, Collapse, Empty, Space, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import React, { useMemo } from 'react';
+import { AuditDayStatsBar } from './AuditDayStatsBar';
+import { AuditWaterfall } from './AuditWaterfall';
+import { computeDetailKpi, isErrorStep } from './detailKpi';
 import { formatAuditJson, isTruncatedAuditText } from './formatAuditJson';
 import { buildAuditReplayCurl, readBrowserReplaySession } from './formatAuditCurl';
+import { displayActionLabel, displaySummary, labelOfAction } from './labels';
 import styles from './style.module.scss';
-import type { AuditEventDetail, AuditEventListItem, AuditStep } from './types';
+import type { AuditDayStats, AuditEventDetail, AuditEventListItem, AuditStep } from './types';
 
 export type AuditLogListMode = 'app' | 'platform';
 
@@ -23,6 +28,12 @@ export type AuditLogListProps = {
   /** 点击行（进详情页） */
   onRowClick?: (row: AuditEventListItem) => void;
   filterSlot?: React.ReactNode;
+  /** 日汇总顶栏 */
+  dayStats?: AuditDayStats | null;
+  dayStatsLoading?: boolean;
+  dayStatsError?: string | null;
+  onExport?: () => void;
+  exportLoading?: boolean;
   pagination?: false | object;
   className?: string;
 };
@@ -42,13 +53,6 @@ function statusColor(status: string): string {
   if (status === 'success') return SEMANTIC_COLORS.SUCCESS;
   if (status === 'fail' || status === 'error') return SEMANTIC_COLORS.DANGER;
   return SEMANTIC_COLORS.DEFAULT;
-}
-
-function stepFlowStatus(s: AuditStep): string {
-  if (s.stepType === 'ERROR' || s.status === 'error') return 'error';
-  if (s.status === 'process' || s.status === 'processing') return 'process';
-  if (s.status === 'wait') return 'wait';
-  return 'finish';
 }
 
 function categoryLabel(c?: string | null): string {
@@ -74,6 +78,10 @@ function parseHttpStatus(output: unknown): number | null {
     return Number.isFinite(n) ? n : null;
   }
   return null;
+}
+
+function showActionCode(detail: AuditEventDetail): boolean {
+  return Boolean(detail.actionLabel?.trim()) || Boolean(labelOfAction(detail.action));
 }
 
 const JsonBlock: React.FC<{ value: unknown; maxHeight?: number }> = ({
@@ -174,7 +182,7 @@ export const AuditStepContent: React.FC<{ step: AuditStep }> = ({ step }) => {
   );
 };
 
-/** 审计事件详情：InfoPage + CommonDescriptions + Flow */
+/** 审计事件详情：KPI + Lazy 瀑布 + 默认折叠 Flow */
 export const AuditEventDetailView: React.FC<{
   detail: AuditEventDetail | null;
   loading?: boolean;
@@ -183,14 +191,36 @@ export const AuditEventDetailView: React.FC<{
   /** 当前登录 token（不含 Bearer 前缀亦可）；复制 curl 用，不落库 */
   getAuthToken?: () => string | null | undefined;
 }> = ({ detail, loading, emptyDescription = '暂无明细', className, getAuthToken }) => {
+  const kpi = useMemo(() => computeDetailKpi(detail), [detail]);
+  const kpiItems = useMemo((): StatItem[] => {
+    const slow =
+      kpi.slowestStep != null ? `${kpi.slowestStep.title} (${kpi.slowestStep.durationMs}ms)` : '—';
+    return [
+      {
+        title: '总耗时',
+        value: kpi.durationMs ?? '—',
+        suffix: kpi.durationMs != null ? 'ms' : undefined,
+        tone: 'blue',
+        color: '#1677ff',
+      },
+      { title: '步数', value: kpi.stepCount, tone: 'lilac', color: '#722ed1' },
+      { title: 'SQL 步', value: kpi.sqlCount, tone: 'mint', color: '#0d9f8a' },
+      { title: '最慢步', value: slow, tone: 'peach', color: '#d46b08' },
+    ];
+  }, [kpi]);
+
   if (loading) {
     return <Typography.Text type="secondary">加载中…</Typography.Text>;
   }
   if (!detail) {
     return <Empty description={emptyDescription} />;
   }
+
   const steps = detail.steps || [];
-  const title = detail.actionLabel || detail.action;
+  const title = displayActionLabel(detail.action, detail.actionLabel);
+  const errorKeys = steps
+    .map((s, i) => (isErrorStep(s) ? String(i) : null))
+    .filter((k): k is string => k != null);
 
   const descContent = [
     {
@@ -236,7 +266,7 @@ export const AuditEventDetailView: React.FC<{
       ),
       span: 1,
     },
-    ...(detail.actionLabel
+    ...(showActionCode(detail)
       ? [{ label: '动作码', value: <Typography.Text code>{detail.action}</Typography.Text> }]
       : []),
   ];
@@ -247,7 +277,7 @@ export const AuditEventDetailView: React.FC<{
         title={
           <Space size={8} wrap>
             <span>{title}</span>
-            {detail.actionLabel ? (
+            {title !== detail.action ? (
               <Typography.Text type="secondary" className={styles.actionCode}>
                 {detail.action}
               </Typography.Text>
@@ -276,23 +306,43 @@ export const AuditEventDetailView: React.FC<{
           ) : undefined
         }
       >
+        <div className={styles.kpiBlock}>
+          <StatCardList items={kpiItems} inline fontSize={20} gutter={[12, 8]} />
+        </div>
         <CommonDescriptions content={descContent} column={3} bordered size="small" />
       </InfoPage.Part>
 
-      <InfoPage.Part title="执行流程" subtitle="请求 → 响应步骤">
+      <InfoPage.Part title="耗时瀑布" subtitle="逐步 durationMs（无 SQL 原文）">
+        <AuditWaterfall steps={steps} />
+      </InfoPage.Part>
+
+      <InfoPage.Part title="执行流程" subtitle="默认折叠；失败步展开；展开后见 SQL/正文">
+        {detail.stepsTruncated ? (
+          <div className={styles.truncateNote}>
+            步骤已截断：展示 {steps.length} / {detail.stepsTotal ?? steps.length}
+          </div>
+        ) : null}
         {steps.length === 0 ? (
           <Empty description="无流程步骤" />
         ) : (
-          <div className={styles.flowWrap}>
-            <Flow
-              dataSource={steps.map((s) => ({
-                title: s.title || s.stepType,
-                description: undefined,
-                status: stepFlowStatus(s),
-                content: <AuditStepContent step={s} />,
-              }))}
-            />
-          </div>
+          <Collapse
+            defaultActiveKey={errorKeys}
+            items={steps.map((s, i) => ({
+              key: String(i),
+              label: (
+                <Space size={8} wrap>
+                  <span>{s.title || s.stepType}</span>
+                  {typeof s.durationMs === 'number' ? (
+                    <Typography.Text type="secondary">{s.durationMs} ms</Typography.Text>
+                  ) : null}
+                  {isErrorStep(s) ? (
+                    <SemanticTag color={SEMANTIC_COLORS.DANGER}>失败</SemanticTag>
+                  ) : null}
+                </Space>
+              ),
+              children: <AuditStepContent step={s} />,
+            }))}
+          />
         )}
       </InfoPage.Part>
     </InfoPage>
@@ -305,6 +355,11 @@ export const AuditLogList: React.FC<AuditLogListProps> = ({
   loading,
   onRowClick,
   filterSlot,
+  dayStats,
+  dayStatsLoading,
+  dayStatsError,
+  onExport,
+  exportLoading,
   pagination,
   className,
 }) => {
@@ -340,9 +395,15 @@ export const AuditLogList: React.FC<AuditLogListProps> = ({
         dataIndex: 'action',
         width: 160,
         ellipsis: true,
-        render: (_: unknown, row) => row.actionLabel || row.action,
+        render: (_: unknown, row) => displayActionLabel(row.action, row.actionLabel),
       },
-      { title: '摘要', dataIndex: 'summary', ellipsis: true },
+      {
+        title: '摘要',
+        dataIndex: 'summary',
+        ellipsis: true,
+        render: (_: unknown, row) =>
+          displaySummary(row.summary, displayActionLabel(row.action, row.actionLabel)),
+      },
       {
         title: '状态',
         dataIndex: 'status',
@@ -366,6 +427,15 @@ export const AuditLogList: React.FC<AuditLogListProps> = ({
   return (
     <div className={classNames(styles.wrap, className)}>
       {filterSlot ? <div className={styles.filter}>{filterSlot}</div> : null}
+      {dayStats !== undefined || onExport ? (
+        <AuditDayStatsBar
+          stats={dayStats ?? null}
+          loading={dayStatsLoading}
+          error={dayStatsError}
+          onExport={onExport}
+          exportLoading={exportLoading}
+        />
+      ) : null}
       <Table<AuditEventListItem>
         rowKey="id"
         loading={loading}

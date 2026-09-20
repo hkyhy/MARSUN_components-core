@@ -36,10 +36,21 @@ describe('AuditLogList', () => {
     expect(screen.getByText(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/)).toBeInTheDocument();
   });
 
-  it('falls back to action code when actionLabel missing', () => {
-    const bare = { ...row, actionLabel: null, summary: null };
-    render(<AuditLogList mode="app" dataSource={[bare]} />);
-    expect(screen.getByText('alertClaim')).toBeInTheDocument();
+  it('falls back to shared labels then action code', () => {
+    const fromSsot = { ...row, actionLabel: null, summary: null };
+    render(<AuditLogList mode="app" dataSource={[fromSsot]} />);
+    expect(screen.getByText('认领告警')).toBeInTheDocument();
+
+    cleanup();
+    const unknown = {
+      ...row,
+      id: 'e2',
+      action: 'noSuchActionX',
+      actionLabel: null,
+      summary: null,
+    };
+    render(<AuditLogList mode="app" dataSource={[unknown]} />);
+    expect(screen.getByText('noSuchActionX')).toBeInTheDocument();
   });
 
   it('shows dash for empty actor', () => {

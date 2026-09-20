@@ -987,17 +987,32 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           import('@/components/Disposition/DispositionBar/examples/DenseActionsDemo/index.tsx?raw'),
         block: true,
       },
+      {
+        title: '7. 预警摘要 lead',
+        description: '有 lead 时不渲染「处置状态」label，左侧只展示摘要（+ 可选徽章）',
+        component: React.lazy(
+          () => import('@/components/Disposition/DispositionBar/examples/LeadSummaryDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/Disposition/DispositionBar/examples/LeadSummaryDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
         componentName: 'DispositionBarProps',
         rows: [
-          { prop: 'label', desc: '左侧文案', type: 'string', defaultVal: "'处置状态'" },
+          {
+            prop: 'label',
+            desc: '左侧文案；有 lead 时不渲染',
+            type: 'string',
+            defaultVal: "'处置状态'",
+          },
+          { prop: 'lead', desc: '左侧预警摘要；有则不渲染「处置状态」label', type: 'ReactNode' },
           {
             prop: 'statusBadge',
-            desc: '状态徽章（string 或 ReactNode）',
+            desc: '状态徽章（string 或 ReactNode）；可与 lead 并存',
             type: 'ReactNode',
-            required: true,
           },
           { prop: 'actions', desc: '右侧操作区', type: 'ReactNode' },
           { prop: 'statusLoading', desc: 'true 时不渲染 actions', type: 'boolean' },
@@ -3735,7 +3750,6 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         ),
         sourcePath: () =>
           import('@/components/Tools/MessageCenter/examples/AppSwitchDemo/index.tsx?raw'),
-        block: true,
       },
     ],
     apiDoc: [
