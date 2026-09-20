@@ -2257,3 +2257,10 @@ tasks:
     Refs: P6.3 · Related: P6-1587
     fillHeight={false} 给 IAM 四页；PageSpin naturalHeight；发版 0.1.73
 
+- id: da1bfb9a-d548-403c-96f4-d3be4da0e6ff
+  name: P6.1.201 ChatCapabilityStrip 与全屏引用布局
+  status: 进行中
+  owner: 前端
+  labels: [agent-hub]
+  note: ChatCapabilityStrip/HeaderTools、panelFullscreen 约4:3、引用侧栏贴右；chore(release) v0.1.116
+
