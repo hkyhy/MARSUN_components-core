@@ -26,12 +26,18 @@ export interface StatCardListProps {
   fontSize?: number;
 }
 
-/** 根据项数自动计算默认列宽 */
+/** 根据项数自动计算默认列宽；24 不能整除时用 flex 均分撑满（如 5 项） */
 const getDefaultCol = (total: number): ColProps => {
-  if (total <= 2) return { xs: 12, sm: 12, lg: 12 };
-  if (total <= 3) return { xs: 12, sm: 8, lg: 8 };
-  if (total <= 4) return { xs: 12, sm: 12, lg: 6 };
-  return { xs: 12, sm: 8, lg: 4 };
+  if (total <= 0) return { span: 24 };
+  if (total === 1) return { span: 24 };
+  if (total === 2) return { xs: 24, sm: 12 };
+  if (total === 3) return { xs: 24, sm: 8 };
+  if (total === 4) return { xs: 12, sm: 12, lg: 6 };
+  if (24 % total === 0) {
+    const span = 24 / total;
+    return { xs: 12, sm: 8, lg: span };
+  }
+  return { flex: '1 1 0', style: { minWidth: 140 } };
 };
 
 /** 统计卡片列表 */

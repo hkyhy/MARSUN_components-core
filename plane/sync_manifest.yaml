@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.152
+  next_task_id: P6.3.153
 tasks:
+- id: P6.3.152
+  plane_issue_id: c9f6b249-907d-4845-b634-fb547eceb09e
+  milestone: P6.3
+  name: StatCardList 均分撑满 + Audit statsBar 间距
+  status: 进行中
+  priority: P1
+  kind: fix
+  owner: 黄金芳
+  start_date: "2026-09-20"
+  target_date: "2026-09-20"
+  tags: [frontend, Stat, Audit, layout]
+  note: |
+    Related: P6.3.139 · S4.30.2016
+    5 项不能整除 24 时 flex 均分；补 statsBar margin；禁 G1
 - id: P6.3.151
   plane_issue_id: 39fbe551-e723-42f6-a609-277ac3f7d499
   milestone: P6.3

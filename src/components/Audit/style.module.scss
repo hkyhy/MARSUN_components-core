@@ -6,6 +6,19 @@
   margin-bottom: 12px;
 }
 
+.statsBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.statsBarCards {
+  flex: 1;
+  min-width: 0;
+}
+
 .detail {
   box-sizing: border-box;
   width: 100%;
