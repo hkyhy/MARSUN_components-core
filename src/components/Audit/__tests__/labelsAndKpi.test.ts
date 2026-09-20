@@ -20,6 +20,23 @@ describe('audit labels', () => {
     expect(displaySummary('', '认领告警')).toBe('—');
     expect(displaySummary('其它说明', '认领告警')).toBe('其它说明');
   });
+
+  it('displaySummary falls back to METHOD path after dedupe', () => {
+    expect(
+      displaySummary('认领告警', '认领告警', {
+        httpMethod: 'POST',
+        path: '/api/v1/agents/x/alertClaim',
+      }),
+    ).toBe('POST /api/v1/agents/x/alertClaim');
+    expect(displaySummary(null, '机型列表', { httpMethod: 'POST', path: '/machineTypes' })).toBe(
+      'POST /machineTypes',
+    );
+  });
+
+  it('resolves TRACE SSOT label', () => {
+    expect(labelOfAction('machineTypes')).toBe('机型列表');
+    expect(labelOfAction('factories')).toBe('分厂列表');
+  });
 });
 
 describe('detail KPI / waterfall', () => {

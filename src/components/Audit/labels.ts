@@ -15,17 +15,26 @@ export function displayActionLabel(action: string, actionLabel?: string | null):
   return labelOfAction(action) || action;
 }
 
+export type DisplaySummaryRoute = {
+  httpMethod?: string | null;
+  path?: string | null;
+};
+
 /**
- * 摘要与动作中文相同或空 → 展示「—」（列表去重）
+ * 摘要与动作中文相同或空 → 尝试 METHOD+path 回落；再空则「—」（列表去重）
  */
 export function displaySummary(
   summary: string | null | undefined,
   actionLabelDisplay: string,
+  route?: DisplaySummaryRoute,
 ): string {
   const s = summary?.trim();
-  if (!s) return '—';
-  if (s === actionLabelDisplay) return '—';
-  return s;
+  if (s && s !== actionLabelDisplay) return s;
+  const method = route?.httpMethod?.trim() || '';
+  const path = route?.path?.trim() || '';
+  const fallback = [method, path].filter(Boolean).join(' ').trim();
+  if (fallback) return fallback;
+  return '—';
 }
 
 export function allActionLabels(): Readonly<Record<string, string>> {

@@ -64,6 +64,35 @@ describe('AuditLogList', () => {
     expect(screen.getByText('equipment-agent')).toBeInTheDocument();
   });
 
+  it('platform mode prefers SystemApp name from systemAppNames', () => {
+    render(
+      <AuditLogList
+        mode="platform"
+        dataSource={[row]}
+        systemAppNames={{ 'equipment-agent': '设备管理 Agent' }}
+      />,
+    );
+    expect(screen.getByText('设备管理 Agent')).toBeInTheDocument();
+    expect(screen.queryByText('equipment-agent')).not.toBeInTheDocument();
+  });
+
+  it('summary falls back to METHOD path when equal to action label', () => {
+    render(
+      <AuditLogList
+        mode="app"
+        dataSource={[
+          {
+            ...row,
+            summary: '认领告警',
+            httpMethod: 'POST',
+            path: '/api/v1/agents/x/alertClaim',
+          },
+        ]}
+      />,
+    );
+    expect(screen.getByText('POST /api/v1/agents/x/alertClaim')).toBeInTheDocument();
+  });
+
   it('calls onRowClick', () => {
     const onRowClick = vi.fn();
     const { container } = render(

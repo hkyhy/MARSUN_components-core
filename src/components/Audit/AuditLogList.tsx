@@ -36,6 +36,8 @@ export type AuditLogListProps = {
   exportLoading?: boolean;
   pagination?: false | object;
   className?: string;
+  /** platform 系统列：SSO SystemApp.code → name；缺则回落 systemAppId */
+  systemAppNames?: Record<string, string>;
 };
 
 function formatCreatedAt(iso: string): string {
@@ -362,6 +364,7 @@ export const AuditLogList: React.FC<AuditLogListProps> = ({
   exportLoading,
   pagination,
   className,
+  systemAppNames,
 }) => {
   const columns: ColumnsType<AuditEventListItem> = useMemo(() => {
     const cols: ColumnsType<AuditEventListItem> = [
@@ -402,7 +405,10 @@ export const AuditLogList: React.FC<AuditLogListProps> = ({
         dataIndex: 'summary',
         ellipsis: true,
         render: (_: unknown, row) =>
-          displaySummary(row.summary, displayActionLabel(row.action, row.actionLabel)),
+          displaySummary(row.summary, displayActionLabel(row.action, row.actionLabel), {
+            httpMethod: row.httpMethod,
+            path: row.path,
+          }),
       },
       {
         title: '状态',
@@ -419,10 +425,16 @@ export const AuditLogList: React.FC<AuditLogListProps> = ({
         dataIndex: 'systemAppId',
         width: 140,
         ellipsis: true,
+        render: (v: string) => {
+          const id = v && String(v).trim() ? String(v) : '';
+          if (!id) return '—';
+          const name = systemAppNames?.[id]?.trim();
+          return name || id;
+        },
       });
     }
     return cols;
-  }, [mode]);
+  }, [mode, systemAppNames]);
 
   return (
     <div className={classNames(styles.wrap, className)}>
