@@ -2068,7 +2068,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
       {
         title: '模态框表单示例',
-        description: 'FormModal + useFormModal；受控与命令式；destroyOnHidden',
+        description:
+          'FormModal 默认壳=antd Modal + FormInfo；useFormModal 命令式；短表单无大片空白、底栏可见、提交关闭；destroyOnHidden',
         component: React.lazy(() => import('@/components/FormInfo/examples/NewFormInfoModalDemo')),
         sourcePath: () =>
           import('@/components/FormInfo/examples/NewFormInfoModalDemo/index.tsx?raw'),
