@@ -35,4 +35,18 @@ describe('DispositionBar', () => {
     render(<DispositionBar statusBadge="跟进中" actions={<button type="button">关闭</button>} />);
     expect(screen.getByRole('button', { name: '关闭' })).toBeInTheDocument();
   });
+
+  it('with lead: renders summary and omits 处置状态 label', () => {
+    render(
+      <DispositionBar
+        lead="报警 · 用能 EI · 2026-09-18 · 值 42.1"
+        statusBadge="未处置"
+        actions={<button type="button">认领</button>}
+      />,
+    );
+    expect(screen.queryByText('处置状态')).not.toBeInTheDocument();
+    expect(screen.getByText('报警 · 用能 EI · 2026-09-18 · 值 42.1')).toBeInTheDocument();
+    expect(screen.getByText('未处置')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: '预警摘要' })).toBeInTheDocument();
+  });
 });

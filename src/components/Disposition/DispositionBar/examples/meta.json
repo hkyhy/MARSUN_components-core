@@ -39,6 +39,13 @@
       "component": "@/components/Disposition/DispositionBar/examples/DenseActionsDemo",
       "sourcePath": "@/components/Disposition/DispositionBar/examples/DenseActionsDemo/index.tsx",
       "block": true
+    },
+    {
+      "title": "7. 预警摘要 lead",
+      "description": "有 lead 时不渲染「处置状态」label，左侧只展示摘要（+ 可选徽章）",
+      "component": "@/components/Disposition/DispositionBar/examples/LeadSummaryDemo",
+      "sourcePath": "@/components/Disposition/DispositionBar/examples/LeadSummaryDemo/index.tsx",
+      "block": true
     }
   ],
   "apiDoc": [
@@ -47,15 +54,19 @@
       "rows": [
         {
           "prop": "label",
-          "desc": "左侧文案",
+          "desc": "左侧文案；有 lead 时不渲染",
           "type": "string",
           "defaultVal": "'处置状态'"
         },
         {
+          "prop": "lead",
+          "desc": "左侧预警摘要；有则不渲染「处置状态」label",
+          "type": "ReactNode"
+        },
+        {
           "prop": "statusBadge",
-          "desc": "状态徽章（string 或 ReactNode）",
-          "type": "ReactNode",
-          "required": true
+          "desc": "状态徽章（string 或 ReactNode）；可与 lead 并存",
+          "type": "ReactNode"
         },
         {
           "prop": "actions",

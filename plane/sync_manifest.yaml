@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.149
+  next_task_id: P6.3.151
 tasks:
+- id: P6.3.150
+  plane_issue_id: 5e1c88b7-46fe-415a-b68c-6d924c22a98d
+  milestone: P6.3
+  name: DispositionBar lead 预警摘要并发版 0.1.114
+  status: 已完成
+  priority: P0
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-20"
+  target_date: "2026-09-20"
+  tags: [frontend, Disposition, DispositionBar, release]
+  note: |
+    Related: S4.30.2047
+    lead 有值时不渲染「处置状态」空 label；Demo+单测；chore(release) v0.1.114；npm 未登录未 publish；仍≠G1
 - id: P6.3.148
   plane_issue_id: 0b5017eb-d669-4056-a703-cf0b219d4b26
   milestone: P6.3
