@@ -6,6 +6,8 @@ export type {
   InboxBellProps,
   InboxBellMessageType,
 } from './Inbox';
+export { ActionTrackingShell } from './ActionTracking';
+export type { ActionTrackingShellProps } from './ActionTracking';
 export { MessageTemplateAdmin } from './MessageCenter';
 export type {
   MessageTemplateAdminProps,
