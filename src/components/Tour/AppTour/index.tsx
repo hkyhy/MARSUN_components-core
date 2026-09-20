@@ -9,7 +9,11 @@ export interface AppTourStep {
   title: string;
   description: React.ReactNode;
   target?: () => HTMLElement;
-  placement?: TourProps['steps'] extends (infer S)[] | undefined ? S extends { placement?: infer P } ? P : never : never;
+  placement?: TourProps['steps'] extends (infer S)[] | undefined
+    ? S extends { placement?: infer P }
+      ? P
+      : never
+    : never;
 }
 
 export interface AppTourProps {
@@ -41,7 +45,7 @@ const AppTour: React.FC<AppTourProps> = ({ steps, storageKey, autoOpen = true })
 
   return (
     <>
-      <Button type="text" icon={<CircleHelp />} onClick={() => setOpen(true)} title="导览" />
+      <Button type="text" icon={<CircleHelp />} onClick={() => setOpen(true)} title="系统导览" />
       <Tour
         open={open}
         onClose={handleClose}

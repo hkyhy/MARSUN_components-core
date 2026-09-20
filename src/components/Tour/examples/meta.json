@@ -8,6 +8,13 @@
       "component": "@/components/Tour/examples/TourDemo",
       "sourcePath": "@/components/Tour/examples/TourDemo/index.tsx",
       "block": true
+    },
+    {
+      "title": "Agent 壳层导览（权限码过滤）",
+      "description": "data-tour 锚点 + 权限码集合过滤步骤；禁止按角色名分支。多路由编排属业务仓。",
+      "component": "@/components/Tour/examples/AgentLayoutTourDemo",
+      "sourcePath": "@/components/Tour/examples/AgentLayoutTourDemo/index.tsx",
+      "block": true
     }
   ],
   "apiDoc": [
@@ -26,6 +33,23 @@
         { "prop": "description", "desc": "步骤说明", "type": "React.ReactNode", "required": true },
         { "prop": "target", "desc": "锚点元素获取函数", "type": "() => HTMLElement" },
         { "prop": "placement", "desc": "气泡位置", "type": "TourPlacement" }
+      ]
+    },
+    {
+      "componentName": "resolveTourTarget",
+      "rows": [
+        {
+          "prop": "selector",
+          "desc": "CSS 选择器；缺失时返回 null（勿回落 body）",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "componentName": "getTargetByTourId",
+      "rows": [
+        { "prop": "tourId", "desc": "对应 [data-tour=tourId]", "type": "string", "required": true }
       ]
     }
   ]
