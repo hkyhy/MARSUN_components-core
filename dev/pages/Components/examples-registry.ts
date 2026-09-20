@@ -35,9 +35,38 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           import('@/components/AgentHub/Chat/examples/ChatPanelBasicDemo/index.tsx?raw'),
       },
       {
+        title: '能力发现条',
+        description: 'ChatCapabilityStrip 受控展开能力标签与样例 chips',
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatCapabilityStripBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatCapabilityStripBasicDemo/index.tsx?raw'),
+      },
+      {
+        title: '面板头部工具',
+        description: 'ChatPanelHeaderTools 缩放档位、新建会话、全屏切换（受控）',
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatPanelHeaderToolsBasicDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatPanelHeaderToolsBasicDemo/index.tsx?raw'),
+      },
+      {
+        title: '能力条组合面板',
+        description:
+          'Fab/Panel：headerExtra=Strip + headerActions=HeaderTools + afterMessages=ChatFollowUpSuggestions',
+        component: React.lazy(
+          () => import('@/components/AgentHub/Chat/examples/ChatPanelComposeDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/AgentHub/Chat/examples/ChatPanelComposeDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
         title: '浮动助手 FAB',
         description:
-          'ChatAgentFab + ChatAgentFabLayout：reference 引用侧栏、panelFullscreen 全屏高度；headerActions 切换全屏',
+          'ChatAgentFab + ChatAgentFabLayout：引用侧栏在面板内右侧；panelFullscreen 约 4:3；headerActions 切换全屏',
         component: React.lazy(
           () => import('@/components/AgentHub/Chat/examples/ChatAgentFabBasicDemo'),
         ),
@@ -181,7 +210,16 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             desc: '头部右侧自定义操作区（icon 按钮等），位于「收起」左侧',
             type: 'ReactNode',
           },
-          { prop: 'headerExtra', desc: '头部下方扩展区（如最近对话 chip）', type: 'ReactNode' },
+          {
+            prop: 'headerExtra',
+            desc: '头部下方扩展区（如能力发现条 ChatCapabilityStrip）',
+            type: 'ReactNode',
+          },
+          {
+            prop: 'afterMessages',
+            desc: '消息列表内、messages 之后渲染，参与同一滚动（如 ChatFollowUpSuggestions）',
+            type: 'ReactNode',
+          },
           {
             prop: 'beforeInput',
             desc: '输入框上方扩展区（自定义插槽，推荐问请用 followUpItems）',
@@ -219,6 +257,67 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         ],
       },
       {
+        componentName: 'ChatCapabilityStripProps',
+        rows: [
+          {
+            prop: 'capabilities',
+            desc: '能力项列表 { id, label, examples }',
+            type: 'ReadonlyArray<ChatCapabilityItem>',
+            required: true,
+          },
+          {
+            prop: 'expandedId',
+            desc: '当前展开的能力 id；null 为全部收起',
+            type: 'string | null',
+            required: true,
+          },
+          {
+            prop: 'onExpandedChange',
+            desc: '展开切换回调',
+            type: '(id: string | null) => void',
+            required: true,
+          },
+          {
+            prop: 'onSelectExample',
+            desc: '点击样例 chip 回调',
+            type: '(text: string) => void',
+            required: true,
+          },
+          { prop: 'disabled', desc: '禁用样例点击（发送中等）', type: 'boolean' },
+          { prop: 'groupLabel', desc: '分组标签文案', type: 'string', defaultVal: '已开放' },
+          { prop: 'groupHelp', desc: '分组旁帮助槽位（如 TooltipInfo）', type: 'ReactNode' },
+          { prop: 'examplesHint', desc: '展开区提示后缀', type: 'string', defaultVal: '点击即问' },
+          { prop: 'className', desc: '根节点 className', type: 'string' },
+        ],
+      },
+      {
+        componentName: 'ChatPanelHeaderToolsProps',
+        rows: [
+          { prop: 'contentZoom', desc: '当前缩放倍率（受控）', type: 'number', required: true },
+          {
+            prop: 'onContentZoomChange',
+            desc: '缩放变更',
+            type: '(z: number) => void',
+            required: true,
+          },
+          {
+            prop: 'zoomSteps',
+            desc: '缩放档位',
+            type: 'readonly number[]',
+            defaultVal: '[0.2,0.35,0.5,0.7,0.85,1,1.1]',
+          },
+          { prop: 'fullscreen', desc: '是否全屏', type: 'boolean' },
+          { prop: 'onFullscreenChange', desc: '全屏切换', type: '(v: boolean) => void' },
+          { prop: 'onNewSession', desc: '新建会话', type: '() => void' },
+          { prop: 'disableActions', desc: '禁用新建/全屏（发送中等）', type: 'boolean' },
+          { prop: 'showZoom', desc: '是否显示缩放', type: 'boolean', defaultVal: 'true' },
+          { prop: 'showNewSession', desc: '是否显示新建', type: 'boolean', defaultVal: 'true' },
+          { prop: 'showFullscreen', desc: '是否显示全屏', type: 'boolean', defaultVal: 'true' },
+          { prop: 'extra', desc: '额外槽位（收起等）', type: 'ReactNode' },
+          { prop: 'className', desc: '根节点 className', type: 'string' },
+        ],
+      },
+      {
         componentName: 'ChatAgentFabProps',
         rows: [
           { prop: 'open', desc: '是否展开面板', type: 'boolean' },
@@ -246,7 +345,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           },
           {
             prop: 'panelFullscreen',
-            desc: '全屏高度（宽度仍由 panelExpanded 控制）',
+            desc: '约 4:3 拉宽拉高；引用侧栏加宽仍用 panelExpanded',
             type: 'boolean',
             defaultVal: 'false',
           },
@@ -355,7 +454,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           },
           {
             prop: 'panelFullscreen',
-            desc: '全屏高度 calc(100vh - 88px)，仍锚定右下角 FAB',
+            desc: '约 4:3 全屏（宽高随视口），仍锚定右下角 FAB',
             type: 'boolean',
           },
           { prop: 'panelAriaLabel', desc: '弹出面板无障碍标签', type: 'string' },
@@ -3879,6 +3978,13 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         sourcePath: () => import('@/components/Tour/examples/TourDemo/index.tsx?raw'),
         block: true,
       },
+      {
+        title: 'Agent 壳层导览（权限码过滤）',
+        description: 'data-tour 锚点 + 权限码集合过滤步骤；禁止按角色名分支。多路由编排属业务仓。',
+        component: React.lazy(() => import('@/components/Tour/examples/AgentLayoutTourDemo')),
+        sourcePath: () => import('@/components/Tour/examples/AgentLayoutTourDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
       {
@@ -3897,6 +4003,21 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'target', desc: '锚点元素获取函数', type: '() => HTMLElement' },
           { prop: 'placement', desc: '气泡位置', type: 'TourPlacement' },
         ],
+      },
+      {
+        componentName: 'resolveTourTarget',
+        rows: [
+          {
+            prop: 'selector',
+            desc: 'CSS 选择器；缺失时返回 null（勿回落 body）',
+            type: 'string',
+            required: true,
+          },
+        ],
+      },
+      {
+        componentName: 'getTargetByTourId',
+        rows: [{ prop: 'tourId', desc: '对应 [data-tour=tourId]', type: 'string', required: true }],
       },
     ],
   },

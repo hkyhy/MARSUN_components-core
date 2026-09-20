@@ -12,7 +12,8 @@ import { mockAssistantMessage, mockSessionReference, mockUserMessage } from '../
 import styles from './style.module.scss';
 
 const ChatAgentFabBasicDemo: React.FC = () => {
-  const [open, setOpen] = useState(true);
+  /** 默认收起，避免与同页「能力条组合」Demo 叠两个打开态面板 */
+  const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [panelFullscreen, setPanelFullscreen] = useState(false);
   const [messages, setMessages] = useState([mockUserMessage, mockAssistantMessage]);
@@ -84,7 +85,7 @@ const ChatAgentFabBasicDemo: React.FC = () => {
           main={
             <ChatPanel
               title="制度问答"
-              subtitle="浮动助手 + reference 引用侧栏 + 全屏高度"
+              subtitle="浮动助手 + reference 侧栏在面板内右侧 + 全屏（约 4:3）"
               showCloseButton
               onClose={() => handleOpenChange(false)}
               headerActions={headerActions}

@@ -17,7 +17,7 @@ export interface ChatAgentFabProps {
   panelBodyClassName?: string;
   /** 展开引用侧栏等场景下加宽面板 */
   panelExpanded?: boolean;
-  /** 全屏高度（宽度仍由 panelExpanded 控制） */
+  /** 全屏：约 4:3 拉宽拉高（仍锚定右下角）；引用侧栏加宽仍用 panelExpanded */
   panelFullscreen?: boolean;
   offsetRight?: number | string;
   offsetBottom?: number | string;

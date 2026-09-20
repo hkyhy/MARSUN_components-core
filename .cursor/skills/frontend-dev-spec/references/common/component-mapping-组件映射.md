@@ -337,13 +337,13 @@ import type { Citation } from '@hkyhy/marsun-components-core/agent-hub';
 
 **`ChatAgentFab` + reference 引用侧栏（标准接入）**
 
-| 层                   | 用法                                                                                                                                    |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `ChatAgentFab`       | 受控 `open` / `onOpenChange`；`panelExpanded={citationOpen}` 侧栏加宽；`panelFullscreen` 拉高至 `calc(100vh - 88px)`                    |
-| `ChatAgentFabLayout` | `main` 放 `ChatPanel`；`citationAside` 放 `CitationPanel`                                                                               |
-| `useCitationPanel`   | 管理 `citationOpen` / `panelCitations` / `handleCitationClick` / `resetCitationState`                                                   |
-| `ChatPanel`          | `onCitationClick`；`headerActions` 内「新建会话」+「全屏/退出全屏」（`Maximize2`/`Minimize2`），容器类 `chat-panel-header-icon-actions` |
-| 业务                 | API/SSE、`extractCitations(reference)` → `ChatMessage.citations`                                                                        |
+| 层                   | 用法                                                                                                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ChatAgentFab`       | 受控 `open` / `onOpenChange`；`panelExpanded={citationOpen}` 侧栏加宽；`panelFullscreen` 约 4:3 拉宽拉高（仍锚定右下角）；Layout 须拉满宽度使引用贴面板右侧 |
+| `ChatAgentFabLayout` | `main` 放 `ChatPanel`；`citationAside` 放 `CitationPanel`                                                                                                   |
+| `useCitationPanel`   | 管理 `citationOpen` / `panelCitations` / `handleCitationClick` / `resetCitationState`                                                                       |
+| `ChatPanel`          | `onCitationClick`；`headerActions` 内「新建会话」+「全屏/退出全屏」（`Maximize2`/`Minimize2`），容器类 `chat-panel-header-icon-actions`                     |
+| 业务                 | API/SSE、`extractCitations(reference)` → `ChatMessage.citations`                                                                                            |
 
 ```tsx
 const {

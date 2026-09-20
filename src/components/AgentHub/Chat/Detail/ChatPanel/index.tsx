@@ -20,6 +20,8 @@ export interface ChatPanelProps {
   headerActions?: ReactNode;
   headerExtra?: ReactNode;
   beforeInput?: ReactNode;
+  /** 消息列表内、messages 之后渲染，参与同一滚动（如追问建议） */
+  afterMessages?: ReactNode;
 
   /** API 返回的推荐问/追问列表 */
   followUpItems?: string[];
@@ -63,6 +65,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   headerActions,
   headerExtra,
   beforeInput,
+  afterMessages,
   followUpItems,
   starterItems,
   onFollowUpSelect,
@@ -186,6 +189,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
               />
             ))
           )}
+          {afterMessages}
         </div>
       </VirtualScrollbar>
 

@@ -13,8 +13,8 @@ export interface ChatAgentFabLayoutProps {
 }
 
 /**
- * ChatAgentFab 内横向布局：主对话区 + 可选引用侧栏。
- * 配合 ChatAgentFab.panelExpanded 在侧栏打开时加宽面板。
+ * ChatAgentFab 内横向布局：主对话区 + 可选引用侧栏（侧栏贴面板右侧）。
+ * 配合 ChatAgentFab.panelExpanded 在侧栏打开时加宽面板；须 width 100% 以免全屏后右侧留白。
  */
 const ChatAgentFabLayout: React.FC<ChatAgentFabLayoutProps> = ({
   main,

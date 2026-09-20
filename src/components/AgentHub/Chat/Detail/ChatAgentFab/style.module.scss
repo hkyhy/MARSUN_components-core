@@ -48,20 +48,26 @@
 
 .chat-agent-fab-panel-body {
   flex: 1;
+  min-width: 0;
   min-height: 0;
+  width: 100%;
 }
 
 .chat-agent-fab-panel--expanded {
   width: min(720px, calc(100vw - 48px));
 }
 
+/* 全屏：约 4:3 宽屏，贴近产品态（S3 AgentQAPanel），仍锚定右下角 FAB */
 .chat-agent-fab-panel--fullscreen {
-  height: calc(100vh - 88px);
-  max-height: calc(100vh - 88px);
+  width: min(calc(100vw - 48px), calc((100vh - 96px) * 4 / 3));
+  height: min(calc(100vh - 96px), calc((100vw - 48px) * 3 / 4));
+  max-height: min(calc(100vh - 96px), calc((100vw - 48px) * 3 / 4));
+  aspect-ratio: 4 / 3;
 }
 
 .chat-agent-fab-panel-body--expanded {
   display: flex;
   flex-direction: row;
+  width: 100%;
   min-width: 0;
 }

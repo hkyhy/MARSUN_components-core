@@ -77,4 +77,6 @@ export { UserPlus } from './UserPlus';
 export { UserRoundCog } from './UserRoundCog';
 export { Users } from './Users';
 export { X } from './X';
+export { ZoomIn } from './ZoomIn';
+export { ZoomOut } from './ZoomOut';
 export { ICON_NAMES, ICON_REGISTRY, type IconName } from './registry';

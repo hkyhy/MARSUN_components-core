@@ -77,6 +77,8 @@ import { UserPlus } from './UserPlus';
 import { UserRoundCog } from './UserRoundCog';
 import { Users } from './Users';
 import { X } from './X';
+import { ZoomIn } from './ZoomIn';
+import { ZoomOut } from './ZoomOut';
 
 export const ICON_NAMES = [
   'ArrowLeft',
@@ -156,6 +158,8 @@ export const ICON_NAMES = [
   'UserRoundCog',
   'Users',
   'X',
+  'ZoomIn',
+  'ZoomOut',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
@@ -239,4 +243,6 @@ export const ICON_REGISTRY: Record<IconName, React.FC<IconProps>> = {
   UserRoundCog,
   Users,
   X,
+  ZoomIn,
+  ZoomOut,
 };
