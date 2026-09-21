@@ -30,20 +30,69 @@ const TABLE_COLUMN_KEY_WIDTH: Record<string, number> = {
   coeff: 64,
 };
 
-function resolveTableColumnWidth(column: { key: string; label: string; width?: number }) {
+type TableColumn = { key: string; label: string; width?: number };
+
+function resolveTableColumnWidth(column: TableColumn) {
   const hinted = TABLE_COLUMN_KEY_WIDTH[column.key];
   const preferred = column.width ?? hinted ?? column.label.length * 12 + 24;
   return Math.min(TABLE_COLUMN_MAX_WIDTH, Math.max(TABLE_COLUMN_MIN_WIDTH, preferred));
 }
 
-function resolveTableScrollWidth(columns: { key: string; label: string; width?: number }[]) {
+function resolveTableScrollWidth(columns: TableColumn[]) {
   return columns.reduce((sum, column) => sum + resolveTableColumnWidth(column), 0);
 }
 
-function renderChatWidgetTable(
-  columns: NonNullable<ChatWidget['columns']>,
-  rows: ChatWidget['rows'],
-) {
+/**
+ * BFF 偶发给 string[] 列或数组行；未归一化时 column.label.length 会白屏。
+ * 合法 {key,label} 列原样保留。
+ */
+function normalizeTableColumnsAndRows(
+  rawColumns: unknown,
+  rawRows: unknown,
+): { columns: TableColumn[]; rows: Record<string, unknown>[] } {
+  const colList = Array.isArray(rawColumns) ? rawColumns : [];
+  const columns: TableColumn[] = colList.map((col, i) => {
+    if (
+      col &&
+      typeof col === 'object' &&
+      !Array.isArray(col) &&
+      typeof (col as { key?: unknown }).key === 'string' &&
+      typeof (col as { label?: unknown }).label === 'string'
+    ) {
+      const c = col as { key: string; label: string; width?: number };
+      return { key: c.key, label: c.label, width: c.width };
+    }
+    const label =
+      typeof col === 'string'
+        ? col
+        : String((col as { label?: unknown } | null)?.label ?? `列${i + 1}`);
+    const key =
+      col && typeof col === 'object' && !Array.isArray(col) && (col as { key?: unknown }).key
+        ? String((col as { key: unknown }).key)
+        : `c${i}`;
+    return { key, label };
+  });
+
+  const rowList = Array.isArray(rawRows) ? rawRows : [];
+  const rows = rowList.map((row) => {
+    if (row && typeof row === 'object' && !Array.isArray(row)) {
+      return row as Record<string, unknown>;
+    }
+    if (!Array.isArray(row)) return {};
+    const obj: Record<string, unknown> = {};
+    columns.forEach((c, i) => {
+      obj[c.key] = row[i] ?? '';
+    });
+    return obj;
+  });
+
+  return { columns, rows };
+}
+
+function renderChatWidgetTable(rawColumns: unknown, rawRows: unknown) {
+  const { columns, rows } = normalizeTableColumnsAndRows(rawColumns, rawRows);
+  if (!columns.length) return null;
+
   const scrollWidth = resolveTableScrollWidth(columns);
   return (
     <VirtualScrollbar
@@ -64,7 +113,7 @@ function renderChatWidgetTable(
           width: resolveTableColumnWidth(column),
           ellipsis: { showTitle: true },
         }))}
-        dataSource={(rows || []).map((row, rowIndex) => ({ ...row, key: rowIndex }))}
+        dataSource={rows.map((row, rowIndex) => ({ ...row, key: rowIndex }))}
       />
     </VirtualScrollbar>
   );
