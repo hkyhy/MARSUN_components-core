@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { MultiField as MultiFieldBase } from '@kne/react-form-plus';
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import classnames from 'classnames';
 import type { ReactNode } from 'react';
 import { Empty } from '@/components/Empty';
@@ -42,9 +42,25 @@ const MultiField = withLocale((p: MultiFieldProps) => {
                 'multi-field-delete-label',
               )}
             />
-            <Button icon={removeIcon} onClick={onRemove} disabled={!allowRemove}>
-              {typeof removeText === 'function' ? removeText(others.label) : removeText}
-            </Button>
+            <Popconfirm
+              title={formatMessage({ id: 'deleteConfirm' })}
+              okText={formatMessage({ id: 'deleteConfirmOk' })}
+              cancelText={formatMessage({ id: 'cancel' })}
+              okButtonProps={{ danger: true }}
+              disabled={!allowRemove}
+              onConfirm={onRemove}
+            >
+              <Button
+                type="link"
+                danger
+                className="btn-no-padding"
+                icon={removeIcon}
+                disabled={!allowRemove}
+                aria-label={formatMessage({ id: 'deleteText' })}
+              >
+                {typeof removeText === 'function' ? removeText(others.label) : removeText}
+              </Button>
+            </Popconfirm>
           </div>
         </div>
       )}

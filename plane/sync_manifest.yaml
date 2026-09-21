@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.154
+  next_task_id: P6.3.155
 tasks:
+- id: P6.3.154
+  milestone: P6.3
+  name: FormInfo List/MultiField 删除红钮二次确认
+  status: 进行中
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-21"
+  target_date: "2026-09-21"
+  tags: [frontend, FormInfo, List, MultiField]
+  note: |
+    Related: S4.30.2103
+    List/MultiField/TableList 删除 Popconfirm + danger；locale deleteConfirm；禁发版跳号
 - id: P6.3.153
   plane_issue_id: 53d79664-85cb-49d0-8692-5a753f19574a
   milestone: P6.3

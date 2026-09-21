@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { SubList } from '@kne/react-form-plus';
-import { Button, Divider, Tag } from 'antd';
+import { Button, Divider, Popconfirm, Tag } from 'antd';
 import classnames from 'classnames';
 import { useState, type ReactNode } from 'react';
 import { Empty } from '@/components/Empty';
@@ -163,16 +163,24 @@ const List = withLocale((p: ListProps) => {
               }}
               gap={isNestBeyond ? 0 : 16}
               extra={
-                <Button
-                  type="link"
-                  danger
-                  className="btn-no-padding"
-                  icon={removeIcon}
+                <Popconfirm
+                  title={formatMessage({ id: 'deleteConfirm' })}
+                  okText={formatMessage({ id: 'deleteConfirmOk' })}
+                  cancelText={formatMessage({ id: 'cancel' })}
+                  okButtonProps={{ danger: true }}
                   disabled={!allowRemove}
-                  onClick={onRemove}
+                  onConfirm={onRemove}
                 >
-                  {removeText}
-                </Button>
+                  <Button
+                    type="link"
+                    danger
+                    className="btn-no-padding"
+                    icon={removeIcon}
+                    disabled={!allowRemove}
+                  >
+                    {removeText}
+                  </Button>
+                </Popconfirm>
               }
             />
             <Divider />

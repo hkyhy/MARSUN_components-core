@@ -2,7 +2,7 @@
 import { FieldList, SubList, TableList as TableListBase } from '@kne/react-form-plus';
 import { useIsMobile } from '@kne/responsive-utils';
 import TableView, { isRenderMobileActive, resolveRenderMobile } from '@kne/table-view';
-import { Button, Col, Row } from 'antd';
+import { Button, Col, Popconfirm, Row } from 'antd';
 import classnames from 'classnames';
 import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Empty } from '@/components/Empty';
@@ -182,9 +182,18 @@ const TableList = withLocale((p: TableListProps) => {
         <Row key={id} wrap={false} align="top">
           {children}
           <Col className={style['marsun-form-info-table-options']}>
-            <Button type="link" onClick={onRemove} danger disabled={!allowRemove} icon={removeIcon}>
-              {removeText}
-            </Button>
+            <Popconfirm
+              title={formatMessage({ id: 'deleteConfirm' })}
+              okText={formatMessage({ id: 'deleteConfirmOk' })}
+              cancelText={formatMessage({ id: 'cancel' })}
+              okButtonProps={{ danger: true }}
+              disabled={!allowRemove}
+              onConfirm={onRemove}
+            >
+              <Button type="link" danger disabled={!allowRemove} icon={removeIcon}>
+                {removeText}
+              </Button>
+            </Popconfirm>
           </Col>
         </Row>
       )}
@@ -251,9 +260,18 @@ const TableList = withLocale((p: TableListProps) => {
             />
           </div>
           <div className={style['marsun-form-info-table-list-mobile-actions']}>
-            <Button type="link" onClick={onRemove} danger disabled={!allowRemove} icon={removeIcon}>
-              {removeText}
-            </Button>
+            <Popconfirm
+              title={formatMessage({ id: 'deleteConfirm' })}
+              okText={formatMessage({ id: 'deleteConfirmOk' })}
+              cancelText={formatMessage({ id: 'cancel' })}
+              okButtonProps={{ danger: true }}
+              disabled={!allowRemove}
+              onConfirm={onRemove}
+            >
+              <Button type="link" danger disabled={!allowRemove} icon={removeIcon}>
+                {removeText}
+              </Button>
+            </Popconfirm>
           </div>
         </div>
       )}
