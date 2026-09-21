@@ -3,9 +3,10 @@ meta:
   next_task_id: P6.3.155
 tasks:
 - id: P6.3.154
+  plane_issue_id: 54e17002-0dba-49b0-abf6-9127ab833a01
   milestone: P6.3
   name: FormInfo List/MultiField 删除红钮二次确认
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: feat
   owner: 黄金芳
