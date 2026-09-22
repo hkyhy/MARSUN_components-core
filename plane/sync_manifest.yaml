@@ -14,8 +14,9 @@ tasks:
   target_date: "2026-09-22"
   tags: [frontend, ButtonGroup, Disposition]
   note: |
-    Related: S4.30.2114
-    core ButtonGroup/actionListItem/normalizeActionList；unavailable→hidden；DispositionBar 两端对齐；仓内改本地 ButtonGroup；release v0.1.118
+    Related: S4.30.2114 · TagGroup P1.18.1002
+    core ButtonGroup/actionListItem/normalizeActionList；unavailable→hidden；DispositionBar 两端对齐；仓内改本地 ButtonGroup；
+    TagGroup 可点选（color/selected/title）；chore(release) v0.1.118
 - id: P6.3.154
   plane_issue_id: 54e17002-0dba-49b0-abf6-9127ab833a01
   milestone: P6.3
