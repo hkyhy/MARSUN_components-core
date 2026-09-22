@@ -1,5 +1,5 @@
 import type { KBDocument } from '@/components/AgentHub/types';
-import ButtonGroup from '@kne/button-group';
+import ButtonGroup from '../../../../ButtonGroup';
 import { CirclePlay, Square } from '@/components/Icons';
 import { Empty, Table, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -53,7 +53,10 @@ const DocumentTable: React.FC<DocumentTableProps> = ({
       dataIndex: 'name',
       ellipsis: true,
       render: (name: string) => (
-        <Text className={classNames('document-table-root', styles['document-table-root'])} ellipsis={{ tooltip: name }}>
+        <Text
+          className={classNames('document-table-root', styles['document-table-root'])}
+          ellipsis={{ tooltip: name }}
+        >
           {name}
         </Text>
       ),

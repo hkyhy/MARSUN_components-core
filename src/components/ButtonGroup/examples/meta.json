@@ -1,0 +1,74 @@
+{
+  "title": "ButtonGroup 操作按钮组",
+  "description": "业务操作组 SSOT：薄封装 @kne/button-group。默认 unavailable→hidden（无权限/态到了不可再操作不置灰占位）；短暂 loading 用 loading/disabled。",
+  "examples": [
+    {
+      "title": "1. 基础用法",
+      "description": "link 操作 + 确认删除",
+      "component": "@/components/ButtonGroup/examples/BasicDemo",
+      "sourcePath": "@/components/ButtonGroup/examples/BasicDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "2. unavailable 隐藏",
+      "description": "跟进中：认领/下发 unavailable，只留关闭与根因（不渲染「已认领」灰钮）",
+      "component": "@/components/ButtonGroup/examples/HideUnavailableDemo",
+      "sourcePath": "@/components/ButtonGroup/examples/HideUnavailableDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "ButtonGroupProps",
+      "rows": [
+        {
+          "prop": "list",
+          "desc": "操作项对象数组（或函数项）。支持 unavailable：业务态不可再操作 → 默认收成 hidden",
+          "type": "ActionListItem[]",
+          "defaultVal": "—"
+        },
+        {
+          "prop": "hideUnavailable",
+          "desc": "默认 true：把 unavailable 合并进 hidden；false 透传（逃生）",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "moreType",
+          "desc": "溢出「更多」形态；表格操作列常用 link（省略号）",
+          "type": "'link' | string",
+          "defaultVal": "—"
+        },
+        {
+          "prop": "showLength",
+          "desc": "固定外露个数；不传则按容器宽度自动收起",
+          "type": "number",
+          "defaultVal": "—"
+        }
+      ]
+    },
+    {
+      "componentName": "ActionListItem / actionListItem()",
+      "rows": [
+        {
+          "prop": "unavailable",
+          "desc": "业务态不可再操作；hideUnavailable 时 → hidden，禁止改文案为「已认领」并 disabled 占位",
+          "type": "boolean",
+          "defaultVal": "—"
+        },
+        {
+          "prop": "hidden",
+          "desc": "不渲染（权限等）；与 Unavailable 任一为真即隐藏",
+          "type": "boolean",
+          "defaultVal": "—"
+        },
+        {
+          "prop": "actionListItem.can / available",
+          "desc": "helper：can=权限，available=业务可操作；任一 false → hidden",
+          "type": "boolean",
+          "defaultVal": "true"
+        }
+      ]
+    }
+  ]
+}

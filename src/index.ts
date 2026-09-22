@@ -126,6 +126,17 @@ export type { PersonOptionDto, ReviewerOptionDto, PersonSelectOption } from './u
 // Components
 export * from './components/Auth';
 export * from './components/Alert';
+export {
+  default as ButtonGroup,
+  actionListItem,
+  normalizeActionList,
+} from './components/ButtonGroup';
+export type {
+  ButtonGroupProps,
+  ActionListItem,
+  ActionListItemInput,
+  NormalizeActionListOptions,
+} from './components/ButtonGroup';
 export * from './components/Descriptions';
 export * from './components/Empty';
 /** @deprecated 请改用 `@hkyhy/marsun-components-core/editor`（L2，含 CKEditor） */

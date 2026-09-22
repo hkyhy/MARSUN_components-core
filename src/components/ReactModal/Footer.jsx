@@ -1,7 +1,7 @@
 // @ts-nocheck
 // Ported from https://github.com/kne-union/react-modal/blob/master/src/Footer.js
 import classnames from 'classnames';
-import ButtonGroupModule from '@kne/button-group';
+import ButtonGroupModule from '../ButtonGroup';
 import { useIntl } from './intlStub';
 import style from './style.module.scss';
 

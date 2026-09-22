@@ -1,4 +1,4 @@
-import ButtonGroup from '@kne/button-group';
+import ButtonGroup from '../../../ButtonGroup';
 import { Plus } from '@/components/Icons';
 import React from 'react';
 

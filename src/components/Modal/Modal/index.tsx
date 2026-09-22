@@ -1,4 +1,4 @@
-import ButtonGroup from '@kne/button-group';
+import ButtonGroup from '../../ButtonGroup';
 import { Modal as AntModal } from 'antd';
 import classNames from 'classnames';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';

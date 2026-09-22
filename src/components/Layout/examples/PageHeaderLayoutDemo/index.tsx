@@ -1,5 +1,5 @@
 import { PageHeaderLayout } from '@/components';
-import ButtonGroup from '@kne/button-group';
+import ButtonGroup from '../../../ButtonGroup';
 import React from 'react';
 import styles from './style.module.scss';
 import classNames from 'classnames';
@@ -23,7 +23,14 @@ const PageHeaderLayoutDemo: React.FC = () => {
       actions={<ButtonGroup list={headerListArray} />}
       description="页面说明提示，用于解释当前页面的用途或注意事项。"
     >
-      <div className={classNames('page-header-layout-demo-header', styles['page-header-layout-demo-header'])}>页面内容区域</div>
+      <div
+        className={classNames(
+          'page-header-layout-demo-header',
+          styles['page-header-layout-demo-header'],
+        )}
+      >
+        页面内容区域
+      </div>
     </PageHeaderLayout>
   );
 };

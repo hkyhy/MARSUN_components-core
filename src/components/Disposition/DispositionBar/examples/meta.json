@@ -34,8 +34,8 @@
       "sourcePath": "@/components/Disposition/DispositionBar/examples/CustomBadgeDemo/index.tsx"
     },
     {
-      "title": "6. 多操作钮",
-      "description": "右侧注入多个业务操作",
+      "title": "6. 多操作钮（ButtonGroup）",
+      "description": "右侧注入 core ButtonGroup；unavailable 的认领/下发不渲染，不置灰「已认领」",
       "component": "@/components/Disposition/DispositionBar/examples/DenseActionsDemo",
       "sourcePath": "@/components/Disposition/DispositionBar/examples/DenseActionsDemo/index.tsx",
       "block": true

@@ -19,6 +19,8 @@
   align-items: center;
   gap: 8px;
   min-height: 28px;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .marsun-disposition-label {
@@ -55,8 +57,17 @@
 }
 
 .marsun-disposition-actions {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: flex-end;
   align-items: center;
+
+  /*
+   * kne 未传 showLength → 根节点 width:100%（测宽用），可见行默认左齐，
+   * 会贴在状态右侧、右侧留白。强制可见行右齐，恢复「左状态 / 右操作」。
+   */
+  :global(.marsun-button-group) > div:last-child {
+    justify-content: flex-end;
+  }
 }

@@ -1,5 +1,5 @@
 import { Trash2 } from '@/components/Icons';
-import ButtonGroup from '@kne/button-group';
+import ButtonGroup from '../../../ButtonGroup';
 import React from 'react';
 
 export interface SessionActionButtonsProps {

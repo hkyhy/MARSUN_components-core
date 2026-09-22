@@ -1,7 +1,7 @@
 import { SEMANTIC_COLORS, SemanticTag } from '@/components';
 import type { Dataset } from '@/components/AgentHub/types';
 import { LayoutGrid } from '@/components/Icons';
-import ButtonGroup from '@kne/button-group';
+import ButtonGroup from '../../../../ButtonGroup';
 import { Progress, Tooltip, Typography } from 'antd';
 import React from 'react';
 import styles from './style.module.scss';
@@ -43,14 +43,24 @@ const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
       onClick={() => onView(dataset)}
     >
       {/* Top primary accent strip */}
-      <div className={classNames('bg-primary', classNames('knowledge-card-inner', styles['knowledge-card-inner']))} />
+      <div
+        className={classNames(
+          'bg-primary',
+          classNames('knowledge-card-inner', styles['knowledge-card-inner']),
+        )}
+      />
 
       {/* Card body */}
       <div className={classNames('knowledge-card-header', styles['knowledge-card-header'])}>
         {/* Header: icon + name + model tag */}
         <div className={classNames('knowledge-card-body', styles['knowledge-card-body'])}>
           <div className={classNames('knowledge-card-footer', styles['knowledge-card-footer'])}>
-            <LayoutGrid className={classNames('text-primary', classNames('knowledge-card-row', styles['knowledge-card-row']))} />
+            <LayoutGrid
+              className={classNames(
+                'text-primary',
+                classNames('knowledge-card-row', styles['knowledge-card-row']),
+              )}
+            />
           </div>
           <div className={classNames('knowledge-card-col', styles['knowledge-card-col'])}>
             <Tooltip title={dataset.name}>
@@ -63,7 +73,10 @@ const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
               </Text>
             </Tooltip>
             {modelShort && (
-              <SemanticTag color={SEMANTIC_COLORS.INFO} className={classNames('knowledge-card-panel', styles['knowledge-card-panel'])}>
+              <SemanticTag
+                color={SEMANTIC_COLORS.INFO}
+                className={classNames('knowledge-card-panel', styles['knowledge-card-panel'])}
+              >
                 {modelShort}
               </SemanticTag>
             )}
@@ -71,33 +84,55 @@ const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
         </div>
 
         {/* Description */}
-        <Paragraph type="secondary" className={classNames('knowledge-card-card', styles['knowledge-card-card'])} ellipsis={{ rows: 2 }}>
+        <Paragraph
+          type="secondary"
+          className={classNames('knowledge-card-card', styles['knowledge-card-card'])}
+          ellipsis={{ rows: 2 }}
+        >
           {dataset.description || '暂无描述'}
         </Paragraph>
 
         {/* Stats pills */}
         <div className={classNames('knowledge-card-item', styles['knowledge-card-item'])}>
           <div className={classNames('knowledge-card-link', styles['knowledge-card-link'])}>
-            <Text strong className={classNames('knowledge-card-label', styles['knowledge-card-label'])}>
+            <Text
+              strong
+              className={classNames('knowledge-card-label', styles['knowledge-card-label'])}
+            >
               {docCount}
             </Text>
-            <Text type="secondary" className={classNames('knowledge-card-value', styles['knowledge-card-value'])}>
+            <Text
+              type="secondary"
+              className={classNames('knowledge-card-value', styles['knowledge-card-value'])}
+            >
               文档
             </Text>
           </div>
           <div className={classNames('knowledge-card-link', styles['knowledge-card-link'])}>
-            <Text strong className={classNames('knowledge-card-label', styles['knowledge-card-label'])}>
+            <Text
+              strong
+              className={classNames('knowledge-card-label', styles['knowledge-card-label'])}
+            >
               {chunkCount}
             </Text>
-            <Text type="secondary" className={classNames('knowledge-card-value', styles['knowledge-card-value'])}>
+            <Text
+              type="secondary"
+              className={classNames('knowledge-card-value', styles['knowledge-card-value'])}
+            >
               分块
             </Text>
           </div>
           <div className={classNames('knowledge-card-link', styles['knowledge-card-link'])}>
-            <Text strong className={classNames('knowledge-card-label', styles['knowledge-card-label'])}>
+            <Text
+              strong
+              className={classNames('knowledge-card-label', styles['knowledge-card-label'])}
+            >
               {tokenNum > 1000 ? `${(tokenNum / 1000).toFixed(0)}k` : tokenNum}
             </Text>
-            <Text type="secondary" className={classNames('knowledge-card-value', styles['knowledge-card-value'])}>
+            <Text
+              type="secondary"
+              className={classNames('knowledge-card-value', styles['knowledge-card-value'])}
+            >
               Tokens
             </Text>
           </div>

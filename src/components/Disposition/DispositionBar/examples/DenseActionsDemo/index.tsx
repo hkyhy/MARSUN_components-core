@@ -1,23 +1,19 @@
-import { DispositionBar } from '@/components';
-import { Button } from 'antd';
+import { ButtonGroup, DispositionBar } from '@/components';
 import React from 'react';
 
-/** 多操作钮：认领 / 分配 / 跟进 / RCA / 关闭 */
+/** 多操作：用 core ButtonGroup；unavailable 项不渲染（不置灰占位）；不传 showLength → 按容器宽「⋯」 */
 const DenseActionsDemo: React.FC = () => (
   <DispositionBar
     statusBadge="跟进中"
     actions={
-      <>
-        <Button type="primary" size="small">
-          认领
-        </Button>
-        <Button size="small">分配</Button>
-        <Button size="small">跟进</Button>
-        <Button size="small">发起 RCA</Button>
-        <Button size="small" danger>
-          关闭
-        </Button>
-      </>
+      <ButtonGroup
+        list={[
+          { children: '认领', type: 'primary', size: 'small', unavailable: true },
+          { children: '下发任务', type: 'default', size: 'small', unavailable: true },
+          { children: '关闭/暂缓', type: 'default', size: 'small', onClick: () => undefined },
+          { children: '查看根因分析', type: 'default', size: 'small', onClick: () => undefined },
+        ]}
+      />
     }
   />
 );

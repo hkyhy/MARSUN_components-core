@@ -1,4 +1,4 @@
-import ButtonGroup from '@kne/button-group';
+import ButtonGroup from '../ButtonGroup';
 import classNames from 'classnames';
 import type { ReactNode } from 'react';
 import type { DescriptionItem } from '../Descriptions/CommonDescriptions';

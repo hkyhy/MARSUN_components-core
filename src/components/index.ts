@@ -1,5 +1,12 @@
 export * from './Auth';
 export * from './Alert';
+export { default as ButtonGroup, actionListItem, normalizeActionList } from './ButtonGroup';
+export type {
+  ButtonGroupProps,
+  ActionListItem,
+  ActionListItemInput,
+  NormalizeActionListOptions,
+} from './ButtonGroup';
 export * from './Descriptions';
 export * from './Empty';
 export * from './Editor';

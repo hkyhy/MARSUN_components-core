@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.155
+  next_task_id: P6.3.156
 tasks:
+- id: P6.3.155
+  plane_issue_id: 6e35d454-87bc-46c1-b806-acdb6a048fe0
+  milestone: P6.3
+  name: ButtonGroup SSOT 与 DispositionBar 操作区布局
+  status: 进行中
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-22"
+  target_date: "2026-09-22"
+  tags: [frontend, ButtonGroup, Disposition]
+  note: |
+    Related: S4.30.2114
+    core ButtonGroup/actionListItem/normalizeActionList；unavailable→hidden；DispositionBar 两端对齐；仓内改本地 ButtonGroup；release v0.1.118
 - id: P6.3.154
   plane_issue_id: 54e17002-0dba-49b0-abf6-9127ab833a01
   milestone: P6.3
@@ -2272,9 +2286,17 @@ tasks:
     fillHeight={false} 给 IAM 四页；PageSpin naturalHeight；发版 0.1.73
 
 - id: da1bfb9a-d548-403c-96f4-d3be4da0e6ff
+  plane_issue_id: da1bfb9a-d548-403c-96f4-d3be4da0e6ff
+  milestone: P6.1
   name: P6.1.201 ChatCapabilityStrip 与全屏引用布局
-  status: 进行中
-  owner: 前端
-  labels: [agent-hub]
-  note: ChatCapabilityStrip/HeaderTools、panelFullscreen 约4:3、引用侧栏贴右；chore(release) v0.1.116
+  status: 已完成
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-20"
+  target_date: "2026-09-20"
+  tags: [agent-hub]
+  note: |
+    Related: P6.1
+    ChatCapabilityStrip/HeaderTools、panelFullscreen 约4:3、引用侧栏贴右；chore(release) v0.1.116
 
