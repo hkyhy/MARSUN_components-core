@@ -36,9 +36,87 @@
       "component": "@/components/Tag/examples/TagsShowLengthDemo",
       "sourcePath": "@/components/Tag/examples/TagsShowLengthDemo/index.tsx",
       "block": true
+    },
+    {
+      "title": "TagGroup 可点选",
+      "description": "按项着色 + selected 反白 + onItemClick；同名可合并 ×N；title 出 Tooltip",
+      "component": "@/components/Tag/examples/TagGroupInteractiveDemo",
+      "sourcePath": "@/components/Tag/examples/TagGroupInteractiveDemo/index.tsx",
+      "block": true
     }
   ],
   "apiDoc": [
+    {
+      "componentName": "TagGroupProps",
+      "rows": [
+        {
+          "prop": "items",
+          "desc": "标签项：key / label / color? / selected? / disabled?",
+          "type": "TagGroupItem[]",
+          "required": false
+        },
+        {
+          "prop": "onItemClick",
+          "desc": "点击某一项；有回调时默认可点（cursor:pointer）",
+          "type": "(item: TagGroupItem) => void",
+          "required": false
+        },
+        {
+          "prop": "empty",
+          "desc": "无项占位；传 null 不渲染",
+          "type": "React.ReactNode",
+          "defaultVal": "null"
+        },
+        {
+          "prop": "color",
+          "desc": "未指定 color 的项默认语义色",
+          "type": "SemanticColor | string",
+          "defaultVal": "SEMANTIC_COLORS.DEFAULT"
+        },
+        {
+          "prop": "className",
+          "desc": "列表容器 class",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "componentName": "TagGroupItem",
+      "rows": [
+        {
+          "prop": "key",
+          "desc": "项唯一键",
+          "type": "React.Key",
+          "required": true
+        },
+        {
+          "prop": "label",
+          "desc": "展示文案（可含 ×N 等）",
+          "type": "React.ReactNode",
+          "required": true
+        },
+        {
+          "prop": "color",
+          "desc": "单项语义色",
+          "type": "SemanticColor | string"
+        },
+        {
+          "prop": "selected",
+          "desc": "选中反白",
+          "type": "boolean"
+        },
+        {
+          "prop": "disabled",
+          "desc": "禁用点击",
+          "type": "boolean"
+        },
+        {
+          "prop": "title",
+          "desc": "悬停 Tooltip；有值时外包 Tooltip",
+          "type": "React.ReactNode"
+        }
+      ]
+    },
     {
       "componentName": "TagsProps",
       "rows": [

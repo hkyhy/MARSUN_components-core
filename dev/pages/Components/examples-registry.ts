@@ -909,6 +909,84 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       },
     ],
   },
+  '/components/buttongroup': {
+    title: 'ButtonGroup 操作按钮组',
+    description:
+      '业务操作组 SSOT：薄封装 @kne/button-group。默认 unavailable→hidden（无权限/态到了不可再操作不置灰占位）；短暂 loading 用 loading/disabled。',
+    examples: [
+      {
+        title: '1. 基础用法',
+        description: 'link 操作 + 确认删除',
+        component: React.lazy(() => import('@/components/ButtonGroup/examples/BasicDemo')),
+        sourcePath: () => import('@/components/ButtonGroup/examples/BasicDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '2. unavailable 隐藏',
+        description: '跟进中：认领/下发 unavailable，只留关闭与根因（不渲染「已认领」灰钮）',
+        component: React.lazy(
+          () => import('@/components/ButtonGroup/examples/HideUnavailableDemo'),
+        ),
+        sourcePath: () =>
+          import('@/components/ButtonGroup/examples/HideUnavailableDemo/index.tsx?raw'),
+        block: true,
+      },
+    ],
+    apiDoc: [
+      {
+        componentName: 'ButtonGroupProps',
+        rows: [
+          {
+            prop: 'list',
+            desc: '操作项对象数组（或函数项）。支持 unavailable：业务态不可再操作 → 默认收成 hidden',
+            type: 'ActionListItem[]',
+            defaultVal: '—',
+          },
+          {
+            prop: 'hideUnavailable',
+            desc: '默认 true：把 unavailable 合并进 hidden；false 透传（逃生）',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
+          {
+            prop: 'moreType',
+            desc: '溢出「更多」形态；表格操作列常用 link（省略号）',
+            type: "'link' | string",
+            defaultVal: '—',
+          },
+          {
+            prop: 'showLength',
+            desc: '固定外露个数；不传则按容器宽度自动收起',
+            type: 'number',
+            defaultVal: '—',
+          },
+        ],
+      },
+      {
+        componentName: 'ActionListItem / actionListItem()',
+        rows: [
+          {
+            prop: 'unavailable',
+            desc: '业务态不可再操作；hideUnavailable 时 → hidden，禁止改文案为「已认领」并 disabled 占位',
+            type: 'boolean',
+            defaultVal: '—',
+          },
+          {
+            prop: 'hidden',
+            desc: '不渲染（权限等）；与 Unavailable 任一为真即隐藏',
+            type: 'boolean',
+            defaultVal: '—',
+          },
+          {
+            prop: 'actionListItem.can / available',
+            desc: 'helper：can=权限，available=业务可操作；任一 false → hidden',
+            type: 'boolean',
+            defaultVal: 'true',
+          },
+        ],
+      },
+    ],
+  },
   '/components/descriptions': {
     title: 'Descriptions 描述列表',
     description: '通用描述列表组件，用于展示只读字段信息。基于 antd Descriptions 封装。',
@@ -1077,8 +1155,8 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           import('@/components/Disposition/DispositionBar/examples/CustomBadgeDemo/index.tsx?raw'),
       },
       {
-        title: '6. 多操作钮',
-        description: '右侧注入多个业务操作',
+        title: '6. 多操作钮（ButtonGroup）',
+        description: '右侧注入 core ButtonGroup；unavailable 的认领/下发不渲染，不置灰「已认领」',
         component: React.lazy(
           () => import('@/components/Disposition/DispositionBar/examples/DenseActionsDemo'),
         ),
@@ -3664,8 +3742,59 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         sourcePath: () => import('@/components/Tag/examples/TagsShowLengthDemo/index.tsx?raw'),
         block: true,
       },
+      {
+        title: 'TagGroup 可点选',
+        description: '按项着色 + selected 反白 + onItemClick；同名可合并 ×N；title 出 Tooltip',
+        component: React.lazy(() => import('@/components/Tag/examples/TagGroupInteractiveDemo')),
+        sourcePath: () => import('@/components/Tag/examples/TagGroupInteractiveDemo/index.tsx?raw'),
+        block: true,
+      },
     ],
     apiDoc: [
+      {
+        componentName: 'TagGroupProps',
+        rows: [
+          {
+            prop: 'items',
+            desc: '标签项：key / label / color? / selected? / disabled?',
+            type: 'TagGroupItem[]',
+          },
+          {
+            prop: 'onItemClick',
+            desc: '点击某一项；有回调时默认可点（cursor:pointer）',
+            type: '(item: TagGroupItem) => void',
+          },
+          {
+            prop: 'empty',
+            desc: '无项占位；传 null 不渲染',
+            type: 'React.ReactNode',
+            defaultVal: 'null',
+          },
+          {
+            prop: 'color',
+            desc: '未指定 color 的项默认语义色',
+            type: 'SemanticColor | string',
+            defaultVal: 'SEMANTIC_COLORS.DEFAULT',
+          },
+          { prop: 'className', desc: '列表容器 class', type: 'string' },
+        ],
+      },
+      {
+        componentName: 'TagGroupItem',
+        rows: [
+          { prop: 'key', desc: '项唯一键', type: 'React.Key', required: true },
+          {
+            prop: 'label',
+            desc: '展示文案（可含 ×N 等）',
+            type: 'React.ReactNode',
+            required: true,
+          },
+          { prop: 'color', desc: '单项语义色', type: 'SemanticColor | string' },
+          { prop: 'selected', desc: '选中反白', type: 'boolean' },
+          { prop: 'disabled', desc: '禁用点击', type: 'boolean' },
+          { prop: 'title', desc: '悬停 Tooltip；有值时外包 Tooltip', type: 'React.ReactNode' },
+        ],
+      },
       {
         componentName: 'TagsProps',
         rows: [

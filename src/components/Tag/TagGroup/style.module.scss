@@ -1,0 +1,13 @@
+@use '@/styles/mixins' as *;
+
+.tag-group-list {
+  @include flex-row(4px);
+  flex-wrap: wrap;
+  max-width: 100%;
+  align-items: center;
+}
+
+.tag-group-item-wrap {
+  display: inline-flex;
+  max-width: 100%;
+}
