@@ -31,6 +31,21 @@ tasks:
   note: |
     Related: S4.30.2103
     List/MultiField/TableList 删除 Popconfirm + danger；locale deleteConfirm；禁发版跳号
+- id: P6.1.202
+  plane_issue_id: eef81088-d45f-4c71-abe6-b1ba542e88b8
+  milestone: P6.1
+  name: P6.1.202 Chat 能力条齐套文档回写
+  status: 已完成
+  priority: P1
+  kind: docs
+  owner: 黄金芳
+  start_date: "2026-09-20"
+  target_date: "2026-09-22"
+  tags: [agent-hub, docs]
+  note: |
+    Related: P6.1.201
+    元仓 Plans/ChatCapabilityStrip-齐套.md + WorkRecord + S3 冒烟 #19–23 诚实未勾；仍≠G1
+
 - id: P6.3.153
   plane_issue_id: 53d79664-85cb-49d0-8692-5a753f19574a
   milestone: P6.3
