@@ -50,7 +50,7 @@ tasks:
   plane_issue_id: 53d79664-85cb-49d0-8692-5a753f19574a
   milestone: P6.3
   name: Audit 系统名/摘要回落/TRACE labels 并发版 0.1.116
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: feat
   owner: 黄金芳
@@ -60,6 +60,24 @@ tasks:
   note: |
     Related: P6.11.1169 · S4.30.2054 · P1.30.1029 · S4.30.2055
     systemAppNames；displaySummary METHOD+path；TRACE labels.json；chore v0.1.116；禁 G1
+    2026-09-22 关单：tgz 真装过；D-reg/浏览器冒烟书面债另记
+
+- id: P6.11.1170
+  plane_issue_id: 5efa5cf9-0527-4d18-99f6-7ff377d718ba
+  milestone: P6.11
+  name: P6.11.1170 登记105审计消息变量工单部署
+  status: 已完成
+  priority: P1
+  kind: docs
+  owner: 黄金芳
+  start_date: "2026-09-21"
+  target_date: "2026-09-21"
+  tags: [deploy, docs, audit, msg-center]
+  note: |
+    Related: S4.30.2056 · S4.30.2057 · P1.30.1030
+    arch 部署登记 09-21 已记；Commit a6fb4d67；仍≠G1
+    2026-09-22 关单
+
 - id: P6.3.152
   plane_issue_id: c9f6b249-907d-4845-b634-fb547eceb09e
   milestone: P6.3
