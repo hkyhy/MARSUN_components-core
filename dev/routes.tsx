@@ -17,12 +17,14 @@ export const showcaseRoutes = (
       <Route path="drillnav" element={<ExamplePage />} />
     </Route>
     <Route path="tools">
+      <Route path="actiontracking" element={<ExamplePage />} />
       <Route path="inbox" element={<ExamplePage />} />
       <Route path="messagecenter" element={<ExamplePage />} />
     </Route>
     <Route path="alert" element={<ExamplePage />} />
     <Route path="audit" element={<ExamplePage />} />
     <Route path="auth" element={<ExamplePage />} />
+    <Route path="buttongroup" element={<ExamplePage />} />
     <Route path="descriptions" element={<ExamplePage />} />
     <Route path="editor" element={<ExamplePage />} />
     <Route path="empty" element={<ExamplePage />} />

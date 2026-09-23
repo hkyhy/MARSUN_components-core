@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import type { ReactNode } from 'react';
-import ModulePageShell, { type ModulePageShellProps } from '../../Layout/ModulePageShell';
-import type { PageShellActionItem } from '../../Layout/PageShell';
+import ModulePageShell, { type ModulePageShellProps } from '../../../Layout/ModulePageShell';
+import type { PageShellActionItem } from '../../../Layout/PageShell';
 import styles from './style.module.scss';
 
 export type ActionTrackingShellProps = {

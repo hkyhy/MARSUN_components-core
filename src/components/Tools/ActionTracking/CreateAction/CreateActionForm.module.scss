@@ -1,0 +1,23 @@
+.create-action-form {
+  width: 100%;
+}
+
+.assignee-option {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.assignee-option-name {
+  color: var(--font-color, #1f2937);
+}
+
+.assignee-option-org {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--font-color-grey, #94a3b8);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

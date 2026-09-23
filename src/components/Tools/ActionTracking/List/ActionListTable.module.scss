@@ -1,0 +1,12 @@
+.action-list-table-card {
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-color-white);
+  border-radius: var(--radius-card, 8px);
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.action-list-table-scroll {
+  min-height: 0;
+}

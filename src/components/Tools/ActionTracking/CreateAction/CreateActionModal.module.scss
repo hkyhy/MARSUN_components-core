@@ -1,0 +1,14 @@
+/* 下发/新建：antd Modal；禁横向条（FormInfo Row gutter 负边距） */
+.create-action-modal {
+  :global(.marsun-form-info-modal-body) {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* 兜底：若 kne Empty 误挂进 modal content，勿露底栏 No data */
+  :global(.ant-modal-content) > :global(.ant-empty),
+  :global(.ant-modal-content) > :global(.select-list),
+  :global(.ant-modal-content) > :global(.select-list-scroll-list) {
+    display: none !important;
+  }
+}

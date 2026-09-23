@@ -1,0 +1,11 @@
+.action-filter-bar {
+  width: 100%;
+  min-width: 0;
+}
+
+.action-filter-bar-query-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--font-color-grey-2, #666);
+}

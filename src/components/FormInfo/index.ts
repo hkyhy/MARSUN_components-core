@@ -31,8 +31,19 @@ export {
   SuperSelect,
   SUPER_SELECT_ALL_VALUE,
   isSuperSelectAllValue,
+  createPagedSuperSelectApi,
+  pagedSuperSelectGetSearchProps,
+  pagedSuperSelectPagination,
+  PAGED_SUPER_SELECT_PAGE_SIZE,
 } from './fields';
-export type { SuperSelectProps, SuperSelectOption } from './fields';
+export type {
+  SuperSelectProps,
+  SuperSelectOption,
+  PagedSuperSelectOption,
+  PagedSuperSelectQuery,
+  PagedSuperSelectPage,
+  CreatePagedSuperSelectApiOptions,
+} from './fields';
 export { RichTextField } from './RichTextField';
 export type { RichTextFieldProps } from './RichTextField';
 export { VariableMentionField } from './VariableMentionInput';

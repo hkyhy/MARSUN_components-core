@@ -1,0 +1,13 @@
+/* 对齐 FormInfo 字段壳：间距与 label 色由 marsun-form-info / react-form 全局样式承担 */
+.person-role-cascader-field {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.person-role-cascader-field-label {
+  color: var(--font-color-grey, rgba(0, 0, 0, 0.45));
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 8px;
+  font-weight: normal;
+}

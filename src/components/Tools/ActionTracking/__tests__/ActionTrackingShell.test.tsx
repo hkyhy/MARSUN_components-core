@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { PageShellProvider } from '../../../Layout/PageShell';
-import ActionTrackingShell from '../ActionTrackingShell';
+import ActionTrackingShell from '../Shell/ActionTrackingShell';
 
 describe('ActionTrackingShell', () => {
   it('renders filter / list / modal slots', () => {

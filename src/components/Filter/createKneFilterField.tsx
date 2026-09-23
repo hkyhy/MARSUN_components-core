@@ -15,6 +15,7 @@ import {
 import styles from './createKneFilterField.module.scss';
 import classNames from 'classnames';
 import { renderSelectListItemContent } from '../ReactFilter/renderSelectListItemContent';
+import { defaultSuperSelectEmpty } from '../Form/superSelectEmpty';
 
 export type KneFilterFieldProps = BaseFilterProps & {
   value?: MarsunSelectValue;
@@ -148,6 +149,7 @@ export function createKneFilterField(
             valueType="all"
             value={draft ?? (single ? null : [])}
             onChange={handleDraftChange}
+            empty={(kneRest.empty as React.ReactNode | undefined) ?? defaultSuperSelectEmpty()}
             renderItemContent={
               (renderItemContent as ((ctx: unknown) => React.ReactNode) | undefined) ||
               renderSelectListItemContent

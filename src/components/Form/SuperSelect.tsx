@@ -20,9 +20,11 @@ import {
 } from '@/components/Filter/kneValueAdapter';
 import styles from './SuperSelect.module.scss';
 import { renderSelectListItemContent } from '@/components/ReactFilter/renderSelectListItemContent';
+import { defaultSuperSelectEmpty } from './superSelectEmpty';
 
 /** 与 @kne/super-select 默认 `selectedAllValue.value` 对齐 */
 export const SUPER_SELECT_ALL_VALUE = 'all';
+export { SUPER_SELECT_EMPTY_TEXT, defaultSuperSelectEmpty } from './superSelectEmpty';
 
 export type SuperSelectOption = {
   value: string | number;
@@ -118,6 +120,8 @@ const SuperSelectField: FC<
   api,
   getSearchProps: getSearchPropsProp,
   renderItemContent,
+  getPopupContainer: getPopupContainerProp,
+  empty: emptyProp,
   ...kneRest
 }) => {
   const mapsRef = useRef({
@@ -125,6 +129,11 @@ const SuperSelectField: FC<
     itemMap: {} as Record<string, KneSelectItem>,
   });
   const useApi = api != null;
+  /** Modal 内 kne boundary 会把列表 Empty 挂进弹层底栏；默认挂 body（可覆盖） */
+  const getPopupContainer =
+    getPopupContainerProp ??
+    (() => (typeof document !== 'undefined' ? document.body : (null as unknown as HTMLElement)));
+  const empty = emptyProp ?? defaultSuperSelectEmpty();
 
   const labelMapFromOptions = useMemo(() => {
     const map: Record<string, string> = {};
@@ -169,6 +178,9 @@ const SuperSelectField: FC<
         value={kneValue}
         onChange={handleChange}
         renderItemContent={renderItemContent || renderSelectListItemContent}
+        getPopupContainer={getPopupContainer}
+        overlayStyle={{ zIndex: 1400, ...(kneRest.overlayStyle as object | undefined) }}
+        empty={empty}
         {...(useApi
           ? {
               api,

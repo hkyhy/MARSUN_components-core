@@ -76,6 +76,18 @@ export {
   isSuperSelectAllValue,
 } from '@/components/Form/SuperSelect';
 export type { SuperSelectProps, SuperSelectOption } from '@/components/Form/SuperSelect';
+export {
+  createPagedSuperSelectApi,
+  pagedSuperSelectGetSearchProps,
+  pagedSuperSelectPagination,
+  PAGED_SUPER_SELECT_PAGE_SIZE,
+} from '@/components/Form/createPagedSuperSelectApi';
+export type {
+  PagedSuperSelectOption,
+  PagedSuperSelectQuery,
+  PagedSuperSelectPage,
+  CreatePagedSuperSelectApiOptions,
+} from '@/components/Form/createPagedSuperSelectApi';
 export const InputNumber = withNormalizedLabelTips(
   BaseInputNumber as ComponentType<FieldProps>,
 ) as ComponentType<FieldProps>;

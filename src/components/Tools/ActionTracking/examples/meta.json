@@ -1,0 +1,165 @@
+{
+  "title": "ActionTracking 行动跟踪",
+  "description": "页壳（Shell）→ 筛选门禁 canQuery → 列表壳 → 建单/下发（SuperSelect 任务类型/分厂 + 品种分页 api）→ 跟进/取消（HTML 消毒）。EP/API 均由 App 注入；showcase 用 fixture，≠ 业务 mock。",
+  "examples": [
+    {
+      "title": "1. 页壳 + 列表",
+      "description": "ActionTrackingShell + FilterBar + ListTable；新建入口由 actions 注入",
+      "component": "@/components/Tools/ActionTracking/examples/ShellPageDemo",
+      "sourcePath": "@/components/Tools/ActionTracking/examples/ShellPageDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "2. 建单 / 下发",
+      "description": "CreateActionModal：SuperSelect 任务类型/分厂；品种 loadVarietyPage 分页；create vs dispatch+lockedContext",
+      "component": "@/components/Tools/ActionTracking/examples/CreateActionDemo",
+      "sourcePath": "@/components/Tools/ActionTracking/examples/CreateActionDemo/index.tsx"
+    },
+    {
+      "title": "3. 筛选 canQuery",
+      "description": "F1：无创建时间窗 → 提示禁扫全表；有 from+to 才可查",
+      "component": "@/components/Tools/ActionTracking/examples/FilterCanQueryDemo",
+      "sourcePath": "@/components/Tools/ActionTracking/examples/FilterCanQueryDemo/index.tsx",
+      "block": true
+    },
+    {
+      "title": "4. 跟进 / 取消",
+      "description": "ActionFollowModal + CancelExecutionModal；摘要 HTML 经 sanitizeActionHtml（F3）",
+      "component": "@/components/Tools/ActionTracking/examples/FollowCancelDemo",
+      "sourcePath": "@/components/Tools/ActionTracking/examples/FollowCancelDemo/index.tsx"
+    },
+    {
+      "title": "5. 权限注入",
+      "description": "canCreate 开/关：App 注入 EP；core 不硬编码权限码",
+      "component": "@/components/Tools/ActionTracking/examples/PermissionsDemo",
+      "sourcePath": "@/components/Tools/ActionTracking/examples/PermissionsDemo/index.tsx",
+      "block": true
+    }
+  ],
+  "apiDoc": [
+    {
+      "componentName": "ActionTrackingShellProps",
+      "rows": [
+        {
+          "prop": "title",
+          "desc": "页标题",
+          "type": "string",
+          "defaultVal": "'行动跟踪'"
+        },
+        {
+          "prop": "actions",
+          "desc": "顶栏操作（如新建）；是否传入由 App EP 决定",
+          "type": "PageShellActionItem[]"
+        },
+        {
+          "prop": "filterSlot",
+          "desc": "筛选条插槽",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "listSlot",
+          "desc": "列表+分页插槽",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "modalSlot",
+          "desc": "新建/跟进/取消等弹层",
+          "type": "ReactNode"
+        }
+      ]
+    },
+    {
+      "componentName": "CreateActionModalProps",
+      "rows": [
+        {
+          "prop": "loaders",
+          "desc": "人员级联 + 分厂选项；禁 DEMO / 禁 core 直连业务 API",
+          "type": "CreateActionLoaders",
+          "required": true
+        },
+        {
+          "prop": "dimensionOptions",
+          "desc": "任务类型码表（展示名取自 App 数据）",
+          "type": "CreateActionDimensionOption[]",
+          "required": true
+        },
+        {
+          "prop": "onSubmit",
+          "desc": "校验通过后写 API；返回可选 actionId",
+          "type": "(payload) => Promise<string | undefined>",
+          "required": true
+        },
+        {
+          "prop": "titlePlaceholder",
+          "desc": "F4：任务标题 placeholder，App 注入",
+          "type": "string"
+        },
+        {
+          "prop": "metricPlaceholder",
+          "desc": "F4：关联指标 placeholder，App 注入",
+          "type": "string"
+        },
+        {
+          "prop": "lockedContext",
+          "desc": "分域只读上下文；有则不出分厂/品种/指标",
+          "type": "LockedContextField[]"
+        },
+        {
+          "prop": "variant",
+          "desc": "主动新建 / 预警下发",
+          "type": "'create' | 'dispatch'",
+          "defaultVal": "'create'"
+        }
+      ]
+    },
+    {
+      "componentName": "ActionFilterBarProps",
+      "rows": [
+        {
+          "prop": "list",
+          "desc": "ReactFilter list 配置（App 注入）",
+          "type": "unknown",
+          "required": true
+        },
+        {
+          "prop": "canQuery",
+          "desc": "F1：通常 = canQueryActionList；false 展示 hint",
+          "type": "boolean",
+          "defaultVal": "true"
+        },
+        {
+          "prop": "queryBlockedHint",
+          "desc": "!canQuery 时提示",
+          "type": "ReactNode"
+        }
+      ]
+    },
+    {
+      "componentName": "ActionFollowModalProps",
+      "rows": [
+        {
+          "prop": "view",
+          "desc": "跟进 / 复核 / 已取消只读",
+          "type": "'follow' | 'review' | 'cancelled'",
+          "required": true
+        },
+        {
+          "prop": "summarySlot",
+          "desc": "摘要区；可控 HTML 须 sanitizeActionHtml",
+          "type": "ReactNode",
+          "required": true
+        },
+        {
+          "prop": "formSlot",
+          "desc": "跟进/复核表单字段",
+          "type": "ReactNode"
+        },
+        {
+          "prop": "onSubmit",
+          "desc": "跟进或完成提交",
+          "type": "(values, mode) => Promise<void>"
+        }
+      ]
+    }
+  ]
+}

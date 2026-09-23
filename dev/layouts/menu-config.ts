@@ -22,12 +22,15 @@ export const MENU_ITEMS: MenuProps['items'] = [
   {
     key: 'navigation',
     label: 'Navigation',
-    children: [{ key: '/components/navigation/drillnav', label: 'DrillNav' }],
+    children: [
+      { key: '/components/navigation/drillnav', label: 'DrillNav' },
+    ],
   },
   {
     key: 'tools',
     label: 'Tools',
     children: [
+      { key: '/components/tools/actiontracking', label: 'ActionTracking' },
       { key: '/components/tools/inbox', label: 'Inbox' },
       { key: '/components/tools/messagecenter', label: 'MessageCenter' },
     ],
@@ -35,6 +38,7 @@ export const MENU_ITEMS: MenuProps['items'] = [
   { key: '/components/alert', label: 'Alert' },
   { key: '/components/audit', label: 'Audit' },
   { key: '/components/auth', label: 'Auth' },
+  { key: '/components/buttongroup', label: 'ButtonGroup' },
   { key: '/components/descriptions', label: 'Descriptions' },
   { key: '/components/editor', label: 'Editor' },
   { key: '/components/empty', label: 'Empty' },

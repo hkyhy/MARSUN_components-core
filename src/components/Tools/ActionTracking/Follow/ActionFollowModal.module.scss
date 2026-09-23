@@ -1,0 +1,72 @@
+.actions-follow-modal {
+  :global(.ant-modal-body) {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+}
+
+.actions-follow-modal-scroll-wrap {
+  max-height: min(65vh, 600px);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.actions-follow-modal-scroll {
+  min-height: 0;
+  max-height: min(65vh, 600px);
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.actions-follow-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  padding-right: 4px;
+  box-sizing: border-box;
+
+  :global(.ant-descriptions) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  :global(.ant-descriptions-view table) {
+    width: 100% !important;
+    table-layout: fixed;
+  }
+
+  :global(.ant-descriptions-item-label),
+  :global(.ant-descriptions-item-content) {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  :global(input),
+  :global(textarea),
+  :global(.ant-input),
+  :global(.ant-select),
+  :global(.ant-picker) {
+    max-width: 100%;
+  }
+
+  :global(.react-form__field),
+  :global(.react-form__field-main),
+  :global(.ant-form-item),
+  :global(.ant-row) {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+.actions-follow-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #f0f0f0);
+}

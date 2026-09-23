@@ -37,4 +37,18 @@ describe('SuperSelect api mode', () => {
     expect(src).toMatch(/useApi\s*\?\s*\{[\s\S]*api,/);
     expect(src).not.toMatch(/options=\{options\}\s*\n\s*single=\{single\}/);
   });
+
+  it('defaults getPopupContainer to document.body', () => {
+    const src = readFileSync(join(here, '../SuperSelect.tsx'), 'utf8');
+    expect(src).toMatch(/getPopupContainerProp \?\?/);
+    expect(src).toMatch(/document\.body/);
+  });
+
+  it('defaults empty to Chinese 暂无数据', () => {
+    const src = readFileSync(join(here, '../SuperSelect.tsx'), 'utf8');
+    expect(src).toMatch(/emptyProp \?\? defaultSuperSelectEmpty/);
+    const emptySrc = readFileSync(join(here, '../superSelectEmpty.tsx'), 'utf8');
+    expect(emptySrc).toMatch(/暂无数据/);
+    expect(emptySrc).not.toMatch(/No data/);
+  });
 });

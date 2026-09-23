@@ -16,6 +16,19 @@ export type { KneRuleResult } from './inputRangeRules';
 
 export { SuperSelect, SUPER_SELECT_ALL_VALUE, isSuperSelectAllValue } from './SuperSelect';
 export type { SuperSelectProps, SuperSelectOption } from './SuperSelect';
+export { SUPER_SELECT_EMPTY_TEXT, defaultSuperSelectEmpty } from './superSelectEmpty';
+export {
+  createPagedSuperSelectApi,
+  pagedSuperSelectGetSearchProps,
+  pagedSuperSelectPagination,
+  PAGED_SUPER_SELECT_PAGE_SIZE,
+} from './createPagedSuperSelectApi';
+export type {
+  PagedSuperSelectOption,
+  PagedSuperSelectQuery,
+  PagedSuperSelectPage,
+  CreatePagedSuperSelectApiOptions,
+} from './createPagedSuperSelectApi';
 
 /** @kne/form-info — 业务从包根导入，勿直连 @kne/form-info */
 export {
