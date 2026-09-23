@@ -136,7 +136,7 @@ node scripts/version-check.mjs --apply   # → 0.1.99
 
 也可在 Actions 中手动运行 **Publish npm**，填写已有 tag 重新发布。
 
-- 2026-09-23：`v0.1.121` — ActionListTable 默认 scrollX 对齐长状态列（重试发布）
+- 2026-09-23：`v0.1.122` — ActionListTable 默认 scrollX 对齐长状态列（0.1.121 已发后补发）
 
 ## 后续接入 maoyang
 
