@@ -5,4 +5,5 @@ export type {
   InboxBellListParams,
   InboxBellProps,
   InboxBellMessageType,
+  InboxBellHandle,
 } from './InboxBell';

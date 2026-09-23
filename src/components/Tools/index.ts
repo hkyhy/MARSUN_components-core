@@ -5,6 +5,12 @@ export type {
   InboxBellListParams,
   InboxBellProps,
   InboxBellMessageType,
+  InboxBellHandle,
+} from './Inbox';
+export {
+  INBOX_BADGE_REFRESH_EVENT,
+  requestInboxBadgeRefresh,
+  requestInboxBadgeRefreshAfterWrite,
 } from './Inbox';
 export { ActionTrackingShell } from './ActionTracking';
 export type { ActionTrackingShellProps } from './ActionTracking';

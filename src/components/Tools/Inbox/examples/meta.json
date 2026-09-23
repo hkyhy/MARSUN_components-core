@@ -36,7 +36,17 @@
           "desc": "点击条目跳转；不传则用 href 直接跳",
           "type": "(href: string, item: InboxBellItem) => void"
         },
-        { "prop": "pollMs", "desc": "角标轮询间隔；≤0 关闭", "type": "number" },
+        {
+          "prop": "pollMs",
+          "desc": "角标定时轮询间隔（ms）；默认 0 关闭。另有挂载/路由 locationKey/焦点/requestInboxBadgeRefresh 触发",
+          "type": "number",
+          "default": "0"
+        },
+        {
+          "prop": "locationKey",
+          "desc": "路由身份；变化时刷新角标（如 pathname）",
+          "type": "string | number"
+        },
         { "prop": "pageSize", "desc": "列表页大小", "type": "number" },
         { "prop": "title", "desc": "Drawer 标题", "type": "string" }
       ]
