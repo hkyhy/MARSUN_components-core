@@ -17,12 +17,13 @@ const mockRows: AuditEventListItem[] = [
     status: 'success',
     httpMethod: 'POST',
     path: '/api/v1/agents/x/energy-management/alertClaim',
-    durationMs: 42,
+    durationMs: 263,
     hasSteps: true,
     createdAt: dayjs().subtract(1, 'hour').toISOString(),
   },
 ];
 
+/** showcase 假数据：逐步 durationMs 供区间甘特演示；业务页禁止 mock 兜底 */
 const mockDetail: AuditEventDetail = {
   ...mockRows[0]!,
   requestCurl: "curl -X POST 'http://example' -H 'Authorization: ***REDACTED***'",
@@ -32,21 +33,42 @@ const mockDetail: AuditEventDetail = {
       stepType: 'REQUEST',
       title: '请求进入',
       status: 'finish',
+      durationMs: 2,
       input: { alertId: 'a1' },
     },
     {
       seq: 2,
       stepType: 'SQL',
+      title: 'query(doris)',
+      status: 'finish',
+      durationMs: 121,
+      sqlText: 'SELECT /* demo */ 1',
+      tables: ['demo_fact'],
+    },
+    {
+      seq: 3,
+      stepType: 'SQL',
       title: '更新处置表',
       status: 'finish',
+      durationMs: 80,
       sqlText: 'UPDATE s4_alert SET status=? WHERE id=?',
       tables: ['s4_alert'],
     },
     {
-      seq: 3,
+      seq: 4,
+      stepType: 'SQL',
+      title: 'query(doris)',
+      status: 'finish',
+      durationMs: 41,
+      sqlText: 'SELECT /* demo */ 2',
+      tables: ['demo_dim'],
+    },
+    {
+      seq: 5,
       stepType: 'RESPONSE',
       title: '响应完成',
       status: 'finish',
+      durationMs: 19,
       output: {
         httpStatus: 200,
         body: '{"code":0,"data":{"pageData":[{"factoryCode":"1600","machineNo":"细纱001"}…[truncated]',

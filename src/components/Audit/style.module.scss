@@ -97,3 +97,87 @@
   font-size: 12px;
   color: var(--font-color-grey, #666666);
 }
+
+/* DevTools Timing 风格区间条 */
+.timing {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
+.timingRows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timingRow {
+  display: grid;
+  grid-template-columns: minmax(96px, 160px) minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+}
+
+.timingLabel {
+  overflow: hidden;
+  color: var(--font-color, #1f1f1f);
+  font-size: 12px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timingTrack {
+  position: relative;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--bg-color-grey-1, #f5f5f5);
+}
+
+.timingBar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 2px;
+  min-width: 2px;
+}
+
+.timingBarThin {
+  width: 2px;
+}
+
+.timingMs {
+  color: var(--font-color, #1f1f1f);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.timingFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color-split, #f0f0f0);
+}
+
+.stepHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.stepHeaderTitle {
+  max-width: 100%;
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

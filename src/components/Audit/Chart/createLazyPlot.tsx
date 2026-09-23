@@ -56,3 +56,4 @@ export function createLazyPlot<K extends keyof ChartsModule>(exportName: K) {
 export const LazyBar = createLazyPlot('Bar');
 export const LazyColumn = createLazyPlot('Column');
 export const LazyLine = createLazyPlot('Line');
+export const LazyPie = createLazyPlot('Pie');

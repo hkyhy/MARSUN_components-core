@@ -72,12 +72,29 @@ describe('detail KPI / waterfall', () => {
     expect(kpi.hasAnyStepMs).toBe(true);
   });
 
-  it('waterfall omits steps without ms', () => {
+  it('waterfall omits steps without ms and accumulates range', () => {
     const data = waterfallChartData([
       { seq: 1, stepType: 'SQL', title: 'a', status: 'finish', durationMs: 5 },
       { seq: 2, stepType: 'SQL', title: 'b', status: 'finish' },
+      { seq: 3, stepType: 'SQL', title: 'c', status: 'finish', durationMs: 10 },
     ]);
-    expect(data).toEqual([{ title: 'a', durationMs: 5 }]);
+    expect(data).toEqual([
+      { title: '1. a', startMs: 0, endMs: 5, durationMs: 5, stepType: 'SQL' },
+      { title: '3. c', startMs: 5, endMs: 15, durationMs: 10, stepType: 'SQL' },
+    ]);
+  });
+
+  it('waterfall sorts by seq and always prefixes title with seq', () => {
+    const data = waterfallChartData([
+      { seq: 3, stepType: 'SQL', title: 'query', status: 'finish', durationMs: 20 },
+      { seq: 1, stepType: 'REQUEST', title: '请求进入', status: 'finish', durationMs: 2 },
+      { seq: 2, stepType: 'SQL', title: 'query', status: 'finish', durationMs: 8 },
+    ]);
+    expect(data).toEqual([
+      { title: '1. 请求进入', startMs: 0, endMs: 2, durationMs: 2, stepType: 'REQUEST' },
+      { title: '2. query', startMs: 2, endMs: 10, durationMs: 8, stepType: 'SQL' },
+      { title: '3. query', startMs: 10, endMs: 30, durationMs: 20, stepType: 'SQL' },
+    ]);
   });
 
   it('empty KPI when no detail', () => {

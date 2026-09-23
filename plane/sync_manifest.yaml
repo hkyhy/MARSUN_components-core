@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.156
+  next_task_id: P6.3.157
 tasks:
+- id: P6.3.156
+  plane_issue_id: de28497f-7cc6-414d-be1a-c13d50593a9c
+  milestone: P6.3
+  name: Audit 耗时区间甘特 + 性能占比饼图并发版
+  status: 进行中
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-09-23"
+  target_date: "2026-09-23"
+  tags: [frontend, Audit, waterfall, release]
+  note: |
+    Related: P6.3.153 · S4.30.2217
+    Timing 风格区间条；Collapse header 标签；AuditStepPerfChart 占比；chore(release) 待发
 - id: P6.3.155
   plane_issue_id: 6e35d454-87bc-46c1-b806-acdb6a048fe0
   milestone: P6.3

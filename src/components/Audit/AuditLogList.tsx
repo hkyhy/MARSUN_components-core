@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import React, { useMemo } from 'react';
 import { AuditDayStatsBar } from './AuditDayStatsBar';
+import { AuditStepPerfChart } from './AuditStepPerfChart';
 import { AuditWaterfall } from './AuditWaterfall';
 import { computeDetailKpi, isErrorStep } from './detailKpi';
 import { formatAuditJson, isTruncatedAuditText } from './formatAuditJson';
@@ -143,24 +144,49 @@ function renderBody(label: string, value: unknown): React.ReactNode {
   );
 }
 
-export const AuditStepContent: React.FC<{ step: AuditStep }> = ({ step }) => {
+function stepTypeTagColor(stepType: string): string {
+  const t = stepType.toUpperCase();
+  if (t === 'SQL') return SEMANTIC_COLORS.CYAN;
+  if (t === 'ERROR') return SEMANTIC_COLORS.DANGER;
+  if (t === 'RESPONSE') return SEMANTIC_COLORS.SUCCESS;
+  if (t === 'REQUEST') return SEMANTIC_COLORS.DEFAULT;
+  if (t === 'AUTH' || t === 'UPSTREAM') return SEMANTIC_COLORS.WARNING;
+  return SEMANTIC_COLORS.INFO;
+}
+
+/** Collapse header：类型 / HTTP / 耗时 / 表 / 失败 — 折叠态也可见 */
+export const AuditStepHeader: React.FC<{ step: AuditStep }> = ({ step }) => {
   const httpStatus = parseHttpStatus(step.output);
+  const tables = step.tables?.filter(Boolean) ?? [];
+  return (
+    <div className={styles.stepHeader}>
+      <span className={styles.stepHeaderTitle}>{step.title || step.stepType}</span>
+      {step.stepType ? (
+        <SemanticTag color={stepTypeTagColor(String(step.stepType))}>{step.stepType}</SemanticTag>
+      ) : null}
+      {httpStatus != null ? (
+        <SemanticTag color={httpStatusColor(httpStatus)}>HTTP {httpStatus}</SemanticTag>
+      ) : null}
+      {typeof step.durationMs === 'number' ? (
+        <SemanticTag color={SEMANTIC_COLORS.DEFAULT}>{step.durationMs} ms</SemanticTag>
+      ) : null}
+      {tables.length > 0 ? (
+        <SemanticTag color={SEMANTIC_COLORS.INFO}>表：{tables.join(', ')}</SemanticTag>
+      ) : null}
+      {step.sqlText && String(step.stepType).toUpperCase() !== 'SQL' ? (
+        <SemanticTag color={SEMANTIC_COLORS.CYAN}>SQL</SemanticTag>
+      ) : null}
+      {isErrorStep(step) ? <SemanticTag color={SEMANTIC_COLORS.DANGER}>失败</SemanticTag> : null}
+    </div>
+  );
+};
+
+export const AuditStepContent: React.FC<{ step: AuditStep }> = ({ step }) => {
   return (
     <div className={styles.stepBody}>
-      <div className={styles.stepMeta}>
-        {step.stepType ? (
-          <SemanticTag color={SEMANTIC_COLORS.DEFAULT}>{step.stepType}</SemanticTag>
-        ) : null}
-        {httpStatus != null ? (
-          <SemanticTag color={httpStatusColor(httpStatus)}>HTTP {httpStatus}</SemanticTag>
-        ) : null}
-        {step.occurredAt ? (
-          <Typography.Text type="secondary">{formatCreatedAt(step.occurredAt)}</Typography.Text>
-        ) : null}
-        {typeof step.durationMs === 'number' ? (
-          <Typography.Text type="secondary">{step.durationMs} ms</Typography.Text>
-        ) : null}
-      </div>
+      {step.occurredAt ? (
+        <Typography.Text type="secondary">{formatCreatedAt(step.occurredAt)}</Typography.Text>
+      ) : null}
       {step.sqlText ? (
         <>
           <div className={styles.blockLabel}>SQL</div>
@@ -168,9 +194,6 @@ export const AuditStepContent: React.FC<{ step: AuditStep }> = ({ step }) => {
             <pre className={styles.jsonBlock}>{step.sqlText}</pre>
           </VirtualScrollbar>
         </>
-      ) : null}
-      {step.tables?.length ? (
-        <Typography.Text type="secondary">表：{step.tables.join(', ')}</Typography.Text>
       ) : null}
       {step.errorMessage ? (
         <Typography.Text type="danger">{step.errorMessage}</Typography.Text>
@@ -314,11 +337,15 @@ export const AuditEventDetailView: React.FC<{
         <CommonDescriptions content={descContent} column={3} bordered size="small" />
       </InfoPage.Part>
 
-      <InfoPage.Part title="耗时瀑布" subtitle="逐步 durationMs（无 SQL 原文）">
+      <InfoPage.Part title="耗时瀑布">
         <AuditWaterfall steps={steps} />
       </InfoPage.Part>
 
-      <InfoPage.Part title="执行流程" subtitle="默认折叠；失败步展开；展开后见 SQL/正文">
+      <InfoPage.Part title="性能分析">
+        <AuditStepPerfChart steps={steps} />
+      </InfoPage.Part>
+
+      <InfoPage.Part title="执行流程">
         {detail.stepsTruncated ? (
           <div className={styles.truncateNote}>
             步骤已截断：展示 {steps.length} / {detail.stepsTotal ?? steps.length}
@@ -331,17 +358,7 @@ export const AuditEventDetailView: React.FC<{
             defaultActiveKey={errorKeys}
             items={steps.map((s, i) => ({
               key: String(i),
-              label: (
-                <Space size={8} wrap>
-                  <span>{s.title || s.stepType}</span>
-                  {typeof s.durationMs === 'number' ? (
-                    <Typography.Text type="secondary">{s.durationMs} ms</Typography.Text>
-                  ) : null}
-                  {isErrorStep(s) ? (
-                    <SemanticTag color={SEMANTIC_COLORS.DANGER}>失败</SemanticTag>
-                  ) : null}
-                </Space>
-              ),
+              label: <AuditStepHeader step={s} />,
               children: <AuditStepContent step={s} />,
             }))}
           />
