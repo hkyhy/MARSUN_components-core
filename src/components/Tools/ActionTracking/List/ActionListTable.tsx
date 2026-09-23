@@ -44,7 +44,7 @@ function ActionListTable<T extends ActionListRowBase>({
   tableName,
   fetchColumnConfig,
   saveColumnConfig,
-  scrollX = 1560,
+  scrollX = 1608,
   emptyText = '暂无跟踪任务，可点击「新建任务」主动添加',
   emptyIcon,
   className,
