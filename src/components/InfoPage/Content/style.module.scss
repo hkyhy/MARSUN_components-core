@@ -17,6 +17,42 @@
 
     line-height: 18px;
   }
+
+  /* 上 label / 下 value 平铺网格（单机详情等只读指标） */
+  &.layout-stack {
+    .item-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .label {
+      font-size: 12px;
+      line-height: 18px;
+      color: var(--font-color-grey-1, var(--ant-color-text-secondary, #8c8c8c));
+    }
+
+    .content-content {
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 500;
+      color: var(--font-color, var(--ant-color-text, #141414));
+    }
+
+    &.size-small {
+      .label {
+        font-size: 12px;
+      }
+
+      .content-content {
+        font-size: 13px;
+        line-height: 20px;
+      }
+    }
+  }
 }
 
 .item {

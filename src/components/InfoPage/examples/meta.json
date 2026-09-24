@@ -24,6 +24,13 @@
       "block": true
     },
     {
+      "title": "平铺指标 stack",
+      "description": "Content layout=stack：FlexBox 平铺，够宽一行排完；分区用 InfoPage.Part",
+      "component": "@/components/InfoPage/examples/InfoPageContentStackDemo",
+      "sourcePath": "@/components/InfoPage/examples/InfoPageContentStackDemo/index.tsx",
+      "block": true
+    },
+    {
       "title": "描述列表",
       "description": "InfoPageDescriptions 二维数组详情展示",
       "component": "@/components/InfoPage/examples/InfoPageDescriptionsDemo",

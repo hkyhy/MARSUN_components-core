@@ -29,12 +29,24 @@ export interface ContentItem {
   display?: boolean | ((item: ContentItem, list: ContentItem[]) => boolean);
 }
 
+export type ContentLayout = 'inline' | 'stack';
+
 export interface ContentProps extends BaseComponentProps {
   list?: ContentItem[];
   labelAlign?: 'left' | 'right' | 'auto';
+  /** inline 布局列数；stack 布局忽略（改用 FlexBox 按条数自适应一行排满） */
   col?: number;
-  gutter?: number;
+  gutter?: number | [number, number];
   size?: 'small';
+  /**
+   * inline（默认）：标签与值横排，标签后缀「：」
+   * stack：标签在上、值在下；内部 FlexBox，容器够宽时一行排完所有字段
+   */
+  layout?: ContentLayout;
+  /** stack 时覆盖 FlexBox columns；默认按 list.length × minItemWidth 生成 */
+  columns?: Array<{ width: number; col: number; size?: number }>;
+  /** stack 单项最小宽度（px），默认 140 */
+  minItemWidth?: number;
   itemRender?: (component: ReactNode, item: ContentItem & { index: number }) => ReactNode;
 }
 

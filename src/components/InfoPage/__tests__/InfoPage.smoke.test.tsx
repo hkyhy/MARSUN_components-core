@@ -15,6 +15,7 @@ import InfoPage, {
   computeColumnsValue,
   TableView,
 } from '../index';
+import { buildStackFlexColumns } from '../Content/index.jsx';
 
 describe('InfoPage smoke', () => {
   it('exports key members', () => {
@@ -46,5 +47,37 @@ describe('InfoPage smoke', () => {
     );
     expect(screen.getByText('基本信息')).toBeInTheDocument();
     expect(screen.getByText('测试设备')).toBeInTheDocument();
+  });
+
+  it('buildStackFlexColumns prefers one row when wide enough', () => {
+    const cols = buildStackFlexColumns(5, 140);
+    expect(cols).toHaveLength(5);
+    expect(cols[0]).toEqual({ width: 140, col: 1 });
+    expect(cols[4]).toEqual({ width: 700, col: 5 });
+  });
+
+  it('renders stack layout wrapper for FlexBox', () => {
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+      configurable: true,
+      get() {
+        return 900;
+      },
+    });
+    const { container } = render(
+      <Content
+        layout="stack"
+        gutter={[16, 10]}
+        list={[
+          { label: '窗内超期次数', content: '0' },
+          { label: '最近保养类型', content: '保养' },
+          { label: '上次保养日', content: '2026-09-12' },
+          { label: '当前周期（天）', content: '30' },
+          { label: '当前超期（天）', content: '—' },
+        ]}
+      />,
+    );
+    const root = container.querySelector('[data-layout="stack"]');
+    expect(root).not.toBeNull();
+    expect(root?.className).toMatch(/layout-stack/);
   });
 });

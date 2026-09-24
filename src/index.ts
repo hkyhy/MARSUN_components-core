@@ -207,6 +207,12 @@ export {
   Report,
   Score,
 } from './components/InfoPage';
+export type {
+  ContentItem,
+  ContentLayout,
+  ContentProps,
+  InfoPagePartProps,
+} from './components/InfoPage';
 // FlexBox（@kne/flex-box vendor）；供 FormInfo 响应式列布局
 export {
   FlexBox,
