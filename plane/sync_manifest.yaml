@@ -6,7 +6,7 @@ tasks:
   plane_issue_id: null
   milestone: P6.3
   name: InfoPage Content layout=stack FlexBox 平铺指标并发版
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: feat
   owner: 黄金芳
