@@ -1,11 +1,12 @@
 import { FileTags } from '@/components/Tag';
 import { Trash2, Download, Eye } from '@/components/Icons';
 import { formatFileSize } from '@/utils/format';
-import { Button, Tooltip } from 'antd';
+import { Button, Tooltip, message } from 'antd';
 import React, { useState } from 'react';
 import FilePreviewModal from '../FilePreviewModal';
 import { getFileIcon, getFileTypeName, normalizeFileDisplayItem } from '../fileDisplay';
 import type { FileDisplayItem } from '../types';
+import { fetchWithMarsunAuth, useFileAuthHeaders } from '../utils/authedFetch';
 import styles from './style.module.scss';
 import classNames from 'classnames';
 
@@ -41,13 +42,29 @@ const FileItem: React.FC<FileItemProps> = ({
 }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const resolvedFile = normalizeFileDisplayItem(file);
+  const authHeaders = useFileAuthHeaders();
 
   const handleDownload = () => {
     if (onDownload) {
       onDownload(resolvedFile);
       return;
     }
-    if (resolvedFile.url) window.open(resolvedFile.url, '_blank');
+    if (!resolvedFile.url) return;
+    void (async () => {
+      try {
+        const res = await fetchWithMarsunAuth(resolvedFile.url!, authHeaders);
+        if (!res.ok) throw new Error(`下载失败 (${res.status})`);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = resolvedFile.name || 'download';
+        a.click();
+        URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        message.error(err instanceof Error ? err.message : '下载失败');
+      }
+    })();
   };
 
   const handlePreview = () => {

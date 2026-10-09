@@ -2,6 +2,12 @@ import { Empty, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { getPreviewKind, needsBlobPreview } from '../previewKind';
 import type { FileDisplayItem } from '../types';
+import {
+  fetchAuthedArrayBuffer,
+  fetchAuthedObjectUrl,
+  useFileAuthHeaderKey,
+  useFileAuthHeaders,
+} from '../utils/authedFetch';
 import styles from './style.module.scss';
 import classNames from 'classnames';
 
@@ -11,10 +17,55 @@ interface FilePreviewContentProps {
   unsupportedMessage?: string;
 }
 
-async function fetchPreviewBlob(url: string): Promise<ArrayBuffer> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`预览加载失败 (${res.status})`);
-  return res.arrayBuffer();
+/** 受护 URL → objectURL（img/iframe/video）；公开 URL 原样返回 */
+function useAuthedObjectUrl(previewUrl?: string): {
+  src: string | undefined;
+  loading: boolean;
+  error: string | null;
+} {
+  const headers = useFileAuthHeaders();
+  const authKey = useFileAuthHeaderKey();
+  const [src, setSrc] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!previewUrl) {
+      setSrc(undefined);
+      setError(null);
+      setLoading(false);
+      return undefined;
+    }
+    let cancelled = false;
+    let revoke: (() => void) | undefined;
+    setLoading(true);
+    setError(null);
+    void (async () => {
+      try {
+        const got = await fetchAuthedObjectUrl(previewUrl, headers);
+        if (cancelled) {
+          got.revoke();
+          return;
+        }
+        revoke = got.revoke;
+        setSrc(got.objectUrl);
+      } catch (err) {
+        if (!cancelled) {
+          setSrc(undefined);
+          setError(err instanceof Error ? err.message : '预览加载失败');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      revoke?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- headers 随 authKey 变
+  }, [previewUrl, authKey]);
+
+  return { src, loading, error };
 }
 
 function mapPreviewError(err: unknown, kind: string): string {
@@ -201,6 +252,13 @@ const FilePreviewContent: React.FC<FilePreviewContentProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const kind = getPreviewKind(file);
+  const authHeaders = useFileAuthHeaders();
+  const authKey = useFileAuthHeaderKey();
+  const media = useAuthedObjectUrl(
+    kind === 'image' || kind === 'pdf' || kind === 'iframe' || kind === 'video' || kind === 'audio'
+      ? previewUrl
+      : undefined,
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -220,7 +278,7 @@ const FilePreviewContent: React.FC<FilePreviewContentProps> = ({
 
       setLoading(true);
       try {
-        const data = await fetchPreviewBlob(previewUrl);
+        const data = await fetchAuthedArrayBuffer(previewUrl, authHeaders);
         if (cancelled) return;
 
         if (kind === 'excel') {
@@ -250,36 +308,77 @@ const FilePreviewContent: React.FC<FilePreviewContentProps> = ({
       cleanupRef.current = undefined;
       container.innerHTML = '';
     };
-  }, [previewUrl, kind, file.id, file.name]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- authHeaders 随 authKey
+  }, [previewUrl, kind, file.id, file.name, authKey]);
 
   if (!previewUrl) {
     return <Empty description="无可预览地址" />;
   }
 
   if (kind === 'image') {
+    if (media.loading) {
+      return (
+        <div className={styles['file-preview-media-wrap']}>
+          <Spin />
+        </div>
+      );
+    }
+    if (media.error || !media.src) {
+      return <Empty description={media.error || '预览加载失败'} />;
+    }
     return (
       <div className={styles['file-preview-media-wrap']}>
-        <img src={previewUrl} alt={file.name} className={styles['file-preview-image']} />
+        <img src={media.src} alt={file.name} className={styles['file-preview-image']} />
       </div>
     );
   }
 
   if (kind === 'pdf' || kind === 'iframe') {
-    return <iframe src={previewUrl} title={file.name} className={styles['file-preview-iframe']} />;
+    if (media.loading) {
+      return (
+        <div className={styles['file-preview-media-wrap']}>
+          <Spin />
+        </div>
+      );
+    }
+    if (media.error || !media.src) {
+      return <Empty description={media.error || '预览加载失败'} />;
+    }
+    return <iframe src={media.src} title={file.name} className={styles['file-preview-iframe']} />;
   }
 
   if (kind === 'video') {
+    if (media.loading) {
+      return (
+        <div className={styles['file-preview-media-wrap']}>
+          <Spin />
+        </div>
+      );
+    }
+    if (media.error || !media.src) {
+      return <Empty description={media.error || '预览加载失败'} />;
+    }
     return (
       <div className={styles['file-preview-media-wrap']}>
-        <video src={previewUrl} controls className={styles['file-preview-video']} />
+        <video src={media.src} controls className={styles['file-preview-video']} />
       </div>
     );
   }
 
   if (kind === 'audio') {
+    if (media.loading) {
+      return (
+        <div className={styles['file-preview-audio-wrap']}>
+          <Spin />
+        </div>
+      );
+    }
+    if (media.error || !media.src) {
+      return <Empty description={media.error || '预览加载失败'} />;
+    }
     return (
       <div className={styles['file-preview-audio-wrap']}>
-        <audio src={previewUrl} controls className={styles['file-preview-audio']} />
+        <audio src={media.src} controls className={styles['file-preview-audio']} />
       </div>
     );
   }

@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.160
+  next_task_id: P6.3.162
 tasks:
+- id: P6.3.161
+  plane_issue_id: 76869234-5666-44bc-b7ce-656087342d76 # 暂挂 P6.3.159；CREATE 细项失败时仍可交付
+  milestone: P6.3
+  name: File 预览/下载走 MarsunCoreProvider Bearer + pack 0.1.126
+  status: 进行中
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-10-09"
+  target_date: "2026-10-09"
+  tags: [frontend, components, FilePreview, FileItem, release]
+  note: |
+    Related: S4.30.2304
+    authedFetch；img/pdf/office 预览与下载带 Authorization；本地 pack 0.1.126
 - id: P6.3.159
   plane_issue_id: 76869234-5666-44bc-b7ce-656087342d76
   milestone: P6.3

@@ -19,3 +19,9 @@ export { default as FilePreviewLink } from './FilePreviewLink';
 export type { FilePreviewLinkProps } from './FilePreviewLink';
 export { downloadFileItem, getFileDownloadAuthHeaders, getFileDownloadUrl } from './utils/download';
 export type { FileDownloadAuthOptions, FileDownloadOptions } from './utils/download';
+export {
+  fetchAuthedArrayBuffer,
+  fetchAuthedObjectUrl,
+  fetchWithMarsunAuth,
+  needsAuthFetch,
+} from './utils/authedFetch';

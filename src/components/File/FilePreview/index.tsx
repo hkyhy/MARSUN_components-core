@@ -1,11 +1,12 @@
 import { formatFileSize } from '@/utils/format';
 import { CloudDownload } from '@/components/Icons';
 import SemanticTag from '@/components/Tag/SemanticTag';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import React from 'react';
 import { getFileIcon, getFileTypeName, normalizeFileDisplayItem } from '../fileDisplay';
 import { getFileTypeTagColor, getPreviewKind } from '../previewKind';
 import type { FileDisplayItem } from '../types';
+import { fetchWithMarsunAuth, useFileAuthHeaders } from '../utils/authedFetch';
 import FilePreviewContent from './FilePreviewContent';
 import styles from './style.module.scss';
 import classNames from 'classnames';
@@ -39,15 +40,29 @@ const FilePreview: React.FC<FilePreviewProps> = ({
   const canDownload = Boolean(onDownload || resolvedDownloadUrl);
   const previewKind = getPreviewKind(resolvedFile);
   const typeLabel = getFileTypeName(resolvedFile.name, resolvedFile.mimeType);
+  const authHeaders = useFileAuthHeaders();
 
   const handleDownload = () => {
     if (onDownload) {
       onDownload(resolvedFile);
       return;
     }
-    if (resolvedDownloadUrl) {
-      window.open(resolvedDownloadUrl, '_blank', 'noopener,noreferrer');
-    }
+    if (!resolvedDownloadUrl) return;
+    void (async () => {
+      try {
+        const res = await fetchWithMarsunAuth(resolvedDownloadUrl, authHeaders);
+        if (!res.ok) throw new Error(`下载失败 (${res.status})`);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = resolvedFile.name || 'download';
+        a.click();
+        URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        message.error(err instanceof Error ? err.message : '下载失败');
+      }
+    })();
   };
 
   return (
@@ -64,7 +79,9 @@ const FilePreview: React.FC<FilePreviewProps> = ({
               </span>
               <SemanticTag color={getFileTypeTagColor(previewKind)}>{typeLabel}</SemanticTag>
               {resolvedFile.size != null && (
-                <span className={styles['file-preview-size']}>{formatFileSize(resolvedFile.size)}</span>
+                <span className={styles['file-preview-size']}>
+                  {formatFileSize(resolvedFile.size)}
+                </span>
               )}
             </div>
             {canDownload && (
