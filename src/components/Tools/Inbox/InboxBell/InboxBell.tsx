@@ -70,6 +70,14 @@ export type InboxBellProps = {
   className?: string;
   /** Drawer 标题 */
   title?: string;
+  /**
+   * 同源 SSE 路径（默认 `/api/v1/msg-center/inbox/stream`）。
+   * 传 `false` 关闭。须配合 `getAccessToken`（EventSource 用 `access_token` 查询参数传 JWT）。
+   * 失败回落写后刷新 / 焦点刷新，不定时轮询冒充。
+   */
+  streamPath?: string | false;
+  /** 返回当前 JWT；空则不开 SSE */
+  getAccessToken?: () => string | null | undefined;
 };
 
 export type InboxBellHandle = {
@@ -102,7 +110,7 @@ function messageTypeLabel(raw?: string): string {
 /**
  * 通用站内信铃铛：列表 / 已读 / Tab / 角标。
  * 不含认领、行动等业务动作；由注入的 fetchInbox / markRead / onNavigate 对接消息服务。
- * 默认不定时轮询；有消息侧靠业务回调 / 路由 / 焦点再拉角标（真·SSE push 他窗）。
+ * 默认不定时轮询；有消息侧靠业务回调 / 路由 / 焦点 / 可选 SSE 再拉角标。
  */
 const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell(
   {
@@ -114,6 +122,8 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     pageSize = 50,
     className,
     title = '站内信',
+    streamPath = '/api/v1/msg-center/inbox/stream',
+    getAccessToken,
   },
   ref,
 ) {
@@ -218,6 +228,42 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     window.addEventListener(INBOX_BADGE_REFRESH_EVENT, onExternal);
     return () => window.removeEventListener(INBOX_BADGE_REFRESH_EVENT, onExternal);
   }, [refreshBadge]);
+
+  useEffect(() => {
+    if (streamPath === false) return undefined;
+    if (typeof getAccessToken !== 'function') return undefined;
+    if (typeof window === 'undefined' || typeof EventSource === 'undefined') return undefined;
+
+    const token = String(getAccessToken() || '').trim();
+    if (!token) return undefined;
+
+    const base = String(streamPath || '/api/v1/msg-center/inbox/stream').trim();
+    const url = new URL(base, window.location.origin);
+    url.searchParams.set('access_token', token);
+
+    let es: EventSource;
+    try {
+      es = new EventSource(url.toString());
+    } catch {
+      return undefined;
+    }
+
+    const onBadge = () => {
+      void refreshBadge();
+    };
+    es.addEventListener('badge', onBadge);
+    es.addEventListener('inbox', onBadge);
+    // 失败回落写后/焦点刷新；关连接防 EventSource 自动重连刷屏
+    es.onerror = () => {
+      es.close();
+    };
+
+    return () => {
+      es.removeEventListener('badge', onBadge);
+      es.removeEventListener('inbox', onBadge);
+      es.close();
+    };
+  }, [streamPath, getAccessToken, refreshBadge]);
 
   useEffect(() => {
     if (open) void load();
