@@ -1,4 +1,4 @@
-import { Badge, Button, Drawer, Space, Tag, message } from 'antd';
+import { Badge, Button, Checkbox, Drawer, Space, message, notification } from 'antd';
 import classNames from 'classnames';
 import {
   forwardRef,
@@ -14,8 +14,15 @@ import { Bell } from '@/components/Icons';
 import { PageSpin } from '@/components/Layout';
 import { SegmentedRadio } from '@/components/SegmentedRadio';
 import { StateBar } from '@/components/StateBar';
+import { SEMANTIC_COLORS, SemanticTag } from '@/components/Tag';
 import { sanitizeInboxHtml } from '../sanitizeInboxHtml';
 import { INBOX_BADGE_REFRESH_EVENT } from '../requestInboxBadgeRefresh';
+import {
+  loadInboxToastPrefs,
+  saveInboxToastPrefs,
+  shouldToastForMessageType,
+  type InboxToastPrefs,
+} from './toastPrefs';
 import styles from './style.module.scss';
 
 export type InboxBellMessageType = 'alert' | 'action' | 'remind' | string;
@@ -107,8 +114,42 @@ function messageTypeLabel(raw?: string): string {
   return TYPE_TAG_LABEL[key] || key;
 }
 
+function messageTypeSemanticColor(raw?: string): string {
+  const key = String(raw || '')
+    .trim()
+    .toLowerCase();
+  if (key === 'alert') return SEMANTIC_COLORS.DANGER;
+  if (key === 'action') return SEMANTIC_COLORS.PRIMARY;
+  if (key === 'remind') return SEMANTIC_COLORS.WARNING;
+  return SEMANTIC_COLORS.DEFAULT;
+}
+
+type BadgePreview = {
+  messageType?: string;
+  title?: string;
+  summary?: string;
+};
+
+function parseBadgePreview(raw: string): BadgePreview | null {
+  try {
+    const data = JSON.parse(raw) as Record<string, unknown>;
+    if (!data || typeof data !== 'object') return null;
+    const messageType = String(data.messageType || data.message_type || '').trim();
+    const title = String(data.title || '').trim();
+    const summary = String(data.summary || '').trim();
+    if (!messageType && !title && !summary) return null;
+    return {
+      messageType: messageType || undefined,
+      title: title || undefined,
+      summary: summary || undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /**
- * 通用站内信铃铛：列表 / 已读 / Tab / 角标。
+ * 通用站内信铃铛：列表 / 已读 / Tab / 角标 / 可选 SSE toast。
  * 不含认领、行动等业务动作；由注入的 fetchInbox / markRead / onNavigate 对接消息服务。
  * 默认不定时轮询；有消息侧靠业务回调 / 路由 / 焦点 / 可选 SSE 再拉角标。
  */
@@ -135,8 +176,11 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
   const [unreadByType, setUnreadByType] = useState<Partial<Record<string, number>>>({});
   const [messageType, setMessageType] = useState<string>('');
   const [readFilter, setReadFilter] = useState<'all' | 'unread' | 'read'>('all');
+  const [toastPrefs, setToastPrefs] = useState<InboxToastPrefs>(() => loadInboxToastPrefs());
   const focusDebounceRef = useRef<number | null>(null);
   const locationKeyPrimedRef = useRef(false);
+  const toastPrefsRef = useRef(toastPrefs);
+  toastPrefsRef.current = toastPrefs;
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -248,8 +292,25 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
       return undefined;
     }
 
-    const onBadge = () => {
+    const onBadge = (ev: Event) => {
       void refreshBadge();
+      const msgEv = ev as MessageEvent;
+      const preview = typeof msgEv?.data === 'string' ? parseBadgePreview(msgEv.data) : null;
+      if (!preview) return;
+      if (!shouldToastForMessageType(toastPrefsRef.current, preview.messageType)) return;
+      const toastTitle = preview.title || '新站内信';
+      const toastDesc = preview.summary || undefined;
+      notification.open({
+        key: `inbox-badge-${preview.messageType || 'msg'}-${Date.now()}`,
+        message: toastTitle,
+        description: toastDesc,
+        placement: 'topRight',
+        duration: 4.5,
+        onClick: () => {
+          notification.destroy();
+          setOpen(true);
+        },
+      });
     };
     es.addEventListener('badge', onBadge);
     es.addEventListener('inbox', onBadge);
@@ -280,6 +341,14 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
       }),
     [unreadByType, unreadTotal],
   );
+
+  const updateToastPref = (key: keyof InboxToastPrefs, checked: boolean) => {
+    setToastPrefs((prev) => {
+      const next = { ...prev, [key]: checked };
+      saveInboxToastPrefs(next);
+      return next;
+    });
+  };
 
   const handleOpenItem = async (item: InboxBellItem) => {
     if (!item.read) {
@@ -350,48 +419,74 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
             ]}
           />
         </div>
+        <div className={styles.toastPrefs} data-testid="inbox-toast-prefs">
+          <div className={styles.toastPrefsTitle}>消息提示</div>
+          <p className={styles.toastPrefsHint}>本机浏览器偏好，非租户策略</p>
+          <Space size={12} wrap>
+            <Checkbox
+              checked={toastPrefs.alert}
+              onChange={(e) => updateToastPref('alert', e.target.checked)}
+            >
+              预警弹出
+            </Checkbox>
+            <Checkbox
+              checked={toastPrefs.action}
+              onChange={(e) => updateToastPref('action', e.target.checked)}
+            >
+              行动弹出
+            </Checkbox>
+            <Checkbox
+              checked={toastPrefs.remind}
+              onChange={(e) => updateToastPref('remind', e.target.checked)}
+            >
+              提醒弹出
+            </Checkbox>
+          </Space>
+        </div>
         {error ? <p className={styles.error}>{error}</p> : null}
         <PageSpin spinning={loading}>
           {!loading && !error && items.length === 0 ? (
             <Empty description="暂无站内信" />
           ) : (
             <ul className={styles.list}>
-              {items.map((item) => (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    className={classNames(styles.item, !item.read && styles.itemUnread)}
-                    onClick={() => void handleOpenItem(item)}
-                  >
-                    <Space orientation="vertical" size={2} style={{ width: '100%' }}>
-                      <span className={styles.itemTitle}>{item.title || '（无标题）'}</span>
-                      {(() => {
-                        const safeHtml = sanitizeInboxHtml(item.bodyHtml);
-                        if (safeHtml) {
-                          return (
-                            <div
-                              className={styles.itemBodyHtml}
-                              dangerouslySetInnerHTML={{ __html: safeHtml }}
-                            />
-                          );
-                        }
-                        return item.summary ? (
+              {items.map((item) => {
+                const typeLabel = messageTypeLabel(item.messageType);
+                const safeHtml = sanitizeInboxHtml(item.bodyHtml);
+                return (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      className={classNames(styles.item, !item.read && styles.itemUnread)}
+                      onClick={() => void handleOpenItem(item)}
+                    >
+                      <div className={styles.itemHeader}>
+                        <span className={styles.itemHeaderLeft}>
+                          <span className={styles.itemTitle}>{item.title || '（无标题）'}</span>
+                          {typeLabel ? (
+                            <SemanticTag
+                              color={messageTypeSemanticColor(item.messageType)}
+                              className={styles.typeTag}
+                            >
+                              {typeLabel}
+                            </SemanticTag>
+                          ) : null}
+                        </span>
+                        <span className={styles.itemTime}>{item.createdAt || ''}</span>
+                      </div>
+                      <div className={styles.itemBody}>
+                        {safeHtml ? (
+                          <div
+                            className={styles.itemBodyHtml}
+                            dangerouslySetInnerHTML={{ __html: safeHtml }}
+                          />
+                        ) : item.summary ? (
                           <span className={styles.itemSummary}>{item.summary}</span>
-                        ) : null;
-                      })()}
-                      {(() => {
-                        const typeLabel = messageTypeLabel(item.messageType);
-                        return (
-                          <span className={styles.itemMeta}>
-                            {typeLabel ? <Tag className={styles.typeTag}>{typeLabel}</Tag> : null}
-                            {item.createdAt || (typeLabel ? '' : '—')}
-                          </span>
-                        );
-                      })()}
-                    </Space>
-                  </button>
-                </li>
-              ))}
+                        ) : null}
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </PageSpin>
@@ -401,3 +496,10 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
 });
 
 export default InboxBell;
+export {
+  DEFAULT_INBOX_TOAST_PREFS,
+  loadInboxToastPrefs,
+  saveInboxToastPrefs,
+  shouldToastForMessageType,
+};
+export type { InboxToastPrefs };
