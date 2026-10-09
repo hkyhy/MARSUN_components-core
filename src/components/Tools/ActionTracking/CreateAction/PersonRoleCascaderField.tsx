@@ -49,14 +49,7 @@ const PersonRoleCascaderField: React.FC<PersonRoleCascaderFieldProps> = ({
       )}
     >
       <div className="react-form__field-main">
-        <div
-          className={classNames(
-            'react-form__field-label',
-            'is-req',
-            'marsun-form-info-is-req',
-            styles['person-role-cascader-field-label'],
-          )}
-        >
+        <div className={classNames('react-form__field-label', 'is-req', 'marsun-form-info-is-req')}>
           {label}
         </div>
         <div className="react-form__field-input">

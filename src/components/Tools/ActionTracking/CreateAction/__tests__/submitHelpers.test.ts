@@ -1,5 +1,10 @@
+import dayjs from 'dayjs';
 import { describe, expect, it } from 'vitest';
-import { createActionPersonWarnMessage, validateCreateActionPersons } from '../submitHelpers';
+import {
+  createActionPersonWarnMessage,
+  normalizeDueDateYmd,
+  validateCreateActionPersons,
+} from '../submitHelpers';
 import type { ActionPersonOption } from '../types';
 
 const allocatorOpts: ActionPersonOption[] = [{ value: 'alloc-1', displayName: '分配人甲' }];
@@ -40,5 +45,22 @@ describe('validateCreateActionPersons（T1 校验失败）', () => {
       expect(r.allocator.displayName).toBe('分配人甲');
       expect(r.assignee.displayName).toBe('执行人乙');
     }
+  });
+});
+
+describe('normalizeDueDateYmd', () => {
+  it('空值 → 空串', () => {
+    expect(normalizeDueDateYmd(null)).toBe('');
+    expect(normalizeDueDateYmd(undefined)).toBe('');
+    expect(normalizeDueDateYmd('')).toBe('');
+  });
+
+  it('字符串截取 YYYY-MM-DD', () => {
+    expect(normalizeDueDateYmd('2026-10-16')).toBe('2026-10-16');
+    expect(normalizeDueDateYmd('2026-10-16T12:00:00')).toBe('2026-10-16');
+  });
+
+  it('Dayjs → YYYY-MM-DD', () => {
+    expect(normalizeDueDateYmd(dayjs('2026-10-16'))).toBe('2026-10-16');
   });
 });

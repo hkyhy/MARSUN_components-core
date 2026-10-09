@@ -2,10 +2,12 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { FormModal } from '../../../FormInfo';
 import { message } from 'antd';
 import classNames from 'classnames';
+import dayjs from 'dayjs';
 import CreateActionForm from './CreateActionForm';
 import {
   addDaysYmd,
   createActionPersonWarnMessage,
+  normalizeDueDateYmd,
   personDisplayName,
   validateCreateActionPersons,
 } from './submitHelpers';
@@ -14,6 +16,7 @@ import type {
   CreateActionDimensionOption,
   CreateActionLoaders,
   CreateActionPrefill,
+  CreateActionScopeMode,
   CreateActionSubmitPayload,
   LockedContextField,
 } from './types';
@@ -27,12 +30,19 @@ export type CreateActionModalProps = {
   prefill?: CreateActionPrefill;
   lockPrefill?: boolean;
   lockedContext?: LockedContextField[];
+  /**
+   * 业务上下文字段模式。有 lockedContext 时强制 locked。
+   * 默认 form（S3）；EAM `/actions` 主动新建传 none。
+   */
+  scopeMode?: CreateActionScopeMode;
   /** @deprecated 有 lockedContext 时忽略 */
   varietyLabel?: string;
   /** F4：任务标题 placeholder */
   titlePlaceholder?: string;
   /** F4：关联指标 placeholder */
   metricPlaceholder?: string;
+  /** scopeMode=none 时短提示（App 注入） */
+  noneScopeHint?: string;
   /** 弹窗标题；默认按 variant */
   title?: string;
   /** 主按钮文案；默认 下发/创建 */
@@ -58,8 +68,9 @@ export type CreateActionModalProps = {
  * 主动新建 / 预警下发任务 · FormModal + FormInfo。
  *
  * ## App 注入契约（W1）
- * - `loaders`：人员级联 + 分厂选项（禁 DEMO / 禁 core 直连业务 API）
+ * - `loaders`：人员级联 + 分厂选项（禁 DEMO / 禁 core 直连业务 API；scopeMode=none 可不传分厂/品种）
  * - `dimensionOptions`：任务类型码表（展示名取自 App 数据）
+ * - `scopeMode`：form（默认）| locked（有 lockedContext 强制）| none（EAM 主动新建）
  * - `titlePlaceholder` / `metricPlaceholder`：F4，由 App 注入业务文案
  * - `onSubmit`：对齐 EAM 提交面；actor / analysisId / eventSource / REST 由 App 补齐
  * - EP 门禁：由 App 决定是否打开本 Modal（禁 DEMO 恒真）
@@ -72,9 +83,11 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
   prefill,
   lockPrefill = false,
   lockedContext,
+  scopeMode: scopeModeProp = 'form',
   varietyLabel,
   titlePlaceholder,
   metricPlaceholder,
+  noneScopeHint,
   title: titleProp,
   okText: okTextProp,
   dimensionOptions,
@@ -100,11 +113,13 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
 
   const isDispatch = variant === 'dispatch';
   const useLocked = Boolean(lockedContext && lockedContext.length > 0);
+  const useNoneScope = !useLocked && scopeModeProp === 'none';
   const scopeFactory = prefill?.factory?.trim() || '';
   const scopeVariety = prefill?.variety?.trim() || '';
   const scopeMetric = prefill?.metric?.trim() || '';
   const lockScope =
     !useLocked &&
+    !useNoneScope &&
     (isDispatch || lockPrefill) &&
     Boolean(scopeFactory || scopeVariety || scopeMetric);
 
@@ -122,10 +137,10 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
       status: defaultStatus,
       allocatorUserId: '',
       assigneeUserId: '',
-      dueDate: addDaysYmd(defaultDueDays),
-      factory: scopeFactory,
-      variety: useLocked ? '' : scopeVariety,
-      metric: useLocked ? '' : scopeMetric,
+      dueDate: dayjs(addDaysYmd(defaultDueDays)),
+      factory: useLocked || useNoneScope ? '' : scopeFactory,
+      variety: useLocked || useNoneScope ? '' : scopeVariety,
+      metric: useLocked || useNoneScope ? '' : scopeMetric,
       ...lockedFields,
     };
   }, [
@@ -134,6 +149,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
     scopeVariety,
     scopeMetric,
     useLocked,
+    useNoneScope,
     prefill?.title,
     prefill?.dimension,
     dimensionOptions,
@@ -160,24 +176,32 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
 
     setSaving(true);
     try {
-      const due = String(formData.dueDate ?? '').trim();
+      const due = normalizeDueDateYmd(formData.dueDate);
       const assignee = personDisplayName(fromOptions, assigneeUserId);
       const allocator = personDisplayName(allocatorOpt, allocatorUserId);
-      const factory = useLocked ? scopeFactory : String(formData.factory || '').trim();
-      const variety = useLocked ? '' : String(formData.variety || '').trim();
-      const metric = useLocked ? '' : String(formData.metric || '').trim();
+      const factory = useLocked
+        ? scopeFactory
+        : useNoneScope
+          ? ''
+          : String(formData.factory || '').trim();
+      const variety = useLocked || useNoneScope ? '' : String(formData.variety || '').trim();
+      const metric = useLocked || useNoneScope ? '' : String(formData.metric || '').trim();
       const title = String(formData.title || '').trim();
       const dimension =
         String(formData.dimension || '').trim() ||
         String(prefill?.dimension || '').trim() ||
         dimensionOptions[0]?.value ||
         '';
+      const dimLabel =
+        dimensionOptions.find((o) => o.value === dimension)?.label?.trim() || dimension;
       const eventLabel = useLocked
         ? (lockedContext || [])
             .map((f) => f.value)
             .filter(Boolean)
             .join(' · ')
-        : [factory, variety, metric].filter(Boolean).join(' · ');
+        : useNoneScope
+          ? [title, dimLabel].filter(Boolean).join(' · ')
+          : [factory, variety, metric].filter(Boolean).join(' · ');
 
       const payload: CreateActionSubmitPayload = {
         title,
@@ -192,7 +216,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
         factory,
         variety,
         metric,
-        factoryCode: prefill?.factoryCode || undefined,
+        factoryCode: useNoneScope ? undefined : prefill?.factoryCode || undefined,
         factoryName: factory || undefined,
         verifyMetric: metric || undefined,
         eventLabel,
@@ -239,9 +263,11 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
         onAssigneeOptionsReady={onAssigneeOptionsReady}
         onAllocatorOptionsReady={onAllocatorOptionsReady}
         lockedContext={useLocked ? lockedContext : undefined}
-        varietyLabel={useLocked ? undefined : varietyLabel}
+        scopeMode={useLocked ? 'locked' : useNoneScope ? 'none' : 'form'}
+        varietyLabel={useLocked || useNoneScope ? undefined : varietyLabel}
         titlePlaceholder={titlePlaceholder}
-        metricPlaceholder={metricPlaceholder}
+        metricPlaceholder={useNoneScope ? undefined : metricPlaceholder}
+        noneScopeHint={useNoneScope ? noneScopeHint : undefined}
         dimensionOptions={dimensionOptions}
         loaders={loaders}
         emptyAssigneeHint={emptyAssigneeHint}

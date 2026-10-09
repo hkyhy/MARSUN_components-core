@@ -25,6 +25,7 @@ import FormInfoBase, {
 } from '@kne/form-info';
 import {
   CancelButton as KneCancelButton,
+  DatePicker as KneDatePicker,
   Input as KneInput,
   InputNumber as KneInputNumber,
   RadioGroup as KneRadioGroup,
@@ -115,6 +116,11 @@ export const Switch = withNormalizedLabelTips(
 ) as ComponentType<FieldProps>;
 export const RadioGroup = withNormalizedLabelTips(
   KneRadioGroup as ComponentType<FieldProps>,
+) as ComponentType<FieldProps>;
+
+/** 存量 kne 栈日期字段；新模块优先 `./form-info` DatePicker */
+export const DatePicker = withNormalizedLabelTips(
+  KneDatePicker as ComponentType<FieldProps>,
 ) as ComponentType<FieldProps>;
 
 export const SubmitButton = KneSubmitButton as ComponentType<ButtonProps>;

@@ -9,9 +9,9 @@ import {
   createActionLoadersFromFixture,
 } from '@/components/Tools/ActionTracking/doc/actionTracking.fixture';
 
-type Mode = 'create' | 'dispatch';
+type Mode = 'create' | 'createNone' | 'dispatch';
 
-/** 2. 建单 / 下发（lockedContext + F4 placeholder） */
+/** 2. 建单 / 下发（lockedContext + scopeMode=none + F4 placeholder） */
 const CreateActionDemo: React.FC = () => {
   const [mode, setMode] = useState<Mode>('create');
   const [open, setOpen] = useState(false);
@@ -27,24 +27,29 @@ const CreateActionDemo: React.FC = () => {
     [mode],
   );
 
+  const openLabel = mode === 'dispatch' ? '下发' : mode === 'createNone' ? '新建(none)' : '新建';
+
   return (
     <Space orientation="vertical" size={12} style={{ width: '100%' }}>
       <Segmented
         value={mode}
         options={[
-          { label: '主动新建', value: 'create' },
+          { label: '主动新建(form)', value: 'create' },
+          { label: '主动新建(none)', value: 'createNone' },
           { label: '预警下发', value: 'dispatch' },
         ]}
         onChange={(v) => setMode(v as Mode)}
       />
       <Button type="primary" onClick={() => setOpen(true)}>
-        打开 {mode === 'dispatch' ? '下发' : '新建'} 弹窗
+        打开 {openLabel} 弹窗
       </Button>
       <CreateActionModal
         open={open}
         onClose={() => setOpen(false)}
         onCreated={() => setOpen(false)}
-        variant={mode}
+        variant={mode === 'dispatch' ? 'dispatch' : 'create'}
+        scopeMode={mode === 'createNone' ? 'none' : undefined}
+        noneScopeHint={mode === 'createNone' ? '业务上下文请从用能/保养/专件下发' : undefined}
         dimensionOptions={ACTION_DIMENSIONS}
         loaders={loaders}
         titlePlaceholder="排查用能 EI 偏高"

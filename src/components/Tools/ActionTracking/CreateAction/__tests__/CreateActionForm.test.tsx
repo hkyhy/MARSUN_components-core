@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { Form } from '../../../../FormInfo';
 import CreateActionForm from '../CreateActionForm';
 import type { CreateActionLoaders } from '../types';
@@ -13,6 +13,11 @@ vi.mock('../../../../FormInfo', async (importOriginal) => {
     </div>
   );
   return { ...actual, SuperSelect: SuperSelectStub };
+});
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
 });
 
 beforeAll(() => {
@@ -109,6 +114,48 @@ describe('CreateActionForm（T1 lockedContext / F4 placeholder）', () => {
     await waitFor(() => {
       expect(screen.getByPlaceholderText('排查用能 EI 偏高')).toBeTruthy();
       expect(screen.getByPlaceholderText('例如：EI')).toBeTruthy();
+    });
+  });
+
+  it('scopeMode=none：不出分厂/品种/关联指标，不拉 factory/variety loader', async () => {
+    const loaders = mockLoaders();
+    render(
+      <Form onSubmit={() => undefined}>
+        <CreateActionForm
+          dimensionOptions={dimensionOptions}
+          loaders={loaders}
+          scopeMode="none"
+          noneScopeHint="业务上下文请从用能/保养/专件下发"
+          titlePlaceholder="排查用能 EI 偏高"
+        />
+      </Form>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('排查用能 EI 偏高')).toBeTruthy();
+    });
+    expect(screen.queryByTestId('super-select-factory')).toBeNull();
+    expect(screen.queryByTestId('super-select-variety')).toBeNull();
+    expect(screen.queryByText('关联指标')).toBeNull();
+    expect(screen.getByText('业务上下文请从用能/保养/专件下发')).toBeTruthy();
+    expect(loaders.loadFactoryOptions).not.toHaveBeenCalled();
+    expect(loaders.loadVarietyPage).not.toHaveBeenCalled();
+  });
+
+  it('scopeMode=form（默认）：渲染分厂与关联指标', async () => {
+    const loaders = mockLoaders();
+    render(
+      <Form onSubmit={() => undefined}>
+        <CreateActionForm dimensionOptions={dimensionOptions} loaders={loaders} />
+      </Form>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('super-select-factory')).toBeTruthy();
+    });
+    expect(screen.getByText('关联指标')).toBeTruthy();
+    await waitFor(() => {
+      expect(loaders.loadFactoryOptions).toHaveBeenCalled();
     });
   });
 });

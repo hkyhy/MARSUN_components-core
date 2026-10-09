@@ -51,3 +51,29 @@ export function addDaysYmd(days: number, from: Date = new Date()): string {
   const day = String(d.getDate()).padStart(2, '0');
   return `${y}-${m}-${day}`;
 }
+
+/**
+ * FormInfo DatePicker 提交值规范化为 YYYY-MM-DD。
+ * kne/antd 可能给出 Dayjs 或已格式化字符串。
+ */
+export function normalizeDueDateYmd(raw: unknown): string {
+  if (raw == null || raw === '') return '';
+  if (typeof raw === 'string') {
+    const s = raw.trim();
+    return s.length >= 10 ? s.slice(0, 10) : s;
+  }
+  if (typeof raw === 'object') {
+    const maybe = raw as { format?: (pattern: string) => string; $d?: Date };
+    if (typeof maybe.format === 'function') {
+      try {
+        return maybe.format('YYYY-MM-DD');
+      } catch {
+        /* fall through */
+      }
+    }
+    if (maybe.$d instanceof Date && !Number.isNaN(maybe.$d.getTime())) {
+      return addDaysYmd(0, maybe.$d);
+    }
+  }
+  return String(raw).trim().slice(0, 10);
+}

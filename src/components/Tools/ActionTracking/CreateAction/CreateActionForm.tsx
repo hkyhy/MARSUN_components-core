@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
+  DatePicker,
   FormInfo,
   Input,
   SuperSelect,
@@ -19,6 +20,7 @@ import type {
   CreateActionDimensionOption,
   CreateActionLoaders,
   CreateActionScopeLock,
+  CreateActionScopeMode,
   CreateActionSelectOption,
   LockedContextField,
 } from './types';
@@ -55,10 +57,17 @@ export type CreateActionFormProps = {
   scopeLock?: CreateActionScopeLock;
   varietyLabel?: string;
   lockedContext?: LockedContextField[];
+  /**
+   * 业务上下文字段模式。有 lockedContext 时强制 locked。
+   * 默认 form（S3）；EAM 主动新建传 none。
+   */
+  scopeMode?: CreateActionScopeMode;
   /** F4：任务标题 placeholder（App 注入；禁写死业务文案） */
   titlePlaceholder?: string;
   /** F4：关联指标 placeholder */
   metricPlaceholder?: string;
+  /** scopeMode=none 时展示在截止日期下的短提示（App 注入） */
+  noneScopeHint?: string;
   dimensionOptions: CreateActionDimensionOption[];
   loaders: CreateActionLoaders;
   emptyAssigneeHint?: string;
@@ -92,8 +101,10 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   scopeLock,
   varietyLabel,
   lockedContext,
+  scopeMode: scopeModeProp = 'form',
   titlePlaceholder,
   metricPlaceholder,
+  noneScopeHint,
   dimensionOptions,
   loaders,
   emptyAssigneeHint = '暂无执行人',
@@ -114,6 +125,12 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   const factoryRef = useRef(scopeLock?.factory?.trim() || '');
 
   const useLockedContext = Boolean(lockedContext && lockedContext.length > 0);
+  const resolvedScopeMode: CreateActionScopeMode = useLockedContext
+    ? 'locked'
+    : scopeModeProp === 'none'
+      ? 'none'
+      : 'form';
+  const useNoneScope = resolvedScopeMode === 'none';
   const lockFactory = Boolean(scopeLock?.factory?.trim());
   const lockVariety = Boolean(scopeLock?.variety?.trim());
   const lockMetric = Boolean(scopeLock?.metric?.trim());
@@ -153,7 +170,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
 
   const handleFormSync = useCallback(
     (data: Record<string, unknown>) => {
-      if (useLockedContext) return;
+      if (useLockedContext || useNoneScope) return;
       const next = asFactoryValue(data.factory);
       if (next === factoryRef.current) return;
       const prev = factoryRef.current;
@@ -165,7 +182,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
         });
       }
     },
-    [formApi.openApi, hasVarietyPage, lockVariety, useLockedContext],
+    [formApi.openApi, hasVarietyPage, lockVariety, useLockedContext, useNoneScope],
   );
 
   useEffect(() => {
@@ -215,7 +232,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
 
   /** 分厂：与人员并行、互不阻塞（对齐 EAM CycleForm 静态 options） */
   useEffect(() => {
-    if (useLockedContext || !loaders.loadFactoryOptions) return;
+    if (useLockedContext || useNoneScope || !loaders.loadFactoryOptions) return;
     let cancelled = false;
     setFactoryLoading(true);
     settleWithTimeout(loaders.loadFactoryOptions(), CATALOG_LOAD_TIMEOUT_MS)
@@ -237,7 +254,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only load
   }, []);
 
-  const lockedList = useLockedContext
+  const scopeFields: ReactNode[] = useLockedContext
     ? (lockedContext || []).map((field, idx) => (
         <Input
           key={`locked-${idx}-${field.label}`}
@@ -246,51 +263,53 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
           disabled
         />
       ))
-    : [
-        <SuperSelect
-          key="factory"
-          name="factory"
-          label="分厂"
-          single
-          options={factorySelectOptions}
-          placeholder={factoryLoading ? '加载分厂…' : '选择分厂'}
-          disabled={factoryLoading || lockFactory}
-          allowClear={!lockFactory}
-        />,
-        hasVarietyPage && varietySelectApi ? (
+    : useNoneScope
+      ? []
+      : [
           <SuperSelect
-            key={`variety-${factoryKey || 'none'}`}
-            name="variety"
-            label={varietyLabel || '品种'}
+            key="factory"
+            name="factory"
+            label="分厂"
             single
-            api={varietySelectApi}
-            getSearchProps={varietyGetSearchProps}
-            pagination={varietyPagination}
-            placeholder={canLoadVariety ? '选择品种' : '请先选择分厂'}
-            disabled={lockVariety || !canLoadVariety}
-            allowClear={!lockVariety}
-            searchPlaceholder="搜索品种"
-          />
-        ) : (
-          <SuperSelect
-            key="variety"
-            name="variety"
-            label={varietyLabel || '品种'}
-            single
-            options={[]}
-            placeholder="App 未注入 loadVarietyPage"
-            disabled
-          />
-        ),
-        <Input
-          key="metric"
-          name="metric"
-          label="关联指标"
-          placeholder={metricPlaceholder || '可选'}
-          maxLength={40}
-          disabled={lockMetric}
-        />,
-      ];
+            options={factorySelectOptions}
+            placeholder={factoryLoading ? '加载分厂…' : '选择分厂'}
+            disabled={factoryLoading || lockFactory}
+            allowClear={!lockFactory}
+          />,
+          hasVarietyPage && varietySelectApi ? (
+            <SuperSelect
+              key={`variety-${factoryKey || 'none'}`}
+              name="variety"
+              label={varietyLabel || '品种'}
+              single
+              api={varietySelectApi}
+              getSearchProps={varietyGetSearchProps}
+              pagination={varietyPagination}
+              placeholder={canLoadVariety ? '选择品种' : '请先选择分厂'}
+              disabled={lockVariety || !canLoadVariety}
+              allowClear={!lockVariety}
+              searchPlaceholder="搜索品种"
+            />
+          ) : (
+            <SuperSelect
+              key="variety"
+              name="variety"
+              label={varietyLabel || '品种'}
+              single
+              options={[]}
+              placeholder="App 未注入 loadVarietyPage"
+              disabled
+            />
+          ),
+          <Input
+            key="metric"
+            name="metric"
+            label="关联指标"
+            placeholder={metricPlaceholder || '可选'}
+            maxLength={40}
+            disabled={lockMetric}
+          />,
+        ];
 
   return (
     <div className={classNames('create-action-form', styles['create-action-form'])}>
@@ -298,7 +317,6 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
       <SetFormFields patch={{ allocatorUserId: defaultAllocatorUserId }} />
       <FormInfo
         column={1}
-        gap={0}
         list={[
           <Input
             key="title"
@@ -317,33 +335,42 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
             options={dimensionOptions}
             placeholder="选择任务类型"
           />,
+          <PersonRoleCascaderField
+            key="allocatorUserId"
+            name="allocatorUserId"
+            label="分配人"
+            cascadeOptions={allocatorCascade}
+            loading={personLoading}
+            emptyHint={emptyAllocatorHint}
+            placeholder={allocatorPlaceholder}
+            defaultUserId={defaultAllocatorUserId}
+          />,
+          <PersonRoleCascaderField
+            key="assigneeUserId"
+            name="assigneeUserId"
+            label="执行人"
+            cascadeOptions={assigneeCascade}
+            loading={personLoading}
+            emptyHint={emptyAssigneeHint}
+            placeholder={assigneePlaceholder}
+          />,
+          <DatePicker
+            key="dueDate"
+            name="dueDate"
+            label="截止日期"
+            labelTips="可选"
+            format="YYYY-MM-DD"
+            placeholder="选择截止日期"
+            allowClear
+          />,
+          ...scopeFields,
         ]}
       />
-      <PersonRoleCascaderField
-        name="allocatorUserId"
-        label="分配人"
-        cascadeOptions={allocatorCascade}
-        loading={personLoading}
-        emptyHint={emptyAllocatorHint}
-        placeholder={allocatorPlaceholder}
-        defaultUserId={defaultAllocatorUserId}
-      />
-      <PersonRoleCascaderField
-        name="assigneeUserId"
-        label="执行人"
-        cascadeOptions={assigneeCascade}
-        loading={personLoading}
-        emptyHint={emptyAssigneeHint}
-        placeholder={assigneePlaceholder}
-      />
-      <FormInfo
-        column={1}
-        gap={0}
-        list={[
-          <Input key="dueDate" name="dueDate" label="截止日期（可选）" type="date" />,
-          ...lockedList,
-        ]}
-      />
+      {useNoneScope && noneScopeHint ? (
+        <p className={classNames('create-action-none-hint', styles['create-action-none-hint'])}>
+          {noneScopeHint}
+        </p>
+      ) : null}
     </div>
   );
 };

@@ -11,7 +11,7 @@
     },
     {
       "title": "2. 建单 / 下发",
-      "description": "CreateActionModal：SuperSelect 任务类型/分厂；品种 loadVarietyPage 分页；create vs dispatch+lockedContext",
+      "description": "CreateActionModal：form / scopeMode=none / dispatch+lockedContext；品种分页仅 form",
       "component": "@/components/Tools/ActionTracking/examples/CreateActionDemo",
       "sourcePath": "@/components/Tools/ActionTracking/examples/CreateActionDemo/index.tsx"
     },
@@ -101,8 +101,19 @@
         },
         {
           "prop": "lockedContext",
-          "desc": "分域只读上下文；有则不出分厂/品种/指标",
+          "desc": "分域只读上下文；有则强制 scopeMode=locked",
           "type": "LockedContextField[]"
+        },
+        {
+          "prop": "scopeMode",
+          "desc": "form（默认）| locked | none（EAM 主动新建不出分厂/品种/指标）",
+          "type": "'form' | 'locked' | 'none'",
+          "defaultVal": "'form'"
+        },
+        {
+          "prop": "noneScopeHint",
+          "desc": "scopeMode=none 时短提示（App 注入）",
+          "type": "string"
         },
         {
           "prop": "variant",

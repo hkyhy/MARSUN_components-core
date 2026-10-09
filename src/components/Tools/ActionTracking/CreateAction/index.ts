@@ -21,6 +21,7 @@ export {
 export type {
   CreateActionPrefill,
   CreateActionScopeLock,
+  CreateActionScopeMode,
   LockedContextField,
   ActionPersonCascadeOption,
   ActionPersonOption,

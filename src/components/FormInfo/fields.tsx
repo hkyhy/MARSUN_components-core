@@ -3,6 +3,7 @@
  */
 import {
   CancelButton as BaseCancelButton,
+  DatePicker as BaseDatePicker,
   Input as BaseInput,
   InputNumber as BaseInputNumber,
   RadioGroup as BaseRadioGroup,
@@ -96,6 +97,11 @@ export const Switch = withNormalizedLabelTips(
 ) as ComponentType<FieldProps>;
 export const RadioGroup = withNormalizedLabelTips(
   BaseRadioGroup as ComponentType<FieldProps>,
+) as ComponentType<FieldProps>;
+
+/** FormInfo 日期字段（antd DatePicker）；禁止 Input type="date" */
+export const DatePicker = withNormalizedLabelTips(
+  BaseDatePicker as ComponentType<FieldProps>,
 ) as ComponentType<FieldProps>;
 
 export const SubmitButton = BaseSubmitButton as ComponentType<ButtonProps>;

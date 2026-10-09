@@ -23,6 +23,7 @@ export type {
   PersonRoleCascaderFieldProps,
   CreateActionPrefill,
   CreateActionScopeLock,
+  CreateActionScopeMode,
   LockedContextField,
   ActionPersonCascadeOption,
   ActionPersonOption,

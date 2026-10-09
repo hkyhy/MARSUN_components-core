@@ -24,6 +24,15 @@ export type LockedContextField = {
   value: string;
 };
 
+/**
+ * 建单业务上下文字段模式。
+ * - `form`：可编辑分厂/品种/指标（S3 默认）
+ * - `locked`：只读 lockedContext（域下发）
+ * - `none`：不出分厂/品种/指标（EAM `/actions` 主动新建）
+ * 有 `lockedContext` 时强制 `locked`，忽略传入值。
+ */
+export type CreateActionScopeMode = 'form' | 'locked' | 'none';
+
 /** 角色→用户两级级联节点 */
 export type ActionPersonCascadeOption = {
   value: string;
@@ -101,6 +110,7 @@ export type CreateActionSubmitPayload = {
   allocatorUserId: string;
   owner: string;
   dueDate?: string;
+  /** scopeMode=none / locked 时可空 */
   factory: string;
   variety: string;
   metric: string;

@@ -25,6 +25,7 @@ export {
   InputNumber,
   Switch,
   RadioGroup,
+  DatePicker,
   SubmitButton,
   ResetButton,
   CancelButton,

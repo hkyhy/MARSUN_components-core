@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.158
+  next_task_id: P6.3.160
 tasks:
+- id: P6.3.159
+  plane_issue_id: 76869234-5666-44bc-b7ce-656087342d76
+  milestone: P6.3
+  name: CreateAction FormInfo DatePicker + scopeMode=none
+  status: 已完成
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: "2026-10-09"
+  target_date: "2026-10-09"
+  tags: [frontend, FormInfo, ActionTracking, CreateAction, release]
+  note: |
+    Related: S4.30.2303 · action-tracking §4.1
+    FormInfo 导出 DatePicker（禁 Input type=date）；CreateAction 单 FormInfo list；
+    scopeMode form|locked|none；normalizeDueDateYmd；本地 pack 0.1.125（公网 npm 书面延期）
 - id: P6.3.157
   plane_issue_id: null
   milestone: P6.3
