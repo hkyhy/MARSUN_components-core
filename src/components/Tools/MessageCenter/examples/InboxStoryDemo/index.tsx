@@ -30,7 +30,7 @@ const InboxStoryDemo: React.FC = () => {
     if (params.unreadOnly) list = list.filter((x) => !x.read);
     if (params.readOnly) list = list.filter((x) => x.read);
     return {
-      itemList: list,
+      pageData: list,
       total: list.length,
       unreadTotal: listFixtureInbox().filter((x) => !x.read).length,
       unreadByMessageType: {},
