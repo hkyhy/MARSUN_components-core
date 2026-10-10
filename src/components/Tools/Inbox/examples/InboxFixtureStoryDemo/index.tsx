@@ -16,7 +16,7 @@ const InboxFixtureStoryDemo: React.FC = () => {
   const [, tick] = useState(0);
   const [nav, setNav] = useState('');
 
-  const fetchInbox = useCallback(async (_p: InboxBellListParams) => {
+  const fetchInbox = useCallback(async (params: InboxBellListParams) => {
     const list = listFixtureInbox().map((x) => ({
       id: x.id,
       title: x.title,
@@ -27,8 +27,11 @@ const InboxFixtureStoryDemo: React.FC = () => {
       href: x.href,
       createdAt: x.createdAt,
     }));
+    const currentPage = params.currentPage ?? 1;
+    const size = params.pageSize ?? 20;
+    const start = (currentPage - 1) * size;
     return {
-      itemList: list,
+      pageData: list.slice(start, start + size),
       total: list.length,
       unreadTotal: list.filter((x) => !x.read).length,
       unreadByMessageType: {},

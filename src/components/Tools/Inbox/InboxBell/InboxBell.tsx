@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type UIEvent,
 } from 'react';
 import { Empty } from '@/components/Empty';
 import { Bell } from '@/components/Icons';
@@ -15,6 +16,7 @@ import { PageSpin } from '@/components/Layout';
 import { SegmentedRadio } from '@/components/SegmentedRadio';
 import { StateBar } from '@/components/StateBar';
 import { SEMANTIC_COLORS, SemanticTag } from '@/components/Tag';
+import { VirtualScrollbar } from '@/components/VirtualScrollbar';
 import { sanitizeInboxHtml } from '../sanitizeInboxHtml';
 import { INBOX_BADGE_REFRESH_EVENT } from '../requestInboxBadgeRefresh';
 import { emphasizeQuoted } from './emphasizeQuoted';
@@ -72,6 +74,7 @@ export type InboxBellItem = {
 };
 
 export type InboxBellListResult = {
+  /** 分页列表（Marsun list-api 唯一数组名） */
   pageData: InboxBellItem[];
   total?: number;
   unreadTotal?: number;
@@ -140,6 +143,8 @@ const TYPE_TAG_LABEL: Record<string, string> = {
 };
 
 const FOCUS_DEBOUNCE_MS = 300;
+/** 距底部小于该值时拉下一页 */
+const LOAD_MORE_GAP_PX = 72;
 
 function messageTypeLabel(raw?: string): string {
   const key = String(raw || '')
@@ -208,7 +213,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     onNavigate,
     pollMs = 0,
     locationKey,
-    pageSize = 50,
+    pageSize = 20,
     className,
     title = '站内信',
     streamPath = '/api/v1/msg-center/inbox/stream',
@@ -226,42 +231,102 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
   const [messageType, setMessageType] = useState<string>('');
   const [readFilter, setReadFilter] = useState<'all' | 'unread' | 'read'>('all');
   const [toastPrefs, setToastPrefs] = useState<InboxToastPrefs>(() => loadInboxToastPrefs());
+  const [loadingMore, setLoadingMore] = useState(false);
   const focusDebounceRef = useRef<number | null>(null);
   const locationKeyPrimedRef = useRef(false);
   const toastPrefsRef = useRef(toastPrefs);
   toastPrefsRef.current = toastPrefs;
+  const currentPageRef = useRef(1);
+  const loadingMoreRef = useRef(false);
+  const hasMoreRef = useRef(false);
+
+  const listQuery = useMemo(
+    () => ({
+      messageType: messageType || undefined,
+      unreadOnly: readFilter === 'unread' || undefined,
+      readOnly: readFilter === 'read' || undefined,
+    }),
+    [messageType, readFilter],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
+    currentPageRef.current = 1;
+    hasMoreRef.current = false;
     try {
       const res = await fetchInbox({
         currentPage: 1,
         pageSize,
-        messageType: messageType || undefined,
-        unreadOnly: readFilter === 'unread' || undefined,
-        readOnly: readFilter === 'read' || undefined,
+        ...listQuery,
       });
-      setItems(res?.pageData || []);
+      const page = res?.pageData || [];
+      const total = typeof res?.total === 'number' ? res.total : page.length;
+      setItems(page);
+      hasMoreRef.current = page.length > 0 && page.length < total;
       setUnreadTotal(typeof res?.unreadTotal === 'number' ? res.unreadTotal : 0);
       setUnreadByType(res?.unreadByMessageType || {});
     } catch (e) {
       setItems([]);
+      hasMoreRef.current = false;
       setError(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
-  }, [fetchInbox, messageType, pageSize, readFilter]);
+  }, [fetchInbox, pageSize, listQuery]);
+
+  const loadMore = useCallback(async () => {
+    if (loadingMoreRef.current || !hasMoreRef.current) return;
+    loadingMoreRef.current = true;
+    setLoadingMore(true);
+    try {
+      const next = currentPageRef.current + 1;
+      const res = await fetchInbox({
+        currentPage: next,
+        pageSize,
+        ...listQuery,
+      });
+      const page = res?.pageData || [];
+      const total = typeof res?.total === 'number' ? res.total : 0;
+      setItems((prev) => {
+        const seen = new Set(prev.map((x) => x.id));
+        const extra = page.filter((x) => x?.id && !seen.has(x.id));
+        const merged = extra.length ? [...prev, ...extra] : prev;
+        hasMoreRef.current =
+          extra.length > 0 && (total > 0 ? merged.length < total : extra.length >= pageSize);
+        return merged;
+      });
+      if (page.length) currentPageRef.current = next;
+      if (typeof res?.unreadTotal === 'number') setUnreadTotal(res.unreadTotal);
+      if (res?.unreadByMessageType) setUnreadByType(res.unreadByMessageType);
+    } catch {
+      hasMoreRef.current = false;
+    } finally {
+      loadingMoreRef.current = false;
+      setLoadingMore(false);
+    }
+  }, [fetchInbox, pageSize, listQuery]);
+
+  const onListScroll = useCallback(
+    (e: UIEvent<HTMLDivElement>) => {
+      const el = e.currentTarget;
+      if (el.scrollHeight - el.scrollTop - el.clientHeight <= LOAD_MORE_GAP_PX) {
+        void loadMore();
+      }
+    },
+    [loadMore],
+  );
 
   const refreshBadge = useCallback(async () => {
     try {
-      const res = await fetchInbox({ currentPage: 1, pageSize: 1 });
+      // 与列表同 pageSize（禁硬编码 1）；角标只消费 unread* 字段
+      const res = await fetchInbox({ currentPage: 1, pageSize });
       setUnreadTotal(typeof res?.unreadTotal === 'number' ? res.unreadTotal : 0);
       setUnreadByType(res?.unreadByMessageType || {});
     } catch {
       /* 角标失败不打断 UI */
     }
-  }, [fetchInbox]);
+  }, [fetchInbox, pageSize]);
 
   useImperativeHandle(ref, () => ({ refreshBadge }), [refreshBadge]);
 
@@ -557,117 +622,129 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
           </Space>
         </div>
         {error ? <p className={styles.error}>{error}</p> : null}
-        <PageSpin spinning={loading}>
-          {!loading && !error && items.length === 0 ? (
-            <Empty description="暂无站内信" />
-          ) : (
-            <ul className={styles.list}>
-              {items.map((item) => {
-                const typeLabel = messageTypeLabel(item.messageType);
-                const levelText = String(item.levelLabel || item.level || '').trim();
-                const showLevel = Boolean(levelText);
-                const safeHtml = sanitizeInboxHtml(item.bodyHtml);
-                const actions = filterInboxActionsForHost(
-                  resolveInboxItemActions(item),
-                  Boolean(onItemAction),
-                );
-                const buttonDriven = isInboxButtonDriven(item);
-                const meta = itemMetaLine(item);
-                const showActions = Boolean(actions.primary);
-                return (
-                  <li key={item.id}>
-                    <div
-                      className={classNames(
-                        styles.item,
-                        !item.read && styles.itemUnread,
-                        buttonDriven && styles.itemStatic,
-                      )}
-                      role={buttonDriven ? undefined : 'button'}
-                      tabIndex={buttonDriven ? undefined : 0}
-                      onClick={buttonDriven ? undefined : () => void handleOpenItem(item)}
-                      onKeyDown={
-                        buttonDriven
-                          ? undefined
-                          : (e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                void handleOpenItem(item);
-                              }
-                            }
-                      }
-                    >
-                      <div className={styles.itemHeader}>
-                        <span className={styles.itemHeaderLeft}>
-                          <span className={styles.itemTitle} title={item.title || '（无标题）'}>
-                            {item.title || '（无标题）'}
-                          </span>
-                          {typeLabel ? (
-                            <SemanticTag
-                              color={messageTypeSemanticColor(item.messageType)}
-                              className={styles.typeTag}
-                            >
-                              {typeLabel}
-                            </SemanticTag>
-                          ) : null}
-                        </span>
-                        <span className={styles.itemTime}>{item.createdAt || ''}</span>
-                      </div>
-                      <div className={styles.itemBody}>
-                        {safeHtml ? (
-                          <div
-                            className={styles.itemBodyHtml}
-                            dangerouslySetInnerHTML={{ __html: safeHtml }}
-                          />
-                        ) : item.summary ? (
-                          <span className={styles.itemSummary}>
-                            {emphasizeQuoted(item.summary)}
-                          </span>
-                        ) : null}
-                      </div>
-                      {meta ? <span className={styles.itemMeta}>{meta}</span> : null}
-                      {showLevel ? (
-                        <div className={styles.itemFooterTags}>
-                          <SemanticTag
-                            color={resolveLevelTagColor(item.levelColor)}
-                            className={styles.typeTag}
-                          >
-                            {levelText}
-                          </SemanticTag>
-                        </div>
-                      ) : null}
-                      {showActions && actions.primary ? (
+        <div className={classNames('inbox-bell-list-pane', styles.listPane)}>
+          <PageSpin spinning={loading && items.length === 0}>
+            {!loading && !error && items.length === 0 ? (
+              <Empty description="暂无站内信" />
+            ) : items.length === 0 ? null : (
+              <VirtualScrollbar
+                wrapperClassName={classNames('inbox-bell-list-scroll', styles.listScroll)}
+                className={styles.listViewport}
+                data-testid="inbox-bell-list-scroll"
+                onScroll={onListScroll}
+              >
+                <ul className={styles.list}>
+                  {items.map((item) => {
+                    const typeLabel = messageTypeLabel(item.messageType);
+                    const levelText = String(item.levelLabel || item.level || '').trim();
+                    const showLevel = Boolean(levelText);
+                    const safeHtml = sanitizeInboxHtml(item.bodyHtml);
+                    const actions = filterInboxActionsForHost(
+                      resolveInboxItemActions(item),
+                      Boolean(onItemAction),
+                    );
+                    const buttonDriven = isInboxButtonDriven(item);
+                    const meta = itemMetaLine(item);
+                    const showActions = Boolean(actions.primary);
+                    return (
+                      <li key={item.id}>
                         <div
-                          className={styles.itemActions}
-                          onClick={(e) => e.stopPropagation()}
-                          onKeyDown={(e) => e.stopPropagation()}
+                          className={classNames(
+                            styles.item,
+                            !item.read && styles.itemUnread,
+                            buttonDriven && styles.itemStatic,
+                          )}
+                          role={buttonDriven ? undefined : 'button'}
+                          tabIndex={buttonDriven ? undefined : 0}
+                          onClick={buttonDriven ? undefined : () => void handleOpenItem(item)}
+                          onKeyDown={
+                            buttonDriven
+                              ? undefined
+                              : (e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    void handleOpenItem(item);
+                                  }
+                                }
+                          }
                         >
-                          <Space size={8} wrap>
-                            <Button
-                              size="small"
-                              type="primary"
-                              onClick={() => void runQuickAction(item, actions.primary!)}
-                            >
-                              {actions.primary.label}
-                            </Button>
-                            {actions.secondary ? (
-                              <Button
-                                size="small"
-                                type="link"
-                                onClick={() => void runQuickAction(item, actions.secondary!)}
-                              >
-                                {actions.secondary.label}
-                              </Button>
+                          <div className={styles.itemHeader}>
+                            <span className={styles.itemHeaderLeft}>
+                              <span className={styles.itemTitle} title={item.title || '（无标题）'}>
+                                {item.title || '（无标题）'}
+                              </span>
+                              {typeLabel ? (
+                                <SemanticTag
+                                  color={messageTypeSemanticColor(item.messageType)}
+                                  className={styles.typeTag}
+                                >
+                                  {typeLabel}
+                                </SemanticTag>
+                              ) : null}
+                            </span>
+                            <span className={styles.itemTime}>{item.createdAt || ''}</span>
+                          </div>
+                          <div className={styles.itemBody}>
+                            {safeHtml ? (
+                              <div
+                                className={styles.itemBodyHtml}
+                                dangerouslySetInnerHTML={{ __html: safeHtml }}
+                              />
+                            ) : item.summary ? (
+                              <span className={styles.itemSummary}>
+                                {emphasizeQuoted(item.summary)}
+                              </span>
                             ) : null}
-                          </Space>
+                          </div>
+                          {meta ? <span className={styles.itemMeta}>{meta}</span> : null}
+                          {showLevel ? (
+                            <div className={styles.itemFooterTags}>
+                              <SemanticTag
+                                color={resolveLevelTagColor(item.levelColor)}
+                                className={styles.typeTag}
+                              >
+                                {levelText}
+                              </SemanticTag>
+                            </div>
+                          ) : null}
+                          {showActions && actions.primary ? (
+                            <div
+                              className={styles.itemActions}
+                              onClick={(e) => e.stopPropagation()}
+                              onKeyDown={(e) => e.stopPropagation()}
+                            >
+                              <Space size={8} wrap>
+                                <Button
+                                  size="small"
+                                  type="primary"
+                                  onClick={() => void runQuickAction(item, actions.primary!)}
+                                >
+                                  {actions.primary.label}
+                                </Button>
+                                {actions.secondary ? (
+                                  <Button
+                                    size="small"
+                                    type="link"
+                                    onClick={() => void runQuickAction(item, actions.secondary!)}
+                                  >
+                                    {actions.secondary.label}
+                                  </Button>
+                                ) : null}
+                              </Space>
+                            </div>
+                          ) : null}
                         </div>
-                      ) : null}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </PageSpin>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {loadingMore ? (
+                  <p className={classNames('inbox-bell-list-footer', styles.listFooter)}>加载中…</p>
+                ) : null}
+              </VirtualScrollbar>
+            )}
+          </PageSpin>
+        </div>
       </Drawer>
     </div>
   );

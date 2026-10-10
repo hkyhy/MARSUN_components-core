@@ -15,7 +15,7 @@ describe('InboxBell poll / refresh', () => {
 
   it('pollMs<=0 不启动定时轮询；挂载仍刷一次角标', async () => {
     const fetchInbox = vi.fn(async () => ({
-      itemList: [],
+      pageData: [],
       unreadTotal: 0,
       unreadByMessageType: {},
     }));
@@ -29,7 +29,7 @@ describe('InboxBell poll / refresh', () => {
     });
 
     expect(fetchInbox).toHaveBeenCalledTimes(1);
-    expect(fetchInbox).toHaveBeenCalledWith({ currentPage: 1, pageSize: 1 });
+    expect(fetchInbox).toHaveBeenCalledWith({ currentPage: 1, pageSize: 20 });
     expect(setIntervalSpy).not.toHaveBeenCalled();
 
     await act(async () => {
@@ -41,7 +41,7 @@ describe('InboxBell poll / refresh', () => {
 
   it('pollMs>0 会定时刷角标', async () => {
     const fetchInbox = vi.fn(async () => ({
-      itemList: [],
+      pageData: [],
       unreadTotal: 0,
       unreadByMessageType: {},
     }));
@@ -63,7 +63,7 @@ describe('InboxBell poll / refresh', () => {
 
   it('requestInboxBadgeRefresh 事件触发 refreshBadge', async () => {
     const fetchInbox = vi.fn(async () => ({
-      itemList: [],
+      pageData: [],
       unreadTotal: 1,
       unreadByMessageType: { action: 1 },
     }));

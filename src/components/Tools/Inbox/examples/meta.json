@@ -4,7 +4,7 @@
   "examples": [
     {
       "title": "InboxBell 铃铛",
-      "description": "角标未读数；Drawer 卡片场景 Tag + 预警级别 + 底栏查看/去认领；toast 紧凑带「查看」",
+      "description": "角标未读数；Drawer 列表 VirtualScrollbar 滚到底加载下一页（pageSize=20）；卡片场景 Tag + 预警级别 + 底栏查看/去认领",
       "component": "@/components/Tools/Inbox/examples/InboxBellDemo",
       "sourcePath": "@/components/Tools/Inbox/examples/InboxBellDemo/index.tsx"
     },
@@ -47,7 +47,12 @@
           "desc": "路由身份；变化时刷新角标（如 pathname）",
           "type": "string | number"
         },
-        { "prop": "pageSize", "desc": "列表页大小", "type": "number" },
+        {
+          "prop": "pageSize",
+          "desc": "列表/滚动加载每页条数；默认 20。滚到底请求 currentPage+1",
+          "type": "number",
+          "default": "20"
+        },
         { "prop": "title", "desc": "Drawer 标题", "type": "string" },
         {
           "prop": "onItemAction",

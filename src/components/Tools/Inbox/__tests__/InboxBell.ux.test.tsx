@@ -66,10 +66,10 @@ describe('InboxBell UX / toast prefs', () => {
   it('卡片头：标题+类型左、时间右；SemanticTag 分色类存在', async () => {
     const fetchInbox = vi.fn(async (params: { pageSize?: number }) => {
       if (params.pageSize === 1) {
-        return { itemList: [], unreadTotal: 1, unreadByMessageType: { action: 1 } };
+        return { pageData: [], unreadTotal: 1, unreadByMessageType: { action: 1 } };
       }
       return {
-        itemList: [
+        pageData: [
           {
             id: 'm1',
             title: '您有新任务',
@@ -110,7 +110,7 @@ describe('InboxBell UX / toast prefs', () => {
 
   it('Drawer 可改偏好并写入 localStorage', async () => {
     const fetchInbox = vi.fn(async () => ({
-      itemList: [],
+      pageData: [],
       unreadTotal: 0,
       unreadByMessageType: {},
     }));
@@ -156,7 +156,7 @@ describe('InboxBell UX / toast prefs', () => {
     vi.stubGlobal('EventSource', FakeES as unknown as typeof EventSource);
 
     const fetchInbox = vi.fn(async () => ({
-      itemList: [],
+      pageData: [],
       unreadTotal: 0,
       unreadByMessageType: {},
     }));
@@ -225,7 +225,7 @@ describe('InboxBell UX / toast prefs', () => {
     vi.stubGlobal('EventSource', FakeES as unknown as typeof EventSource);
 
     const fetchInbox = vi.fn(async () => ({
-      itemList: [],
+      pageData: [],
       unreadTotal: 0,
       unreadByMessageType: {},
     }));
@@ -260,10 +260,10 @@ describe('InboxBell UX / toast prefs', () => {
   it('预警卡片展示级别 Tag；认领到期展示去认领', async () => {
     const fetchInbox = vi.fn(async (params: { pageSize?: number }) => {
       if (params.pageSize === 1) {
-        return { itemList: [], unreadTotal: 2 };
+        return { pageData: [], unreadTotal: 2 };
       }
       return {
-        itemList: [
+        pageData: [
           {
             id: 'a1',
             title: '巡检预警标题',
@@ -316,5 +316,57 @@ describe('InboxBell UX / toast prefs', () => {
     expect(screen.getAllByText('双超').length).toBeGreaterThan(0);
     expect(screen.getByText('去认领')).toBeTruthy();
     expect(screen.getByText('查看预警')).toBeTruthy();
+  });
+
+  it('滚到底加载下一页（pageData 追加）', async () => {
+    const all = Array.from({ length: 25 }, (_, i) => ({
+      id: `p-${i + 1}`,
+      title: `消息 ${i + 1}`,
+      summary: `s${i + 1}`,
+      messageType: 'action' as const,
+      read: true,
+      href: '/actions',
+    }));
+    const fetchInbox = vi.fn(async (params: { currentPage?: number; pageSize?: number }) => {
+      const size = params.pageSize ?? 20;
+      const page = params.currentPage ?? 1;
+      const start = (page - 1) * size;
+      return {
+        pageData: all.slice(start, start + size),
+        total: all.length,
+        unreadTotal: 0,
+        unreadByMessageType: {},
+      };
+    });
+
+    render(
+      <InboxBell
+        fetchInbox={fetchInbox}
+        markRead={async () => undefined}
+        pollMs={0}
+        streamPath={false}
+        pageSize={10}
+      />,
+    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+    fireEvent.click(screen.getByLabelText(/站内信/));
+    expect(await screen.findByText('消息 1')).toBeTruthy();
+    expect(screen.queryByText('消息 11')).toBeNull();
+
+    const viewport = screen.getByTestId('inbox-bell-list-scroll');
+    Object.defineProperty(viewport, 'scrollHeight', { configurable: true, value: 800 });
+    Object.defineProperty(viewport, 'clientHeight', { configurable: true, value: 400 });
+    Object.defineProperty(viewport, 'scrollTop', { configurable: true, value: 740 });
+    await act(async () => {
+      fireEvent.scroll(viewport);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(await screen.findByText('消息 11')).toBeTruthy();
+    const pages = fetchInbox.mock.calls.map((c) => c[0]?.currentPage);
+    expect(pages).toContain(2);
   });
 });

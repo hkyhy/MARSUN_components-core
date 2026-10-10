@@ -45,9 +45,19 @@ const SEED: InboxBellItem[] = [
   },
 ];
 
-/** InboxBell Demo：本地内存数据，演示列表 / 已读 / Tab / 角标 */
+const SCROLL_SEED: InboxBellItem[] = Array.from({ length: 24 }, (_, i) => ({
+  id: `hist-${i + 1}`,
+  title: `历史站内信 ${i + 1}`,
+  summary: `滚动到底加载下一页 · 第 ${i + 1} 条`,
+  messageType: (['alert', 'action', 'remind'] as const)[i % 3],
+  read: i % 4 === 0,
+  href: '/actions',
+  createdAt: `2026-09-${String(14 - (i % 9)).padStart(2, '0')} 10:00`,
+}));
+
+/** InboxBell Demo：本地内存数据，演示列表 / 已读 / Tab / 角标 / 滚动分页 */
 const InboxBellDemo: React.FC = () => {
-  const [rows, setRows] = useState(SEED);
+  const [rows, setRows] = useState([...SEED, ...SCROLL_SEED]);
   const [log, setLog] = useState('');
   const [poll, setPoll] = useState(false);
 
@@ -64,8 +74,11 @@ const InboxBellDemo: React.FC = () => {
         }
         return acc;
       }, {});
+      const currentPage = params.currentPage ?? 1;
+      const size = params.pageSize ?? 20;
+      const start = (currentPage - 1) * size;
       return {
-        itemList: list,
+        pageData: list.slice(start, start + size),
         total: list.length,
         unreadTotal: rows.filter((x) => !x.read).length,
         unreadByMessageType,
