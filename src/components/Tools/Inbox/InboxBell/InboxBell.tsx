@@ -10,6 +10,7 @@ import {
   useState,
   type UIEvent,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { Empty } from '@/components/Empty';
 import { Bell } from '@/components/Icons';
 import { PageSpin } from '@/components/Layout';
@@ -34,6 +35,9 @@ import {
   type InboxToastPrefs,
 } from './toastPrefs';
 import styles from './style.module.scss';
+
+/** SSE / 写后预览 toast 展示时长 */
+const TOAST_DURATION_MS = 6_000;
 
 export type InboxBellMessageType = 'alert' | 'action' | 'remind' | string;
 
@@ -185,6 +189,13 @@ type BadgePreview = {
   summary?: string;
 };
 
+type LiveToast = {
+  key: string;
+  title: string;
+  summary: string;
+  messageType?: string;
+};
+
 function parseBadgePreview(raw: string): BadgePreview | null {
   try {
     const data = JSON.parse(raw) as Record<string, unknown>;
@@ -234,9 +245,11 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
   const [readFilter, setReadFilter] = useState<'all' | 'unread' | 'read'>('all');
   const [toastPrefs, setToastPrefs] = useState<InboxToastPrefs>(() => loadInboxToastPrefs());
   const [loadingMore, setLoadingMore] = useState(false);
+  const [liveToast, setLiveToast] = useState<LiveToast | null>(null);
   const focusDebounceRef = useRef<number | null>(null);
   const badgeDebounceRef = useRef<number | null>(null);
   const pendingToastRef = useRef<BadgePreview | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
   const locationKeyPrimedRef = useRef(false);
   const toastPrefsRef = useRef(toastPrefs);
   toastPrefsRef.current = toastPrefs;
@@ -332,70 +345,40 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     }
   }, [fetchInbox, pageSize]);
 
+  const dismissLiveToast = useCallback(() => {
+    if (toastTimerRef.current != null) {
+      window.clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = null;
+    }
+    setLiveToast(null);
+  }, []);
+
+  const openDrawerFromToast = useCallback(() => {
+    dismissLiveToast();
+    setOpen(true);
+  }, [dismissLiveToast]);
+
   const flushPendingToast = useCallback(() => {
     const preview = pendingToastRef.current;
     pendingToastRef.current = null;
     if (!preview) return;
     if (!shouldToastForMessageType(toastPrefsRef.current, preview.messageType)) return;
-    const toastTitle = preview.title || '新站内信';
-    const toastDesc = preview.summary || '';
-    const typeLabel = messageTypeLabel(preview.messageType);
-    const openDrawer = () => {
-      notification.destroy();
-      setOpen(true);
-    };
+    // 自渲染 toast：避免 antd 静态 notification 离场后残留透明可点壳
+    if (toastTimerRef.current != null) {
+      window.clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = null;
+    }
     const toastKey = `inbox-badge-${preview.messageType || 'msg'}-${Date.now()}`;
-    notification.open({
+    setLiveToast({
       key: toastKey,
-      className: classNames('marsun-inbox-toast', styles.toastNotice),
-      closable: true,
-      title: (
-        <div className={styles.toastHead}>
-          <span className={styles.toastTitle}>{emphasizeQuoted(toastTitle)}</span>
-          {typeLabel ? (
-            <SemanticTag
-              color={messageTypeSemanticColor(preview.messageType)}
-              className={styles.typeTag}
-            >
-              {typeLabel}
-            </SemanticTag>
-          ) : null}
-        </div>
-      ),
-      message: (
-        <div className={styles.toastHead}>
-          <span className={styles.toastTitle}>{emphasizeQuoted(toastTitle)}</span>
-          {typeLabel ? (
-            <SemanticTag
-              color={messageTypeSemanticColor(preview.messageType)}
-              className={styles.typeTag}
-            >
-              {typeLabel}
-            </SemanticTag>
-          ) : null}
-        </div>
-      ),
-      description: (
-        <div className={styles.toastBody}>
-          {toastDesc ? <div className={styles.toastDesc}>{emphasizeQuoted(toastDesc)}</div> : null}
-          <div className={styles.toastActions}>
-            <Button
-              type="primary"
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                openDrawer();
-              }}
-            >
-              查看
-            </Button>
-          </div>
-        </div>
-      ),
-      placement: 'topRight',
-      duration: 6,
-      onClick: openDrawer,
+      title: preview.title || '新站内信',
+      summary: preview.summary || '',
+      messageType: preview.messageType,
     });
+    toastTimerRef.current = window.setTimeout(() => {
+      toastTimerRef.current = null;
+      setLiveToast(null);
+    }, TOAST_DURATION_MS);
   }, []);
 
   /** 合并高频角标刷新（SSE 扫描风暴 / 写后 / 路由 / 焦点）；有预览时立即 toast，角标仍防抖 */
@@ -477,10 +460,19 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
   }, [scheduleBadgeRefresh]);
 
   useEffect(() => {
+    // 清掉历史版本 ant notification 残留的透明可点壳
+    notification.destroy();
+  }, []);
+
+  useEffect(() => {
     return () => {
       if (badgeDebounceRef.current != null) {
         window.clearTimeout(badgeDebounceRef.current);
         badgeDebounceRef.current = null;
+      }
+      if (toastTimerRef.current != null) {
+        window.clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = null;
       }
     };
   }, []);
@@ -634,6 +626,8 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     await handleOpenItem(item);
   };
 
+  const toastTypeLabel = liveToast ? messageTypeLabel(liveToast.messageType) : '';
+
   return (
     <div className={classNames(styles.bellWrap, className)}>
       <Badge count={unreadTotal} size="small" overflowCount={99} offset={[-4, 4]}>
@@ -645,6 +639,60 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
           onClick={() => setOpen(true)}
         />
       </Badge>
+      {liveToast && typeof document !== 'undefined'
+        ? createPortal(
+            <div className={styles.toastHost} data-testid="inbox-live-toast-host">
+              <div
+                key={liveToast.key}
+                className={classNames('marsun-inbox-toast', styles.toastNotice)}
+                role="alert"
+                data-testid="inbox-live-toast"
+                onClick={openDrawerFromToast}
+              >
+                <button
+                  type="button"
+                  className={styles.toastClose}
+                  aria-label="关闭"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dismissLiveToast();
+                  }}
+                >
+                  ×
+                </button>
+                <div className={styles.toastHead}>
+                  <span className={styles.toastTitle}>{emphasizeQuoted(liveToast.title)}</span>
+                  {toastTypeLabel ? (
+                    <SemanticTag
+                      color={messageTypeSemanticColor(liveToast.messageType)}
+                      className={styles.typeTag}
+                    >
+                      {toastTypeLabel}
+                    </SemanticTag>
+                  ) : null}
+                </div>
+                <div className={styles.toastBody}>
+                  {liveToast.summary ? (
+                    <div className={styles.toastDesc}>{emphasizeQuoted(liveToast.summary)}</div>
+                  ) : null}
+                  <div className={styles.toastActions}>
+                    <Button
+                      type="primary"
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDrawerFromToast();
+                      }}
+                    >
+                      查看
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
       <Drawer
         title={title}
         open={open}

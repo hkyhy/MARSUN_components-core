@@ -139,7 +139,7 @@ describe('InboxBell UX / toast prefs', () => {
     expect(loadInboxToastPrefs().remind).toBe(true);
   });
 
-  it('SSE badge 带预览且偏好允许 → notification.open 纯文本；点击打开 Drawer', async () => {
+  it('SSE badge 带预览且偏好允许 → 自渲染 toast；点击打开 Drawer', async () => {
     const listeners: Record<string, (ev: MessageEvent) => void> = {};
     class FakeES {
       url: string;
@@ -194,24 +194,18 @@ describe('InboxBell UX / toast prefs', () => {
       await Promise.resolve();
     });
 
-    expect(notificationOpen).toHaveBeenCalled();
-    const arg = notificationOpen.mock.calls[0][0] as {
-      message: unknown;
-      description: unknown;
-      className?: string;
-      actions?: unknown;
-      onClick?: () => void;
-    };
-    expect(String(arg.className || '')).toContain('marsun-inbox-toast');
-    expect(arg.message).toBeTruthy();
-    expect(arg.description).toBeTruthy();
-    expect(arg.title || arg.message).toBeTruthy();
+    expect(notificationOpen).not.toHaveBeenCalled();
+    const toast = await screen.findByTestId('inbox-live-toast');
+    expect(toast.className).toContain('marsun-inbox-toast');
+    expect(within(toast).getByText('您有新任务')).toBeTruthy();
+    expect(within(toast).getByText(/请尽快处理/)).toBeTruthy();
 
     await act(async () => {
-      arg.onClick?.();
+      fireEvent.click(toast);
       await Promise.resolve();
     });
     expect(screen.getAllByText('本机浏览器偏好，非租户策略').length).toBeGreaterThan(0);
+    expect(screen.queryByTestId('inbox-live-toast')).toBeNull();
   });
 
   it('SSE 无预览字段 → 只刷角标不弹 toast', async () => {
