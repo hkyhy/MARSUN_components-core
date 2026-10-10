@@ -95,6 +95,7 @@
 .item {
   display: block;
   width: 100%;
+  box-sizing: border-box;
   text-align: left;
   padding: 12px;
   border: 1px solid #e2e8f0;
@@ -107,6 +108,18 @@
   }
 }
 
+.itemStatic {
+  cursor: default;
+
+  &:hover {
+    border-color: #e2e8f0;
+  }
+
+  &.itemUnread:hover {
+    border-color: #bfdbfe;
+  }
+}
+
 .itemUnread {
   border-color: #bfdbfe;
   background: #f8fbff;
@@ -114,31 +127,35 @@
 
 .itemHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
   width: 100%;
+  margin-bottom: 6px;
 }
 
 .itemHeaderLeft {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 6px;
   min-width: 0;
   flex: 1;
 }
 
 .itemTitle {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
   color: var(--font-color, #0f172a);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .itemTime {
   flex-shrink: 0;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
   color: var(--font-color-grey-2, #94a3b8);
   line-height: 1.4;
@@ -146,20 +163,25 @@
 }
 
 .itemBody {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .itemSummary {
   display: block;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--font-color-grey-1, #64748b);
   line-height: 1.5;
+
+  :global(strong) {
+    font-weight: 600;
+    color: var(--font-color, #0f172a);
+  }
 }
 
 .itemBodyHtml {
   display: block;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--font-color-grey-1, #64748b);
   line-height: 1.5;
@@ -183,4 +205,71 @@
 .typeTag {
   margin-inline-end: 0;
   flex-shrink: 0;
+}
+
+.itemMeta {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--font-color-grey-2, #94a3b8);
+  line-height: 1.4;
+}
+
+.itemFooterTags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.itemActions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* toast：样式挂在自渲染节点上（portal 不依赖 ant 内部 class） */
+.toastNotice {
+  width: 320px !important;
+  padding: 12px 16px !important;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.toastHead {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.toastTitle {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--font-color, #0f172a);
+}
+
+.toastBody {
+  margin-top: 2px;
+}
+
+.toastDesc {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--font-color-grey-1, #64748b);
+
+  :global(strong) {
+    font-weight: 600;
+    color: var(--font-color, #0f172a);
+  }
+}
+
+.toastActions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
 }

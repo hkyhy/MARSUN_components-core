@@ -7,3 +7,16 @@ export type {
   InboxBellMessageType,
   InboxBellHandle,
 } from './InboxBell';
+export {
+  resolveInboxItemActions,
+  filterInboxActionsForHost,
+  normalizeInboxActions,
+  inboxSceneLabel,
+  isInboxButtonDriven,
+  isTerminalActionStatus,
+} from './inboxItemActions';
+export type {
+  InboxItemActionKind,
+  InboxItemQuickAction,
+  InboxItemActionsResolved,
+} from './inboxItemActions';

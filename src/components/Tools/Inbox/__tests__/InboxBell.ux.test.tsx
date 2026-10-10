@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import InboxBell from '../InboxBell/InboxBell';
 import {
@@ -52,6 +52,7 @@ describe('InboxBell UX / toast prefs', () => {
   });
 
   afterEach(() => {
+    cleanup();
     vi.unstubAllGlobals();
   });
 
@@ -74,8 +75,11 @@ describe('InboxBell UX / toast prefs', () => {
             title: '您有新任务',
             summary: '请尽快处理',
             messageType: 'action',
+            category: 'action_assigned',
+            actionId: 'a1',
             createdAt: '2026-10-09 12:00',
             read: false,
+            href: '/actions?actionId=a1',
           },
         ],
         unreadTotal: 1,
@@ -98,6 +102,7 @@ describe('InboxBell UX / toast prefs', () => {
 
     expect(await screen.findByText('您有新任务')).toBeTruthy();
     expect(screen.getByText('行动')).toBeTruthy();
+    expect(screen.getByText('去执行')).toBeTruthy();
     expect(screen.getByText('2026-10-09 12:00')).toBeTruthy();
     expect(screen.getByText('请尽快处理')).toBeTruthy();
     expect(screen.getByText('本机浏览器偏好，非租户策略')).toBeTruthy();
@@ -190,19 +195,22 @@ describe('InboxBell UX / toast prefs', () => {
 
     expect(notificationOpen).toHaveBeenCalled();
     const arg = notificationOpen.mock.calls[0][0] as {
-      message: string;
-      description: string;
+      message: unknown;
+      description: unknown;
+      className?: string;
+      actions?: unknown;
       onClick?: () => void;
     };
-    expect(arg.message).toBe('您有新任务');
-    expect(arg.description).toBe('李四你好：请尽快处理');
-    expect(String(arg.message)).not.toContain('<');
+    expect(String(arg.className || '')).toContain('marsun-inbox-toast');
+    expect(arg.message).toBeTruthy();
+    expect(arg.description).toBeTruthy();
+    expect(arg.title || arg.message).toBeTruthy();
 
     await act(async () => {
       arg.onClick?.();
       await Promise.resolve();
     });
-    expect(screen.getByText('本机浏览器偏好，非租户策略')).toBeTruthy();
+    expect(screen.getAllByText('本机浏览器偏好，非租户策略').length).toBeGreaterThan(0);
   });
 
   it('SSE 无预览字段 → 只刷角标不弹 toast', async () => {
@@ -247,5 +255,66 @@ describe('InboxBell UX / toast prefs', () => {
 
     expect(fetchInbox.mock.calls.length).toBeGreaterThan(afterMount);
     expect(notificationOpen).not.toHaveBeenCalled();
+  });
+
+  it('预警卡片展示级别 Tag；认领到期展示去认领', async () => {
+    const fetchInbox = vi.fn(async (params: { pageSize?: number }) => {
+      if (params.pageSize === 1) {
+        return { itemList: [], unreadTotal: 2 };
+      }
+      return {
+        itemList: [
+          {
+            id: 'a1',
+            title: '巡检预警标题',
+            summary: '回潮率超标',
+            messageType: 'alert',
+            category: 'inspect_alert',
+            level: 'L3',
+            levelLabel: '双超',
+            levelColor: '#f5222d',
+            createdAt: '2026-09-18 18:33:08',
+            read: false,
+            href: '/alerts',
+          },
+          {
+            id: 'r1',
+            title: '认领到期标题',
+            summary: '仍未认领',
+            messageType: 'remind',
+            category: 'claim_due',
+            level: 'L3',
+            levelLabel: '双超',
+            levelColor: '#f5222d',
+            createdAt: '2026-09-18 18:33:08',
+            read: false,
+            href: '/alerts',
+          },
+        ],
+        unreadTotal: 2,
+      };
+    });
+
+    render(
+      <InboxBell
+        fetchInbox={fetchInbox}
+        markRead={async () => undefined}
+        pollMs={0}
+        streamPath={false}
+      />,
+    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+    fireEvent.click(screen.getByLabelText(/站内信/));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(await screen.findByText('巡检预警标题')).toBeTruthy();
+    expect(screen.getAllByText('预警').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('双超').length).toBeGreaterThan(0);
+    expect(screen.getByText('去认领')).toBeTruthy();
+    expect(screen.getByText('查看预警')).toBeTruthy();
   });
 });

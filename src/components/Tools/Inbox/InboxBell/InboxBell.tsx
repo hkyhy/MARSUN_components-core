@@ -17,6 +17,14 @@ import { StateBar } from '@/components/StateBar';
 import { SEMANTIC_COLORS, SemanticTag } from '@/components/Tag';
 import { sanitizeInboxHtml } from '../sanitizeInboxHtml';
 import { INBOX_BADGE_REFRESH_EVENT } from '../requestInboxBadgeRefresh';
+import { emphasizeQuoted } from './emphasizeQuoted';
+import {
+  filterInboxActionsForHost,
+  isInboxButtonDriven,
+  resolveInboxItemActions,
+  type InboxItemActionKind,
+  type InboxItemQuickAction,
+} from './inboxItemActions';
 import {
   loadInboxToastPrefs,
   saveInboxToastPrefs,
@@ -39,6 +47,28 @@ export type InboxBellItem = {
   href?: string;
   createdAt?: string;
   level?: string;
+  /** 级别展示名（业务仓从已有维表/工具函数填；空则回落 level） */
+  levelLabel?: string;
+  /**
+   * 级别 Tag 色：业务仓传入预警级别设置色（如 QA `ALERT_LEVEL_COLORS.*.accent`）。
+   * 支持 SemanticColor 键或 `#hex`；core 不自造级别色表。
+   */
+  levelColor?: string;
+  category?: string;
+  scene?: string;
+  eventKey?: string;
+  categoryLabel?: string;
+  alertId?: string | null;
+  actionId?: string | null;
+  claimed?: boolean;
+  started?: boolean;
+  /** 行动当前状态（enrich / contextJson）；终态时底栏只保留查看任务 */
+  actionStatus?: string;
+  factory?: string;
+  variety?: string;
+  metric?: string;
+  /** 业务日/月份（如 2026-07-31）；预警深链 date 用 */
+  month?: string;
 };
 
 export type InboxBellListResult = {
@@ -85,6 +115,11 @@ export type InboxBellProps = {
   streamPath?: string | false;
   /** 返回当前 JWT；空则不开 SSE */
   getAccessToken?: () => string | null | undefined;
+  /**
+   * 卡片底栏动作（认领/去执行等）。不传则底栏按钮一律走 onNavigate / href。
+   * 业务仓拦截 claim_alert / start_action / create_task。
+   */
+  onItemAction?: (kind: InboxItemActionKind, item: InboxBellItem) => void | Promise<void>;
 };
 
 export type InboxBellHandle = {
@@ -124,6 +159,19 @@ function messageTypeSemanticColor(raw?: string): string {
   return SEMANTIC_COLORS.DEFAULT;
 }
 
+function itemMetaLine(item: InboxBellItem): string {
+  return [item.factory, item.variety, item.metric]
+    .map((x) => String(x || '').trim())
+    .filter(Boolean)
+    .join(' · ');
+}
+
+/** 业务传入色；无则 DEFAULT（禁止在 core 造级别→色平行表） */
+function resolveLevelTagColor(raw?: string): string {
+  const c = String(raw || '').trim();
+  return c || SEMANTIC_COLORS.DEFAULT;
+}
+
 type BadgePreview = {
   messageType?: string;
   title?: string;
@@ -149,8 +197,8 @@ function parseBadgePreview(raw: string): BadgePreview | null {
 }
 
 /**
- * 通用站内信铃铛：列表 / 已读 / Tab / 角标 / 可选 SSE toast。
- * 不含认领、行动等业务动作；由注入的 fetchInbox / markRead / onNavigate 对接消息服务。
+ * 通用站内信铃铛：列表 / 已读 / Tab / 角标 / 卡片底栏动作 / 可选 SSE toast。
+ * 认领、去执行等业务动作由 `onItemAction` 注入；默认底栏按钮走 onNavigate / href。
  * 默认不定时轮询；有消息侧靠业务回调 / 路由 / 焦点 / 可选 SSE 再拉角标。
  */
 const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell(
@@ -165,6 +213,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     title = '站内信',
     streamPath = '/api/v1/msg-center/inbox/stream',
     getAccessToken,
+    onItemAction,
   },
   ref,
 ) {
@@ -299,17 +348,65 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
       if (!preview) return;
       if (!shouldToastForMessageType(toastPrefsRef.current, preview.messageType)) return;
       const toastTitle = preview.title || '新站内信';
-      const toastDesc = preview.summary || undefined;
+      const toastDesc = preview.summary || '';
+      const typeLabel = messageTypeLabel(preview.messageType);
+      const openDrawer = () => {
+        notification.destroy();
+        setOpen(true);
+      };
+      const toastKey = `inbox-badge-${preview.messageType || 'msg'}-${Date.now()}`;
       notification.open({
-        key: `inbox-badge-${preview.messageType || 'msg'}-${Date.now()}`,
-        message: toastTitle,
-        description: toastDesc,
+        key: toastKey,
+        className: classNames('marsun-inbox-toast', styles.toastNotice),
+        closable: true,
+        title: (
+          <div className={styles.toastHead}>
+            <span className={styles.toastTitle}>{emphasizeQuoted(toastTitle)}</span>
+            {typeLabel ? (
+              <SemanticTag
+                color={messageTypeSemanticColor(preview.messageType)}
+                className={styles.typeTag}
+              >
+                {typeLabel}
+              </SemanticTag>
+            ) : null}
+          </div>
+        ),
+        message: (
+          <div className={styles.toastHead}>
+            <span className={styles.toastTitle}>{emphasizeQuoted(toastTitle)}</span>
+            {typeLabel ? (
+              <SemanticTag
+                color={messageTypeSemanticColor(preview.messageType)}
+                className={styles.typeTag}
+              >
+                {typeLabel}
+              </SemanticTag>
+            ) : null}
+          </div>
+        ),
+        description: (
+          <div className={styles.toastBody}>
+            {toastDesc ? (
+              <div className={styles.toastDesc}>{emphasizeQuoted(toastDesc)}</div>
+            ) : null}
+            <div className={styles.toastActions}>
+              <Button
+                type="primary"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDrawer();
+                }}
+              >
+                查看
+              </Button>
+            </div>
+          </div>
+        ),
         placement: 'topRight',
-        duration: 4.5,
-        onClick: () => {
-          notification.destroy();
-          setOpen(true);
-        },
+        duration: 6,
+        onClick: openDrawer,
       });
     };
     es.addEventListener('badge', onBadge);
@@ -350,8 +447,8 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     });
   };
 
-  const handleOpenItem = async (item: InboxBellItem) => {
-    if (!item.read) {
+  const handleOpenItem = async (item: InboxBellItem, opts?: { skipRead?: boolean }) => {
+    if (!opts?.skipRead && !item.read) {
       try {
         await markRead(item.id);
         setItems((prev) => prev.map((x) => (x.id === item.id ? { ...x, read: true } : x)));
@@ -374,6 +471,21 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
       window.location.assign(href);
     }
     setOpen(false);
+  };
+
+  const runQuickAction = async (item: InboxBellItem, action: InboxItemQuickAction) => {
+    if (action.disabled) return;
+    if (onItemAction) {
+      try {
+        await onItemAction(action.kind, item);
+        void load();
+        void refreshBadge();
+      } catch (e) {
+        message.error(e instanceof Error ? e.message : '操作失败');
+      }
+      return;
+    }
+    await handleOpenItem(item);
   };
 
   return (
@@ -451,17 +563,43 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
             <ul className={styles.list}>
               {items.map((item) => {
                 const typeLabel = messageTypeLabel(item.messageType);
+                const levelText = String(item.levelLabel || item.level || '').trim();
+                const showLevel = Boolean(levelText);
                 const safeHtml = sanitizeInboxHtml(item.bodyHtml);
+                const actions = filterInboxActionsForHost(
+                  resolveInboxItemActions(item),
+                  Boolean(onItemAction),
+                );
+                const buttonDriven = isInboxButtonDriven(item);
+                const meta = itemMetaLine(item);
+                const showActions = Boolean(actions.primary);
                 return (
                   <li key={item.id}>
-                    <button
-                      type="button"
-                      className={classNames(styles.item, !item.read && styles.itemUnread)}
-                      onClick={() => void handleOpenItem(item)}
+                    <div
+                      className={classNames(
+                        styles.item,
+                        !item.read && styles.itemUnread,
+                        buttonDriven && styles.itemStatic,
+                      )}
+                      role={buttonDriven ? undefined : 'button'}
+                      tabIndex={buttonDriven ? undefined : 0}
+                      onClick={buttonDriven ? undefined : () => void handleOpenItem(item)}
+                      onKeyDown={
+                        buttonDriven
+                          ? undefined
+                          : (e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                void handleOpenItem(item);
+                              }
+                            }
+                      }
                     >
                       <div className={styles.itemHeader}>
                         <span className={styles.itemHeaderLeft}>
-                          <span className={styles.itemTitle}>{item.title || '（无标题）'}</span>
+                          <span className={styles.itemTitle} title={item.title || '（无标题）'}>
+                            {item.title || '（无标题）'}
+                          </span>
                           {typeLabel ? (
                             <SemanticTag
                               color={messageTypeSemanticColor(item.messageType)}
@@ -480,10 +618,49 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
                             dangerouslySetInnerHTML={{ __html: safeHtml }}
                           />
                         ) : item.summary ? (
-                          <span className={styles.itemSummary}>{item.summary}</span>
+                          <span className={styles.itemSummary}>
+                            {emphasizeQuoted(item.summary)}
+                          </span>
                         ) : null}
                       </div>
-                    </button>
+                      {meta ? <span className={styles.itemMeta}>{meta}</span> : null}
+                      {showLevel ? (
+                        <div className={styles.itemFooterTags}>
+                          <SemanticTag
+                            color={resolveLevelTagColor(item.levelColor)}
+                            className={styles.typeTag}
+                          >
+                            {levelText}
+                          </SemanticTag>
+                        </div>
+                      ) : null}
+                      {showActions && actions.primary ? (
+                        <div
+                          className={styles.itemActions}
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        >
+                          <Space size={8} wrap>
+                            <Button
+                              size="small"
+                              type="primary"
+                              onClick={() => void runQuickAction(item, actions.primary!)}
+                            >
+                              {actions.primary.label}
+                            </Button>
+                            {actions.secondary ? (
+                              <Button
+                                size="small"
+                                type="link"
+                                onClick={() => void runQuickAction(item, actions.secondary!)}
+                              >
+                                {actions.secondary.label}
+                              </Button>
+                            ) : null}
+                          </Space>
+                        </div>
+                      ) : null}
+                    </div>
                   </li>
                 );
               })}
@@ -501,5 +678,18 @@ export {
   loadInboxToastPrefs,
   saveInboxToastPrefs,
   shouldToastForMessageType,
-};
-export type { InboxToastPrefs };
+} from './toastPrefs';
+export type { InboxToastPrefs } from './toastPrefs';
+export {
+  resolveInboxItemActions,
+  filterInboxActionsForHost,
+  normalizeInboxActions,
+  inboxSceneLabel,
+  isInboxButtonDriven,
+  isTerminalActionStatus,
+} from './inboxItemActions';
+export type {
+  InboxItemActionKind,
+  InboxItemQuickAction,
+  InboxItemActionsResolved,
+} from './inboxItemActions';

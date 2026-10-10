@@ -1,10 +1,10 @@
 {
   "title": "Inbox 站内信",
-  "description": "通用站内信铃铛：列表 / 已读 / Tab / 角标；业务注入 fetchInbox，不含认领/行动。",
+  "description": "通用站内信铃铛：头栏标题+类型Tag|时间；预警级别 Tag 在卡片底部（色由业务 levelColor 注入）；底栏 Actions；紧凑 toast 自带查看按钮。",
   "examples": [
     {
       "title": "InboxBell 铃铛",
-      "description": "角标未读数；Drawer 内按类型与已读筛选；点击条目 markRead + onNavigate",
+      "description": "角标未读数；Drawer 卡片场景 Tag + 预警级别 + 底栏查看/去认领；toast 紧凑带「查看」",
       "component": "@/components/Tools/Inbox/examples/InboxBellDemo",
       "sourcePath": "@/components/Tools/Inbox/examples/InboxBellDemo/index.tsx"
     },
@@ -48,7 +48,12 @@
           "type": "string | number"
         },
         { "prop": "pageSize", "desc": "列表页大小", "type": "number" },
-        { "prop": "title", "desc": "Drawer 标题", "type": "string" }
+        { "prop": "title", "desc": "Drawer 标题", "type": "string" },
+        {
+          "prop": "onItemAction",
+          "desc": "卡片底栏动作；拦截认领/去执行/新建任务。不传则按钮走 onNavigate/href",
+          "type": "(kind, item) => void | Promise<void>"
+        }
       ]
     }
   ]

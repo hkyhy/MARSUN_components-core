@@ -3888,7 +3888,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: '2. 建单 / 下发',
         description:
-          'CreateActionModal：SuperSelect 任务类型/分厂；品种 loadVarietyPage 分页；create vs dispatch+lockedContext',
+          'CreateActionModal：form / scopeMode=none / dispatch+lockedContext；品种分页仅 form',
         component: React.lazy(
           () => import('@/components/Tools/ActionTracking/examples/CreateActionDemo'),
         ),
@@ -3966,9 +3966,16 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
           { prop: 'metricPlaceholder', desc: 'F4：关联指标 placeholder，App 注入', type: 'string' },
           {
             prop: 'lockedContext',
-            desc: '分域只读上下文；有则不出分厂/品种/指标',
+            desc: '分域只读上下文；有则强制 scopeMode=locked',
             type: 'LockedContextField[]',
           },
+          {
+            prop: 'scopeMode',
+            desc: 'form（默认）| locked | none（EAM 主动新建不出分厂/品种/指标）',
+            type: "'form' | 'locked' | 'none'",
+            defaultVal: "'form'",
+          },
+          { prop: 'noneScopeHint', desc: 'scopeMode=none 时短提示（App 注入）', type: 'string' },
           {
             prop: 'variant',
             desc: '主动新建 / 预警下发',
@@ -4018,11 +4025,13 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/tools/inbox': {
     title: 'Inbox 站内信',
-    description: '通用站内信铃铛：列表 / 已读 / Tab / 角标；业务注入 fetchInbox，不含认领/行动。',
+    description:
+      '通用站内信铃铛：头栏标题+类型Tag|时间；预警级别 Tag 在卡片底部（色由业务 levelColor 注入）；底栏 Actions；紧凑 toast 自带查看按钮。',
     examples: [
       {
         title: 'InboxBell 铃铛',
-        description: '角标未读数；Drawer 内按类型与已读筛选；点击条目 markRead + onNavigate',
+        description:
+          '角标未读数；Drawer 卡片场景 Tag + 预警级别 + 底栏查看/去认领；toast 紧凑带「查看」',
         component: React.lazy(() => import('@/components/Tools/Inbox/examples/InboxBellDemo')),
         sourcePath: () => import('@/components/Tools/Inbox/examples/InboxBellDemo/index.tsx?raw'),
       },
@@ -4057,9 +4066,23 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             desc: '点击条目跳转；不传则用 href 直接跳',
             type: '(href: string, item: InboxBellItem) => void',
           },
-          { prop: 'pollMs', desc: '角标轮询间隔；≤0 关闭', type: 'number' },
+          {
+            prop: 'pollMs',
+            desc: '角标定时轮询间隔（ms）；默认 0 关闭。另有挂载/路由 locationKey/焦点/requestInboxBadgeRefresh 触发',
+            type: 'number',
+          },
+          {
+            prop: 'locationKey',
+            desc: '路由身份；变化时刷新角标（如 pathname）',
+            type: 'string | number',
+          },
           { prop: 'pageSize', desc: '列表页大小', type: 'number' },
           { prop: 'title', desc: 'Drawer 标题', type: 'string' },
+          {
+            prop: 'onItemAction',
+            desc: '卡片底栏动作；拦截认领/去执行/新建任务。不传则按钮走 onNavigate/href',
+            type: '(kind, item) => void | Promise<void>',
+          },
         ],
       },
     ],

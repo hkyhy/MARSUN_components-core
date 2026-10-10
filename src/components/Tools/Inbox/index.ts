@@ -7,6 +7,19 @@ export type {
   InboxBellMessageType,
   InboxBellHandle,
 } from './InboxBell';
+export {
+  resolveInboxItemActions,
+  filterInboxActionsForHost,
+  normalizeInboxActions,
+  inboxSceneLabel,
+  isInboxButtonDriven,
+  isTerminalActionStatus,
+} from './InboxBell';
+export type {
+  InboxItemActionKind,
+  InboxItemQuickAction,
+  InboxItemActionsResolved,
+} from './InboxBell';
 export { sanitizeInboxHtml } from './sanitizeInboxHtml';
 export {
   INBOX_BADGE_REFRESH_EVENT,

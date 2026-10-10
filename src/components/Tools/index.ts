@@ -6,6 +6,17 @@ export type {
   InboxBellProps,
   InboxBellMessageType,
   InboxBellHandle,
+  InboxItemActionKind,
+  InboxItemQuickAction,
+  InboxItemActionsResolved,
+} from './Inbox';
+export {
+  resolveInboxItemActions,
+  filterInboxActionsForHost,
+  normalizeInboxActions,
+  inboxSceneLabel,
+  isInboxButtonDriven,
+  isTerminalActionStatus,
 } from './Inbox';
 export {
   INBOX_BADGE_REFRESH_EVENT,
