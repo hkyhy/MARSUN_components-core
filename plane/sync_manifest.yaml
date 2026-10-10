@@ -1,12 +1,26 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.163
+  next_task_id: P6.3.164
 tasks:
+- id: P6.3.163
+  plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 失败；暂挂同线 InboxBell Issue
+  milestone: P6.3
+  name: InboxBell 角标 SSE 防抖合并并发版 0.1.127
+  status: 进行中
+  priority: P1
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-10-10'
+  target_date: '2026-10-10'
+  tags: [frontend, InboxBell, msg-center, release]
+  note: |
+    Related: S4-664 · S3-1222 · P6.3.162
+    BADGE_DEBOUNCE_MS=1500；SSE/写后/路由/焦点合并刷角标；仍≠G1
 - id: P6.3.162
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 502；暂挂同线 InboxBell Issue
   milestone: P6.3
   name: InboxBell pageData 分页与滚底加载并发版
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: feat
   owner: 黄金芳

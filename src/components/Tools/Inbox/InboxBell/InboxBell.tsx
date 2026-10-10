@@ -143,6 +143,8 @@ const TYPE_TAG_LABEL: Record<string, string> = {
 };
 
 const FOCUS_DEBOUNCE_MS = 300;
+/** SSE / 写后 / 外部刷角标合并窗口，避免扫描风暴打爆 inbox */
+const BADGE_DEBOUNCE_MS = 1_500;
 /** 距底部小于该值时拉下一页 */
 const LOAD_MORE_GAP_PX = 72;
 
@@ -233,6 +235,8 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
   const [toastPrefs, setToastPrefs] = useState<InboxToastPrefs>(() => loadInboxToastPrefs());
   const [loadingMore, setLoadingMore] = useState(false);
   const focusDebounceRef = useRef<number | null>(null);
+  const badgeDebounceRef = useRef<number | null>(null);
+  const pendingToastRef = useRef<BadgePreview | null>(null);
   const locationKeyPrimedRef = useRef(false);
   const toastPrefsRef = useRef(toastPrefs);
   toastPrefsRef.current = toastPrefs;
@@ -328,6 +332,88 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     }
   }, [fetchInbox, pageSize]);
 
+  const flushPendingToast = useCallback(() => {
+    const preview = pendingToastRef.current;
+    pendingToastRef.current = null;
+    if (!preview) return;
+    if (!shouldToastForMessageType(toastPrefsRef.current, preview.messageType)) return;
+    const toastTitle = preview.title || '新站内信';
+    const toastDesc = preview.summary || '';
+    const typeLabel = messageTypeLabel(preview.messageType);
+    const openDrawer = () => {
+      notification.destroy();
+      setOpen(true);
+    };
+    const toastKey = `inbox-badge-${preview.messageType || 'msg'}-${Date.now()}`;
+    notification.open({
+      key: toastKey,
+      className: classNames('marsun-inbox-toast', styles.toastNotice),
+      closable: true,
+      title: (
+        <div className={styles.toastHead}>
+          <span className={styles.toastTitle}>{emphasizeQuoted(toastTitle)}</span>
+          {typeLabel ? (
+            <SemanticTag
+              color={messageTypeSemanticColor(preview.messageType)}
+              className={styles.typeTag}
+            >
+              {typeLabel}
+            </SemanticTag>
+          ) : null}
+        </div>
+      ),
+      message: (
+        <div className={styles.toastHead}>
+          <span className={styles.toastTitle}>{emphasizeQuoted(toastTitle)}</span>
+          {typeLabel ? (
+            <SemanticTag
+              color={messageTypeSemanticColor(preview.messageType)}
+              className={styles.typeTag}
+            >
+              {typeLabel}
+            </SemanticTag>
+          ) : null}
+        </div>
+      ),
+      description: (
+        <div className={styles.toastBody}>
+          {toastDesc ? <div className={styles.toastDesc}>{emphasizeQuoted(toastDesc)}</div> : null}
+          <div className={styles.toastActions}>
+            <Button
+              type="primary"
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                openDrawer();
+              }}
+            >
+              查看
+            </Button>
+          </div>
+        </div>
+      ),
+      placement: 'topRight',
+      duration: 6,
+      onClick: openDrawer,
+    });
+  }, []);
+
+  /** 合并高频角标刷新（SSE 扫描风暴 / 写后 / 路由 / 焦点）；命令式 refreshBadge 仍立即执行 */
+  const scheduleBadgeRefresh = useCallback(
+    (preview?: BadgePreview | null) => {
+      if (preview) pendingToastRef.current = preview;
+      if (badgeDebounceRef.current != null) {
+        window.clearTimeout(badgeDebounceRef.current);
+      }
+      badgeDebounceRef.current = window.setTimeout(() => {
+        badgeDebounceRef.current = null;
+        void refreshBadge();
+        flushPendingToast();
+      }, BADGE_DEBOUNCE_MS);
+    },
+    [refreshBadge, flushPendingToast],
+  );
+
   useImperativeHandle(ref, () => ({ refreshBadge }), [refreshBadge]);
 
   useEffect(() => {
@@ -341,8 +427,8 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
       locationKeyPrimedRef.current = true;
       return;
     }
-    void refreshBadge();
-  }, [locationKey, refreshBadge]);
+    scheduleBadgeRefresh();
+  }, [locationKey, scheduleBadgeRefresh]);
 
   useEffect(() => {
     if (pollMs <= 0) return undefined;
@@ -359,7 +445,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
       }
       focusDebounceRef.current = window.setTimeout(() => {
         focusDebounceRef.current = null;
-        void refreshBadge();
+        scheduleBadgeRefresh();
       }, FOCUS_DEBOUNCE_MS);
     };
 
@@ -377,15 +463,24 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
         focusDebounceRef.current = null;
       }
     };
-  }, [refreshBadge]);
+  }, [scheduleBadgeRefresh]);
 
   useEffect(() => {
     const onExternal = () => {
-      void refreshBadge();
+      scheduleBadgeRefresh();
     };
     window.addEventListener(INBOX_BADGE_REFRESH_EVENT, onExternal);
     return () => window.removeEventListener(INBOX_BADGE_REFRESH_EVENT, onExternal);
-  }, [refreshBadge]);
+  }, [scheduleBadgeRefresh]);
+
+  useEffect(() => {
+    return () => {
+      if (badgeDebounceRef.current != null) {
+        window.clearTimeout(badgeDebounceRef.current);
+        badgeDebounceRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (streamPath === false) return undefined;
@@ -407,72 +502,9 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     }
 
     const onBadge = (ev: Event) => {
-      void refreshBadge();
       const msgEv = ev as MessageEvent;
       const preview = typeof msgEv?.data === 'string' ? parseBadgePreview(msgEv.data) : null;
-      if (!preview) return;
-      if (!shouldToastForMessageType(toastPrefsRef.current, preview.messageType)) return;
-      const toastTitle = preview.title || '新站内信';
-      const toastDesc = preview.summary || '';
-      const typeLabel = messageTypeLabel(preview.messageType);
-      const openDrawer = () => {
-        notification.destroy();
-        setOpen(true);
-      };
-      const toastKey = `inbox-badge-${preview.messageType || 'msg'}-${Date.now()}`;
-      notification.open({
-        key: toastKey,
-        className: classNames('marsun-inbox-toast', styles.toastNotice),
-        closable: true,
-        title: (
-          <div className={styles.toastHead}>
-            <span className={styles.toastTitle}>{emphasizeQuoted(toastTitle)}</span>
-            {typeLabel ? (
-              <SemanticTag
-                color={messageTypeSemanticColor(preview.messageType)}
-                className={styles.typeTag}
-              >
-                {typeLabel}
-              </SemanticTag>
-            ) : null}
-          </div>
-        ),
-        message: (
-          <div className={styles.toastHead}>
-            <span className={styles.toastTitle}>{emphasizeQuoted(toastTitle)}</span>
-            {typeLabel ? (
-              <SemanticTag
-                color={messageTypeSemanticColor(preview.messageType)}
-                className={styles.typeTag}
-              >
-                {typeLabel}
-              </SemanticTag>
-            ) : null}
-          </div>
-        ),
-        description: (
-          <div className={styles.toastBody}>
-            {toastDesc ? (
-              <div className={styles.toastDesc}>{emphasizeQuoted(toastDesc)}</div>
-            ) : null}
-            <div className={styles.toastActions}>
-              <Button
-                type="primary"
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openDrawer();
-                }}
-              >
-                查看
-              </Button>
-            </div>
-          </div>
-        ),
-        placement: 'topRight',
-        duration: 6,
-        onClick: openDrawer,
-      });
+      scheduleBadgeRefresh(preview);
     };
     es.addEventListener('badge', onBadge);
     es.addEventListener('inbox', onBadge);
@@ -486,7 +518,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
       es.removeEventListener('inbox', onBadge);
       es.close();
     };
-  }, [streamPath, getAccessToken, refreshBadge]);
+  }, [streamPath, getAccessToken, scheduleBadgeRefresh]);
 
   useEffect(() => {
     if (open) void load();

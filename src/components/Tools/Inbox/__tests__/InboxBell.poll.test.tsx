@@ -61,7 +61,7 @@ describe('InboxBell poll / refresh', () => {
     expect(fetchInbox.mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('requestInboxBadgeRefresh 事件触发 refreshBadge', async () => {
+  it('requestInboxBadgeRefresh 事件防抖后触发 refreshBadge', async () => {
     const fetchInbox = vi.fn(async () => ({
       pageData: [],
       unreadTotal: 1,
@@ -78,6 +78,14 @@ describe('InboxBell poll / refresh', () => {
 
     await act(async () => {
       requestInboxBadgeRefresh();
+      requestInboxBadgeRefresh();
+      requestInboxBadgeRefresh();
+      await Promise.resolve();
+    });
+    expect(fetchInbox.mock.calls.length).toBe(afterMount);
+
+    await act(async () => {
+      vi.advanceTimersByTime(1_500);
       await Promise.resolve();
     });
     expect(fetchInbox.mock.calls.length).toBe(afterMount + 1);
