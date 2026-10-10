@@ -144,6 +144,7 @@ describe('InboxBell UX / toast prefs', () => {
     class FakeES {
       url: string;
       onerror: (() => void) | null = null;
+      onopen: (() => void) | null = null;
       constructor(url: string) {
         this.url = url;
       }
@@ -214,8 +215,11 @@ describe('InboxBell UX / toast prefs', () => {
   });
 
   it('SSE 无预览字段 → 只刷角标不弹 toast', async () => {
+    vi.useFakeTimers();
     const listeners: Record<string, (ev: MessageEvent) => void> = {};
     class FakeES {
+      onerror: (() => void) | null = null;
+      onopen: (() => void) | null = null;
       addEventListener(type: string, cb: (ev: MessageEvent) => void) {
         listeners[type] = cb;
       }
@@ -253,8 +257,12 @@ describe('InboxBell UX / toast prefs', () => {
       await Promise.resolve();
     });
 
-    expect(fetchInbox.mock.calls.length).toBeGreaterThan(afterMount);
     expect(notificationOpen).not.toHaveBeenCalled();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1600);
+    });
+    expect(fetchInbox.mock.calls.length).toBeGreaterThan(afterMount);
+    vi.useRealTimers();
   });
 
   it('预警卡片展示级别 Tag；认领到期展示去认领', async () => {

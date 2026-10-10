@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.164
+  next_task_id: P6.3.165
 tasks:
+- id: P6.3.164
+  plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 失败时暂挂同线 InboxBell Issue
+  milestone: P6.3
+  name: InboxBell SSE 退避重连与写后 toast 预览并发版 0.1.128
+  status: 进行中
+  priority: P1
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-10-10'
+  target_date: '2026-10-10'
+  tags: [frontend, InboxBell, msg-center, release]
+  note: |
+    Related: S4-664 · S3-1222 · P6.3.163
+    SSE 受控退避重连；preview 立即 toast；requestInboxBadgeRefresh detail；本地 core peer alias；仍≠G1
 - id: P6.3.163
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 失败；暂挂同线 InboxBell Issue
   milestone: P6.3

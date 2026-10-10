@@ -27,3 +27,4 @@ export {
   requestInboxBadgeRefresh,
   requestInboxBadgeRefreshAfterWrite,
 } from './requestInboxBadgeRefresh';
+export type { InboxBadgeRefreshDetail } from './requestInboxBadgeRefresh';

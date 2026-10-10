@@ -398,17 +398,19 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     });
   }, []);
 
-  /** 合并高频角标刷新（SSE 扫描风暴 / 写后 / 路由 / 焦点）；命令式 refreshBadge 仍立即执行 */
+  /** 合并高频角标刷新（SSE 扫描风暴 / 写后 / 路由 / 焦点）；有预览时立即 toast，角标仍防抖 */
   const scheduleBadgeRefresh = useCallback(
     (preview?: BadgePreview | null) => {
-      if (preview) pendingToastRef.current = preview;
+      if (preview) {
+        pendingToastRef.current = preview;
+        flushPendingToast();
+      }
       if (badgeDebounceRef.current != null) {
         window.clearTimeout(badgeDebounceRef.current);
       }
       badgeDebounceRef.current = window.setTimeout(() => {
         badgeDebounceRef.current = null;
         void refreshBadge();
-        flushPendingToast();
       }, BADGE_DEBOUNCE_MS);
     },
     [refreshBadge, flushPendingToast],
@@ -466,8 +468,9 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
   }, [scheduleBadgeRefresh]);
 
   useEffect(() => {
-    const onExternal = () => {
-      scheduleBadgeRefresh();
+    const onExternal = (ev: Event) => {
+      const detail = (ev as CustomEvent<{ preview?: BadgePreview | null }>).detail;
+      scheduleBadgeRefresh(detail?.preview || undefined);
     };
     window.addEventListener(INBOX_BADGE_REFRESH_EVENT, onExternal);
     return () => window.removeEventListener(INBOX_BADGE_REFRESH_EVENT, onExternal);
@@ -487,36 +490,81 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     if (typeof getAccessToken !== 'function') return undefined;
     if (typeof window === 'undefined' || typeof EventSource === 'undefined') return undefined;
 
-    const token = String(getAccessToken() || '').trim();
-    if (!token) return undefined;
-
     const base = String(streamPath || '/api/v1/msg-center/inbox/stream').trim();
-    const url = new URL(base, window.location.origin);
-    url.searchParams.set('access_token', token);
-
-    let es: EventSource;
-    try {
-      es = new EventSource(url.toString());
-    } catch {
-      return undefined;
-    }
+    let closed = false;
+    let es: EventSource | null = null;
+    let retryTimer: number | null = null;
+    let attempt = 0;
 
     const onBadge = (ev: Event) => {
       const msgEv = ev as MessageEvent;
       const preview = typeof msgEv?.data === 'string' ? parseBadgePreview(msgEv.data) : null;
       scheduleBadgeRefresh(preview);
     };
-    es.addEventListener('badge', onBadge);
-    es.addEventListener('inbox', onBadge);
-    // 失败回落写后/焦点刷新；关连接防 EventSource 自动重连刷屏
-    es.onerror = () => {
-      es.close();
+
+    const clearRetry = () => {
+      if (retryTimer != null) {
+        window.clearTimeout(retryTimer);
+        retryTimer = null;
+      }
     };
 
+    const scheduleReconnect = () => {
+      if (closed || retryTimer != null) return;
+      const delay = Math.min(30_000, 1_000 * 2 ** Math.min(attempt, 5));
+      attempt += 1;
+      retryTimer = window.setTimeout(() => {
+        retryTimer = null;
+        connect();
+      }, delay);
+    };
+
+    const connect = () => {
+      if (closed) return;
+      const token = String(getAccessToken() || '').trim();
+      if (!token) {
+        scheduleReconnect();
+        return;
+      }
+      if (es) {
+        es.removeEventListener('badge', onBadge);
+        es.removeEventListener('inbox', onBadge);
+        es.close();
+        es = null;
+      }
+      const url = new URL(base, window.location.origin);
+      url.searchParams.set('access_token', token);
+      try {
+        es = new EventSource(url.toString());
+      } catch {
+        scheduleReconnect();
+        return;
+      }
+      es.addEventListener('badge', onBadge);
+      es.addEventListener('inbox', onBadge);
+      es.onopen = () => {
+        attempt = 0;
+      };
+      // 受控退避重连（勿永久 close；否则站内信 toast 再也收不到）
+      es.onerror = () => {
+        if (closed) return;
+        es?.close();
+        es = null;
+        scheduleReconnect();
+      };
+    };
+
+    connect();
+
     return () => {
-      es.removeEventListener('badge', onBadge);
-      es.removeEventListener('inbox', onBadge);
-      es.close();
+      closed = true;
+      clearRetry();
+      if (es) {
+        es.removeEventListener('badge', onBadge);
+        es.removeEventListener('inbox', onBadge);
+        es.close();
+        es = null;
+      }
     };
   }, [streamPath, getAccessToken, scheduleBadgeRefresh]);
 
