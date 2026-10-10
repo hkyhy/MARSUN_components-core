@@ -12,6 +12,7 @@ export type {
 } from './Inbox';
 export {
   resolveInboxItemActions,
+  resolveInboxSceneKey,
   filterInboxActionsForHost,
   normalizeInboxActions,
   inboxSceneLabel,

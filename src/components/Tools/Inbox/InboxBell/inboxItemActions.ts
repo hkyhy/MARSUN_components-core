@@ -3,6 +3,7 @@ export type InboxItemActionKind =
   | 'claim_alert'
   | 'start_action'
   | 'view_task'
+  /** @deprecated 铃铛永不解析；保留类型以免破对外联合 */
   | 'create_task'
   | 'open_actions'
   | 'view_rca'
@@ -73,8 +74,21 @@ function canonScene(raw?: string | null): string {
   return c;
 }
 
+/** 是否已映射到 SCENE_LABEL 已知键（非原样回落的未知串） */
+function isKnownSceneKey(key: string): boolean {
+  return Boolean(key && SCENE_LABEL[key]);
+}
+
+/**
+ * 场景键：优先能映射到已知场景的 eventKey → scene → category；
+ * 避免脏 category 压过正确 eventKey（如 action.status_changed）。
+ */
 export function resolveInboxSceneKey(item: InboxItemActionSource): string {
-  return canonScene(item.category) || canonScene(item.scene) || canonScene(item.eventKey);
+  const candidates = [item.eventKey, item.scene, item.category].map((x) => canonScene(x));
+  for (const c of candidates) {
+    if (isKnownSceneKey(c)) return c;
+  }
+  return candidates.find(Boolean) || '';
 }
 
 export function inboxSceneLabel(item: InboxItemActionSource): string {
@@ -130,7 +144,7 @@ function viewTaskOrHref(n: InboxItemActionSource, actionId: string): InboxItemAc
 
 /**
  * 解析卡片底栏动作。
- * 约定：禁用态不返回（由 normalize 再保险）；终态任务只给「查看任务」。
+ * 约定：禁用态不返回（由 normalize 再保险）；终态任务只给「查看任务」；永不解析新建任务。
  */
 export function resolveInboxItemActions(n: InboxItemActionSource): InboxItemActionsResolved {
   const c = resolveInboxSceneKey(n);
@@ -194,10 +208,7 @@ export function resolveInboxItemActions(n: InboxItemActionSource): InboxItemActi
         secondary: { kind: 'view_task', label: '查看任务' },
       };
     }
-    return {
-      primary: { kind: 'view_alert', label: '查看预警' },
-      secondary: { kind: 'create_task', label: '新建任务' },
-    };
+    return { primary: { kind: 'view_alert', label: '查看预警' } };
   }
 
   // 行动类消息（含历史 category 空）：优先任务，禁止误用「查看预警」
@@ -218,10 +229,7 @@ export function resolveInboxItemActions(n: InboxItemActionSource): InboxItemActi
         secondary: { kind: 'view_task', label: '查看任务' },
       };
     }
-    return {
-      primary: { kind: 'view_alert', label: '查看预警' },
-      secondary: { kind: 'create_task', label: '新建任务' },
-    };
+    return { primary: { kind: 'view_alert', label: '查看预警' } };
   }
 
   if (actionId) {
@@ -254,13 +262,12 @@ export function normalizeInboxActions(
   return { primary, secondary };
 }
 
-/** 无业务 onItemAction 时不展示「新建任务」（会误跳 href） */
+/** 铃铛永不展示「新建任务」（解析路径已停产；此处再防御） */
 export function filterInboxActionsForHost(
   resolved: InboxItemActionsResolved,
-  hasItemAction: boolean,
+  _hasItemAction: boolean,
 ): InboxItemActionsResolved {
   const base = normalizeInboxActions(resolved);
-  if (hasItemAction) return base;
   const dropCreate = (a?: InboxItemQuickAction) => (a && a.kind === 'create_task' ? undefined : a);
   let primary = dropCreate(base.primary);
   let secondary = dropCreate(base.secondary);

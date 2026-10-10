@@ -4,6 +4,7 @@ import {
   inboxSceneLabel,
   normalizeInboxActions,
   resolveInboxItemActions,
+  resolveInboxSceneKey,
 } from '../InboxBell/inboxItemActions';
 
 describe('resolveInboxItemActions', () => {
@@ -61,10 +62,48 @@ describe('resolveInboxItemActions', () => {
     expect(byType.primary?.label).not.toBe('查看预警');
   });
 
-  it('无 onItemAction 时去掉新建任务', () => {
+  it('inspect_alert 无 actionId → 仅查看预警，无新建任务', () => {
     const r = resolveInboxItemActions({ category: 'inspect_alert', alertId: '1' });
-    expect(r.secondary?.kind).toBe('create_task');
-    const filtered = filterInboxActionsForHost(r, false);
+    expect(r.primary).toEqual({ kind: 'view_alert', label: '查看预警' });
+    expect(r.secondary).toBeUndefined();
+    const filtered = filterInboxActionsForHost(r, true);
     expect(filtered.secondary).toBeUndefined();
+    expect(filtered.primary?.kind).toBe('view_alert');
+  });
+
+  it('eventKey=status_changed + 脏 category + alertId → 查看任务/查看，无误查看预警/新建任务', () => {
+    const r = filterInboxActionsForHost(
+      resolveInboxItemActions({
+        category: 'inspect_alert',
+        eventKey: 'action.status_changed',
+        messageType: 'action',
+        alertId: 'al1',
+        actionId: 'a1',
+        href: '/actions?actionId=a1',
+      }),
+      true,
+    );
+    expect(
+      resolveInboxSceneKey({
+        category: 'inspect_alert',
+        eventKey: 'action.status_changed',
+      }),
+    ).toBe('action_status_changed');
+    expect(r.primary?.kind).toBe('view_task');
+    expect(r.primary?.label).not.toBe('查看预警');
+    expect(r.secondary?.kind).not.toBe('create_task');
+    expect(JSON.stringify(r)).not.toContain('create_task');
+  });
+
+  it('filter 防御：残留 create_task 一律去掉', () => {
+    const filtered = filterInboxActionsForHost(
+      {
+        primary: { kind: 'view_alert', label: '查看预警' },
+        secondary: { kind: 'create_task', label: '新建任务' },
+      },
+      true,
+    );
+    expect(filtered.secondary).toBeUndefined();
+    expect(filtered.primary?.kind).toBe('view_alert');
   });
 });

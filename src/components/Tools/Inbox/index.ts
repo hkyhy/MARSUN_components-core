@@ -9,6 +9,7 @@ export type {
 } from './InboxBell';
 export {
   resolveInboxItemActions,
+  resolveInboxSceneKey,
   filterInboxActionsForHost,
   normalizeInboxActions,
   inboxSceneLabel,

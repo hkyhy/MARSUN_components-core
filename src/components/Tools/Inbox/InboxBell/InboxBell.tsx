@@ -72,7 +72,7 @@ export type InboxBellItem = {
 };
 
 export type InboxBellListResult = {
-  itemList: InboxBellItem[];
+  pageData: InboxBellItem[];
   total?: number;
   unreadTotal?: number;
   unreadByMessageType?: Partial<Record<string, number>>;
@@ -116,8 +116,8 @@ export type InboxBellProps = {
   /** 返回当前 JWT；空则不开 SSE */
   getAccessToken?: () => string | null | undefined;
   /**
-   * 卡片底栏动作（认领/去执行等）。不传则底栏按钮一律走 onNavigate / href。
-   * 业务仓拦截 claim_alert / start_action / create_task。
+   * 卡片底栏动作（认领/去执行/查看等）。不传则底栏按钮一律走 onNavigate / href。
+   * 业务仓拦截 claim_alert / start_action；铃铛不解析新建任务。
    */
   onItemAction?: (kind: InboxItemActionKind, item: InboxBellItem) => void | Promise<void>;
 };
@@ -242,7 +242,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
         unreadOnly: readFilter === 'unread' || undefined,
         readOnly: readFilter === 'read' || undefined,
       });
-      setItems(res?.itemList || []);
+      setItems(res?.pageData || []);
       setUnreadTotal(typeof res?.unreadTotal === 'number' ? res.unreadTotal : 0);
       setUnreadByType(res?.unreadByMessageType || {});
     } catch (e) {
@@ -478,6 +478,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     if (onItemAction) {
       try {
         await onItemAction(action.kind, item);
+        setOpen(false);
         void load();
         void refreshBadge();
       } catch (e) {
@@ -682,6 +683,7 @@ export {
 export type { InboxToastPrefs } from './toastPrefs';
 export {
   resolveInboxItemActions,
+  resolveInboxSceneKey,
   filterInboxActionsForHost,
   normalizeInboxActions,
   inboxSceneLabel,
