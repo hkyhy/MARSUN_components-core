@@ -136,6 +136,7 @@ node scripts/version-check.mjs --apply   # → 0.1.99
 
 也可在 Actions 中手动运行 **Publish npm**，填写已有 tag 重新发布。
 
+- 2026-10-11：`v0.1.131` — 消息模板富文本色/加粗回显（seed 侧另修）
 - 2026-10-11：`v0.1.130` — InboxBell 级别 Tag `selected` 反白（消息类型 Tag 仍默认浅底）
 - 2026-10-10：`v0.1.129` — InboxBell toast `createPortal` 自渲染（禁 ant notification 透明残留壳）
 - 2026-10-09：`v0.1.124` — CreateAction FormInfo DatePicker 与 scopeMode=none（token 刷新后重发）
