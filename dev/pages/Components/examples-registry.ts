@@ -1200,11 +1200,12 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
   },
   '/components/editor': {
     title: 'Editor 富文本',
-    description: 'CKEditor 5：基础格式 +「插入变量」原子色块 {{key}}；L2 `/editor`。',
+    description:
+      'CKEditor 5：加粗/斜体/下划线/字色/背景色/列表 +「插入变量」原子色块；L2 `/editor`。',
     examples: [
       {
         title: '1. RichTextEditor 基础',
-        description: '粗体 / 斜体 / 列表；挂载写一次，键入不刷光标',
+        description: '粗体 / 斜体 / 下划线 / 字色 / 列表 / 清除格式',
         component: React.lazy(() => import('@/components/Editor/examples/RichTextBasicDemo')),
         sourcePath: () => import('@/components/Editor/examples/RichTextBasicDemo/index.tsx?raw'),
         block: true,
@@ -1217,13 +1218,20 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
         block: true,
       },
       {
-        title: '3. disabled',
+        title: '3. 字色与色块样式持久化',
+        description: '变量上加粗/字色存盘 HTML 带 strong/color；重开 wrap 后仍可回显',
+        component: React.lazy(() => import('@/components/Editor/examples/RichTextFormatDemo')),
+        sourcePath: () => import('@/components/Editor/examples/RichTextFormatDemo/index.tsx?raw'),
+        block: true,
+      },
+      {
+        title: '4. disabled',
         description: 'disabled 不可编辑',
         component: React.lazy(() => import('@/components/Editor/examples/RichTextDisabledDemo')),
         sourcePath: () => import('@/components/Editor/examples/RichTextDisabledDemo/index.tsx?raw'),
       },
       {
-        title: '4. 只读',
+        title: '5. 只读',
         description: 'readOnly 只读展示',
         component: React.lazy(() => import('@/components/Editor/examples/RichTextReadOnlyDemo')),
         sourcePath: () => import('@/components/Editor/examples/RichTextReadOnlyDemo/index.tsx?raw'),
@@ -4031,7 +4039,7 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
       {
         title: 'InboxBell 铃铛',
         description:
-          '角标未读数；Drawer 卡片场景 Tag + 预警级别 + 底栏查看/去认领；toast 紧凑带「查看」',
+          '角标未读数；Drawer 列表 VirtualScrollbar 滚到底加载下一页（pageSize=20）；卡片场景 Tag + 预警级别 + 底栏查看/去认领',
         component: React.lazy(() => import('@/components/Tools/Inbox/examples/InboxBellDemo')),
         sourcePath: () => import('@/components/Tools/Inbox/examples/InboxBellDemo/index.tsx?raw'),
       },
@@ -4076,7 +4084,11 @@ export const EXAMPLE_REGISTRY: Record<string, ExampleGroup> = {
             desc: '路由身份；变化时刷新角标（如 pathname）',
             type: 'string | number',
           },
-          { prop: 'pageSize', desc: '列表页大小', type: 'number' },
+          {
+            prop: 'pageSize',
+            desc: '列表/滚动加载每页条数；默认 20。滚到底请求 currentPage+1',
+            type: 'number',
+          },
           { prop: 'title', desc: 'Drawer 标题', type: 'string' },
           {
             prop: 'onItemAction',
