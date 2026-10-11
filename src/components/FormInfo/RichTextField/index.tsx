@@ -24,6 +24,8 @@ export type RichTextFieldProps = {
   className?: string;
   /** remount 键（换文档时传入） */
   editorKey?: string;
+  /** 编辑器 HTML 旁路（保存时优先用，避免 Form 滞后丢样式） */
+  onEditorHtml?: (html: string) => void;
   [key: string]: unknown;
 };
 
@@ -40,6 +42,7 @@ type FieldRenderProps = {
   catalogError?: string;
   className?: string;
   editorKey?: string;
+  onEditorHtml?: (html: string) => void;
 };
 
 type KneHooks = {
@@ -64,6 +67,7 @@ const RichTextControl: FC<FieldRenderProps> = ({
   catalogError,
   className,
   editorKey,
+  onEditorHtml,
   id,
 }) => (
   <div
@@ -79,7 +83,10 @@ const RichTextControl: FC<FieldRenderProps> = ({
       <RichTextEditor
         key={editorKey || 'rte'}
         value={value}
-        onChange={onChange}
+        onChange={(html) => {
+          onChange?.(html);
+          onEditorHtml?.(html);
+        }}
         disabled={disabled}
         readOnly={readOnly}
         placeholder={placeholder}
@@ -94,8 +101,9 @@ const RichTextControl: FC<FieldRenderProps> = ({
 
 const RichTextFieldInner: FC<RichTextFieldProps> = (props) => {
   const { useDecorator } = (ReactFormAntd as unknown as { hooks: KneHooks }).hooks;
+  // fieldName 用已注册的 textArea，保证 Form data 按 name 回填 value（自定义名易空值）
   const render = useDecorator({
-    fieldName: 'richTextEditor',
+    fieldName: 'textArea',
     ...props,
   });
   return render(RichTextControl);

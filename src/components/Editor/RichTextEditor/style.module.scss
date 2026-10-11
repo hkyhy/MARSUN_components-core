@@ -29,6 +29,24 @@
       box-sizing: border-box;
       cursor: default;
       user-select: none;
+
+      &[data-bold='1'] {
+        font-weight: 700;
+      }
+
+      &[data-italic='1'] {
+        font-style: italic;
+      }
+
+      &[data-underline='1'] {
+        text-decoration: underline;
+      }
+
+      // 有字色/背景色时以内联 style 为准（createMsgVarChipView 写入）
+      &[style*='color:'],
+      &[style*='background-color:'] {
+        background-image: none;
+      }
     }
   }
 }

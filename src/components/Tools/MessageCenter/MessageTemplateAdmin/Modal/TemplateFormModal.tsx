@@ -1,9 +1,13 @@
 import { FormInfo, FormItem, FormModal, Input, Select } from '@/components/FormInfo';
 import { RichTextField } from '@/components/FormInfo/RichTextField';
+import {
+  ensureRichTextBlockHtml,
+  unwrapMsgVarSpansForStorage,
+} from '@/components/Editor/variableMention';
 import { sanitizeInboxHtml } from '@/components/Tools/Inbox/sanitizeInboxHtml';
 import { applyTemplateVars, normalizeTemplatePlaceholders } from '../../utils/templateCode';
 import { Collapse, Modal, Typography, message } from 'antd';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
   MessageEventCatalogItem,
@@ -79,13 +83,19 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   /** 仅业务 DI 自定义受众插槽时使用；默认走 FormInfo Select */
   const [roles, setRoles] = useState<string[]>([]);
   const [editorReady, setEditorReady] = useState(false);
+  /** 编辑器最新 HTML（优先于 Form data，避免字色/加粗未写入 Form 就点保存） */
+  const latestBodyHtmlRef = useRef('');
 
   useEffect(() => {
     if (!open || !initial) {
       setEditorReady(false);
+      latestBodyHtmlRef.current = '';
       return;
     }
     setRoles(initial.audienceRoles || initial.roles || []);
+    latestBodyHtmlRef.current = ensureRichTextBlockHtml(
+      normalizeTemplatePlaceholders(initial.bodyTemplate || ''),
+    );
     const id = window.requestAnimationFrame(() => setEditorReady(true));
     return () => window.cancelAnimationFrame(id);
   }, [open, initial]);
@@ -101,7 +111,10 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
       titleTemplate: normalizeTemplatePlaceholders(
         initial.titleTemplate || initial.titlePreview || '',
       ),
-      bodyTemplate: normalizeTemplatePlaceholders(initial.bodyTemplate || ''),
+      // seed/库内常为无 <p> 纯文本；先块级化，避免 RTE setData 丢正文
+      bodyTemplate: ensureRichTextBlockHtml(
+        normalizeTemplatePlaceholders(initial.bodyTemplate || ''),
+      ),
       audienceRoles: initial.audienceRoles || initial.roles || [],
       audienceSlots: initial.audienceSlots || [],
     };
@@ -119,13 +132,8 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   }, []);
 
   const fieldList = useMemo(() => {
-    if (!editorReady) {
-      return [
-        <Typography.Text key="loading" type="secondary">
-          加载编辑器…
-        </Typography.Text>,
-      ];
-    }
+    // 始终登记 bodyTemplate 等字段（勿先只渲染「加载中」——Form 首挂无 name 时 data 回填易丢，
+    // 预览仍能读到 store/兜底，编辑区却一直空）。CKEditor 仅用 editorReady 控制挂载。
     const fields: React.ReactNode[] = [];
     if (!isCreate) {
       fields.push(<Input key="code" name="code" label="编号" disabled />);
@@ -172,6 +180,9 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
         editorKey={editorKey}
         placeholder="编辑正文，点「插入变量」"
         minHeight={160}
+        onEditorHtml={(html) => {
+          latestBodyHtmlRef.current = html;
+        }}
       />,
     );
     if (!renderAudienceField) {
@@ -285,7 +296,11 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
             label: scenario,
             messageType: hit?.messageType || initial?.messageType || 'alert',
             titleTemplate,
-            bodyTemplate: normalizeTemplatePlaceholders(String(data.bodyTemplate || '')),
+            bodyTemplate: unwrapMsgVarSpansForStorage(
+              normalizeTemplatePlaceholders(
+                String(latestBodyHtmlRef.current || data.bodyTemplate || ''),
+              ),
+            ),
             audienceRoles,
             roles: audienceRoles,
             audienceSlots,

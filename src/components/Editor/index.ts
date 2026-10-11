@@ -9,10 +9,19 @@ export {
   toMentionFeedItem,
   normalizeMentionHtmlToVarTokens,
   wrapVarTokensForDisplay,
+  ensureRichTextBlockHtml,
+  prepareEditorHtml,
+  splitInlineFormatAroundMsgVars,
   upliftVarTokensToMentions,
   insertVarTokenAt,
+  unwrapMsgVarSpansForStorage,
 } from './variableMention';
 export type { VariableMentionItem } from './variableMention';
-export { MsgVarWidget, insertMsgVar } from './msgVarTokenPlugin';
+export {
+  MsgVarWidget,
+  insertMsgVar,
+  collectMarksFromAncestors,
+  MSG_VAR_MARK_ATTRS,
+} from './msgVarTokenPlugin';
 export { VariablePicker } from './VariablePicker';
 export type { VariablePickerProps } from './VariablePicker';
