@@ -5,7 +5,7 @@ tasks:
 - id: P6.3.167
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 易挂错 P6.31；暂挂同线 InboxBell Issue
   milestone: P6.3
-  name: 消息模板富文本色/加粗回显并发版 0.1.131
+  name: 消息模板富文本色/加粗回显并发版 0.1.132
   status: 已完成
   priority: P1
   kind: fix
@@ -15,7 +15,7 @@ tasks:
   tags: [frontend, Editor, MessageCenter, release]
   note: |
     Related: S4-664 · S4.30.2320
-    RichTextEditor 色/加粗；msgVar 拆格式；TemplateFormModal 正文 HTML；chore(release) v0.1.131；仍≠G1
+    RichTextEditor 色/加粗；msgVar 拆格式；TemplateFormModal 正文 HTML；chore(release) v0.1.132（重试 npm）；仍≠G1
 - id: P6.3.166
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 失败；暂挂同线 InboxBell Issue
   milestone: P6.3
