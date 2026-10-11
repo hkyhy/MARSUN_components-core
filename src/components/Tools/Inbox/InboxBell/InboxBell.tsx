@@ -829,6 +829,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
                             <div className={styles.itemFooterTags}>
                               <SemanticTag
                                 color={resolveLevelTagColor(item.levelColor)}
+                                selected
                                 className={styles.typeTag}
                               >
                                 {levelText}

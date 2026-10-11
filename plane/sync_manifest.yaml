@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.166
+  next_task_id: P6.3.167
 tasks:
+- id: P6.3.166
+  plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 失败；暂挂同线 InboxBell Issue
+  milestone: P6.3
+  name: InboxBell 级别 Tag 反白选中态并发版 0.1.130
+  status: 已完成
+  priority: P1
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-10-11'
+  target_date: '2026-10-11'
+  tags: [frontend, InboxBell, msg-center, release]
+  note: |
+    Related: S4-664 · S3-1222 · P6.3.165
+    级别 SemanticTag selected 反白；消息类型 Tag 保持默认浅底；chore(release) v0.1.130；仍≠G1
 - id: P6.3.165
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 失败；暂挂同线 InboxBell Issue
   milestone: P6.3
