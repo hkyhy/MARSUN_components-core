@@ -5,7 +5,10 @@ import type { ColumnsType } from 'antd/es/table';
 export type ActionListFilters = {
   dimension?: string;
   status?: string;
+  /** 执行人展示名（兼容旧筛）；主路径用 assigneeUserId */
   assignee?: string;
+  /** 执行人 SSO userId（SuperSelect 取值） */
+  assigneeUserId?: string;
   factory?: string;
   q?: string;
   from?: string;
@@ -24,6 +27,8 @@ export type ActionListRowBase = {
   dimension?: string;
   assignee?: string;
   owner?: string;
+  /** 业务时间（源事件账期/日）；≠ createdAt 任务创建 */
+  bizDate?: string;
   createdAt?: string;
   startedAt?: string;
   completedAt?: string;

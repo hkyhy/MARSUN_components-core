@@ -46,12 +46,15 @@ export {
   CancelExecutionModal,
   CancelExecutionForm,
   sanitizeActionHtml,
+  isActionExecuteHidden,
   defaultCreatedRange,
   normalizeActionFilters,
   canQueryActionList,
   resetActionFiltersToDefault,
 } from './ActionTracking';
 export type {
+  ActionExecuteGateRow,
+  ActionExecuteGateOptions,
   CreateActionModalProps,
   CreateActionFormProps,
   PersonRoleCascaderProps,

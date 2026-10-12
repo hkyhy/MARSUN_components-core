@@ -62,4 +62,5 @@ export type { ActionFollowModalProps, ActionFollowView } from './Follow';
 export { default as CancelExecutionModal, CancelExecutionForm } from './Cancel';
 export type { CancelExecutionModalProps } from './Cancel';
 
-export { sanitizeActionHtml } from './utils';
+export { sanitizeActionHtml, isActionExecuteHidden } from './utils';
+export type { ActionExecuteGateRow, ActionExecuteGateOptions } from './utils';
