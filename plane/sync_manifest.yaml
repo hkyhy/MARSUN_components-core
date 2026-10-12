@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.169
+  next_task_id: P6.3.170
 tasks:
+- id: P6.3.169
+  plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # 与 P6.3.168 同线（避 P6.31 误挂）
+  milestone: P6.3
+  name: ActionList 卡片去壳与铃铛摘要色 + 发版 0.1.135
+  status: 已完成
+  priority: P1
+  kind: style
+  owner: 黄金芳
+  start_date: '2026-10-12'
+  target_date: '2026-10-12'
+  tags: [frontend, ActionTracking, Inbox, release]
+  note: |
+    Related: S4-788 · S4-789 · S3-1219 · S3.3.2595
+    ActionListTable 去白底卡片壳；InboxBell 摘要用主字色；chore(release) v0.1.135；仍≠G1
+    取号：台账 max P6.3.168 → P6.3.169
 - id: P6.3.168
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 细项失败时暂挂同线 InboxBell Issue
   milestone: P6.3
