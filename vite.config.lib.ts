@@ -41,6 +41,11 @@ function isExternal(id: string): boolean {
   // Bundle CSS/SCSS side-effects (e.g. @kne/super-select/dist/index.css, @kne/table-view/dist/index.css)
   if (/\.(css|scss|sass|less)(\?|$)/.test(id)) return false;
   if (EXTERNAL_PACKAGES.has(id)) return true;
+  // 子路径也须 external：否则 `react-dom/client` 会打进 dist/_virtual + dist/node_modules/.pnpm/react-dom@*
+  // 业务仓 MARSUN_CORE_LOCAL 联调时再打进 kneFormInfo → 双 React（ReactCurrentBatchConfig 白屏）
+  for (const pkg of EXTERNAL_PACKAGES) {
+    if (id === pkg || id.startsWith(`${pkg}/`)) return true;
+  }
   if (id === 'lodash' || id.startsWith('lodash/')) return true;
   if (id.startsWith('@kne/')) return true;
   if (id.startsWith('@ant-design/icons')) return true;

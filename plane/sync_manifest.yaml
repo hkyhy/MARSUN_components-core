@@ -1,7 +1,23 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.170
+  next_task_id: P6.3.171
 tasks:
+- id: P6.3.170
+  plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # 与同线 InboxBell Issue（避 P6.31 误挂）
+  milestone: P6.3
+  name: vite external 子路径防双 React + 正式发版 0.1.133
+  status: 已完成
+  priority: P1
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-10-12'
+  target_date: '2026-10-12'
+  tags: [frontend, build, release]
+  note: |
+    Related: S4-788 · S4-789 · S3-1219
+    vite.config.lib EXTERNAL 覆盖 react-dom/client 等子路径；合并 feat 未进 main 的 Disposition/模板Tag/ActionList/执行门禁；
+    顺号：npm 仍 0.1.132 → chore(release) v0.1.133 push main；仍≠G1
+    取号：台账 max P6.3.169 → P6.3.170
 - id: P6.3.169
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # 与 P6.3.168 同线（避 P6.31 误挂）
   milestone: P6.3
@@ -15,7 +31,7 @@ tasks:
   tags: [frontend, ActionTracking, Inbox, release]
   note: |
     Related: S4-788 · S4-789 · S3-1219 · S3.3.2595
-    ActionListTable 去白底卡片壳；InboxBell 摘要用主字色；chore(release) v0.1.135；仍≠G1
+    ActionListTable 去白底卡片壳；InboxBell 摘要用主字色；分支误标 v0.1.135 未进 main，实发见 P6.3.170=0.1.133；仍≠G1
     取号：台账 max P6.3.168 → P6.3.169
 - id: P6.3.168
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 细项失败时暂挂同线 InboxBell Issue
@@ -31,7 +47,7 @@ tasks:
   note: |
     Related: S4-789 · S4-788 · S3-1222
     formatDispositionStatusBadge 短徽章+Tooltip；MessageTemplateAdmin source=catalog|tenant Tag；
-    chore(release) v0.1.133；仍≠G1
+    分支曾标发版未进 main，实发见 P6.3.170；仍≠G1
     取号：台账 max P6.3.167 → P6.3.168
 - id: P6.3.167
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 易挂错 P6.31；暂挂同线 InboxBell Issue
