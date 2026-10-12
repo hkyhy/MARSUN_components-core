@@ -34,7 +34,9 @@ const DispositionBar: React.FC<DispositionBarProps> = ({
   const hasBadge = statusBadge != null && statusBadge !== false && statusBadge !== '';
   const badgeNode = hasBadge ? (
     typeof statusBadge === 'string' || typeof statusBadge === 'number' ? (
-      <span className={styles['marsun-disposition-badge']}>{statusBadge}</span>
+      <span className={styles['marsun-disposition-badge']} title={String(statusBadge)}>
+        {statusBadge}
+      </span>
     ) : (
       statusBadge
     )

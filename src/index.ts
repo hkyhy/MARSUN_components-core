@@ -250,6 +250,7 @@ export {
   AlertDispositionPanel,
   DispositionAlertLevelLegend,
   formatDispositionTriggerText,
+  formatDispositionStatusBadge,
   getDispositionAlertLevel,
   buildDispositionAlertContext,
 } from './components/Disposition';
@@ -261,6 +262,8 @@ export type {
   DispositionAlertLevelSpec,
   DispositionAlertLevelCatalog,
   DispositionAlertLevelLegendProps,
+  DispositionStatusBadgeParts,
+  DispositionStatusBadgeFormatted,
 } from './components/Disposition';
 export * from './components/Audit';
 export * from './components/Stat';

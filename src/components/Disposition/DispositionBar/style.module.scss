@@ -45,6 +45,7 @@
 .marsun-disposition-badge {
   display: inline-flex;
   align-items: center;
+  max-width: min(100%, 240px);
   height: 22px;
   padding: 0 8px;
   border-radius: 4px;
@@ -54,6 +55,10 @@
   background: #e6f4ff;
   color: #1677ff;
   border: 1px solid #91caff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
 .marsun-disposition-actions {

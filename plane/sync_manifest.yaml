@@ -1,7 +1,23 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.168
+  next_task_id: P6.3.169
 tasks:
+- id: P6.3.168
+  plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 细项失败时暂挂同线 InboxBell Issue
+  milestone: P6.3
+  name: DispositionBar 状态短徽章 + 模板来源 Tag 并发版 0.1.133
+  status: 已完成
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: '2026-10-12'
+  target_date: '2026-10-12'
+  tags: [frontend, Disposition, MessageCenter, release]
+  note: |
+    Related: S4-789 · S4-788 · S3-1222
+    formatDispositionStatusBadge 短徽章+Tooltip；MessageTemplateAdmin source=catalog|tenant Tag；
+    chore(release) v0.1.133；仍≠G1
+    取号：台账 max P6.3.167 → P6.3.168
 - id: P6.3.167
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # CREATE 易挂错 P6.31；暂挂同线 InboxBell Issue
   milestone: P6.3

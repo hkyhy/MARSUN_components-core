@@ -87,6 +87,7 @@ export {
   AlertDispositionPanel,
   DispositionAlertLevelLegend,
   formatDispositionTriggerText,
+  formatDispositionStatusBadge,
   getDispositionAlertLevel,
   buildDispositionAlertContext,
 } from './Disposition';
@@ -98,6 +99,8 @@ export type {
   DispositionAlertLevelSpec,
   DispositionAlertLevelCatalog,
   DispositionAlertLevelLegendProps,
+  DispositionStatusBadgeParts,
+  DispositionStatusBadgeFormatted,
 } from './Disposition';
 export * from './Audit';
 export * from './Stat';
