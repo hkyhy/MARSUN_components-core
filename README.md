@@ -136,6 +136,7 @@ node scripts/version-check.mjs --apply   # → 0.1.99
 
 也可在 Actions 中手动运行 **Publish npm**，填写已有 tag 重新发布。
 
+- 2026-10-12：`v0.1.133` — DispositionBar 短徽章；模板来源 Tag；ActionList 去壳/铃铛摘要色；执行门禁 SSOT；vite external 子路径防双 React（feat 分支曾误标 0.1.135 未进 main，顺号回正）
 - 2026-10-11：`v0.1.132` — 重试发布消息模板富文本（0.1.131 CI 绿但 npm 未见）
 - 2026-10-11：`v0.1.131` — 消息模板富文本色/加粗回显（配置页；seed 另仓）
 - 2026-10-11：`v0.1.130` — InboxBell 级别 Tag `selected` 反白（消息类型 Tag 仍默认浅底）
