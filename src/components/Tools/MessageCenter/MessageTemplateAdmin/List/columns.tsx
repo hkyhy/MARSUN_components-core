@@ -1,5 +1,5 @@
 import type { ColumnsType } from 'antd/es/table';
-import { Button, Switch } from 'antd';
+import { Button, Switch, Tag } from 'antd';
 import type { MessageTemplateAdminItem } from '../types';
 
 const TYPE_LABELS: Record<string, string> = {
@@ -7,6 +7,18 @@ const TYPE_LABELS: Record<string, string> = {
   action: '行动跟踪',
   remind: '任务提醒',
 };
+
+/** catalog=Agent 内置；tenant / 缺省且非 builtin-id=自定义 */
+export function templateSourceTag(row: MessageTemplateAdminItem): {
+  label: string;
+  color: string;
+} {
+  const src = row.source;
+  if (src === 'catalog' || String(row.id || '').startsWith('builtin-')) {
+    return { label: '内置', color: 'blue' };
+  }
+  return { label: '自定义', color: 'default' };
+}
 
 export function buildTemplateColumns(opts: {
   canUpdate: boolean;
@@ -26,6 +38,15 @@ export function buildTemplateColumns(opts: {
       title: '场景',
       key: 'scenario',
       render: (_, r) => r.scenario || r.label || '—',
+    },
+    {
+      title: '来源',
+      key: 'source',
+      width: 88,
+      render: (_, r) => {
+        const tag = templateSourceTag(r);
+        return <Tag color={tag.color}>{tag.label}</Tag>;
+      },
     },
     {
       title: '事件',

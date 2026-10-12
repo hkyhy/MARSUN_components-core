@@ -6,7 +6,7 @@ import {
 } from '@/components/Editor/variableMention';
 import { sanitizeInboxHtml } from '@/components/Tools/Inbox/sanitizeInboxHtml';
 import { applyTemplateVars, normalizeTemplatePlaceholders } from '../../utils/templateCode';
-import { Collapse, Modal, Typography, message } from 'antd';
+import { Collapse, Modal, Space, Tag, Typography, message } from 'antd';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
@@ -20,6 +20,7 @@ import {
   hasAudienceSelection,
   normalizeAudienceSlots,
 } from '../audienceSlots';
+import { templateSourceTag } from '../List/columns';
 import styles from '../style.module.scss';
 
 /** ReactModal 内 Select 弹出层须高于 Modal（≈1100） */
@@ -327,9 +328,20 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
     ],
   );
 
+  const sourceTag = !isCreate && initial ? templateSourceTag(initial) : null;
+
   return (
     <FormModal
-      title={isCreate ? '新建模板' : '编辑模板'}
+      title={
+        sourceTag ? (
+          <Space size={8}>
+            <span>编辑模板</span>
+            <Tag color={sourceTag.color}>{sourceTag.label}</Tag>
+          </Space>
+        ) : (
+          '新建模板'
+        )
+      }
       open={open}
       onCancel={onCancel}
       width={720}

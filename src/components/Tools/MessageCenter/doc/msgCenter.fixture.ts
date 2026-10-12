@@ -19,6 +19,8 @@ export type MsgTemplateItem = {
   audienceRoles: string[];
   enabled: boolean;
   channel: string;
+  /** catalog=Agent 内置；tenant=租户自定义（对齐 mc list source） */
+  source?: 'catalog' | 'tenant';
 };
 
 export type MsgInboxItem = {
@@ -75,7 +77,7 @@ export const MSG_ROLES: MsgRoleItem[] = [
 
 export const MSG_TEMPLATES_SEED: MsgTemplateItem[] = [
   {
-    id: 'tpl-energy',
+    id: 'builtin-tpl-energy',
     code: 'energy_gap_default',
     eventKey: 'energy.gap',
     scenario: '用能缺口汇总',
@@ -86,18 +88,20 @@ export const MSG_TEMPLATES_SEED: MsgTemplateItem[] = [
     audienceRoles: ['EQUIPMENT_ADMIN'],
     enabled: true,
     channel: 'in_app',
+    source: 'catalog',
   },
   {
-    id: 'tpl-maint',
-    code: 'maint_overdue_default',
+    id: 'tpl-maint-tenant',
+    code: 'maint_overdue_custom',
     eventKey: 'maintenance.overdue',
-    scenario: '保养超期提醒',
+    scenario: '保养超期提醒（租户改）',
     messageType: 'remind',
     titleTemplate: '保养超期提醒',
     bodyTemplate: '<p>机台 {{machineId}} 已超期</p>',
     audienceRoles: ['EQUIPMENT_ADMIN'],
     enabled: false,
     channel: 'in_app',
+    source: 'tenant',
   },
 ];
 

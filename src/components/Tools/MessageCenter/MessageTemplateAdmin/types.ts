@@ -71,6 +71,11 @@ export type MessageTemplateAdminItem = {
   audienceSlots?: string[];
   enabled?: boolean;
   channel?: string;
+  /**
+   * 配置归属：catalog=Agent 内置（可虚拟行）；tenant=租户自定义/覆盖。
+   * 与 mc list `source` 对齐。
+   */
+  source?: 'catalog' | 'tenant';
 };
 
 export type MessageEventCatalogItem = {
