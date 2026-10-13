@@ -91,6 +91,16 @@ const InboxBellDemo: React.FC = () => {
     setRows((prev) => prev.map((x) => (x.id === id ? { ...x, read: true } : x)));
   }, []);
 
+  const markAllRead = useCallback(async () => {
+    let updated = 0;
+    setRows((prev) => {
+      updated = prev.filter((x) => !x.read).length;
+      return prev.map((x) => (x.read ? x : { ...x, read: true }));
+    });
+    setLog(`清空未读 ${updated} 条`);
+    return { updated };
+  }, []);
+
   const onNavigate = useCallback((href: string, item: InboxBellItem) => {
     setLog(`navigate ${href} · ${item.title}`);
   }, []);
@@ -107,6 +117,7 @@ const InboxBellDemo: React.FC = () => {
       <InboxBell
         fetchInbox={fetchInbox}
         markRead={markRead}
+        markAllRead={markAllRead}
         onNavigate={onNavigate}
         pollMs={pollMs}
       />

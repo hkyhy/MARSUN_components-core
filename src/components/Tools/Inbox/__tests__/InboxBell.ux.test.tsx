@@ -371,4 +371,84 @@ describe('InboxBell UX / toast prefs', () => {
     const pages = fetchInbox.mock.calls.map((c) => c[0]?.currentPage);
     expect(pages).toContain(2);
   });
+
+  it('有未读时可点清空未读并调用 markAllRead；无未读禁用', async () => {
+    let unread = 2;
+    const markAllRead = vi.fn(async () => {
+      unread = 0;
+      return { updated: 2 };
+    });
+    const fetchInbox = vi.fn(async () => ({
+      pageData: unread
+        ? [
+            {
+              id: 'u1',
+              title: '未读一',
+              summary: 's',
+              messageType: 'alert',
+              read: false,
+              href: '/alerts',
+            },
+          ]
+        : [],
+      unreadTotal: unread,
+      unreadByMessageType: unread ? { alert: unread } : {},
+    }));
+
+    render(
+      <InboxBell
+        fetchInbox={fetchInbox}
+        markRead={async () => undefined}
+        markAllRead={markAllRead}
+        pollMs={0}
+        streamPath={false}
+      />,
+    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+    fireEvent.click(screen.getByLabelText(/站内信/));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const btn = await screen.findByTestId('inbox-clear-unread');
+    expect(btn).toBeTruthy();
+    expect((btn as HTMLButtonElement).disabled).toBe(false);
+
+    await act(async () => {
+      fireEvent.click(btn);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(markAllRead).toHaveBeenCalledTimes(1);
+    expect(await screen.findByTestId('inbox-clear-unread')).toBeTruthy();
+    const after = screen.getByTestId('inbox-clear-unread') as HTMLButtonElement;
+    expect(after.disabled).toBe(true);
+  });
+
+  it('未传 markAllRead 时不展示清空未读', async () => {
+    const fetchInbox = vi.fn(async () => ({
+      pageData: [],
+      unreadTotal: 3,
+      unreadByMessageType: { alert: 3 },
+    }));
+    render(
+      <InboxBell
+        fetchInbox={fetchInbox}
+        markRead={async () => undefined}
+        pollMs={0}
+        streamPath={false}
+      />,
+    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+    fireEvent.click(screen.getByLabelText(/站内信/));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(screen.queryByTestId('inbox-clear-unread')).toBeNull();
+  });
 });

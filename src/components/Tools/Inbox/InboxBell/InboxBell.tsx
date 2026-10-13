@@ -98,6 +98,11 @@ export type InboxBellProps = {
   fetchInbox: (params: InboxBellListParams) => Promise<InboxBellListResult>;
   /** 标记已读 */
   markRead: (id: string) => Promise<void | InboxBellItem>;
+  /**
+   * 清空未读（本用户+租户+app 全部未读标已读）。不传则不展示按钮。
+   * 成功后铃铛会刷新列表与角标。
+   */
+  markAllRead?: () => Promise<{ updated?: number } | void>;
   /** 点击条目：默认用 window.location / 业务 navigate */
   onNavigate?: (href: string, item: InboxBellItem) => void;
   /**
@@ -223,6 +228,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
   {
     fetchInbox,
     markRead,
+    markAllRead,
     onNavigate,
     pollMs = 0,
     locationKey,
@@ -245,6 +251,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
   const [readFilter, setReadFilter] = useState<'all' | 'unread' | 'read'>('all');
   const [toastPrefs, setToastPrefs] = useState<InboxToastPrefs>(() => loadInboxToastPrefs());
   const [loadingMore, setLoadingMore] = useState(false);
+  const [clearingUnread, setClearingUnread] = useState(false);
   const [liveToast, setLiveToast] = useState<LiveToast | null>(null);
   const focusDebounceRef = useRef<number | null>(null);
   const badgeDebounceRef = useRef<number | null>(null);
@@ -626,6 +633,22 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
     await handleOpenItem(item);
   };
 
+  const handleClearUnread = async () => {
+    if (!markAllRead || unreadTotal <= 0 || clearingUnread) return;
+    setClearingUnread(true);
+    try {
+      const res = await markAllRead();
+      const n = typeof res?.updated === 'number' ? res.updated : undefined;
+      message.success(typeof n === 'number' ? `已清空 ${n} 条未读` : '已清空未读');
+      await load();
+      await refreshBadge();
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : '清空未读失败');
+    } finally {
+      setClearingUnread(false);
+    }
+  };
+
   const toastTypeLabel = liveToast ? messageTypeLabel(liveToast.messageType) : '';
 
   return (
@@ -724,6 +747,19 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
               { value: 'read', label: '已读' },
             ]}
           />
+          {markAllRead ? (
+            <Button
+              type="link"
+              size="small"
+              className={styles.clearUnreadBtn}
+              data-testid="inbox-clear-unread"
+              loading={clearingUnread}
+              disabled={unreadTotal <= 0 || clearingUnread}
+              onClick={() => void handleClearUnread()}
+            >
+              清空未读
+            </Button>
+          ) : null}
         </div>
         <div className={styles.toastPrefs} data-testid="inbox-toast-prefs">
           <div className={styles.toastPrefsTitle}>消息提示</div>

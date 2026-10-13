@@ -32,6 +32,11 @@
           "required": true
         },
         {
+          "prop": "markAllRead",
+          "desc": "清空未读（本用户+租户+app 全部标已读）；不传则不展示按钮",
+          "type": "() => Promise<{ updated?: number } | void>"
+        },
+        {
           "prop": "onNavigate",
           "desc": "点击条目跳转；不传则用 href 直接跳",
           "type": "(href: string, item: InboxBellItem) => void"
