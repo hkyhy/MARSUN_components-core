@@ -3,6 +3,7 @@ meta:
   next_task_id: P6.3.172
 tasks:
 - id: P6.3.171
+  plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # 与同线 InboxBell Issue（避 P6.31 误挂）
   milestone: P6.3
   name: InboxBell 清空未读 markAllRead + 发版 0.1.134
   status: 已完成
@@ -13,10 +14,11 @@ tasks:
   target_date: '2026-10-13'
   tags: [frontend, inbox, release]
   note: |
-    Related: S4-789 · S3-1222 · S4.30.2330 · S3.3.2599
+    Related: S4-789 · S3-1222 · S4.30.2330 · S3.3.2600
     Drawer「清空未读」；可选 markAllRead；Demo/vitest/meta；version 0.1.134；
-    仍≠G1（chore(release) 另推或本窗同包）
-    取号：台账 next_task_id P6.3.171
+    chore(release) v0.1.134 push main；仍≠G1（CI publish 实证后算 G1）
+    取号：台账 next_task_id P6.3.171；避 P6.31
+
 - id: P6.3.170
   plane_issue_id: 752c042e-c045-464f-a6a5-8e7b2c77733f # 与同线 InboxBell Issue（避 P6.31 误挂）
   milestone: P6.3
