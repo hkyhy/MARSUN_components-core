@@ -28,6 +28,9 @@ const EXTERNAL_PACKAGES = new Set([
   'pptx-preview',
   'lodash',
   '@ant-design/icons',
+  // 图表为 peer：须保持 bare `import('@ant-design/charts')`，禁打进 dist/node_modules
+  '@ant-design/charts',
+  '@ant-design/plots',
   '@kne/super-select',
   '@kne/super-select-plus',
   '@kne/react-intl',
@@ -49,6 +52,7 @@ function isExternal(id: string): boolean {
   if (id === 'lodash' || id.startsWith('lodash/')) return true;
   if (id.startsWith('@kne/')) return true;
   if (id.startsWith('@ant-design/icons')) return true;
+  if (id.startsWith('@ant-design/charts') || id.startsWith('@ant-design/plots')) return true;
   if (id === 'simplebar' || id.startsWith('simplebar/')) return true;
   if (id === 'simplebar-react' || id.startsWith('simplebar-react/')) return true;
   // CKEditor 必须 external：打进 dist/node_modules 后，消费方 Vite 会二次变换并丢掉

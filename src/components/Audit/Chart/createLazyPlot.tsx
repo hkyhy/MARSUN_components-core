@@ -57,3 +57,4 @@ export const LazyBar = createLazyPlot('Bar');
 export const LazyColumn = createLazyPlot('Column');
 export const LazyLine = createLazyPlot('Line');
 export const LazyPie = createLazyPlot('Pie');
+export const LazyDualAxes = createLazyPlot('DualAxes');

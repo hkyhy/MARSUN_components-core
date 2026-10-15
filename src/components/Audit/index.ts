@@ -14,6 +14,15 @@ export { AuditStepPerfChart } from './AuditStepPerfChart';
 export type { AuditStepPerfChartProps } from './AuditStepPerfChart';
 export { AuditPerfDashboard } from './AuditPerfDashboard';
 export type { AuditPerfDashboardProps } from './AuditPerfDashboard';
+/** 业务图懒加载（@ant-design/charts）；DualAxes 的 mark 列表传 marks */
+export {
+  createLazyPlot,
+  LazyBar,
+  LazyColumn,
+  LazyLine,
+  LazyPie,
+  LazyDualAxes,
+} from './Chart/createLazyPlot';
 export { displayActionLabel, displaySummary, labelOfAction, allActionLabels } from './labels';
 export { computeDetailKpi, waterfallChartData, isErrorStep } from './detailKpi';
 export type { AuditDetailKpi, WaterfallChartBar } from './detailKpi';
