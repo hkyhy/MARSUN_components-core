@@ -10,6 +10,7 @@ import type {
   MessageAudienceUserOption,
   MessageCrudFlags,
   MessageEventCatalogItem,
+  MessageLevelOption,
   MessageTemplateAdminItem,
   PushRuleAdminItem,
 } from '../types';
@@ -44,12 +45,23 @@ export type PushRulesPanelProps = {
   audienceRolesError?: string;
   /** 例外抄送（静态 userIds）options 加载失败短文案 */
   audienceUsersError?: string;
+  /**
+   * 级别多选 options（业务注入）。未传 / 空 → 下拉无选项；禁 core 写死业务档位。
+   */
+  levelOptions?: readonly MessageLevelOption[];
+  /** 新建规则 levels 初值；未传则 `[]` */
+  defaultLevels?: readonly string[];
+  /** 级别字段 tip；未传用中性说明 */
+  levelFieldTips?: string;
   fetchPushRules: () => Promise<PushRuleAdminItem[]>;
   savePushRule: (item: PushRuleAdminItem) => Promise<void>;
   setPushRuleEnabled?: (item: PushRuleAdminItem, enabled: boolean) => Promise<void>;
   deletePushRule?: (item: PushRuleAdminItem) => Promise<void>;
   createNonce?: number;
 };
+
+const DEFAULT_LEVEL_FIELD_TIPS =
+  '规则匹配 emit 时带 level 会对齐所选档；选项由业务注入（各系统档位不同）。';
 
 type FormShape = {
   label?: string;
@@ -76,6 +88,9 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   userOptions = [],
   audienceRolesError = '',
   audienceUsersError = '',
+  levelOptions = [],
+  defaultLevels = [],
+  levelFieldTips = DEFAULT_LEVEL_FIELD_TIPS,
   fetchPushRules,
   savePushRule,
   setPushRuleEnabled,
@@ -121,7 +136,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
       label: first?.label || '新建推送规则',
       eventKey: first?.eventKey || '',
       templateCode: tplForEvent?.code || '',
-      levels: ['L2'],
+      levels: Array.isArray(defaultLevels) ? [...defaultLevels] : [],
       audienceRoles: [],
       audienceUserIds: [],
       audienceSlots: [],
@@ -130,6 +145,8 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
       scanLookbackDays: 7,
       enabled: true,
     });
+    // defaultLevels 仅在打开新建时取样；勿列入 deps（业务常传内联数组）
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- createNonce 驱动打开
   }, [createNonce, canCreate, catalog, templates]);
 
   const templatesForEvent = useCallback(
@@ -457,10 +474,18 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               label="级别"
               mode="multiple"
               disabled={!canUpdate && !isCreate}
-              options={['L1', 'L2', 'L3'].map((x) => ({ value: x, label: x }))}
-              placeholder="点击下拉选择级别（可多选）"
-              notFoundContent="无级别选项"
-              labelTips="告警/任务级别档：L1 最高、L2 中、L3 较低。规则匹配 emit 时带 level 会对齐这些档。"
+              options={levelOptions}
+              placeholder={
+                levelOptions.length
+                  ? '点击下拉选择级别（可多选）'
+                  : '未配置级别选项（请业务注入 levelOptions）'
+              }
+              notFoundContent={
+                levelOptions.length
+                  ? '无级别选项'
+                  : '未注入 levelOptions（业务档位，勿在 core 写死）'
+              }
+              labelTips={levelFieldTips}
               {...selectInModalPopupProps}
             />,
             <FiSelect

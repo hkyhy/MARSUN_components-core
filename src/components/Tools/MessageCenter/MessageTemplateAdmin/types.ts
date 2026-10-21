@@ -142,6 +142,12 @@ export type PushRuleAdminItem = {
   enabled?: boolean;
 };
 
+/** 推送规则「级别」多选 option；档位语义因业务而异，须由业务 DI，core 不内置 L1/L2/… */
+export type MessageLevelOption = {
+  value: string;
+  label: string;
+};
+
 export type MessageTemplateAdminProps = {
   fetchTemplates: () => Promise<MessageTemplateAdminItem[]>;
   saveTemplate?: (item: MessageTemplateAdminItem) => Promise<void>;
@@ -162,6 +168,15 @@ export type MessageTemplateAdminProps = {
    * 任务认领人/分配人等当事人由业务 emit 传 userIds，勿靠配置面点名。
    */
   fetchAudienceUsers?: () => Promise<MessageAudienceUserOption[]>;
+  /**
+   * 推送规则「级别」多选 options（业务注入）。
+   * 未传 / 空数组 → 下拉无选项（禁 core 写死 L1/L2/L3）；各业务档位不同（如 S3 含 L2+）。
+   */
+  levelOptions?: readonly MessageLevelOption[];
+  /** 新建推送规则时 levels 初值；未传则 `[]` */
+  defaultLevels?: readonly string[];
+  /** 级别字段 labelTips；未传用中性说明（不写死「L1 最高」等业务语义） */
+  levelFieldTips?: string;
   /**
    * @deprecated 变量须来自 catalog；仅联调 fixture 可传。业务页勿硬编码平行表。
    */

@@ -18,6 +18,14 @@ import React, { useCallback } from 'react';
 
 resetMsgCenterFixture();
 
+/** Showcase 用能档位；业务仓须注入本系统档位（如 S3：L1/L2/L2+/L3） */
+const DEMO_LEVEL_OPTIONS = [
+  { value: 'L1', label: 'L1' },
+  { value: 'L2', label: 'L2' },
+  { value: 'L3', label: 'L3' },
+] as const;
+const DEMO_DEFAULT_LEVELS = ['L2'] as const;
+
 /** 模板 + 推送规则 + 变量 CRUD（Showcase；fixture 非运行时 mock） */
 const TemplateCrudDemo: React.FC = () => {
   const fetchTemplates = useCallback(async () => listFixtureTemplates(), []);
@@ -47,6 +55,8 @@ const TemplateCrudDemo: React.FC = () => {
       setTemplateEnabled={async (item, enabled) => {
         if (item.id) setFixtureTemplateEnabled(item.id, enabled);
       }}
+      levelOptions={DEMO_LEVEL_OPTIONS}
+      defaultLevels={DEMO_DEFAULT_LEVELS}
       fetchPushRules={async () => listFixturePushRules()}
       savePushRule={async (item) => {
         saveFixturePushRule({

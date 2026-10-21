@@ -59,6 +59,9 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   savePushRule,
   setPushRuleEnabled,
   deletePushRule,
+  levelOptions,
+  defaultLevels,
+  levelFieldTips,
   fetchVariables,
   saveVariable,
   deleteVariable,
@@ -248,6 +251,9 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
       userOptions={userOptions}
       audienceRolesError={audienceRolesError}
       audienceUsersError={audienceUsersError}
+      levelOptions={levelOptions}
+      defaultLevels={defaultLevels}
+      levelFieldTips={levelFieldTips}
       fetchPushRules={fetchPushRules!}
       savePushRule={savePushRule!}
       setPushRuleEnabled={setPushRuleEnabled}
