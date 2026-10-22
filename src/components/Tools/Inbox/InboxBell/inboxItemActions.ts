@@ -42,6 +42,7 @@ const SCENE_LABEL: Record<string, string> = {
   dispose_escalation: '处置升级',
   action_overdue: '行动超期',
   action_assigned: '任务分配',
+  action_assigned_ack: '分配确认',
   action_status_changed: '状态变更',
   action_claimed: '任务认领',
   action_followed: '任务跟进',
@@ -53,6 +54,7 @@ const SCENE_ALIAS: Record<string, string> = {
   'remind.claim_due': 'claim_due',
   'action.overdue': 'action_overdue',
   'action.assigned': 'action_assigned',
+  'action.assigned_ack': 'action_assigned_ack',
   'action.status_changed': 'action_status_changed',
   'action.status': 'action_status_changed',
   'action.due_soon': 'action_overdue',
@@ -104,6 +106,7 @@ export function isInboxButtonDriven(item: InboxItemActionSource): boolean {
     c === 'claim_overdue' ||
     c === 'action_overdue' ||
     c === 'action_assigned' ||
+    c === 'action_assigned_ack' ||
     c === 'action_status_changed' ||
     c === 'action_claimed' ||
     c === 'action_followed' ||
@@ -130,6 +133,7 @@ function isActionMessage(n: InboxItemActionSource, scene: string): boolean {
     scene.startsWith('action_') ||
     scene === 'action_overdue' ||
     scene === 'action_assigned' ||
+    scene === 'action_assigned_ack' ||
     scene === 'action_status_changed' ||
     scene === 'action_claimed' ||
     scene === 'action_followed'
@@ -169,8 +173,13 @@ export function resolveInboxItemActions(n: InboxItemActionSource): InboxItemActi
     return { primary: { kind: 'claim_alert', label: '去认领' } };
   }
 
-  // 已认领 / 已跟进 / 状态变更：只看任务（勿落「查看预警」）
-  if (c === 'action_claimed' || c === 'action_followed' || c === 'action_status_changed') {
+  // 已认领 / 已跟进 / 状态变更 / 分配人确认：只看任务（勿落「去执行」「查看预警」）
+  if (
+    c === 'action_claimed' ||
+    c === 'action_followed' ||
+    c === 'action_status_changed' ||
+    c === 'action_assigned_ack'
+  ) {
     return viewTaskOrHref(n, actionId);
   }
 
