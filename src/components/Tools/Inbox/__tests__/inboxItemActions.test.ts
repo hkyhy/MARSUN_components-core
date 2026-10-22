@@ -34,6 +34,26 @@ describe('resolveInboxItemActions', () => {
     expect(inboxSceneLabel({ category: 'action.assigned' })).toBe('任务分配');
   });
 
+  it('action_assigned_ack + actionId → 恒查看任务，禁止去执行', () => {
+    const byCat = resolveInboxItemActions({
+      category: 'action_assigned_ack',
+      actionId: 'x',
+      messageType: 'action',
+    });
+    expect(byCat.primary).toEqual({ kind: 'view_task', label: '查看任务' });
+    expect(inboxSceneLabel({ category: 'action_assigned_ack' })).toBe('分配确认');
+
+    const byEvent = resolveInboxItemActions({
+      eventKey: 'action.assigned_ack',
+      category: 'action_assigned',
+      actionId: 'x',
+      messageType: 'action',
+    });
+    expect(resolveInboxSceneKey({ eventKey: 'action.assigned_ack' })).toBe('action_assigned_ack');
+    expect(byEvent.primary).toEqual({ kind: 'view_task', label: '查看任务' });
+    expect(byEvent.primary?.kind).not.toBe('start_action');
+  });
+
   it('终态任务隐藏去执行，只留查看任务', () => {
     const r = resolveInboxItemActions({
       category: 'action_assigned',
