@@ -13,7 +13,7 @@ tasks:
   target_date: '2026-10-23'
   tags: [frontend, actions, hotfix]
   note: |
-    Related: S3-1721 · S3.3.2830 · S3.5.1018
+    Related: S3-1523 · S3.3.2830 · S3.5.1018
     allocatorDisabled / defaultAssigneeUserId；合 main 后 chore(release) 0.1.138
 - id: P6.3.172
   milestone: P6.3
