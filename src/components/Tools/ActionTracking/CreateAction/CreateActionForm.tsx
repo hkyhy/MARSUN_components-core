@@ -74,6 +74,13 @@ export type CreateActionFormProps = {
   emptyAllocatorHint?: string;
   allocatorPlaceholder?: string;
   assigneePlaceholder?: string;
+  /**
+   * 分配人只读。新建/编辑均禁用改派（默认 true）；
+   * 值由 pickDefaultAllocatorUserId / 表单初值写入。
+   */
+  allocatorDisabled?: boolean;
+  /** 编辑回填：执行人 userId（级联选项就绪后写入） */
+  defaultAssigneeUserId?: string;
   onAssigneeOptionsReady?: (options: ActionPersonOption[]) => void;
   onAllocatorOptionsReady?: (options: ActionPersonOption[]) => void;
 };
@@ -111,6 +118,8 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   emptyAllocatorHint = '暂无分配人',
   allocatorPlaceholder = '先选角色，再选分配人',
   assigneePlaceholder = '先选角色，再选执行人',
+  allocatorDisabled = true,
+  defaultAssigneeUserId = '',
   onAssigneeOptionsReady,
   onAllocatorOptionsReady,
 }) => {
@@ -311,10 +320,17 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
           />,
         ];
 
+  const assigneeDefault = String(defaultAssigneeUserId || '').trim();
+
   return (
     <div className={classNames('create-action-form', styles['create-action-form'])}>
       <FormDataSync onChange={handleFormSync} />
-      <SetFormFields patch={{ allocatorUserId: defaultAllocatorUserId }} />
+      <SetFormFields
+        patch={{
+          allocatorUserId: defaultAllocatorUserId,
+          ...(assigneeDefault ? { assigneeUserId: assigneeDefault } : {}),
+        }}
+      />
       <FormInfo
         column={1}
         list={[
@@ -341,6 +357,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
             label="分配人"
             cascadeOptions={allocatorCascade}
             loading={personLoading}
+            disabled={allocatorDisabled}
             emptyHint={emptyAllocatorHint}
             placeholder={allocatorPlaceholder}
             defaultUserId={defaultAllocatorUserId}
@@ -353,6 +370,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
             loading={personLoading}
             emptyHint={emptyAssigneeHint}
             placeholder={assigneePlaceholder}
+            defaultUserId={assigneeDefault}
           />,
           <DatePicker
             key="dueDate"

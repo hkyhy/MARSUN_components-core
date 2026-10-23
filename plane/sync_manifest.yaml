@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.173
+  next_task_id: P6.3.174
 tasks:
+- id: P6.3.173
+  milestone: P6.3
+  name: CreateActionForm allocatorDisabled + defaultAssigneeUserId（编辑回填）
+  status: 已完成
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: '2026-10-23'
+  target_date: '2026-10-23'
+  tags: [frontend, actions, hotfix]
+  note: |
+    Related: S3-1721 · S3.3.2830 · S3.5.1018
+    allocatorDisabled / defaultAssigneeUserId；合 main 后 chore(release) 0.1.138
 - id: P6.3.172
   milestone: P6.3
   name: InboxBell action_assigned_ack 恒查看任务（禁去执行）
