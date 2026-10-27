@@ -14,7 +14,7 @@ import { Table } from '@/components/Table';
 import { SEMANTIC_COLORS, Tags } from '@/components/Tag';
 import { CommonDescriptions, type DescriptionItem } from '@/components/Descriptions';
 import { FormDataSync, FormInfo, FormModal, Select } from '@/components/Form';
-import { Button, Space, Typography, message } from 'antd';
+import { Alert, Button, Space, Typography, message } from 'antd';
 import {
   useCallback,
   useEffect,
@@ -67,12 +67,24 @@ function buildViewItems(user: IamUser): DescriptionItem[] {
   ];
 }
 
+export type IamPersonalDataScopeConfig = {
+  /** value 用 '' 表示未设置（提交转 null） */
+  options: { value: string; label: string }[];
+  /** 选未设置时展示 */
+  unsetHint?: string;
+};
+
 export type IamUsersPageProps = {
   client: IamClient;
   catalog: PermissionBindCatalog;
   systemEntryCodes: readonly string[];
   tableName?: string;
   title?: string;
+  /**
+   * 个人数据范围（S3）：传入后启用可编辑 Select，并调用 client.get/setUserAppDataScope。
+   * Assets 不传则保持只读「全公司」占位。
+   */
+  personalDataScope?: IamPersonalDataScopeConfig;
 };
 
 export default function IamUsersPage({
@@ -81,6 +93,7 @@ export default function IamUsersPage({
   systemEntryCodes,
   tableName = 'iam_users',
   title = '用户管理',
+  personalDataScope,
 }: IamUsersPageProps) {
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<IamUser[]>([]);
@@ -98,7 +111,11 @@ export default function IamUsersPage({
   const [groups, setGroups] = useState<IamSharedGroup[]>([]);
   const [roleCodes, setRoleCodes] = useState<string[]>([]);
   const [groupIds, setGroupIds] = useState<string[]>([]);
+  const [dataScope, setDataScope] = useState<string>('');
   const [permFormEpoch, setPermFormEpoch] = useState(0);
+  const scopeEditable = Boolean(
+    personalDataScope?.options?.length && client.getUserAppDataScope && client.setUserAppDataScope,
+  );
 
   const catalogNameByCode = useMemo(() => {
     const m: Record<string, string> = {};
@@ -192,11 +209,14 @@ export default function IamUsersPage({
   const openPerm = async (u: IamUser) => {
     setPermUser(u);
     try {
-      const [r, g, mine, detail] = await Promise.all([
+      const [r, g, mine, detail, scope] = await Promise.all([
         client.listRoles(),
         client.listSharedGroups(),
         client.listUserSharedGroups(u.id),
         client.getUser(u.id),
+        scopeEditable && client.getUserAppDataScope
+          ? client.getUserAppDataScope(u.id)
+          : Promise.resolve(null),
       ]);
       setRoles(r);
       setGroups(g);
@@ -204,6 +224,7 @@ export default function IamUsersPage({
       const appRoleCodes =
         detail.roles?.filter((x) => r.some((rr) => rr.code === x.code)).map((x) => x.code) || [];
       setRoleCodes(appRoleCodes);
+      setDataScope(scope || '');
       setPermFormEpoch((n) => n + 1);
     } catch (e) {
       message.error(e instanceof Error ? e.message : '加载权限失败');
@@ -213,6 +234,7 @@ export default function IamUsersPage({
   const onPermFormSync = useCallback((data: Record<string, unknown>) => {
     if (Array.isArray(data.groupIds)) setGroupIds(data.groupIds.map(String));
     if (Array.isArray(data.roleCodes)) setRoleCodes(data.roleCodes.map(String));
+    if (typeof data.dataScope === 'string') setDataScope(data.dataScope);
   }, []);
 
   const viewItems = useMemo(() => (viewUser ? buildViewItems(viewUser) : []), [viewUser]);
@@ -307,13 +329,21 @@ export default function IamUsersPage({
         cancelText="取消"
         formProps={{
           data: {
-            dataScope: 'COMPANY',
+            dataScope: scopeEditable ? dataScope : 'COMPANY',
             groupIds,
             roleCodes,
           },
-          onSubmit: async (data: { groupIds?: string[]; roleCodes?: string[] }) => {
+          onSubmit: async (data: {
+            groupIds?: string[];
+            roleCodes?: string[];
+            dataScope?: string;
+          }) => {
             if (!permUser) return;
             try {
+              if (scopeEditable && client.setUserAppDataScope) {
+                const raw = String(data.dataScope ?? dataScope ?? '').trim();
+                await client.setUserAppDataScope(permUser.id, raw || null);
+              }
               await client.setUserAppRoleCodes(permUser.id, data.roleCodes ?? roleCodes);
               await client.setUserSharedGroups(permUser.id, data.groupIds ?? groupIds);
               message.success('已保存');
@@ -327,6 +357,9 @@ export default function IamUsersPage({
         }}
       >
         <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          {scopeEditable && !dataScope && personalDataScope?.unsetHint ? (
+            <Alert type="warning" showIcon message={personalDataScope.unsetHint} />
+          ) : null}
           <FormInfo
             column={2}
             gap={16}
@@ -334,9 +367,14 @@ export default function IamUsersPage({
               <Select
                 key="dataScope"
                 name="dataScope"
-                label="数据权限"
-                disabled
-                options={[{ value: 'COMPANY', label: '全公司' }]}
+                label="数据范围"
+                disabled={!scopeEditable}
+                options={
+                  scopeEditable
+                    ? personalDataScope!.options
+                    : [{ value: 'COMPANY', label: '全公司' }]
+                }
+                placeholder="请选择个人数据范围"
               />,
               <Select
                 key="groupIds"

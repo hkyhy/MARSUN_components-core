@@ -120,6 +120,8 @@ const mockClient: IamClient = {
   listUserSharedGroups: async () => groups,
   setUserAppRoleCodes: async () => undefined,
   setUserSharedGroups: async () => undefined,
+  getUserAppDataScope: async () => null,
+  setUserAppDataScope: async () => undefined,
 };
 
 export default function UsersDemo() {

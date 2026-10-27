@@ -41,4 +41,7 @@ export type IamClient = {
   listUserSharedGroups: (userId: string) => Promise<IamSharedGroup[]>;
   setUserAppRoleCodes: (userId: string, roleCodes: string[]) => Promise<void>;
   setUserSharedGroups: (userId: string, groupIds: string[]) => Promise<void>;
+  /** 可选：个人 App 数据范围（S3）；Assets 可不实现 */
+  getUserAppDataScope?: (userId: string) => Promise<string | null>;
+  setUserAppDataScope?: (userId: string, dataScope: string | null) => Promise<void>;
 };

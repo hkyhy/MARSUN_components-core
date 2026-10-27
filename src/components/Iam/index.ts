@@ -14,7 +14,11 @@ export {
 export { roleDisplayName, roleSelectOption } from './utils/roleDisplay';
 export { MULTI_TAG_SHOW_LENGTH, multiTagSelectProps } from './utils/multiTagSelect';
 export { catalogToItems } from './utils/catalogToItems';
-export { default as IamUsersPage, type IamUsersPageProps } from './pages/IamUsersPage';
+export {
+  default as IamUsersPage,
+  type IamUsersPageProps,
+  type IamPersonalDataScopeConfig,
+} from './pages/IamUsersPage';
 export {
   IamRolesPage,
   IamRolePermissionsPage,
