@@ -39,6 +39,8 @@ export type CreateActionModalProps = {
   varietyLabel?: string;
   /** F4：任务标题 placeholder */
   titlePlaceholder?: string;
+  /** F4：任务描述 placeholder */
+  descriptionPlaceholder?: string;
   /** F4：关联指标 placeholder */
   metricPlaceholder?: string;
   /** scopeMode=none 时短提示（App 注入） */
@@ -86,6 +88,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
   scopeMode: scopeModeProp = 'form',
   varietyLabel,
   titlePlaceholder,
+  descriptionPlaceholder,
   metricPlaceholder,
   noneScopeHint,
   title: titleProp,
@@ -133,6 +136,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
     });
     return {
       title: prefill?.title?.trim() || '',
+      description: prefill?.description?.trim() || '',
       dimension: prefill?.dimension?.trim() || dimensionOptions[0]?.value || '',
       status: defaultStatus,
       allocatorUserId: '',
@@ -151,6 +155,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
     useLocked,
     useNoneScope,
     prefill?.title,
+    prefill?.description,
     prefill?.dimension,
     dimensionOptions,
     defaultStatus,
@@ -187,6 +192,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
       const variety = useLocked || useNoneScope ? '' : String(formData.variety || '').trim();
       const metric = useLocked || useNoneScope ? '' : String(formData.metric || '').trim();
       const title = String(formData.title || '').trim();
+      const description = String(formData.description || '').trim();
       const dimension =
         String(formData.dimension || '').trim() ||
         String(prefill?.dimension || '').trim() ||
@@ -205,6 +211,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
 
       const payload: CreateActionSubmitPayload = {
         title,
+        description: description || undefined,
         dimension,
         status: String(formData.status || defaultStatus),
         assignee,
@@ -266,6 +273,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
         scopeMode={useLocked ? 'locked' : useNoneScope ? 'none' : 'form'}
         varietyLabel={useLocked || useNoneScope ? undefined : varietyLabel}
         titlePlaceholder={titlePlaceholder}
+        descriptionPlaceholder={descriptionPlaceholder}
         metricPlaceholder={useNoneScope ? undefined : metricPlaceholder}
         noneScopeHint={useNoneScope ? noneScopeHint : undefined}
         dimensionOptions={dimensionOptions}

@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.174
+  next_task_id: P6.3.175
 tasks:
+# 2026-10-27 · CreateAction 任务描述 + Inbox 审批场景（关联 S3-2171）
+- id: P6.3.174
+  milestone: P6.3
+  name: feat(CreateAction/Inbox)：任务描述 TextArea 与审批驳回站内信 CTA
+  status: 已完成
+  priority: P1
+  kind: feat
+  owner: 黄金芳
+  start_date: '2026-10-27'
+  end_date: '2026-10-27'
+  tags: [frontend, actions, inbox]
+  note: |
+    Related: S3-2171 · S3.3.2872
+    FormInfo TextArea description；inbox approval_pending/rejected 禁去执行
 - id: P6.3.173
   milestone: P6.3
   name: CreateActionForm allocatorDisabled + defaultAssigneeUserId（编辑回填）
@@ -13,7 +27,7 @@ tasks:
   target_date: '2026-10-23'
   tags: [frontend, actions, hotfix]
   note: |
-    Related: S3-1523 · S3.3.2830 · S3.5.1018
+    Related: S3-1523 · S3.3.2866 · S3.5.1023
     allocatorDisabled / defaultAssigneeUserId；合 main 后 chore(release) 0.1.138
 - id: P6.3.172
   milestone: P6.3

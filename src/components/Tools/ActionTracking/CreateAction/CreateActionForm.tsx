@@ -4,6 +4,7 @@ import {
   FormInfo,
   Input,
   SuperSelect,
+  TextArea,
   createPagedSuperSelectApi,
   pagedSuperSelectGetSearchProps,
   pagedSuperSelectPagination,
@@ -64,6 +65,8 @@ export type CreateActionFormProps = {
   scopeMode?: CreateActionScopeMode;
   /** F4：任务标题 placeholder（App 注入；禁写死业务文案） */
   titlePlaceholder?: string;
+  /** F4：任务描述 placeholder（App 注入） */
+  descriptionPlaceholder?: string;
   /** F4：关联指标 placeholder */
   metricPlaceholder?: string;
   /** scopeMode=none 时展示在截止日期下的短提示（App 注入） */
@@ -110,6 +113,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   lockedContext,
   scopeMode: scopeModeProp = 'form',
   titlePlaceholder,
+  descriptionPlaceholder,
   metricPlaceholder,
   noneScopeHint,
   dimensionOptions,
@@ -341,6 +345,18 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
             rule="REQ"
             placeholder={titlePlaceholder || '请输入任务标题'}
             maxLength={120}
+          />,
+          <TextArea
+            key="description"
+            name="description"
+            label="任务描述"
+            labelTips="可选"
+            rows={5}
+            block
+            maxLength={2000}
+            placeholder={
+              descriptionPlaceholder || '说明目前情况、问题与需改进点，便于执行人理解背景'
+            }
           />,
           <SuperSelect
             key="dimension"

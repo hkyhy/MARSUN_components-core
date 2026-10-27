@@ -6,6 +6,8 @@ export type CreateActionPrefill = {
   variety?: string;
   metric?: string;
   title?: string;
+  /** 任务描述预填（质量预警认领/下发等） */
+  description?: string;
   dimension?: string;
   bizDate?: string;
   factoryCode?: string;
@@ -102,6 +104,8 @@ export type CreateActionLoaders = {
  */
 export type CreateActionSubmitPayload = {
   title: string;
+  /** 任务描述（可选） */
+  description?: string;
   dimension: string;
   status: string;
   assignee: string;
