@@ -43,9 +43,16 @@ const SCENE_LABEL: Record<string, string> = {
   action_overdue: '行动超期',
   action_assigned: '任务分配',
   action_assigned_ack: '分配确认',
+  action_unassigned: '任务改派',
+  action_updated: '任务编辑',
   action_status_changed: '状态变更',
   action_claimed: '任务认领',
   action_followed: '任务跟进',
+  action_approval_pending: '待审批',
+  action_approved: '已批准',
+  action_rejected: '已驳回',
+  action_approval_passed_ack: '审批回执',
+  action_approval_rejected_ack: '驳回回执',
   l3_parallel: 'L3并行',
 };
 
@@ -55,14 +62,22 @@ const SCENE_ALIAS: Record<string, string> = {
   'action.overdue': 'action_overdue',
   'action.assigned': 'action_assigned',
   'action.assigned_ack': 'action_assigned_ack',
+  'action.unassigned': 'action_unassigned',
+  'action.updated': 'action_updated',
   'action.status_changed': 'action_status_changed',
   'action.status': 'action_status_changed',
   'action.due_soon': 'action_overdue',
   'action.claimed': 'action_claimed',
   'action.followed': 'action_followed',
+  'action.approval_pending': 'action_approval_pending',
+  'action.approved': 'action_approved',
+  'action.rejected': 'action_rejected',
+  'action.approval_passed_ack': 'action_approval_passed_ack',
+  'action.approval_rejected_ack': 'action_approval_rejected_ack',
 };
 
-const TERMINAL_STATUS = new Set(['done', 'reviewed', 'cancelled', 'closed']);
+/** rejected = 审批驳回终态；禁再展示「去执行 / 已执行」 */
+const TERMINAL_STATUS = new Set(['done', 'reviewed', 'cancelled', 'closed', 'rejected']);
 
 function canonScene(raw?: string | null): string {
   const c = String(raw || '')
@@ -107,6 +122,8 @@ export function isInboxButtonDriven(item: InboxItemActionSource): boolean {
     c === 'action_overdue' ||
     c === 'action_assigned' ||
     c === 'action_assigned_ack' ||
+    c === 'action_unassigned' ||
+    c === 'action_updated' ||
     c === 'action_status_changed' ||
     c === 'action_claimed' ||
     c === 'action_followed' ||
@@ -173,12 +190,35 @@ export function resolveInboxItemActions(n: InboxItemActionSource): InboxItemActi
     return { primary: { kind: 'claim_alert', label: '去认领' } };
   }
 
-  // 已认领 / 已跟进 / 状态变更 / 分配人确认：只看任务（勿落「去执行」「查看预警」）
+  // 已认领 / 已跟进 / 改派 / 编辑 / 分配人确认：只看任务（勿落「去执行」「查看预警」）
   if (
     c === 'action_claimed' ||
     c === 'action_followed' ||
-    c === 'action_status_changed' ||
+    c === 'action_unassigned' ||
+    c === 'action_updated' ||
     c === 'action_assigned_ack'
+  ) {
+    return viewTaskOrHref(n, actionId);
+  }
+
+  // 创建待批：引导批准创建（status=draft）；其它状态变更仅查看
+  if (c === 'action_status_changed') {
+    if (status === 'draft' && actionId) {
+      return { primary: { kind: 'view_task', label: '去批准创建' } };
+    }
+    return viewTaskOrHref(n, actionId);
+  }
+
+  // 审批链路：待审 → 去批准创建；已批/驳回/回执 → 只看任务（禁「去执行」「已执行」）
+  if (c === 'action_approval_pending') {
+    if (actionId) return { primary: { kind: 'view_task', label: '去批准创建' } };
+    return viewTaskOrHref(n, actionId);
+  }
+  if (
+    c === 'action_approved' ||
+    c === 'action_rejected' ||
+    c === 'action_approval_passed_ack' ||
+    c === 'action_approval_rejected_ack'
   ) {
     return viewTaskOrHref(n, actionId);
   }

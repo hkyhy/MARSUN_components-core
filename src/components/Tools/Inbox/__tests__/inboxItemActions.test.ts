@@ -63,6 +63,60 @@ describe('resolveInboxItemActions', () => {
     expect(r.primary).toEqual({ kind: 'view_task', label: '查看任务' });
   });
 
+  it('驳回 / 审批回执 → 查看任务，禁去执行', () => {
+    for (const eventKey of [
+      'action.rejected',
+      'action.approved',
+      'action.approval_rejected_ack',
+      'action.approval_passed_ack',
+    ]) {
+      const r = resolveInboxItemActions({
+        eventKey,
+        actionId: 'x',
+        messageType: 'action',
+        actionStatus: 'rejected',
+      });
+      expect(r.primary).toEqual({ kind: 'view_task', label: '查看任务' });
+      expect(r.primary?.kind).not.toBe('start_action');
+    }
+  });
+
+  it('待审批 → 去批准创建', () => {
+    const r = resolveInboxItemActions({
+      eventKey: 'action.approval_pending',
+      actionId: 'x',
+      messageType: 'action',
+    });
+    expect(r.primary).toEqual({ kind: 'view_task', label: '去批准创建' });
+  });
+
+  it('actionStatus=rejected 也算终态，分配信不展示去执行', () => {
+    const r = resolveInboxItemActions({
+      category: 'action_assigned',
+      actionId: 'x',
+      actionStatus: 'rejected',
+    });
+    expect(r.primary).toEqual({ kind: 'view_task', label: '查看任务' });
+  });
+
+  it('创建待批 draft → 去批准创建', () => {
+    const r = resolveInboxItemActions({
+      category: 'action_status_changed',
+      actionId: 'a1',
+      actionStatus: 'draft',
+    });
+    expect(r.primary).toEqual({ kind: 'view_task', label: '去批准创建' });
+  });
+
+  it('改派 unassigned → 查看任务，禁去执行', () => {
+    const r = resolveInboxItemActions({
+      category: 'action_unassigned',
+      actionId: 'a1',
+      messageType: 'action',
+    });
+    expect(r.primary).toEqual({ kind: 'view_task', label: '查看任务' });
+  });
+
   it('状态变更 / messageType=action → 不落查看预警', () => {
     const byScene = resolveInboxItemActions({
       category: 'action_status_changed',
