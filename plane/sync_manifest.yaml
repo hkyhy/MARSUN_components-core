@@ -15,7 +15,7 @@ tasks:
   tags: [frontend, actions, inbox]
   note: |
     Related: S3-2171 · S3.3.2872
-    FormInfo TextArea description；inbox approval_pending/rejected 禁去执行
+    FormInfo TextArea description；inbox approval_pending/rejected 禁去执行；合 main
 - id: P6.3.173
   milestone: P6.3
   name: CreateActionForm allocatorDisabled + defaultAssigneeUserId（编辑回填）
