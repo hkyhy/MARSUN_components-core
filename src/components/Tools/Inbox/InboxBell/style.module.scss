@@ -132,26 +132,39 @@
 }
 
 .item {
-  --inbox-accent: #94a3b8;
-  position: relative;
   display: block;
   width: 100%;
   box-sizing: border-box;
   text-align: left;
-  padding: 12px 12px 12px 14px;
+  padding: 12px;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #fff;
   cursor: pointer;
-  overflow: hidden;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 
   &:hover {
-    border-color: color-mix(in srgb, var(--inbox-accent) 45%, #e2e8f0);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    border-color: #93c5fd;
   }
 }
 
+.itemStatic {
+  cursor: default;
+
+  &:hover {
+    border-color: #e2e8f0;
+  }
+
+  &.itemUnread:hover {
+    border-color: #bfdbfe;
+  }
+}
+
+.itemUnread {
+  border-color: #bfdbfe;
+  background: #f8fbff;
+}
+
+/* toast 左侧色条用；列表卡已不再挂这些 class */
 .accentAlert {
   --inbox-accent: #ef4444;
 }
@@ -162,39 +175,6 @@
 
 .accentRemind {
   --inbox-accent: #f59e0b;
-}
-
-.itemRibbon {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--inbox-accent) 92%, #fff) 0%,
-    var(--inbox-accent) 100%
-  );
-  border-radius: 12px 0 0 12px;
-}
-
-.itemStatic {
-  cursor: default;
-
-  &:hover {
-    border-color: #e2e8f0;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-  }
-
-  &.itemUnread:hover {
-    border-color: color-mix(in srgb, var(--inbox-accent) 35%, #e2e8f0);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-  }
-}
-
-.itemUnread {
-  border-color: color-mix(in srgb, var(--inbox-accent) 28%, #e2e8f0);
-  background: linear-gradient(90deg, color-mix(in srgb, var(--inbox-accent) 6%, #fff) 0%, #fff 48%);
 }
 
 .itemHeader {

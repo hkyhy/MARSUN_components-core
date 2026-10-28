@@ -8,7 +8,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type UIEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
@@ -824,17 +823,7 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
                             styles.item,
                             !item.read && styles.itemUnread,
                             buttonDriven && styles.itemStatic,
-                            item.messageType === 'alert' && styles.accentAlert,
-                            item.messageType === 'action' && styles.accentAction,
-                            item.messageType === 'remind' && styles.accentRemind,
                           )}
-                          style={
-                            item.levelColor
-                              ? ({
-                                  ['--inbox-accent' as string]: item.levelColor,
-                                } as CSSProperties)
-                              : undefined
-                          }
                           role={buttonDriven ? undefined : 'button'}
                           tabIndex={buttonDriven ? undefined : 0}
                           onClick={buttonDriven ? undefined : () => void handleOpenItem(item)}
@@ -849,9 +838,11 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
                                 }
                           }
                         >
-                          <div className={styles.itemRibbon} aria-hidden />
                           <div className={styles.itemHeader}>
                             <span className={styles.itemHeaderLeft}>
+                              <span className={styles.itemTitle} title={item.title || '（无标题）'}>
+                                {item.title || '（无标题）'}
+                              </span>
                               {typeLabel ? (
                                 <SemanticTag
                                   color={messageTypeSemanticColor(item.messageType)}
@@ -860,9 +851,6 @@ const InboxBell = forwardRef<InboxBellHandle, InboxBellProps>(function InboxBell
                                   {typeLabel}
                                 </SemanticTag>
                               ) : null}
-                              <span className={styles.itemTitle} title={item.title || '（无标题）'}>
-                                {item.title || '（无标题）'}
-                              </span>
                             </span>
                             <span className={styles.itemTime}>{item.createdAt || ''}</span>
                           </div>
