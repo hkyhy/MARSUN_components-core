@@ -136,6 +136,7 @@ node scripts/version-check.mjs --apply   # → 0.1.99
 
 也可在 Actions 中手动运行 **Publish npm**，填写已有 tag 重新发布。
 
+- 2026-10-29：`v0.1.140` — Table：列配置重排/增量列后归位 `fixed` 列，避免操作列 sticky 失效
 - 2026-10-23：`v0.1.138` — CreateActionForm：`allocatorDisabled` / `defaultAssigneeUserId`（Related S3-1523）
 - 2026-10-22：`v0.1.137` — InboxBell：`action_assigned_ack` 恒「查看任务」（禁「去执行」）；Related S3-1721
 - 2026-10-21：`v0.1.136` — MessageCenter 推送规则级别改为业务 DI `levelOptions`（禁写死 L1/L2/L3；S3 可注入 L2+）
