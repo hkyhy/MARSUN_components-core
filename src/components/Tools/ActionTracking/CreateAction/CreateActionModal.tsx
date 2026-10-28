@@ -223,8 +223,9 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
         factory,
         variety,
         metric,
-        factoryCode: useNoneScope ? undefined : prefill?.factoryCode || undefined,
-        factoryName: factory || undefined,
+        // form/locked 的 factory 即厂码（下拉 value）；勿把码误写入 factoryName
+        factoryCode: useNoneScope ? undefined : factory || prefill?.factoryCode || undefined,
+        factoryName: useNoneScope ? undefined : prefill?.factoryName || undefined,
         verifyMetric: metric || undefined,
         eventLabel,
       };
