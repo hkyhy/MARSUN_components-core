@@ -136,7 +136,7 @@ node scripts/version-check.mjs --apply   # → 0.1.99
 
 也可在 Actions 中手动运行 **Publish npm**，填写已有 tag 重新发布。
 
-- 2026-10-29：`v0.1.141` — InboxBell 列表卡回退：去左侧色条、标题在类型 Tag 前、未读底 `#f8fbff`（对齐测试环境观感）
+- 2026-10-29：`v0.1.141` — InboxBell 列表卡回退：去左侧色条、标题在类型 Tag 前、未读底 `#f8fbff`（对齐测试环境观感；npm publish）
 - 2026-10-29：`v0.1.140` — Table：列配置重排/增量列后归位 `fixed` 列，避免操作列 sticky 失效
 
 - 2026-10-23：`v0.1.138` — CreateActionForm：`allocatorDisabled` / `defaultAssigneeUserId`（Related S3-1523）
