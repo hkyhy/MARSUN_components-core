@@ -11,6 +11,8 @@ export type CreateActionPrefill = {
   dimension?: string;
   bizDate?: string;
   factoryCode?: string;
+  /** 分厂展示名（与 factoryCode 分离；提交勿把厂码写入此字段） */
+  factoryName?: string;
 };
 
 /** 分厂/品种/指标只读锁定 */
