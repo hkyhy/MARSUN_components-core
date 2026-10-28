@@ -13,6 +13,7 @@ import {
   FLEX_SPACER_COL_KEY,
   insertBeforeFixedRight,
   isFixedColumn,
+  normalizeFixedColumnOrder,
   setColumnWidthAtPath,
 } from '../columnConfigUtils';
 import type { TableColumnConfigItem } from '../columnConfigTypes';
@@ -181,5 +182,38 @@ describe('fixed column + flex spacer placement', () => {
       'b',
       FLEX_SPACER_COL_KEY,
     ]);
+  });
+
+  it('normalizeFixedColumnOrder pulls fixed:right to end (ops before description)', () => {
+    const title = { key: 'title', fixed: 'left' as const };
+    const factory = { key: 'factory' };
+    const ops = { key: 'ops', fixed: 'right' as const };
+    const description = { key: 'description' };
+    const bad = [title, factory, ops, description];
+    const next = normalizeFixedColumnOrder(bad);
+    expect(next.map((c) => c.key)).toEqual(['title', 'factory', 'description', 'ops']);
+    expect(normalizeFixedColumnOrder(next)).toBe(next);
+  });
+
+  it('normalizeFixedColumnOrder pulls fixed:left to start', () => {
+    const title = { key: 'title', fixed: 'left' as const };
+    const a = { key: 'a' };
+    const next = normalizeFixedColumnOrder([a, title]);
+    expect(next.map((c) => c.key)).toEqual(['title', 'a']);
+  });
+
+  it('applyColumnConfig heals fixed:right buried by reorder + appended uncovered col', () => {
+    const columns: ColumnsType<{ id: string }> = [
+      { title: '标题', key: 'title', fixed: 'left' },
+      { title: '描述', key: 'description' },
+      { title: '分厂', key: 'factory' },
+      { title: '操作', key: 'ops', fixed: 'right' },
+    ];
+    // 用户把操作拖到描述前；配置未含 factory 时追加末尾也会夹在 fixed 后
+    const config: TableColumnConfigItem[] = [{ id: 'title' }, { id: 'ops' }, { id: 'description' }];
+    const next = applyColumnConfig(columns, config);
+    expect(next.map((c) => String(c.key))).toEqual(['title', 'description', 'factory', 'ops']);
+    expect(next[0]?.fixed).toBe('left');
+    expect(next[next.length - 1]?.fixed).toBe('right');
   });
 });

@@ -27,6 +27,7 @@ export {
   insertBeforeFixedRight,
   isFixedColumn,
   isInternalColumnKey,
+  normalizeFixedColumnOrder,
   parseTablePrefs,
   serializeTablePrefs,
   mergeTablePrefs,

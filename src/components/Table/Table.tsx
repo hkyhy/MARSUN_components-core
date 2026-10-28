@@ -47,6 +47,7 @@ import {
   insertBeforeFixedRight,
   isFixedColumn,
   isInternalColumnKey,
+  normalizeFixedColumnOrder,
   setColumnWidthAtPath,
   shortChildId,
   type ColumnTypeAny,
@@ -663,7 +664,10 @@ function TableInner<RecordType extends object = Record<string, unknown>>(
   );
 
   const displayColumns = useMemo(() => {
-    let cols = appliedColumns;
+    // 再归一次：防御未走 applyColumnConfig 的列序，以及后续注入前保证 sticky 合法
+    let cols = normalizeFixedColumnOrder(
+      appliedColumns as ColumnType<RecordType>[],
+    ) as ColumnsType<RecordType>;
     if (enableConfig && loaded) {
       cols = injectHeaderHideEyes(cols, (path) => {
         void handleHideColumnPath(path);
@@ -964,5 +968,6 @@ export {
   insertBeforeFixedRight,
   isFixedColumn,
   isInternalColumnKey,
+  normalizeFixedColumnOrder,
   setColumnWidthAtPath,
 };

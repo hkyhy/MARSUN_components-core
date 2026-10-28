@@ -197,7 +197,11 @@ export function applyColumnConfig<RecordType extends object>(
     return out;
   };
 
-  return buildLevel(config, columns as ColumnTypeAny[]) as ColumnsType<RecordType>;
+  // 列配置拖拽 / 增量列追加末尾，可能把非固定列夹到 fixed:right 之后（或把 fixed:left 拖到中间），
+  // antd sticky 会断 → 操作列跟着横滑。应用配置后强制归位。
+  return normalizeFixedColumnOrder(
+    buildLevel(config, columns as ColumnTypeAny[]),
+  ) as ColumnsType<RecordType>;
 }
 
 /** 仅按 path 合并叶子 width（不改顺序/显隐）；overrides 优先 */
@@ -414,6 +418,36 @@ export function configHasLeafWidths(items: TableColumnConfigItem[] | null | unde
 export function isFixedColumn(col: { fixed?: unknown } | null | undefined): boolean {
   const f = col?.fixed;
   return f === 'left' || f === 'right' || f === true || f === 'start' || f === 'end';
+}
+
+function fixedSide(col: { fixed?: unknown } | null | undefined): 'left' | 'right' | null {
+  const f = col?.fixed;
+  if (f === 'left' || f === 'start' || f === true) return 'left';
+  if (f === 'right' || f === 'end') return 'right';
+  return null;
+}
+
+/**
+ * 顶层列按 antd 固定列约束归位：`fixed:left*` → 中间 → `fixed:right*`。
+ * 各组内保持原相对序；已合法则原样返回（引用相等）。
+ * 弹性占位无 fixed，归入中间组；齿轮等 `fixed:right` 与操作列一起落在末尾。
+ */
+export function normalizeFixedColumnOrder<T extends { fixed?: unknown }>(
+  columns: T[] | undefined,
+): T[] {
+  if (!columns?.length) return columns || [];
+  const left: T[] = [];
+  const middle: T[] = [];
+  const right: T[] = [];
+  for (const col of columns) {
+    const side = fixedSide(col);
+    if (side === 'left') left.push(col);
+    else if (side === 'right') right.push(col);
+    else middle.push(col);
+  }
+  const next = [...left, ...middle, ...right];
+  const same = next.length === columns.length && next.every((col, i) => col === columns[i]);
+  return same ? columns : next;
 }
 
 /**
