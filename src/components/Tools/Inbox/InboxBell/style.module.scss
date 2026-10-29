@@ -304,7 +304,8 @@
   background: #fff;
   color: var(--font-color, #0f172a);
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--inbox-accent) 22%, #e2e8f0);
+  /* 无描边：靠左侧色条 + 轻阴影分层（灰边易显脏） */
+  border: 0;
   box-shadow:
     0 6px 16px 0 rgba(0, 0, 0, 0.08),
     0 3px 6px -4px rgba(0, 0, 0, 0.12),
