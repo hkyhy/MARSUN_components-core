@@ -4,6 +4,7 @@ export {
   default as CreateActionForm,
   renderPersonOptionLabel,
   CREATE_ACTION_VARIETY_PAGE_SIZE,
+  CREATE_ACTION_ASSIGNEE_PAGE_SIZE,
 } from './CreateActionForm';
 export type { CreateActionFormProps } from './CreateActionForm';
 export { default as PersonRoleCascader } from './PersonRoleCascader';
@@ -30,6 +31,7 @@ export type {
   CreateActionDimensionOption,
   CreateActionLoaders,
   CreateActionSelectPageQuery,
+  CreateActionAssigneeUsersPageQuery,
   CreateActionSelectPageResult,
   CreateActionSubmitPayload,
   CreateActionPersonValidateError,

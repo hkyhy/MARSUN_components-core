@@ -89,9 +89,23 @@ export type CreateActionSelectPageResult = {
  * 建单数据加载器（App 注入；core 禁直连业务 API / DEMO）。
  * loadFactoryOptions / loadVarietyPage 在 lockedContext 模式下可不传。
  */
+/** 执行人按角色分页（建单联动；禁一次性 action-person-candidates） */
+export type CreateActionAssigneeUsersPageQuery = CreateActionSelectPageQuery & {
+  roleCode: string;
+};
+
 export type CreateActionLoaders = {
+  /**
+   * @deprecated 大租户过慢；有 loadAssigneeRoles + loadAssigneeUsersPage 时不再调用。
+   */
   loadAssigneeCatalog: () => Promise<CreateActionPersonCatalog>;
   loadAllocatorCatalog: () => Promise<CreateActionPersonCatalog>;
+  /** IAM scope=app 角色下拉（先选角色） */
+  loadAssigneeRoles?: () => Promise<CreateActionSelectOption[]>;
+  /** 选定角色后分页查人（message-users 单页） */
+  loadAssigneeUsersPage?: (
+    query: CreateActionAssigneeUsersPageQuery,
+  ) => Promise<CreateActionSelectPageResult>;
   loadFactoryOptions?: () => Promise<CreateActionSelectOption[]>;
   /**
    * 品种（或 App 自定义 label）分页下拉。
