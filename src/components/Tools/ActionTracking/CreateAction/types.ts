@@ -48,6 +48,8 @@ export type ActionPersonCascadeOption = {
 export type ActionPersonOption = {
   value: string;
   displayName?: string;
+  /** SSO 工号；只读分配人展示「姓名 · 工号」 */
+  employeeId?: string;
   label?: ReactNode;
 };
 

@@ -134,6 +134,8 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   const [personLoading, setPersonLoading] = useState(true);
   const [factoryLoading, setFactoryLoading] = useState(false);
   const [defaultAllocatorUserId, setDefaultAllocatorUserId] = useState('');
+  /** 分配人只读展示名（姓名 · 工号）；写死当前登录人，不走级联选人 */
+  const [allocatorDisplay, setAllocatorDisplay] = useState('');
   const [factoryKey, setFactoryKey] = useState(() => scopeLock?.factory?.trim() || '');
   const factoryRef = useRef(scopeLock?.factory?.trim() || '');
 
@@ -227,11 +229,17 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
           setAllocatorCascade(allocRes.value.cascadeOptions);
           onAllocatorOptionsReady?.(allocRes.value.options);
           const pick = loaders.pickDefaultAllocatorUserId;
-          setDefaultAllocatorUserId(pick ? pick(allocRes.value.options) : '');
+          const pickedId = pick ? pick(allocRes.value.options) : '';
+          setDefaultAllocatorUserId(pickedId);
+          const opt = allocRes.value.options.find((o) => o.value === pickedId);
+          const name = String(opt?.displayName || '').trim();
+          const emp = String(opt?.employeeId || '').trim();
+          setAllocatorDisplay(name && emp ? `${name} · ${emp}` : name || emp || emptyAllocatorHint);
         } else {
           message.error('分配人列表加载失败');
           setAllocatorCascade([]);
           onAllocatorOptionsReady?.([]);
+          setAllocatorDisplay(emptyAllocatorHint);
         }
       })
       .finally(() => {
@@ -332,6 +340,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
       <SetFormFields
         patch={{
           allocatorUserId: defaultAllocatorUserId,
+          allocatorDisplay,
           ...(assigneeDefault ? { assigneeUserId: assigneeDefault } : {}),
         }}
       />
@@ -367,17 +376,27 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
             options={dimensionOptions}
             placeholder="选择任务类型"
           />,
-          <PersonRoleCascaderField
-            key="allocatorUserId"
-            name="allocatorUserId"
-            label="分配人"
-            cascadeOptions={allocatorCascade}
-            loading={personLoading}
-            disabled={allocatorDisabled}
-            emptyHint={emptyAllocatorHint}
-            placeholder={allocatorPlaceholder}
-            defaultUserId={defaultAllocatorUserId}
-          />,
+          allocatorDisabled ? (
+            <Input
+              key="allocatorDisplay"
+              name="allocatorDisplay"
+              label="分配人"
+              disabled
+              placeholder={personLoading ? '加载中…' : emptyAllocatorHint}
+            />
+          ) : (
+            <PersonRoleCascaderField
+              key="allocatorUserId"
+              name="allocatorUserId"
+              label="分配人"
+              cascadeOptions={allocatorCascade}
+              loading={personLoading}
+              disabled={allocatorDisabled}
+              emptyHint={emptyAllocatorHint}
+              placeholder={allocatorPlaceholder}
+              defaultUserId={defaultAllocatorUserId}
+            />
+          ),
           <PersonRoleCascaderField
             key="assigneeUserId"
             name="assigneeUserId"
