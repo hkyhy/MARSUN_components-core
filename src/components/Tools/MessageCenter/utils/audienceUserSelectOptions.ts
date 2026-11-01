@@ -2,6 +2,21 @@ import type { MessageAudienceUserOption } from '../MessageTemplateAdmin/types';
 
 const UNASSIGNED_DEPT = '未分配部门';
 
+/** 按 id 去重合并；用于分页追加与已选回显保留 */
+export function mergeAudienceUsers(
+  base: MessageAudienceUserOption[],
+  extra: MessageAudienceUserOption[],
+): MessageAudienceUserOption[] {
+  const map = new Map<string, MessageAudienceUserOption>();
+  for (const u of base) {
+    if (u?.id) map.set(u.id, u);
+  }
+  for (const u of extra) {
+    if (u?.id && !map.has(u.id)) map.set(u.id, u);
+  }
+  return [...map.values()];
+}
+
 export type AudienceUserSelectOption = {
   value: string;
   label: string;

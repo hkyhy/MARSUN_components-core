@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { buildAudienceUserSelectGroups } from '../utils/audienceUserSelectOptions';
+import {
+  buildAudienceUserSelectGroups,
+  mergeAudienceUsers,
+} from '../utils/audienceUserSelectOptions';
 
 describe('buildAudienceUserSelectGroups', () => {
   it('groups by departmentName and builds role·employee description', () => {
@@ -25,5 +28,21 @@ describe('buildAudienceUserSelectGroups', () => {
     expect(groups[0].options[1].description).toBe('质检员、班组长 · 工号 E001');
     expect(groups[1].options[0].description).toBe('系统管理员');
     expect(groups[0].options[1].searchText).toContain('质量部');
+  });
+});
+
+describe('mergeAudienceUsers', () => {
+  it('dedupes by id and keeps base entry on conflict', () => {
+    const merged = mergeAudienceUsers(
+      [{ id: 'a', name: '甲' }],
+      [
+        { id: 'a', name: '甲-新' },
+        { id: 'b', name: '乙' },
+      ],
+    );
+    expect(merged).toEqual([
+      { id: 'a', name: '甲' },
+      { id: 'b', name: '乙' },
+    ]);
   });
 });

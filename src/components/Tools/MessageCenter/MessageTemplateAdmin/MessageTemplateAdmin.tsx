@@ -13,7 +13,6 @@ import { PushRulesPanel } from './PushRulesPanel';
 import { VariablesPanel } from './VariablesPanel';
 import type {
   MessageAudienceRoleOption,
-  MessageAudienceUserOption,
   MessageEventCatalogItem,
   MessageEventCatalogPayload,
   MessageTemplateAdminItem,
@@ -48,7 +47,8 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   fetchEventCatalog,
   setTemplateEnabled,
   fetchAudienceRoles,
-  fetchAudienceUsers,
+  fetchAudienceUsersPage,
+  fetchAudienceUsersByIds,
   templateVariables,
   previewVars: previewVarsProp,
   canWrite = false,
@@ -81,9 +81,7 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
   const [catalog, setCatalog] = useState<MessageEventCatalogItem[]>([]);
   const [catalogVars, setCatalogVars] = useState<MessageTemplateVariable[]>([]);
   const [roleOptions, setRoleOptions] = useState<MessageAudienceRoleOption[]>([]);
-  const [userOptions, setUserOptions] = useState<MessageAudienceUserOption[]>([]);
   const [audienceRolesError, setAudienceRolesError] = useState('');
-  const [audienceUsersError, setAudienceUsersError] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [catalogError, setCatalogError] = useState('');
@@ -109,7 +107,8 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
     setError('');
     setCatalogError('');
     try {
-      const [list, catSettled, rolesSettled, usersSettled] = await Promise.all([
+      // 例外抄送人员改由 PushRulesPanel 弹窗分页拉取；此处不调 fetchAudienceUsers*
+      const [list, catSettled, rolesSettled] = await Promise.all([
         fetchTemplates(),
         fetchEventCatalog
           ? fetchEventCatalog()
@@ -132,19 +131,6 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
               raw: [] as MessageAudienceRoleOption[],
               error: '',
             }),
-        fetchAudienceUsers
-          ? fetchAudienceUsers()
-              .then((r) => ({ ok: true as const, raw: r, error: '' }))
-              .catch((e: unknown) => ({
-                ok: false as const,
-                raw: [] as MessageAudienceUserOption[],
-                error: e instanceof Error ? e.message : String(e),
-              }))
-          : Promise.resolve({
-              ok: true as const,
-              raw: [] as MessageAudienceUserOption[],
-              error: '',
-            }),
       ]);
       setRows(Array.isArray(list) ? list : []);
       if (catSettled.ok) {
@@ -160,15 +146,13 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
       }
       setRoleOptions(rolesSettled.raw);
       setAudienceRolesError(rolesSettled.ok ? '' : rolesSettled.error);
-      setUserOptions(usersSettled.raw);
-      setAudienceUsersError(usersSettled.ok ? '' : usersSettled.error);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
       setRows([]);
     } finally {
       setLoading(false);
     }
-  }, [fetchTemplates, fetchEventCatalog, fetchAudienceRoles, fetchAudienceUsers]);
+  }, [fetchTemplates, fetchEventCatalog, fetchAudienceRoles]);
 
   useEffect(() => {
     void reload();
@@ -248,9 +232,9 @@ export const MessageTemplateAdmin: React.FC<MessageTemplateAdminProps> = ({
       catalog={catalog}
       templates={rows}
       roleOptions={roleOptions}
-      userOptions={userOptions}
       audienceRolesError={audienceRolesError}
-      audienceUsersError={audienceUsersError}
+      fetchAudienceUsersPage={fetchAudienceUsersPage}
+      fetchAudienceUsersByIds={fetchAudienceUsersByIds}
       levelOptions={levelOptions}
       defaultLevels={defaultLevels}
       levelFieldTips={levelFieldTips}

@@ -93,6 +93,8 @@ export type {
   MessageEventCatalogPayload,
   MessageAudienceRoleOption,
   MessageAudienceUserOption,
+  MessageAudienceUsersPageQuery,
+  MessageAudienceUsersPageResult,
   MessageTemplateVariable,
   MessageTemplateVariableAdmin,
   MessageLevelOption,

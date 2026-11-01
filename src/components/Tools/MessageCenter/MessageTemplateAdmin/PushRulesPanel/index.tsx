@@ -4,10 +4,13 @@ import { Empty } from '@/components/Empty';
 import { PageSpin } from '@/components/Layout';
 import { Table } from '@/components/Table';
 import { Button, Modal, Space, Switch, message } from 'antd';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { UIEvent } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
   MessageAudienceUserOption,
+  MessageAudienceUsersPageQuery,
+  MessageAudienceUsersPageResult,
   MessageCrudFlags,
   MessageEventCatalogItem,
   MessageLevelOption,
@@ -21,7 +24,10 @@ import {
   normalizeAudienceSlots,
 } from '../audienceSlots';
 import { resolveTemplateCodeAfterEventChange } from '../../utils/adminGuards';
-import { buildAudienceUserSelectGroups } from '../../utils/audienceUserSelectOptions';
+import {
+  buildAudienceUserSelectGroups,
+  mergeAudienceUsers,
+} from '../../utils/audienceUserSelectOptions';
 import styles from '../style.module.scss';
 
 /** CI tsc：kne Select 重载与 FieldProps 交叉时误匹配 FormItem children；宽化为任意 props */
@@ -35,16 +41,24 @@ const selectInModalPopupProps = {
   styles: { popup: { root: { zIndex: 2000 } } },
 } as const;
 
+/** 例外抄送每页条数（弹窗分页触底） */
+const AUDIENCE_USERS_PAGE_SIZE = 20;
+const AUDIENCE_USERS_SCROLL_GAP_PX = 24;
+const AUDIENCE_USERS_SEARCH_DEBOUNCE_MS = 300;
+
 export type PushRulesPanelProps = {
   crud: MessageCrudFlags;
   catalog: MessageEventCatalogItem[];
   templates: MessageTemplateAdminItem[];
   roleOptions: MessageAudienceRoleOption[];
-  userOptions?: MessageAudienceUserOption[];
   /** 角色 options 加载失败短文案（勿静默空列表） */
   audienceRolesError?: string;
-  /** 例外抄送（静态 userIds）options 加载失败短文案 */
-  audienceUsersError?: string;
+  /** 例外抄送分页；未传则 Select 空 */
+  fetchAudienceUsersPage?: (
+    q: MessageAudienceUsersPageQuery,
+  ) => Promise<MessageAudienceUsersPageResult>;
+  /** 已选 userIds 标签回显（少量按 id） */
+  fetchAudienceUsersByIds?: (ids: string[]) => Promise<MessageAudienceUserOption[]>;
   /**
    * 级别多选 options（业务注入）。未传 / 空 → 下拉无选项；禁 core 写死业务档位。
    */
@@ -85,9 +99,9 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   catalog,
   templates,
   roleOptions,
-  userOptions = [],
   audienceRolesError = '',
-  audienceUsersError = '',
+  fetchAudienceUsersPage,
+  fetchAudienceUsersByIds,
   levelOptions = [],
   defaultLevels = [],
   levelFieldTips = DEFAULT_LEVEL_FIELD_TIPS,
@@ -108,6 +122,19 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   const [error, setError] = useState('');
   const [editing, setEditing] = useState<PushRuleAdminItem | null>(null);
   const [isCreate, setIsCreate] = useState(false);
+
+  const [audienceUsers, setAudienceUsers] = useState<MessageAudienceUserOption[]>([]);
+  const [audienceUsersLoading, setAudienceUsersLoading] = useState(false);
+  const [audienceUsersError, setAudienceUsersError] = useState('');
+  const [audienceUsersHasMore, setAudienceUsersHasMore] = useState(false);
+  const [audienceUsersKeyword, setAudienceUsersKeyword] = useState('');
+  const audienceUsersPageRef = useRef(0);
+  const audienceUsersLoadedCountRef = useRef(0);
+  const audienceUsersLoadingRef = useRef(false);
+  const audienceUsersHasMoreRef = useRef(false);
+  const audienceUsersKeywordRef = useRef('');
+  const audienceUsersSelectedRef = useRef<MessageAudienceUserOption[]>([]);
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -171,9 +198,137 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   }, [catalog, editing?.eventKey]);
   const noTplForEvent = Boolean(editing) && tplOptions.length === 0;
 
+  const loadAudienceUsersPage = useCallback(
+    async (page: number, keyword: string, mode: 'reset' | 'append') => {
+      if (!fetchAudienceUsersPage) {
+        setAudienceUsers([]);
+        setAudienceUsersHasMore(false);
+        audienceUsersHasMoreRef.current = false;
+        audienceUsersLoadedCountRef.current = 0;
+        return;
+      }
+      if (audienceUsersLoadingRef.current) return;
+      if (mode === 'append' && !audienceUsersHasMoreRef.current) return;
+      audienceUsersLoadingRef.current = true;
+      setAudienceUsersLoading(true);
+      if (mode === 'reset') setAudienceUsersError('');
+      try {
+        const res = await fetchAudienceUsersPage({
+          page,
+          pageSize: AUDIENCE_USERS_PAGE_SIZE,
+          keyword: keyword.trim() || undefined,
+        });
+        const pageItems = Array.isArray(res?.items) ? res.items.filter((u) => u?.id) : [];
+        const total = typeof res?.total === 'number' ? res.total : 0;
+        const rawCount =
+          typeof res?.rawCount === 'number' && res.rawCount >= 0 ? res.rawCount : pageItems.length;
+        const loaded = mode === 'reset' ? rawCount : audienceUsersLoadedCountRef.current + rawCount;
+        audienceUsersLoadedCountRef.current = loaded;
+        const hasMore = rawCount >= AUDIENCE_USERS_PAGE_SIZE && (total <= 0 || loaded < total);
+        audienceUsersHasMoreRef.current = hasMore;
+        setAudienceUsersHasMore(hasMore);
+        setAudienceUsers((prev) => {
+          const selected = audienceUsersSelectedRef.current;
+          if (mode === 'reset') return mergeAudienceUsers(pageItems, selected);
+          return mergeAudienceUsers(prev, pageItems);
+        });
+        audienceUsersPageRef.current = page;
+        audienceUsersKeywordRef.current = keyword;
+      } catch (e) {
+        if (mode === 'reset') {
+          setAudienceUsers(audienceUsersSelectedRef.current.slice());
+          setAudienceUsersError(e instanceof Error ? e.message : String(e));
+          audienceUsersLoadedCountRef.current = 0;
+        }
+        audienceUsersHasMoreRef.current = false;
+        setAudienceUsersHasMore(false);
+      } finally {
+        audienceUsersLoadingRef.current = false;
+        setAudienceUsersLoading(false);
+      }
+    },
+    [fetchAudienceUsersPage],
+  );
+
+  /** 打开弹窗：重置分页并拉第 1 页；已选 id 补标签 */
+  useEffect(() => {
+    if (!editing) {
+      setAudienceUsers([]);
+      setAudienceUsersError('');
+      setAudienceUsersHasMore(false);
+      audienceUsersPageRef.current = 0;
+      audienceUsersHasMoreRef.current = false;
+      audienceUsersKeywordRef.current = '';
+      audienceUsersSelectedRef.current = [];
+      setAudienceUsersKeyword('');
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current);
+        searchDebounceRef.current = null;
+      }
+      return;
+    }
+    let cancelled = false;
+    const selectedIds = (editing.audienceUserIds || []).filter(Boolean);
+    audienceUsersPageRef.current = 0;
+    audienceUsersLoadedCountRef.current = 0;
+    audienceUsersHasMoreRef.current = true;
+    audienceUsersKeywordRef.current = '';
+    setAudienceUsersKeyword('');
+    setAudienceUsers([]);
+    setAudienceUsersError('');
+    setAudienceUsersHasMore(true);
+
+    void (async () => {
+      let selected: MessageAudienceUserOption[] = [];
+      if (selectedIds.length && fetchAudienceUsersByIds) {
+        try {
+          selected = (await fetchAudienceUsersByIds(selectedIds)).filter((u) => u?.id);
+        } catch {
+          selected = selectedIds.map((id) => ({ id, name: id }));
+        }
+      } else if (selectedIds.length) {
+        selected = selectedIds.map((id) => ({ id, name: id }));
+      }
+      if (cancelled) return;
+      audienceUsersSelectedRef.current = selected;
+      setAudienceUsers(selected);
+      await loadAudienceUsersPage(1, '', 'reset');
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [editing, fetchAudienceUsersByIds, loadAudienceUsersPage]);
+
+  const onAudienceUsersPopupScroll = useCallback(
+    (e: UIEvent<HTMLDivElement>) => {
+      const el = e.currentTarget;
+      if (el.scrollHeight - el.scrollTop - el.clientHeight > AUDIENCE_USERS_SCROLL_GAP_PX) return;
+      void loadAudienceUsersPage(
+        audienceUsersPageRef.current + 1,
+        audienceUsersKeywordRef.current,
+        'append',
+      );
+    },
+    [loadAudienceUsersPage],
+  );
+
+  const onAudienceUsersSearch = useCallback(
+    (raw: string) => {
+      const next = String(raw || '');
+      setAudienceUsersKeyword(next);
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+      searchDebounceRef.current = setTimeout(() => {
+        audienceUsersHasMoreRef.current = true;
+        void loadAudienceUsersPage(1, next, 'reset');
+      }, AUDIENCE_USERS_SEARCH_DEBOUNCE_MS);
+    },
+    [loadAudienceUsersPage],
+  );
+
   const audienceUserSelectGroups = useMemo(
-    () => buildAudienceUserSelectGroups(userOptions),
-    [userOptions],
+    () => buildAudienceUserSelectGroups(audienceUsers),
+    [audienceUsers],
   );
 
   const formData = useMemo(
@@ -533,16 +688,25 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               mode="multiple"
               disabled={!formWritable(isCreate)}
               options={audienceUserSelectGroups}
-              optionFilterProp="searchText"
               optionLabelProp="label"
-              filterOption={(input: string, option?: { searchText?: string; label?: string }) => {
-                const q = String(input || '')
-                  .trim()
-                  .toLowerCase();
-                if (!q) return true;
-                const hay = String(option?.searchText || option?.label || '').toLowerCase();
-                return hay.includes(q);
+              filterOption={false}
+              showSearch
+              searchValue={audienceUsersKeyword}
+              onSearch={onAudienceUsersSearch}
+              onPopupScroll={onAudienceUsersPopupScroll}
+              onSelect={(id: string) => {
+                const hit = audienceUsers.find((u) => u.id === id);
+                audienceUsersSelectedRef.current = mergeAudienceUsers(
+                  audienceUsersSelectedRef.current,
+                  [hit || { id, name: id }],
+                );
               }}
+              onDeselect={(id: string) => {
+                audienceUsersSelectedRef.current = audienceUsersSelectedRef.current.filter(
+                  (u) => u.id !== id,
+                );
+              }}
+              loading={audienceUsersLoading}
               optionRender={(ori: {
                 data?: { label?: string; description?: string };
                 label?: React.ReactNode;
@@ -559,16 +723,24 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
                 );
               }}
               placeholder={
-                audienceUsersError
-                  ? '人员加载失败'
-                  : userOptions.length
-                    ? '按部门选择例外抄送人（可多选，日常可留空）'
-                    : '暂无人员（请确认本租户有用户）'
+                !fetchAudienceUsersPage
+                  ? '未配置人员分页接口'
+                  : audienceUsersError
+                    ? '人员加载失败'
+                    : audienceUsersLoading && audienceUsers.length === 0
+                      ? '人员加载中…'
+                      : '按部门选择例外抄送人（可多选，日常可留空）'
               }
               notFoundContent={
-                audienceUsersError ? `加载失败：${audienceUsersError}` : '暂无人员数据'
+                audienceUsersError
+                  ? `加载失败：${audienceUsersError}`
+                  : audienceUsersLoading
+                    ? '加载中…'
+                    : audienceUsersHasMore
+                      ? '继续下拉加载更多'
+                      : '暂无人员数据'
               }
-              labelTips="非常驻名单：仅管理员例外通知等场景。与角色、通知范围并集送达；任务当事人优先用槽位 + emit.audienceContext。"
+              labelTips="非常驻名单：仅管理员例外通知等场景。打开弹窗分页加载，下拉触底续页。与角色、通知范围并集送达；任务当事人优先用槽位 + emit.audienceContext。"
               {...selectInModalPopupProps}
             />,
             <FiInputNumber

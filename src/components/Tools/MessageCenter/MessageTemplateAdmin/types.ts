@@ -114,6 +114,21 @@ export type MessageAudienceUserOption = {
   roleNames?: string;
 };
 
+/** 例外抄送分页查询（core 固定 pageSize=20；1-based page） */
+export type MessageAudienceUsersPageQuery = {
+  page: number;
+  pageSize: number;
+  keyword?: string;
+};
+
+/** 例外抄送分页结果 */
+export type MessageAudienceUsersPageResult = {
+  items: MessageAudienceUserOption[];
+  total: number;
+  /** 本页原始条数（过滤 isActive 前）；用于 hasMore，缺省回落 items.length */
+  rawCount?: number;
+};
+
 export type MessageTemplateVariable = {
   key: string;
   /** 可选中文说明；无则下拉只显示 code */
@@ -163,11 +178,21 @@ export type MessageTemplateAdminProps = {
    */
   fetchAudienceRoles?: () => Promise<MessageAudienceRoleOption[]>;
   /**
-   * 推送规则「例外抄送」多选 options（SSO 本租户用户；静态 userIds）。
-   * 未传则例外抄送 Select 为空（禁手输 id）；展示名须来自接口 displayName。
-   * 任务认领人/分配人等当事人由业务 emit 传 userIds，勿靠配置面点名。
+   * @deprecated 进页全量拉人已废弃；请用 fetchAudienceUsersPage（弹窗分页触底）。
+   * reload 不再调用本回调。
    */
   fetchAudienceUsers?: () => Promise<MessageAudienceUserOption[]>;
+  /**
+   * 推送规则「例外抄送」分页（弹窗打开拉第 1 页，触底翻页；pageSize 由 core 固定 20）。
+   * 未传则例外抄送 Select 为空（禁手输 id）；展示名须来自接口 displayName。
+   */
+  fetchAudienceUsersPage?: (
+    q: MessageAudienceUsersPageQuery,
+  ) => Promise<MessageAudienceUsersPageResult>;
+  /**
+   * 编辑已选 audienceUserIds 时补标签回显（少量按 id 拉详情；勿对整页扇出）。
+   */
+  fetchAudienceUsersByIds?: (ids: string[]) => Promise<MessageAudienceUserOption[]>;
   /**
    * 推送规则「级别」多选 options（业务注入）。
    * 未传 / 空数组 → 下拉无选项（禁 core 写死 L1/L2/L3）；各业务档位不同（如 S3 含 L2+）。
