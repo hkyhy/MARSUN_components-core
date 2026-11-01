@@ -1,11 +1,21 @@
-import { FormInfo, FormModal, Input, InputNumber, Select } from '@/components/FormInfo';
+import {
+  FormInfo,
+  FormModal,
+  Input,
+  InputNumber,
+  Select,
+  SuperSelect,
+  createPagedSuperSelectApi,
+  pagedSuperSelectGetSearchProps,
+  pagedSuperSelectPagination,
+  type SuperSelectOption,
+} from '@/components/FormInfo';
 import { Alert } from '@/components/Alert';
 import { Empty } from '@/components/Empty';
 import { PageSpin } from '@/components/Layout';
 import { Table } from '@/components/Table';
 import { Button, Modal, Space, Switch, message } from 'antd';
-import type { UIEvent } from 'react';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   MessageAudienceRoleOption,
   MessageAudienceUserOption,
@@ -24,10 +34,7 @@ import {
   normalizeAudienceSlots,
 } from '../audienceSlots';
 import { resolveTemplateCodeAfterEventChange } from '../../utils/adminGuards';
-import {
-  buildAudienceUserSelectOptions,
-  mergeAudienceUsers,
-} from '../../utils/audienceUserSelectOptions';
+import { buildAudienceUserSelectOptions } from '../../utils/audienceUserSelectOptions';
 import styles from '../style.module.scss';
 
 /** CI tsc：kne Select 重载与 FieldProps 交叉时误匹配 FormItem children；宽化为任意 props */
@@ -41,10 +48,8 @@ const selectInModalPopupProps = {
   styles: { popup: { root: { zIndex: 2000 } } },
 } as const;
 
-/** 例外抄送每页条数（弹窗分页触底） */
+/** 例外抄送 SuperSelect 滚动分页（对齐建单品种） */
 const AUDIENCE_USERS_PAGE_SIZE = 20;
-const AUDIENCE_USERS_SCROLL_GAP_PX = 24;
-const AUDIENCE_USERS_SEARCH_DEBOUNCE_MS = 300;
 
 export type PushRulesPanelProps = {
   crud: MessageCrudFlags;
@@ -53,7 +58,7 @@ export type PushRulesPanelProps = {
   roleOptions: MessageAudienceRoleOption[];
   /** 角色 options 加载失败短文案（勿静默空列表） */
   audienceRolesError?: string;
-  /** 例外抄送分页；未传则 Select 空 */
+  /** 例外抄送分页；未传则 SuperSelect 禁用 */
   fetchAudienceUsersPage?: (
     q: MessageAudienceUsersPageQuery,
   ) => Promise<MessageAudienceUsersPageResult>;
@@ -92,7 +97,7 @@ type FormShape = {
 /**
  * 推送规则 CRUD：必含 eventKey + templateCode；channels 默认 in_app。
  * 受众：角色多选 + 通知范围（audienceSlots）+ 例外抄送；roles∪slots∪userIds 至少一个。
- * 任务当事人/组织槽依赖 emit.audienceContext；禁 Tree 盖壳。
+ * 例外抄送：FormInfo SuperSelect + createPagedSuperSelectApi 滚动分页。
  */
 export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   crud,
@@ -122,19 +127,9 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
   const [error, setError] = useState('');
   const [editing, setEditing] = useState<PushRuleAdminItem | null>(null);
   const [isCreate, setIsCreate] = useState(false);
-
-  const [audienceUsers, setAudienceUsers] = useState<MessageAudienceUserOption[]>([]);
-  const [audienceUsersLoading, setAudienceUsersLoading] = useState(false);
-  const [audienceUsersError, setAudienceUsersError] = useState('');
-  const [audienceUsersHasMore, setAudienceUsersHasMore] = useState(false);
-  const [audienceUsersKeyword, setAudienceUsersKeyword] = useState('');
-  const audienceUsersPageRef = useRef(0);
-  const audienceUsersLoadedCountRef = useRef(0);
-  const audienceUsersLoadingRef = useRef(false);
-  const audienceUsersHasMoreRef = useRef(false);
-  const audienceUsersKeywordRef = useRef('');
-  const audienceUsersSelectedRef = useRef<MessageAudienceUserOption[]>([]);
-  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** 已选 userIds 标签回显（有 api 时仍可用 options 喂 labelMap） */
+  const [selectedAudienceOptions, setSelectedAudienceOptions] = useState<SuperSelectOption[]>([]);
+  const [audienceSelectNonce, setAudienceSelectNonce] = useState(0);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -176,6 +171,70 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- createNonce 驱动打开
   }, [createNonce, canCreate, catalog, templates]);
 
+  /** 打开弹窗：仅补已选标签；列表由 SuperSelect api 滚动加载 */
+  useEffect(() => {
+    if (!editing) {
+      setSelectedAudienceOptions([]);
+      return;
+    }
+    let cancelled = false;
+    const selectedIds = (editing.audienceUserIds || []).filter(Boolean);
+    void (async () => {
+      let selected: MessageAudienceUserOption[] = [];
+      if (selectedIds.length && fetchAudienceUsersByIds) {
+        try {
+          selected = (await fetchAudienceUsersByIds(selectedIds)).filter((u) => u?.id);
+        } catch {
+          selected = selectedIds.map((id) => ({ id, name: id }));
+        }
+      } else if (selectedIds.length) {
+        selected = selectedIds.map((id) => ({ id, name: id }));
+      }
+      if (cancelled) return;
+      setSelectedAudienceOptions(buildAudienceUserSelectOptions(selected));
+      setAudienceSelectNonce((n) => n + 1);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [editing, fetchAudienceUsersByIds]);
+
+  const audienceUsersApi = useMemo(() => {
+    if (!fetchAudienceUsersPage) return undefined;
+    return createPagedSuperSelectApi({
+      pageSize: AUDIENCE_USERS_PAGE_SIZE,
+      loadPage: async (query) => {
+        const res = await fetchAudienceUsersPage({
+          page: query.currentPage,
+          pageSize: query.pageSize,
+          keyword: query.keyword,
+        });
+        const pageData = buildAudienceUserSelectOptions(res?.items || []).map((o) => ({
+          value: o.value,
+          label: o.label,
+          description: o.description,
+        }));
+        return {
+          pageData,
+          totalCount: typeof res?.total === 'number' ? res.total : pageData.length,
+        };
+      },
+      onError: (err) => {
+        message.error(err instanceof Error ? err.message : '例外抄送人员加载失败');
+      },
+    });
+  }, [fetchAudienceUsersPage]);
+
+  const audienceUsersGetSearchProps = useMemo(
+    () => pagedSuperSelectGetSearchProps(AUDIENCE_USERS_PAGE_SIZE),
+    [],
+  );
+
+  const audienceUsersPagination = useMemo(
+    () => pagedSuperSelectPagination(AUDIENCE_USERS_PAGE_SIZE),
+    [],
+  );
+
   const templatesForEvent = useCallback(
     (eventKey?: string) =>
       templates
@@ -197,139 +256,6 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
     return catalog.find((c) => c.eventKey === ek)?.label || ek || '当前场景';
   }, [catalog, editing?.eventKey]);
   const noTplForEvent = Boolean(editing) && tplOptions.length === 0;
-
-  const loadAudienceUsersPage = useCallback(
-    async (page: number, keyword: string, mode: 'reset' | 'append') => {
-      if (!fetchAudienceUsersPage) {
-        setAudienceUsers([]);
-        setAudienceUsersHasMore(false);
-        audienceUsersHasMoreRef.current = false;
-        audienceUsersLoadedCountRef.current = 0;
-        return;
-      }
-      if (audienceUsersLoadingRef.current) return;
-      if (mode === 'append' && !audienceUsersHasMoreRef.current) return;
-      audienceUsersLoadingRef.current = true;
-      setAudienceUsersLoading(true);
-      if (mode === 'reset') setAudienceUsersError('');
-      try {
-        const res = await fetchAudienceUsersPage({
-          page,
-          pageSize: AUDIENCE_USERS_PAGE_SIZE,
-          keyword: keyword.trim() || undefined,
-        });
-        const pageItems = Array.isArray(res?.items) ? res.items.filter((u) => u?.id) : [];
-        const total = typeof res?.total === 'number' ? res.total : 0;
-        const rawCount =
-          typeof res?.rawCount === 'number' && res.rawCount >= 0 ? res.rawCount : pageItems.length;
-        const loaded = mode === 'reset' ? rawCount : audienceUsersLoadedCountRef.current + rawCount;
-        audienceUsersLoadedCountRef.current = loaded;
-        const hasMore = rawCount >= AUDIENCE_USERS_PAGE_SIZE && (total <= 0 || loaded < total);
-        audienceUsersHasMoreRef.current = hasMore;
-        setAudienceUsersHasMore(hasMore);
-        setAudienceUsers((prev) => {
-          const selected = audienceUsersSelectedRef.current;
-          if (mode === 'reset') return mergeAudienceUsers(pageItems, selected);
-          return mergeAudienceUsers(prev, pageItems);
-        });
-        audienceUsersPageRef.current = page;
-        audienceUsersKeywordRef.current = keyword;
-      } catch (e) {
-        if (mode === 'reset') {
-          setAudienceUsers(audienceUsersSelectedRef.current.slice());
-          setAudienceUsersError(e instanceof Error ? e.message : String(e));
-          audienceUsersLoadedCountRef.current = 0;
-        }
-        audienceUsersHasMoreRef.current = false;
-        setAudienceUsersHasMore(false);
-      } finally {
-        audienceUsersLoadingRef.current = false;
-        setAudienceUsersLoading(false);
-      }
-    },
-    [fetchAudienceUsersPage],
-  );
-
-  /** 打开弹窗：重置分页并拉第 1 页；已选 id 补标签 */
-  useEffect(() => {
-    if (!editing) {
-      setAudienceUsers([]);
-      setAudienceUsersError('');
-      setAudienceUsersHasMore(false);
-      audienceUsersPageRef.current = 0;
-      audienceUsersHasMoreRef.current = false;
-      audienceUsersKeywordRef.current = '';
-      audienceUsersSelectedRef.current = [];
-      setAudienceUsersKeyword('');
-      if (searchDebounceRef.current) {
-        clearTimeout(searchDebounceRef.current);
-        searchDebounceRef.current = null;
-      }
-      return;
-    }
-    let cancelled = false;
-    const selectedIds = (editing.audienceUserIds || []).filter(Boolean);
-    audienceUsersPageRef.current = 0;
-    audienceUsersLoadedCountRef.current = 0;
-    audienceUsersHasMoreRef.current = true;
-    audienceUsersKeywordRef.current = '';
-    setAudienceUsersKeyword('');
-    setAudienceUsers([]);
-    setAudienceUsersError('');
-    setAudienceUsersHasMore(true);
-
-    void (async () => {
-      let selected: MessageAudienceUserOption[] = [];
-      if (selectedIds.length && fetchAudienceUsersByIds) {
-        try {
-          selected = (await fetchAudienceUsersByIds(selectedIds)).filter((u) => u?.id);
-        } catch {
-          selected = selectedIds.map((id) => ({ id, name: id }));
-        }
-      } else if (selectedIds.length) {
-        selected = selectedIds.map((id) => ({ id, name: id }));
-      }
-      if (cancelled) return;
-      audienceUsersSelectedRef.current = selected;
-      setAudienceUsers(selected);
-      await loadAudienceUsersPage(1, '', 'reset');
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [editing, fetchAudienceUsersByIds, loadAudienceUsersPage]);
-
-  const onAudienceUsersPopupScroll = useCallback(
-    (e: UIEvent<HTMLDivElement>) => {
-      const el = e.currentTarget;
-      if (el.scrollHeight - el.scrollTop - el.clientHeight > AUDIENCE_USERS_SCROLL_GAP_PX) return;
-      void loadAudienceUsersPage(
-        audienceUsersPageRef.current + 1,
-        audienceUsersKeywordRef.current,
-        'append',
-      );
-    },
-    [loadAudienceUsersPage],
-  );
-
-  const onAudienceUsersSearch = useCallback(
-    (raw: string) => {
-      const next = String(raw || '');
-      setAudienceUsersKeyword(next);
-      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
-      searchDebounceRef.current = setTimeout(() => {
-        audienceUsersHasMoreRef.current = true;
-        void loadAudienceUsersPage(1, next, 'reset');
-      }, AUDIENCE_USERS_SEARCH_DEBOUNCE_MS);
-    },
-    [loadAudienceUsersPage],
-  );
-
-  const audienceUserSelectOptions = useMemo(
-    () => buildAudienceUserSelectOptions(audienceUsers),
-    [audienceUsers],
-  );
 
   const formData = useMemo(
     () => ({
@@ -511,6 +437,34 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
     [canUpdate, canDelete, catalog, deletePushRule, reload, setPushRuleEnabled],
   );
 
+  const audienceUserField = audienceUsersApi ? (
+    <SuperSelect
+      key={`audienceUserIds-${editing?.id || editing?.code || 'new'}-${audienceSelectNonce}`}
+      name="audienceUserIds"
+      label="例外抄送"
+      disabled={!formWritable(isCreate)}
+      api={audienceUsersApi}
+      options={selectedAudienceOptions}
+      getSearchProps={audienceUsersGetSearchProps}
+      pagination={audienceUsersPagination}
+      placeholder="选择例外抄送人（可多选，日常可留空）"
+      searchPlaceholder="搜索姓名/工号"
+      allowClear
+      overlayStyle={{ zIndex: 2000 }}
+      labelTips="非常驻名单：仅管理员例外通知等场景。SuperSelect 滚动分页；人多时优先搜姓名/工号。与角色、通知范围并集送达；任务当事人优先用槽位 + emit.audienceContext。"
+    />
+  ) : (
+    <SuperSelect
+      key="audienceUserIds-disabled"
+      name="audienceUserIds"
+      label="例外抄送"
+      disabled
+      options={[]}
+      placeholder="未配置人员分页接口"
+      labelTips="业务须注入 fetchAudienceUsersPage。"
+    />
+  );
+
   return (
     <div className={styles.pane}>
       {error ? <Alert type="error" showIcon message={error} style={{ marginBottom: 12 }} /> : null}
@@ -559,14 +513,6 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
             showIcon
             style={{ marginBottom: 12 }}
             message={`受众角色加载失败：${audienceRolesError}`}
-          />
-        ) : null}
-        {audienceUsersError ? (
-          <Alert
-            type="warning"
-            showIcon
-            style={{ marginBottom: 12 }}
-            message={`例外抄送人员加载失败：${audienceUsersError}`}
           />
         ) : null}
         <FormInfo
@@ -681,68 +627,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               labelTips="相对关系与组织范围依赖业务 emit 的 audienceContext；无上下文的槽不会发出。选「本租户（全公司）」保存前会二次确认。与角色、例外抄送并集送达。"
               {...selectInModalPopupProps}
             />,
-            <FiSelect
-              key="audienceUserIds"
-              name="audienceUserIds"
-              label="例外抄送"
-              mode="multiple"
-              disabled={!formWritable(isCreate)}
-              options={audienceUserSelectOptions}
-              optionLabelProp="label"
-              filterOption={false}
-              showSearch
-              searchValue={audienceUsersKeyword}
-              onSearch={onAudienceUsersSearch}
-              onPopupScroll={onAudienceUsersPopupScroll}
-              onSelect={(id: string) => {
-                const hit = audienceUsers.find((u) => u.id === id);
-                audienceUsersSelectedRef.current = mergeAudienceUsers(
-                  audienceUsersSelectedRef.current,
-                  [hit || { id, name: id }],
-                );
-              }}
-              onDeselect={(id: string) => {
-                audienceUsersSelectedRef.current = audienceUsersSelectedRef.current.filter(
-                  (u) => u.id !== id,
-                );
-              }}
-              loading={audienceUsersLoading}
-              optionRender={(ori: {
-                data?: { label?: string; description?: string };
-                label?: React.ReactNode;
-              }) => {
-                const label = ori.data?.label ?? ori.label;
-                const description = ori.data?.description;
-                return (
-                  <div style={{ lineHeight: 1.35, padding: '2px 0' }}>
-                    <div>{label}</div>
-                    {description ? (
-                      <div style={{ fontSize: 12, color: 'rgba(0,0,0,0.45)' }}>{description}</div>
-                    ) : null}
-                  </div>
-                );
-              }}
-              placeholder={
-                !fetchAudienceUsersPage
-                  ? '未配置人员分页接口'
-                  : audienceUsersError
-                    ? '人员加载失败'
-                    : audienceUsersLoading && audienceUsers.length === 0
-                      ? '人员加载中…'
-                      : '选择例外抄送人（可多选，日常可留空）'
-              }
-              notFoundContent={
-                audienceUsersError
-                  ? `加载失败：${audienceUsersError}`
-                  : audienceUsersLoading
-                    ? '加载中…'
-                    : audienceUsersHasMore
-                      ? '继续下拉加载更多'
-                      : '暂无人员数据'
-              }
-              labelTips="非常驻名单：仅管理员例外通知等场景。打开弹窗分页加载，下拉触底续页。与角色、通知范围并集送达；任务当事人优先用槽位 + emit.audienceContext。"
-              {...selectInModalPopupProps}
-            />,
+            audienceUserField,
             <FiInputNumber
               key="slaHours"
               name="slaHours"
