@@ -25,7 +25,7 @@ import {
 } from '../audienceSlots';
 import { resolveTemplateCodeAfterEventChange } from '../../utils/adminGuards';
 import {
-  buildAudienceUserSelectGroups,
+  buildAudienceUserSelectOptions,
   mergeAudienceUsers,
 } from '../../utils/audienceUserSelectOptions';
 import styles from '../style.module.scss';
@@ -326,8 +326,8 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
     [loadAudienceUsersPage],
   );
 
-  const audienceUserSelectGroups = useMemo(
-    () => buildAudienceUserSelectGroups(audienceUsers),
+  const audienceUserSelectOptions = useMemo(
+    () => buildAudienceUserSelectOptions(audienceUsers),
     [audienceUsers],
   );
 
@@ -687,7 +687,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
               label="例外抄送"
               mode="multiple"
               disabled={!formWritable(isCreate)}
-              options={audienceUserSelectGroups}
+              options={audienceUserSelectOptions}
               optionLabelProp="label"
               filterOption={false}
               showSearch
@@ -729,7 +729,7 @@ export const PushRulesPanel: React.FC<PushRulesPanelProps> = ({
                     ? '人员加载失败'
                     : audienceUsersLoading && audienceUsers.length === 0
                       ? '人员加载中…'
-                      : '按部门选择例外抄送人（可多选，日常可留空）'
+                      : '选择例外抄送人（可多选，日常可留空）'
               }
               notFoundContent={
                 audienceUsersError
