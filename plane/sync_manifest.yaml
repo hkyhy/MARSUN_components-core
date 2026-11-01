@@ -6,7 +6,7 @@ tasks:
 - id: P6.3.175
   milestone: P6.3
   name: fix(CreateAction)：只读分配人仍注册 allocatorUserId
-  status: 进行中
+  status: 已完成
   priority: P0
   kind: fix
   owner: 黄金芳
