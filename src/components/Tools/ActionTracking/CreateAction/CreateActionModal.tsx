@@ -163,8 +163,14 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
   ]);
 
   const handleSubmit = async (formData: Record<string, unknown>) => {
+    // 只读分配人：表单可能仅有展示字段；唯一候选（当前登录人）作提交回落
+    const allocatorFromForm = String(formData.allocatorUserId || '').trim();
+    const allocatorFallback =
+      allocatorOptsRef.current.length === 1
+        ? String(allocatorOptsRef.current[0]?.value || '').trim()
+        : '';
     const checked = validateCreateActionPersons(
-      String(formData.allocatorUserId || ''),
+      allocatorFromForm || allocatorFallback,
       String(formData.assigneeUserId || ''),
       allocatorOptsRef.current,
       assigneeOptsRef.current,
