@@ -73,6 +73,8 @@ export type InboxBellItem = {
   /** 审批种类（contextJson.approvalKind）：创建/完成/取消/复核，待审 CTA 回落用 */
   approvalKind?: string;
   factory?: string;
+  /** WERKS 厂码（认领入库 / EP 可见性）；与展示名 factory 分列 */
+  factoryCode?: string;
   variety?: string;
   metric?: string;
   /** 业务日/月份（如 2026-07-31）；预警深链 date 用 */

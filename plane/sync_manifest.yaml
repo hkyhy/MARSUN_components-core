@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.176
+  next_task_id: P6.3.177
 tasks:
+# 2026-11-01 · 发版：InboxBell factoryCode 供 S3 认领入库厂码
+- id: P6.3.176
+  milestone: P6.3
+  name: chore(release)：v0.1.146 InboxBell factoryCode 认领厂码
+  status: 已完成
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-11-01'
+  end_date: '2026-11-01'
+  tags: [frontend, inbox, release]
+  note: |
+    InboxBellItem.factoryCode；S3 认领优先 WERKS 入库；合 main 触发 CI npm 0.1.146
 # 2026-11-01 · 热修：只读分配人须注册 allocatorUserId（线上 missing_allocator）
 - id: P6.3.175
   milestone: P6.3
