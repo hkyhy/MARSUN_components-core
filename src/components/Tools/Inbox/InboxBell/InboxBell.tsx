@@ -70,6 +70,8 @@ export type InboxBellItem = {
   started?: boolean;
   /** 行动当前状态（enrich / contextJson）；终态时底栏只保留查看任务 */
   actionStatus?: string;
+  /** 审批种类（contextJson.approvalKind）：创建/完成/取消/复核，待审 CTA 回落用 */
+  approvalKind?: string;
   factory?: string;
   variety?: string;
   metric?: string;

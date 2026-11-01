@@ -81,13 +81,51 @@ describe('resolveInboxItemActions', () => {
     }
   });
 
-  it('待审批 → 去批准创建', () => {
+  it('待审批 draft → 去批准创建', () => {
     const r = resolveInboxItemActions({
       eventKey: 'action.approval_pending',
       actionId: 'x',
       messageType: 'action',
+      actionStatus: 'draft',
     });
     expect(r.primary).toEqual({ kind: 'view_task', label: '去批准创建' });
+  });
+
+  it('待审批 pending_done → 去批准完成', () => {
+    const r = resolveInboxItemActions({
+      eventKey: 'action.approval_pending',
+      actionId: 'x',
+      messageType: 'action',
+      actionStatus: 'pending_done',
+    });
+    expect(r.primary).toEqual({ kind: 'view_task', label: '去批准完成' });
+  });
+
+  it('待审批缺 status 时回落 approvalKind=完成', () => {
+    const r = resolveInboxItemActions({
+      eventKey: 'action.approval_pending',
+      actionId: 'x',
+      messageType: 'action',
+      approvalKind: '完成',
+    });
+    expect(r.primary).toEqual({ kind: 'view_task', label: '去批准完成' });
+  });
+
+  it('待审批 pending_cancel → 去批准取消；done → 去复核', () => {
+    expect(
+      resolveInboxItemActions({
+        eventKey: 'action.approval_pending',
+        actionId: 'x',
+        actionStatus: 'pending_cancel',
+      }).primary,
+    ).toEqual({ kind: 'view_task', label: '去批准取消' });
+    expect(
+      resolveInboxItemActions({
+        eventKey: 'action.approval_pending',
+        actionId: 'x',
+        actionStatus: 'done',
+      }).primary,
+    ).toEqual({ kind: 'view_task', label: '去复核' });
   });
 
   it('actionStatus=rejected 也算终态，分配信不展示去执行', () => {

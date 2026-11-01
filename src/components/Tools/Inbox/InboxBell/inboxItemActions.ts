@@ -32,6 +32,11 @@ export type InboxItemActionSource = {
   started?: boolean;
   /** 行动项当前状态：approved/in_progress/done/reviewed/cancelled 等 */
   actionStatus?: string | null;
+  /**
+   * 审批种类（BE templateVars.approvalKind）：创建 | 完成 | 取消 | 复核
+   * 待审 CTA 优先用 actionStatus；缺省时回落本字段
+   */
+  approvalKind?: string | null;
   href?: string | null;
 };
 
@@ -78,6 +83,29 @@ const SCENE_ALIAS: Record<string, string> = {
 
 /** rejected = 审批驳回终态；禁再展示「去执行 / 已执行」 */
 const TERMINAL_STATUS = new Set(['done', 'reviewed', 'cancelled', 'closed', 'rejected']);
+
+/** 待审 CTA：按行动状态 / approvalKind 区分创建·完成·取消·复核（禁一律「去批准创建」） */
+export function approvalPendingCtaLabel(
+  actionStatus?: string | null,
+  approvalKind?: string | null,
+): string {
+  const st = String(actionStatus || '')
+    .trim()
+    .toLowerCase();
+  if (st === 'draft') return '去批准创建';
+  if (st === 'pending_done') return '去批准完成';
+  if (st === 'pending_cancel') return '去批准取消';
+  if (st === 'done') return '去复核';
+
+  const kind = String(approvalKind || '')
+    .trim()
+    .toLowerCase();
+  if (kind === 'create' || kind === '创建') return '去批准创建';
+  if (kind === 'complete' || kind === '完成') return '去批准完成';
+  if (kind === 'cancel' || kind === '取消') return '去批准取消';
+  if (kind === 'review' || kind === '复核') return '去复核';
+  return '去审批';
+}
 
 function canonScene(raw?: string | null): string {
   const c = String(raw || '')
@@ -209,9 +237,16 @@ export function resolveInboxItemActions(n: InboxItemActionSource): InboxItemActi
     return viewTaskOrHref(n, actionId);
   }
 
-  // 审批链路：待审 → 去批准创建；已批/驳回/回执 → 只看任务（禁「去执行」「已执行」）
+  // 审批链路：待审按 status/kind CTA；已批/驳回/回执 → 只看任务（禁「去执行」「已执行」）
   if (c === 'action_approval_pending') {
-    if (actionId) return { primary: { kind: 'view_task', label: '去批准创建' } };
+    if (actionId) {
+      return {
+        primary: {
+          kind: 'view_task',
+          label: approvalPendingCtaLabel(status, n.approvalKind),
+        },
+      };
+    }
     return viewTaskOrHref(n, actionId);
   }
   if (
