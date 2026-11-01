@@ -29,6 +29,8 @@ import styles from './CreateActionForm.module.scss';
 
 /** 建单品种下拉页大小（服务端分页） */
 export const CREATE_ACTION_VARIETY_PAGE_SIZE = 20;
+/** 执行人按角色分页页大小 */
+export const CREATE_ACTION_ASSIGNEE_PAGE_SIZE = 20;
 
 const CATALOG_LOAD_TIMEOUT_MS = 15_000;
 
@@ -84,6 +86,8 @@ export type CreateActionFormProps = {
   allocatorDisabled?: boolean;
   /** 编辑回填：执行人 userId（级联选项就绪后写入） */
   defaultAssigneeUserId?: string;
+  /** 编辑回填：执行人展示名（联动选人时作 options 种子） */
+  defaultAssigneeLabel?: string;
   onAssigneeOptionsReady?: (options: ActionPersonOption[]) => void;
   onAllocatorOptionsReady?: (options: ActionPersonOption[]) => void;
 };
@@ -124,20 +128,53 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   assigneePlaceholder = '先选角色，再选执行人',
   allocatorDisabled = true,
   defaultAssigneeUserId = '',
+  defaultAssigneeLabel = '',
   onAssigneeOptionsReady,
   onAllocatorOptionsReady,
 }) => {
   const formApi = useFormApi() as { openApi: OpenApiLike };
+  const useLinkedAssignee = Boolean(loaders.loadAssigneeRoles && loaders.loadAssigneeUsersPage);
   const [assigneeCascade, setAssigneeCascade] = useState<ActionPersonCascadeOption[]>([]);
+  const [assigneeRoleOptions, setAssigneeRoleOptions] = useState<CreateActionSelectOption[]>([]);
+  const [assigneeRoleCode, setAssigneeRoleCode] = useState('');
+  const [selectedAssigneeOptions, setSelectedAssigneeOptions] = useState<
+    CreateActionSelectOption[]
+  >(() => {
+    const id = String(defaultAssigneeUserId || '').trim();
+    if (!id) return [];
+    const label = String(defaultAssigneeLabel || id).trim() || id;
+    return [{ value: id, label }];
+  });
+  const assigneeCacheRef = useRef<Map<string, ActionPersonOption>>(new Map());
   const [allocatorCascade, setAllocatorCascade] = useState<ActionPersonCascadeOption[]>([]);
   const [factoryOptions, setFactoryOptions] = useState<CreateActionSelectOption[]>([]);
   const [personLoading, setPersonLoading] = useState(true);
+  const [rolesLoading, setRolesLoading] = useState(false);
   const [factoryLoading, setFactoryLoading] = useState(false);
   const [defaultAllocatorUserId, setDefaultAllocatorUserId] = useState('');
   /** 分配人只读展示名（姓名 · 工号）；写死当前登录人，不走级联选人 */
   const [allocatorDisplay, setAllocatorDisplay] = useState('');
   const [factoryKey, setFactoryKey] = useState(() => scopeLock?.factory?.trim() || '');
   const factoryRef = useRef(scopeLock?.factory?.trim() || '');
+  const roleRef = useRef('');
+
+  const publishAssigneeOptions = useCallback(() => {
+    onAssigneeOptionsReady?.([...assigneeCacheRef.current.values()]);
+  }, [onAssigneeOptionsReady]);
+
+  const seedAssigneeOption = useCallback(
+    (userId: string, displayName: string) => {
+      const id = String(userId || '').trim();
+      if (!id) return;
+      const name = String(displayName || id).trim() || id;
+      assigneeCacheRef.current.set(id, { value: id, displayName: name });
+      setSelectedAssigneeOptions((prev) =>
+        prev.some((o) => o.value === id) ? prev : [{ value: id, label: name }, ...prev],
+      );
+      publishAssigneeOptions();
+    },
+    [publishAssigneeOptions],
+  );
 
   const useLockedContext = Boolean(lockedContext && lockedContext.length > 0);
   const resolvedScopeMode: CreateActionScopeMode = useLockedContext
@@ -183,8 +220,68 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
     [],
   );
 
+  const assigneeUsersApi = useMemo(() => {
+    if (!useLinkedAssignee || !assigneeRoleCode || !loaders.loadAssigneeUsersPage) {
+      return undefined;
+    }
+    const loadPage = loaders.loadAssigneeUsersPage;
+    const roleCode = assigneeRoleCode;
+    return createPagedSuperSelectApi({
+      pageSize: CREATE_ACTION_ASSIGNEE_PAGE_SIZE,
+      loadPage: async (query) => {
+        const page = await loadPage({
+          ...query,
+          roleCode,
+        });
+        for (const row of page.pageData || []) {
+          const id = String(row.value || '').trim();
+          if (!id) continue;
+          assigneeCacheRef.current.set(id, {
+            value: id,
+            displayName: String(row.label || id),
+            employeeId:
+              String((row as { employeeId?: string }).employeeId || '').trim() || undefined,
+          });
+        }
+        publishAssigneeOptions();
+        return page;
+      },
+      onError: () => message.error('执行人列表加载失败'),
+    });
+  }, [useLinkedAssignee, assigneeRoleCode, loaders.loadAssigneeUsersPage, publishAssigneeOptions]);
+
+  const assigneeUsersGetSearchProps = useMemo(
+    () => pagedSuperSelectGetSearchProps(CREATE_ACTION_ASSIGNEE_PAGE_SIZE),
+    [],
+  );
+
+  const assigneeUsersPagination = useMemo(
+    () => pagedSuperSelectPagination(CREATE_ACTION_ASSIGNEE_PAGE_SIZE),
+    [],
+  );
+
   const handleFormSync = useCallback(
     (data: Record<string, unknown>) => {
+      if (useLinkedAssignee) {
+        const nextRole = asFactoryValue(data.assigneeRoleCode);
+        if (nextRole !== roleRef.current) {
+          const prevRole = roleRef.current;
+          roleRef.current = nextRole;
+          setAssigneeRoleCode(nextRole);
+          if (prevRole && nextRole !== prevRole) {
+            queueMicrotask(() => {
+              formApi.openApi.setFieldValue({ name: 'assigneeUserId' }, '', {
+                runValidate: false,
+              });
+            });
+          }
+        }
+        const uid = asFactoryValue(data.assigneeUserId);
+        if (uid) {
+          const hit = selectedAssigneeOptions.find((o) => o.value === uid);
+          if (hit) seedAssigneeOption(uid, String(hit.label || uid));
+        }
+      }
       if (useLockedContext || useNoneScope) return;
       const next = asFactoryValue(data.factory);
       if (next === factoryRef.current) return;
@@ -197,7 +294,16 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
         });
       }
     },
-    [formApi.openApi, hasVarietyPage, lockVariety, useLockedContext, useNoneScope],
+    [
+      formApi.openApi,
+      hasVarietyPage,
+      lockVariety,
+      useLockedContext,
+      useNoneScope,
+      useLinkedAssignee,
+      selectedAssigneeOptions,
+      seedAssigneeOption,
+    ],
   );
 
   useEffect(() => {
@@ -207,23 +313,35 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
     setFactoryKey(locked);
   }, [scopeLock?.factory]);
 
-  /** 人员目录：独立加载 + 超时，避免拖死分厂 */
+  /** 分配人：本地登录态；执行人联动模式只拉角色，禁一次性 candidates */
   useEffect(() => {
     let cancelled = false;
     setPersonLoading(true);
+    const assigneePromise = useLinkedAssignee
+      ? Promise.resolve({
+          status: 'fulfilled' as const,
+          value: {
+            cascadeOptions: [] as ActionPersonCascadeOption[],
+            options: [] as ActionPersonOption[],
+          },
+        })
+      : settleWithTimeout(loaders.loadAssigneeCatalog(), CATALOG_LOAD_TIMEOUT_MS);
+
     Promise.all([
-      settleWithTimeout(loaders.loadAssigneeCatalog(), CATALOG_LOAD_TIMEOUT_MS),
+      assigneePromise,
       settleWithTimeout(loaders.loadAllocatorCatalog(), CATALOG_LOAD_TIMEOUT_MS),
     ])
       .then(([usersRes, allocRes]) => {
         if (cancelled) return;
-        if (usersRes.status === 'fulfilled') {
-          setAssigneeCascade(usersRes.value.cascadeOptions);
-          onAssigneeOptionsReady?.(usersRes.value.options);
-        } else {
-          message.error('执行人列表加载失败');
-          setAssigneeCascade([]);
-          onAssigneeOptionsReady?.([]);
+        if (!useLinkedAssignee) {
+          if (usersRes.status === 'fulfilled') {
+            setAssigneeCascade(usersRes.value.cascadeOptions);
+            onAssigneeOptionsReady?.(usersRes.value.options);
+          } else {
+            message.error('执行人列表加载失败');
+            setAssigneeCascade([]);
+            onAssigneeOptionsReady?.([]);
+          }
         }
         if (allocRes.status === 'fulfilled') {
           setAllocatorCascade(allocRes.value.cascadeOptions);
@@ -250,6 +368,35 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only load
   }, []);
+
+  useEffect(() => {
+    if (!useLinkedAssignee || !loaders.loadAssigneeRoles) return;
+    let cancelled = false;
+    setRolesLoading(true);
+    settleWithTimeout(loaders.loadAssigneeRoles(), CATALOG_LOAD_TIMEOUT_MS)
+      .then((res) => {
+        if (cancelled) return;
+        if (res.status === 'fulfilled') {
+          setAssigneeRoleOptions(res.value);
+        } else {
+          message.error('执行人角色加载失败');
+          setAssigneeRoleOptions([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setRolesLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
+  }, []);
+
+  useEffect(() => {
+    const id = String(defaultAssigneeUserId || '').trim();
+    if (!id) return;
+    seedAssigneeOption(id, String(defaultAssigneeLabel || id));
+  }, [defaultAssigneeUserId, defaultAssigneeLabel, seedAssigneeOption]);
 
   /** 分厂：与人员并行、互不阻塞（对齐 EAM CycleForm 静态 options） */
   useEffect(() => {
@@ -397,16 +544,53 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
               defaultUserId={defaultAllocatorUserId}
             />
           ),
-          <PersonRoleCascaderField
-            key="assigneeUserId"
-            name="assigneeUserId"
-            label="执行人"
-            cascadeOptions={assigneeCascade}
-            loading={personLoading}
-            emptyHint={emptyAssigneeHint}
-            placeholder={assigneePlaceholder}
-            defaultUserId={assigneeDefault}
-          />,
+          useLinkedAssignee ? (
+            <SuperSelect
+              key="assigneeRoleCode"
+              name="assigneeRoleCode"
+              label="执行人角色"
+              rule="REQ"
+              single
+              options={assigneeRoleOptions}
+              placeholder={rolesLoading ? '加载角色…' : '先选择角色'}
+              disabled={rolesLoading || !assigneeRoleOptions.length}
+              allowClear
+              searchPlaceholder="搜索角色"
+            />
+          ) : null,
+          useLinkedAssignee ? (
+            <SuperSelect
+              key={`assigneeUserId-${assigneeRoleCode || 'none'}`}
+              name="assigneeUserId"
+              label="执行人"
+              rule="REQ"
+              single
+              api={assigneeUsersApi}
+              options={selectedAssigneeOptions}
+              getSearchProps={assigneeUsersGetSearchProps}
+              pagination={assigneeUsersPagination}
+              placeholder={
+                !assigneeRoleCode
+                  ? '请先选择角色'
+                  : assigneePlaceholder || '搜索姓名/工号选择执行人'
+              }
+              disabled={!assigneeRoleCode || !assigneeUsersApi}
+              allowClear
+              searchPlaceholder="搜索姓名/工号"
+              overlayStyle={{ zIndex: 2000 }}
+            />
+          ) : (
+            <PersonRoleCascaderField
+              key="assigneeUserId"
+              name="assigneeUserId"
+              label="执行人"
+              cascadeOptions={assigneeCascade}
+              loading={personLoading}
+              emptyHint={emptyAssigneeHint}
+              placeholder={assigneePlaceholder}
+              defaultUserId={assigneeDefault}
+            />
+          ),
           <DatePicker
             key="dueDate"
             name="dueDate"
