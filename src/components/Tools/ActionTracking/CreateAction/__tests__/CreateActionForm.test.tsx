@@ -158,4 +158,28 @@ describe('CreateActionForm（T1 lockedContext / F4 placeholder）', () => {
       expect(loaders.loadFactoryOptions).toHaveBeenCalled();
     });
   });
+
+  it('allocatorDisabled 默认：只读展示分配人，且隐藏字段仍写入 allocatorUserId', async () => {
+    const loaders = mockLoaders({
+      loadAllocatorCatalog: vi.fn(async () => ({
+        cascadeOptions: [],
+        options: [{ value: 'a1', displayName: '分配1', employeeId: '020172' }],
+      })),
+    });
+    render(
+      <Form onSubmit={() => undefined} data={{}}>
+        <CreateActionForm dimensionOptions={dimensionOptions} loaders={loaders} />
+      </Form>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('分配1 · 020172')).toBeTruthy();
+    });
+    await waitFor(() => {
+      const hidden = document.querySelector(
+        'input[name="allocatorUserId"]',
+      ) as HTMLInputElement | null;
+      expect(hidden?.value).toBe('a1');
+    });
+  });
 });

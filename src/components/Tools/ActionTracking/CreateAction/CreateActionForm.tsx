@@ -523,27 +523,31 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
             options={dimensionOptions}
             placeholder="选择任务类型"
           />,
-          allocatorDisabled ? (
-            <Input
-              key="allocatorDisplay"
-              name="allocatorDisplay"
-              label="分配人"
-              disabled
-              placeholder={personLoading ? '加载中…' : emptyAllocatorHint}
-            />
-          ) : (
-            <PersonRoleCascaderField
-              key="allocatorUserId"
-              name="allocatorUserId"
-              label="分配人"
-              cascadeOptions={allocatorCascade}
-              loading={personLoading}
-              disabled={allocatorDisabled}
-              emptyHint={emptyAllocatorHint}
-              placeholder={allocatorPlaceholder}
-              defaultUserId={defaultAllocatorUserId}
-            />
-          ),
+          ...(allocatorDisabled
+            ? [
+                <Input
+                  key="allocatorDisplay"
+                  name="allocatorDisplay"
+                  label="分配人"
+                  disabled
+                  placeholder={personLoading ? '加载中…' : emptyAllocatorHint}
+                />,
+                // 只读展示不能替掉 name=allocatorUserId：提交校验仍读该字段（FormInfo hidden 仍注册）
+                <Input key="allocatorUserId" name="allocatorUserId" hidden />,
+              ]
+            : [
+                <PersonRoleCascaderField
+                  key="allocatorUserId"
+                  name="allocatorUserId"
+                  label="分配人"
+                  cascadeOptions={allocatorCascade}
+                  loading={personLoading}
+                  disabled={allocatorDisabled}
+                  emptyHint={emptyAllocatorHint}
+                  placeholder={allocatorPlaceholder}
+                  defaultUserId={defaultAllocatorUserId}
+                />,
+              ]),
           useLinkedAssignee ? (
             <SuperSelect
               key="assigneeRoleCode"

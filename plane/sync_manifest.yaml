@@ -1,8 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.175
+  next_task_id: P6.3.176
 tasks:
-# 2026-10-27 · CreateAction 任务描述 + Inbox 审批场景（关联 S3-2171）
+# 2026-11-01 · 热修：只读分配人须注册 allocatorUserId（线上 missing_allocator）
+- id: P6.3.175
+  milestone: P6.3
+  name: fix(CreateAction)：只读分配人仍注册 allocatorUserId
+  status: 已完成
+  priority: P0
+  kind: fix
+  owner: 黄金芳
+  start_date: '2026-11-01'
+  end_date: '2026-11-01'
+  tags: [frontend, actions, hotfix]
+  note: |
+    Related: P6.1.221（a3632d5b）回归：只读展示后表单缺 allocatorUserId → 下发 missing_allocator
+    FormInfo hidden 注册 + Modal 唯一候选回落；合 main 后 CI patch 发版
 - id: P6.3.174
   milestone: P6.3
   name: feat(CreateAction/Inbox)：任务描述 TextArea 与审批驳回站内信 CTA
