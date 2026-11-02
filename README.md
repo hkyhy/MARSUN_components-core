@@ -139,6 +139,7 @@ node scripts/version-check.mjs --apply   # → 0.1.99
 - 2026-10-29：`v0.1.141` — InboxBell 列表卡回退：去左侧色条、标题在类型 Tag 前、未读底 `#f8fbff`（对齐测试环境观感；npm publish）
 - 2026-10-29：`v0.1.140` — Table：列配置重排/增量列后归位 `fixed` 列，避免操作列 sticky 失效
 
+- 2026-11-02：`v0.1.147` — CreateAction：提交带 `assigneeRoleCode`；Form 支持 `defaultAssigneeRoleCode` 编辑回填
 - 2026-10-23：`v0.1.138` — CreateActionForm：`allocatorDisabled` / `defaultAssigneeUserId`（Related S3-1523）
 - 2026-10-22：`v0.1.137` — InboxBell：`action_assigned_ack` 恒「查看任务」（禁「去执行」）；Related S3-1721
 - 2026-10-21：`v0.1.136` — MessageCenter 推送规则级别改为业务 DI `levelOptions`（禁写死 L1/L2/L3；S3 可注入 L2+）

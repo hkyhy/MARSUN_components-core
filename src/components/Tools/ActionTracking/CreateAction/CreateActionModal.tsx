@@ -215,6 +215,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
           ? [title, dimLabel].filter(Boolean).join(' · ')
           : [factory, variety, metric].filter(Boolean).join(' · ');
 
+      const assigneeRoleCode = String(formData.assigneeRoleCode || '').trim();
       const payload: CreateActionSubmitPayload = {
         title,
         description: description || undefined,
@@ -222,6 +223,7 @@ const CreateActionModal: React.FC<CreateActionModalProps> = ({
         status: String(formData.status || defaultStatus),
         assignee,
         assigneeUserId,
+        assigneeRoleCode: assigneeRoleCode || undefined,
         allocator,
         allocatorUserId,
         owner: assignee,

@@ -84,6 +84,8 @@ export type CreateActionFormProps = {
    * 值由 pickDefaultAllocatorUserId / 表单初值写入。
    */
   allocatorDisabled?: boolean;
+  /** 编辑回填：执行人角色 IAM code（联动选人） */
+  defaultAssigneeRoleCode?: string;
   /** 编辑回填：执行人 userId（级联选项就绪后写入） */
   defaultAssigneeUserId?: string;
   /** 编辑回填：执行人展示名（联动选人时作 options 种子） */
@@ -127,6 +129,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   allocatorPlaceholder = '先选角色，再选分配人',
   assigneePlaceholder = '先选角色，再选执行人',
   allocatorDisabled = true,
+  defaultAssigneeRoleCode = '',
   defaultAssigneeUserId = '',
   defaultAssigneeLabel = '',
   onAssigneeOptionsReady,
@@ -136,7 +139,9 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   const useLinkedAssignee = Boolean(loaders.loadAssigneeRoles && loaders.loadAssigneeUsersPage);
   const [assigneeCascade, setAssigneeCascade] = useState<ActionPersonCascadeOption[]>([]);
   const [assigneeRoleOptions, setAssigneeRoleOptions] = useState<CreateActionSelectOption[]>([]);
-  const [assigneeRoleCode, setAssigneeRoleCode] = useState('');
+  const [assigneeRoleCode, setAssigneeRoleCode] = useState(() =>
+    String(defaultAssigneeRoleCode || '').trim(),
+  );
   const [selectedAssigneeOptions, setSelectedAssigneeOptions] = useState<
     CreateActionSelectOption[]
   >(() => {
@@ -156,7 +161,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
   const [allocatorDisplay, setAllocatorDisplay] = useState('');
   const [factoryKey, setFactoryKey] = useState(() => scopeLock?.factory?.trim() || '');
   const factoryRef = useRef(scopeLock?.factory?.trim() || '');
-  const roleRef = useRef('');
+  const roleRef = useRef(String(defaultAssigneeRoleCode || '').trim());
 
   const publishAssigneeOptions = useCallback(() => {
     onAssigneeOptionsReady?.([...assigneeCacheRef.current.values()]);
@@ -398,6 +403,14 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
     seedAssigneeOption(id, String(defaultAssigneeLabel || id));
   }, [defaultAssigneeUserId, defaultAssigneeLabel, seedAssigneeOption]);
 
+  useEffect(() => {
+    const code = String(defaultAssigneeRoleCode || '').trim();
+    if (!code) return;
+    if (roleRef.current === code) return;
+    roleRef.current = code;
+    setAssigneeRoleCode(code);
+  }, [defaultAssigneeRoleCode]);
+
   /** 分厂：与人员并行、互不阻塞（对齐 EAM CycleForm 静态 options） */
   useEffect(() => {
     if (useLockedContext || useNoneScope || !loaders.loadFactoryOptions) return;
@@ -480,6 +493,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
         ];
 
   const assigneeDefault = String(defaultAssigneeUserId || '').trim();
+  const roleDefault = String(defaultAssigneeRoleCode || assigneeRoleCode || '').trim();
 
   return (
     <div className={classNames('create-action-form', styles['create-action-form'])}>
@@ -488,6 +502,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
         patch={{
           allocatorUserId: defaultAllocatorUserId,
           allocatorDisplay,
+          ...(roleDefault ? { assigneeRoleCode: roleDefault } : {}),
           ...(assigneeDefault ? { assigneeUserId: assigneeDefault } : {}),
         }}
       />
