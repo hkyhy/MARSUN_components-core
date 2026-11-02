@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.178
+  next_task_id: P6.3.179
 tasks:
+# 2026-11-02 · 发版：SuperSelect 远程分页默认 loading
+- id: P6.3.178
+  milestone: P6.3
+  name: chore(release)：v0.1.148 SuperSelect 远程分页默认 loading
+  status: 已完成
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-11-02'
+  end_date: '2026-11-02'
+  tags: [frontend, form, release]
+  note: |
+    Related: S3-1523
+    SuperSelect/Filter 默认 loading Spin；createPagedSuperSelectApi updateType=refresh；合 main 触发 CI npm 0.1.148
 # 2026-11-02 · 发版：CreateAction 执行人角色回填与提交
 - id: P6.3.177
   milestone: P6.3
