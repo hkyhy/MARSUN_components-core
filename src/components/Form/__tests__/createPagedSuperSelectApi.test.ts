@@ -14,6 +14,7 @@ describe('createPagedSuperSelectApi', () => {
     }));
     const api = createPagedSuperSelectApi({ loadPage, pageSize: 20 });
     expect(api.data).toEqual({ currentPage: 1, perPage: 20, keyword: '' });
+    expect(api.updateType).toBe('refresh');
     const page = await api.loader({
       data: { currentPage: 2, perPage: 20, keyword: '棉' },
     });

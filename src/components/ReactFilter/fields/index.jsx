@@ -11,7 +11,7 @@ import '@kne/super-select-plus/dist/index.css';
 /** SuperSelect / SelectTree 弹层全局修补（选项撑满、checkbox、叶子 switcher-noop） */
 import '../superSelectPopup.scss';
 import { renderSelectListItemContent } from '../renderSelectListItemContent';
-import { defaultSuperSelectEmpty } from '../../Form/superSelectEmpty';
+import { defaultSuperSelectEmpty, defaultSuperSelectLoading } from '../../Form/superSelectEmpty';
 
 const withInputDefaultPlaceholder = (WrappedComponent) =>
   withLocale(({ placeholder, label, ...props }) => {
@@ -26,11 +26,12 @@ const withInputDefaultPlaceholder = (WrappedComponent) =>
   });
 
 /** 默认超长省略 + title hover；空态中文；业务可传 renderItemContent / empty 覆盖 */
-function SuperSelectWithLabelEllipsis({ renderItemContent, empty, ...props }) {
+function SuperSelectWithLabelEllipsis({ renderItemContent, empty, loading, ...props }) {
   return (
     <SuperSelect
       {...props}
       empty={empty ?? defaultSuperSelectEmpty()}
+      loading={loading === undefined ? defaultSuperSelectLoading() : loading}
       renderItemContent={renderItemContent || renderSelectListItemContent}
     />
   );

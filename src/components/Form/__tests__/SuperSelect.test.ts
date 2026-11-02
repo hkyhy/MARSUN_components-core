@@ -51,4 +51,13 @@ describe('SuperSelect api mode', () => {
     expect(emptySrc).toMatch(/暂无数据/);
     expect(emptySrc).not.toMatch(/No data/);
   });
+
+  it('defaults loading to Spin (react-fetch global loading is null)', () => {
+    const src = readFileSync(join(here, '../SuperSelect.tsx'), 'utf8');
+    expect(src).toMatch(/loadingProp === undefined \? defaultSuperSelectLoading/);
+    expect(src).toMatch(/loading=\{loading\}/);
+    const emptySrc = readFileSync(join(here, '../superSelectEmpty.tsx'), 'utf8');
+    expect(emptySrc).toMatch(/defaultSuperSelectLoading/);
+    expect(emptySrc).toMatch(/<Spin/);
+  });
 });

@@ -43,6 +43,11 @@ export function createPagedSuperSelectApi(options: CreatePagedSuperSelectApiOpti
       perPage: pageSize,
       keyword: '',
     },
+    /**
+     * 搜索/换参时用 refresh，才会走 isLoading → SuperSelect.loading。
+     * 默认 reload 会保留旧列表且不置 isLoading，下拉里看不到加载态。
+     */
+    updateType: 'refresh' as const,
     loader: async ({ data }: { data?: KneLoaderData }) => {
       try {
         return await options.loadPage({

@@ -16,7 +16,11 @@ export type { KneRuleResult } from './inputRangeRules';
 
 export { SuperSelect, SUPER_SELECT_ALL_VALUE, isSuperSelectAllValue } from './SuperSelect';
 export type { SuperSelectProps, SuperSelectOption } from './SuperSelect';
-export { SUPER_SELECT_EMPTY_TEXT, defaultSuperSelectEmpty } from './superSelectEmpty';
+export {
+  SUPER_SELECT_EMPTY_TEXT,
+  defaultSuperSelectEmpty,
+  defaultSuperSelectLoading,
+} from './superSelectEmpty';
 export {
   createPagedSuperSelectApi,
   pagedSuperSelectGetSearchProps,

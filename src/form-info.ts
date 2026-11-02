@@ -39,6 +39,7 @@ export type { SuperSelectProps, SuperSelectOption } from './components/Form/Supe
 export {
   SUPER_SELECT_EMPTY_TEXT,
   defaultSuperSelectEmpty,
+  defaultSuperSelectLoading,
 } from './components/Form/superSelectEmpty';
 export {
   createPagedSuperSelectApi,
