@@ -128,6 +128,8 @@ export type CreateActionSubmitPayload = {
   status: string;
   assignee: string;
   assigneeUserId: string;
+  /** 执行人角色 IAM code（联动选人时必填；App 须落库 assigneeRole） */
+  assigneeRoleCode?: string;
   allocator: string;
   allocatorUserId: string;
   owner: string;
