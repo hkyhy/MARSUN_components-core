@@ -26,7 +26,8 @@ function useViewportWidth(): number {
 }
 
 /**
- * 通用居中 Modal：必填标题、可选 info/description、标题 Action（ButtonGroup）、S/M/L 宽度（只可缩小）、固定 body 高。
+ * 通用居中 Modal：必填标题、可选 info/description、标题 Action（ButtonGroup）、S/M/L 宽度（只可缩小）。
+ * body 按内容自适应，仅设 maxHeight（禁止写死 height 造成短内容留白）。
  */
 const Modal: React.FC<MarsunModalProps> = ({
   open,
@@ -54,7 +55,7 @@ const Modal: React.FC<MarsunModalProps> = ({
     () => resolveModalSizeAnchor({ size, width, viewportWidth }),
     [size, width, viewportWidth],
   );
-  const bodyHeight = MODAL_SIZE_BODY_HEIGHT[sizeAnchor];
+  const bodyMaxHeight = MODAL_SIZE_BODY_HEIGHT[sizeAnchor];
 
   const visibleActions = useMemo(() => {
     const list = (actions ?? []).filter((a) => !a.hidden);
@@ -114,11 +115,15 @@ const Modal: React.FC<MarsunModalProps> = ({
         styles['marsun-modal-scroll-wrapper'],
       )}
       className={classNames('marsun-modal-scroll', styles['marsun-modal-scroll'])}
+      style={{ maxHeight: bodyMaxHeight }}
     >
       {children}
     </VirtualScrollbar>
   ) : (
-    <div className={classNames('marsun-modal-body-inner', styles['marsun-modal-body-inner'])}>
+    <div
+      className={classNames('marsun-modal-body-inner', styles['marsun-modal-body-inner'])}
+      style={{ maxHeight: bodyMaxHeight }}
+    >
       {children}
     </div>
   );
@@ -137,8 +142,7 @@ const Modal: React.FC<MarsunModalProps> = ({
       className={classNames('marsun-modal', styles['marsun-modal'], className)}
       styles={{
         body: {
-          height: bodyHeight,
-          maxHeight: bodyHeight,
+          maxHeight: bodyMaxHeight,
           overflow: 'hidden',
           paddingTop: 12,
           paddingBottom: 12,

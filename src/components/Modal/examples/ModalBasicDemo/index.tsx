@@ -5,7 +5,7 @@ import { useState } from 'react';
 import styles from './style.module.scss';
 
 /**
- * 通用 Modal：S/M/L、标题 info/description/Action、固定高滚动
+ * 通用 Modal：S/M/L、标题 info/description/Action；body 自适应 + maxHeight 滚动
  */
 const ModalBasicDemo: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -44,7 +44,7 @@ const ModalBasicDemo: React.FC = () => {
         }
         scrollable
       >
-        <p>固定高度 body，内容仅纵向滚动，不应出现横向滚动条。</p>
+        <p>body 按内容自适应，超出 maxHeight 后纵向滚动，不应出现横向滚动条。</p>
         {Array.from({ length: 24 }).map((_, i) => (
           <p key={i}>段落内容 {i + 1} — 用于验证 VirtualScrollbar 与宽度约束。</p>
         ))}

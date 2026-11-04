@@ -6,7 +6,7 @@ export const MODAL_SIZE_WIDTH: Record<ModalSize, number> = {
   L: 960,
 };
 
-/** 固定 body 可视高度（外壳不随内容无限长高） */
+/** body 最大可视高度（内容自适应；超出才滚动，禁止当 min-height 用） */
 export const MODAL_SIZE_BODY_HEIGHT: Record<ModalSize, string> = {
   S: 'min(420px, 60vh)',
   M: 'min(560px, 70vh)',

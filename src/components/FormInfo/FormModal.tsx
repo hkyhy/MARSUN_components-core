@@ -186,6 +186,7 @@ const FormModal = (props: FormModalProps) => {
       title={title}
       onCancel={() => close?.()}
       width={resolveFormModalWidth(width, size)}
+      centered
       destroyOnHidden={destroyOnHidden}
       zIndex={zIndex as number | undefined}
       footer={null}
@@ -226,6 +227,7 @@ export const useFormModal = () => {
       title: props.title,
       icon: null,
       width: resolveFormModalWidth(props.width, props.size),
+      centered: true,
       className: classnames(
         style['marsun-form-info-modal'],
         'marsun-form-info-modal',

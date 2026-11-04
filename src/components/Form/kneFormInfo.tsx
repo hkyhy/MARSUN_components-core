@@ -36,7 +36,7 @@ import {
   TextArea as KneTextArea,
   TreeSelect as KneTreeSelect,
 } from '@kne/react-form-antd';
-import type { ComponentType, FC, ReactNode } from 'react';
+import { createElement, type ComponentType, type FC, type ReactNode } from 'react';
 import { withNormalizedLabelTips } from './normalizeLabelTips';
 
 type FieldProps = {
@@ -75,7 +75,21 @@ export type {
 
 export const FormInfo = FormInfoBase;
 export const Form = KneForm;
-export const FormModal = KneFormModal as FC<FormModalProps & { children?: ReactNode }>;
+
+/**
+ * 包根 FormModal = kne 壳；规范要求业务 Modal 居中。
+ * kne 把其余 props 透传 antd Modal，故在此默认 `centered`（调用方可显式覆盖）。
+ */
+export const FormModal: FC<FormModalProps & { children?: ReactNode; centered?: boolean }> = (
+  props,
+) => {
+  const Kne = KneFormModal as ComponentType<
+    FormModalProps & { children?: ReactNode; centered?: boolean }
+  >;
+  const { centered = true, ...rest } = props;
+  return createElement(Kne, { centered, ...rest });
+};
+
 export const FormSteps = KneFormSteps as FC<FormStepsProps>;
 export const FormStepsModal = KneFormStepsModal as FC<FormStepsModalProps>;
 
