@@ -128,6 +128,35 @@ describe('resolveInboxItemActions', () => {
     ).toEqual({ kind: 'view_task', label: '去复核' });
   });
 
+  it('已复核 / viewerStillPending=false → 历史待批信只给查看任务', () => {
+    expect(
+      resolveInboxItemActions({
+        eventKey: 'action.approval_pending',
+        actionId: 'x',
+        actionStatus: 'reviewed',
+        approvalKind: '复核',
+      }).primary,
+    ).toEqual({ kind: 'view_task', label: '查看任务' });
+    expect(
+      resolveInboxItemActions({
+        eventKey: 'action.approval_pending',
+        actionId: 'x',
+        actionStatus: 'pending_done',
+        approvalKind: '完成',
+        viewerStillPending: false,
+      }).primary,
+    ).toEqual({ kind: 'view_task', label: '查看任务' });
+    expect(
+      resolveInboxItemActions({
+        eventKey: 'action.approval_pending',
+        actionId: 'x',
+        actionStatus: 'done',
+        approvalKind: '复核',
+        viewerStillPending: false,
+      }).primary,
+    ).toEqual({ kind: 'view_task', label: '查看任务' });
+  });
+
   it('actionStatus=rejected 也算终态，分配信不展示去执行', () => {
     const r = resolveInboxItemActions({
       category: 'action_assigned',

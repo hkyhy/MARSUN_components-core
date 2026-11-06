@@ -18,6 +18,8 @@ export {
   inboxSceneLabel,
   isInboxButtonDriven,
   isTerminalActionStatus,
+  approvalPendingCtaLabel,
+  shouldShowApprovalPendingCta,
 } from './Inbox';
 export {
   INBOX_BADGE_REFRESH_EVENT,

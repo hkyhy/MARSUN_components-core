@@ -37,6 +37,11 @@ export type InboxItemActionSource = {
    * 待审 CTA 优先用 actionStatus；缺省时回落本字段
    */
   approvalKind?: string | null;
+  /**
+   * BE enrich：当前收件人是否仍待批。
+   * false → 历史待批信也只给「查看任务」（半签已批 / 任务已离待批态）
+   */
+  viewerStillPending?: boolean | null;
   href?: string | null;
 };
 
@@ -84,6 +89,18 @@ const SCENE_ALIAS: Record<string, string> = {
 /** rejected = 审批驳回终态；禁再展示「去执行 / 已执行」 */
 const TERMINAL_STATUS = new Set(['done', 'reviewed', 'cancelled', 'closed', 'rejected']);
 
+/**
+ * 仍可能出待批 CTA 的 live status（与 BE enrich_inbox_items_approval_pending 对齐）。
+ * reviewed / approved / in_progress / cancelled 等已离待批 → 只给「查看任务」。
+ */
+const APPROVAL_PENDING_LIVE_STATUSES = new Set([
+  'draft',
+  'rejected',
+  'pending_done',
+  'pending_cancel',
+  'done',
+]);
+
 /** 待审 CTA：按行动状态 / approvalKind 区分创建·完成·取消·复核（禁一律「去批准创建」） */
 export function approvalPendingCtaLabel(
   actionStatus?: string | null,
@@ -105,6 +122,17 @@ export function approvalPendingCtaLabel(
   if (kind === 'cancel' || kind === '取消') return '去批准取消';
   if (kind === 'review' || kind === '复核') return '去复核';
   return '去审批';
+}
+
+/** 历史待批信是否仍应展示审批 CTA（否 → 查看任务） */
+export function shouldShowApprovalPendingCta(n: {
+  actionStatus?: string | null;
+  viewerStillPending?: boolean | null;
+}): boolean {
+  if (n.viewerStillPending === false) return false;
+  const st = normStatus(n.actionStatus);
+  if (st && !APPROVAL_PENDING_LIVE_STATUSES.has(st)) return false;
+  return true;
 }
 
 function canonScene(raw?: string | null): string {
@@ -229,16 +257,19 @@ export function resolveInboxItemActions(n: InboxItemActionSource): InboxItemActi
     return viewTaskOrHref(n, actionId);
   }
 
-  // 创建待批：引导批准创建（status=draft）；其它状态变更仅查看
+  // 创建待批：引导批准创建（status=draft）；已离待批 / 其它状态变更仅查看
   if (c === 'action_status_changed') {
-    if (status === 'draft' && actionId) {
+    if (status === 'draft' && actionId && shouldShowApprovalPendingCta(n)) {
       return { primary: { kind: 'view_task', label: '去批准创建' } };
     }
     return viewTaskOrHref(n, actionId);
   }
 
-  // 审批链路：待审按 status/kind CTA；已批/驳回/回执 → 只看任务（禁「去执行」「已执行」）
+  // 审批链路：待审按 status/kind CTA；已离待批（含已复核）/半签已批 → 只看任务
   if (c === 'action_approval_pending') {
+    if (!shouldShowApprovalPendingCta(n)) {
+      return viewTaskOrHref(n, actionId);
+    }
     if (actionId) {
       return {
         primary: {

@@ -16,6 +16,7 @@ export {
   isInboxButtonDriven,
   isTerminalActionStatus,
   approvalPendingCtaLabel,
+  shouldShowApprovalPendingCta,
 } from './inboxItemActions';
 export type {
   InboxItemActionKind,

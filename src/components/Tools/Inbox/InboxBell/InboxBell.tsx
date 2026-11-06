@@ -72,6 +72,8 @@ export type InboxBellItem = {
   actionStatus?: string;
   /** 审批种类（contextJson.approvalKind）：创建/完成/取消/复核，待审 CTA 回落用 */
   approvalKind?: string;
+  /** BE enrich：收件人是否仍待批；false 时历史待批信 CTA→查看任务 */
+  viewerStillPending?: boolean;
   factory?: string;
   /** WERKS 厂码（认领入库 / EP 可见性）；与展示名 factory 分列 */
   factoryCode?: string;
@@ -941,6 +943,8 @@ export {
   inboxSceneLabel,
   isInboxButtonDriven,
   isTerminalActionStatus,
+  approvalPendingCtaLabel,
+  shouldShowApprovalPendingCta,
 } from './inboxItemActions';
 export type {
   InboxItemActionKind,

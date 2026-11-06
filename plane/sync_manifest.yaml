@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.180
+  next_task_id: P6.3.181
 tasks:
+# 2026-11-06 · 发版：Inbox 历史待批 CTA 随 live 状态收口
+- id: P6.3.180
+  milestone: P6.3
+  name: chore(release)：v0.1.150 Inbox 历史待批 CTA 收口
+  status: 进行中
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-11-06'
+  tags: [frontend, inbox, release]
+  note: |
+    Related: S3 行动已复核后历史「去复核/去批准完成」仍出
+    resolveInboxItemActions：viewerStillPending=false / reviewed 等已离待批 → 查看任务；合 main 触发 CI npm 0.1.150
 # 2026-11-04 · 发版：Modal maxHeight + FormModal centered
 - id: P6.3.179
   milestone: P6.3
