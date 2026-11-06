@@ -6,11 +6,12 @@ tasks:
 - id: P6.3.180
   milestone: P6.3
   name: chore(release)：v0.1.150 Inbox 历史待批 CTA 收口
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: chore
   owner: 黄金芳
   start_date: '2026-11-06'
+  end_date: '2026-11-06'
   tags: [frontend, inbox, release]
   note: |
     Related: S3 行动已复核后历史「去复核/去批准完成」仍出
