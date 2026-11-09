@@ -19,11 +19,18 @@ import { withNormalizedLabelTips } from '@/components/Form/normalizeLabelTips';
 import { VariableMentionField } from './VariableMentionInput';
 import type { VariableMentionItem } from '@/components/Editor/variableMention';
 
+/** kne 字段 rule：预设名（如 REQ）或同步/异步校验函数 */
+type FieldRule =
+  | string
+  | ((
+      value: unknown,
+    ) => { result: boolean; errMsg: string } | Promise<{ result: boolean; errMsg: string }>);
+
 type FieldProps = {
   name: string;
   label?: ReactNode;
   labelTips?: ReactNode | ((props: FieldProps) => ReactNode);
-  rule?: string;
+  rule?: FieldRule;
   placeholder?: string;
   disabled?: boolean;
   block?: boolean;

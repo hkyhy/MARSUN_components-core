@@ -18,9 +18,13 @@ export type RichTextFieldProps = {
   readOnly?: boolean;
   placeholder?: string;
   minHeight?: number;
+  /** 编辑区最大高度；超出纵向滚动 */
+  maxHeight?: number;
   enableVariableMention?: boolean;
   variables?: VariableMentionItem[];
   catalogError?: string;
+  /** 工具栏插入图片（base64 写入 HTML） */
+  enableImageUpload?: boolean;
   className?: string;
   /** remount 键（换文档时传入） */
   editorKey?: string;
@@ -37,9 +41,11 @@ type FieldRenderProps = {
   readOnly?: boolean;
   placeholder?: string;
   minHeight?: number;
+  maxHeight?: number;
   enableVariableMention?: boolean;
   variables?: VariableMentionItem[];
   catalogError?: string;
+  enableImageUpload?: boolean;
   className?: string;
   editorKey?: string;
   onEditorHtml?: (html: string) => void;
@@ -62,9 +68,11 @@ const RichTextControl: FC<FieldRenderProps> = ({
   readOnly,
   placeholder,
   minHeight = 140,
+  maxHeight,
   enableVariableMention,
   variables,
   catalogError,
+  enableImageUpload,
   className,
   editorKey,
   onEditorHtml,
@@ -91,9 +99,11 @@ const RichTextControl: FC<FieldRenderProps> = ({
         readOnly={readOnly}
         placeholder={placeholder}
         minHeight={minHeight}
+        maxHeight={maxHeight}
         enableVariableMention={enableVariableMention}
         variables={variables}
         catalogError={catalogError}
+        enableImageUpload={enableImageUpload}
       />
     </Suspense>
   </div>

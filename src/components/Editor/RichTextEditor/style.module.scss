@@ -3,6 +3,19 @@
     min-height: var(--rte-min-height, 140px);
   }
 
+  &[data-max-height='1'] {
+    :global(.ck-editor__editable) {
+      max-height: var(--rte-max-height, 280px);
+      overflow-y: auto;
+    }
+
+    :global(.ck-content img),
+    :global(.ck-content figure.image) {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
   &[data-disabled='1'] {
     opacity: 0.65;
     pointer-events: none;
