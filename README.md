@@ -139,6 +139,7 @@ node scripts/version-check.mjs --apply   # → 0.1.99
 - 2026-10-29：`v0.1.141` — InboxBell 列表卡回退：去左侧色条、标题在类型 Tag 前、未读底 `#f8fbff`（对齐测试环境观感；npm publish）
 - 2026-10-29：`v0.1.140` — Table：列配置重排/增量列后归位 `fixed` 列，避免操作列 sticky 失效
 
+- 2026-11-09：`v0.1.151` — TooltipInfo：透传 zIndex/autoAdjustOverflow（覆盖 antd6 unique-container）；RichTextEditor：zh-cn + maxHeight（Related S3-2707）
 - 2026-11-06：`v0.1.150` — InboxBell：历史待批信在已复核/viewerStillPending=false 时回落「查看任务」（禁回落 approvalKind）
 - 2026-11-04：`v0.1.149` — Modal：size 仅 maxHeight（禁写死 height 留白）；包根 FormModal 默认 `centered`（kneFormInfo 包装）
 - 2026-11-02：`v0.1.148` — SuperSelect：远程分页默认 loading（「加载中…」）；`createPagedSuperSelectApi` 搜索换参 `updateType=refresh`（Related S3-1523）（合 main tip 触发 Release npm）

@@ -1,7 +1,22 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.181
+  next_task_id: P6.3.182
 tasks:
+# 2026-11-09 · 发版：TooltipInfo zIndex + RTE zh-cn/maxHeight（S3-2707）
+- id: P6.3.181
+  plane_issue_id: 34bd069d-a71e-4656-a989-df69a8c91f4b
+  milestone: P6.3
+  name: chore(release)：v0.1.151 TooltipInfo zIndex 与 RTE 中文高度
+  status: 已完成
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-11-09'
+  end_date: '2026-11-09'
+  tags: [frontend, tooltip, editor, release]
+  note: |
+    Related: S3-2707
+    TooltipInfo 透传 zIndex/autoAdjustOverflow 写入 unique-container；RichTextEditor zh-cn + maxHeight；合 main 触发 CI npm 0.1.151
 # 2026-11-06 · 发版：Inbox 历史待批 CTA 随 live 状态收口
 - id: P6.3.180
   milestone: P6.3
