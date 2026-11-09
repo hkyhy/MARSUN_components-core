@@ -16,7 +16,13 @@ export interface TooltipInfoNote {
 
 export interface TooltipInfoProps extends Pick<
   TooltipProps,
-  'placement' | 'mouseEnterDelay' | 'mouseLeaveDelay' | 'open' | 'onOpenChange'
+  | 'placement'
+  | 'mouseEnterDelay'
+  | 'mouseLeaveDelay'
+  | 'open'
+  | 'onOpenChange'
+  | 'zIndex'
+  | 'autoAdjustOverflow'
 > {
   /** 展示形态，默认 descriptions */
   type?: TooltipInfoType;
@@ -60,6 +66,7 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
   overlayClassName,
   overlayStyle,
   mouseEnterDelay = 0.3,
+  zIndex,
   ...rest
 }) => {
   const isNote = type === 'note';
@@ -70,6 +77,9 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
 
   const minW = minWidth ?? (isNote ? 240 : 220);
   const maxW = maxWidth ?? (isNote ? 380 : 320);
+  // antd6 UniqueProvider：可见层在 .ant-tooltip-unique-container，CSS 默认 zIndexPopup-1；
+  // 须同步写进 container/uniqueContainer，否则 Modal 内会压住气泡。
+  const zIndexStyle = zIndex != null ? { zIndex } : undefined;
 
   const title = isNote ? (
     <div className="tooltip-info-note">
@@ -87,6 +97,7 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
       placement={placement}
       mouseEnterDelay={mouseEnterDelay}
       destroyOnHidden
+      zIndex={zIndex}
       classNames={{ root: ['tooltip-info-overlay', overlayClassName].filter(Boolean).join(' ') }}
       styles={{
         root: {
@@ -94,6 +105,7 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
           width: 'auto',
           minWidth: minW,
           maxWidth: maxW,
+          ...zIndexStyle,
         },
         container: {
           boxSizing: 'border-box',
@@ -104,6 +116,7 @@ const TooltipInfo: React.FC<TooltipInfoProps> = ({
           color: 'var(--tooltip-info-color, var(--font-color, #222222))',
           boxShadow: '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12)',
           ...overlayStyle,
+          ...zIndexStyle,
         },
       }}
       getPopupContainer={() => document.body}
