@@ -1,11 +1,18 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
+  Base64UploadAdapter,
   Bold,
   ClassicEditor,
   Essentials,
   FontBackgroundColor,
   FontColor,
   GeneralHtmlSupport,
+  Image,
+  ImageInsert,
+  ImageResize,
+  ImageStyle,
+  ImageToolbar,
+  ImageUpload,
   Italic,
   List,
   Paragraph,
@@ -16,6 +23,7 @@ import {
   type Editor,
   type EditorConfig,
 } from 'ckeditor5';
+import translationsZhCn from 'ckeditor5/translations/zh-cn.js';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import 'ckeditor5/ckeditor5.css';
 import { prepareEditorHtml, type VariableMentionItem } from '../variableMention';
@@ -30,6 +38,8 @@ export type RichTextEditorProps = {
   readOnly?: boolean;
   placeholder?: string;
   minHeight?: number;
+  /** 编辑区最大高度；超出纵向滚动，避免撑破弹窗 */
+  maxHeight?: number;
   className?: string;
   /**
    * 开启变量色块 +「插入变量」按钮（catalog 注入；禁 FE DEFAULT_VARS）。
@@ -39,6 +49,11 @@ export type RichTextEditorProps = {
   variables?: VariableMentionItem[];
   /** catalog 失败短文案（按钮 disabled 提示） */
   catalogError?: string;
+  /**
+   * 工具栏「插入图片」；本地选图以 base64 写入 HTML（无需独立上传接口）。
+   * 默认关，避免消息模板等场景误开。
+   */
+  enableImageUpload?: boolean;
 };
 
 const BASE_PLUGINS = [
@@ -53,6 +68,16 @@ const BASE_PLUGINS = [
   List,
   Undo,
   RemoveFormat,
+];
+
+const IMAGE_PLUGINS = [
+  Image,
+  ImageToolbar,
+  ImageUpload,
+  ImageInsert,
+  ImageStyle,
+  ImageResize,
+  Base64UploadAdapter,
 ];
 
 const TOOLBAR = [
@@ -72,6 +97,25 @@ const TOOLBAR = [
   'removeFormat',
 ];
 
+const TOOLBAR_WITH_IMAGE = [
+  'undo',
+  'redo',
+  '|',
+  'bold',
+  'italic',
+  'underline',
+  '|',
+  'fontColor',
+  'fontBackgroundColor',
+  '|',
+  'bulletedList',
+  'numberedList',
+  '|',
+  'uploadImage',
+  '|',
+  'removeFormat',
+];
+
 /**
  * CKEditor 5 + 变量色块。
  * - 只在「编辑区空 + 有外部 value」时 setData，禁止用 Form 旧值回灌冲掉字色/加粗
@@ -84,10 +128,12 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   readOnly = false,
   placeholder,
   minHeight = 140,
+  maxHeight,
   className,
   enableVariableMention = false,
   variables,
   catalogError,
+  enableImageUpload = false,
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<Editor | null>(null);
@@ -100,10 +146,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const seededRef = useRef(false);
 
   const config = useMemo((): EditorConfig => {
-    const plugins = enableVariableMention ? [...BASE_PLUGINS, Widget, MsgVarWidget] : BASE_PLUGINS;
+    const plugins = [
+      ...BASE_PLUGINS,
+      ...(enableImageUpload ? IMAGE_PLUGINS : []),
+      ...(enableVariableMention ? [Widget, MsgVarWidget] : []),
+    ];
     return {
       licenseKey: 'GPL',
-      toolbar: TOOLBAR,
+      language: 'zh-cn',
+      translations: [translationsZhCn],
+      toolbar: enableImageUpload ? TOOLBAR_WITH_IMAGE : TOOLBAR,
       placeholder,
       plugins,
       fontColor: {
@@ -128,6 +180,19 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           { color: '#F3F4F6', label: '浅灰' },
         ],
       },
+      ...(enableImageUpload
+        ? {
+            image: {
+              toolbar: [
+                'imageTextAlternative',
+                'imageStyle:inline',
+                'imageStyle:block',
+                'imageStyle:side',
+                'resizeImage',
+              ],
+            },
+          }
+        : {}),
       htmlSupport: {
         allow: [
           { name: 'span', styles: true, classes: true, attributes: true },
@@ -140,10 +205,21 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           { name: 'ul', classes: true, attributes: true },
           { name: 'ol', classes: true, attributes: true },
           { name: 'li', classes: true, attributes: true },
+          ...(enableImageUpload
+            ? [
+                {
+                  name: 'img',
+                  styles: true,
+                  classes: true,
+                  attributes: ['src', 'alt', 'width', 'height'],
+                },
+                { name: 'figure', styles: true, classes: true, attributes: true },
+              ]
+            : []),
         ],
       },
     } as EditorConfig;
-  }, [enableVariableMention, placeholder]);
+  }, [enableVariableMention, enableImageUpload, placeholder]);
 
   const applyHtmlToEditor = (editor: Editor, raw: string) => {
     const html = prepareEditorHtml(raw, enableVarRef.current);
@@ -181,6 +257,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const locked = disabled || readOnly;
 
+  const rootStyle = {
+    ['--rte-min-height' as string]: `${minHeight}px`,
+    ...(maxHeight != null && maxHeight > 0
+      ? { ['--rte-max-height' as string]: `${maxHeight}px` }
+      : {}),
+  };
+
   return (
     <div
       ref={rootRef}
@@ -189,10 +272,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           ? `${styles.root} ${styles['rich-text-editor']} ${className}`
           : `${styles.root} ${styles['rich-text-editor']}`
       }
-      style={{ ['--rte-min-height' as string]: `${minHeight}px` }}
+      style={rootStyle}
       data-disabled={disabled ? '1' : '0'}
       data-readonly={readOnly ? '1' : '0'}
       data-var-mention={enableVariableMention ? '1' : '0'}
+      data-max-height={maxHeight != null && maxHeight > 0 ? '1' : '0'}
     >
       {enableVariableMention ? (
         <div className={styles['var-toolbar']}>
