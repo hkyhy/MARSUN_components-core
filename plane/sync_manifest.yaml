@@ -6,7 +6,7 @@ tasks:
 - id: P6.3.182
   milestone: P6.3
   name: chore(release)：v0.1.152 钉 @kne/react-form-antd@4.1.12 避白屏
-  status: 进行中
+  status: 已完成
   priority: P1
   kind: chore
   owner: 黄金芳
