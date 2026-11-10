@@ -40,6 +40,12 @@ export default defineConfig({
   plugins: [react(), mockDocPlugin(), viteExamplesPlugin()],
   resolve: {
     alias: { '@': SRC },
+    // @kne/react-form-antd@4.1.7–4.1.11 误打进 react-dom@18，与 React 19 并存会
+    // ReactCurrentBatchConfig 白屏；dedupe 作为兜底，主修仍是钉 4.1.12+
+    dedupe: ['react', 'react-dom'],
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-dom/client'],
   },
   css: {
     preprocessorOptions: {
