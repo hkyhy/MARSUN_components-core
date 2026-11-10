@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.182
+  next_task_id: P6.3.183
 tasks:
+# 2026-11-10 · 发版：钉 kne react-form-antd 避开 react-dom18 白屏
+- id: P6.3.182
+  milestone: P6.3
+  name: chore(release)：v0.1.152 钉 @kne/react-form-antd@4.1.12 避白屏
+  status: 进行中
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-11-10'
+  end_date: '2026-11-10'
+  tags: [frontend, deps, form-info, release]
+  note: |
+    @kne/react-form-antd@4.1.7–4.1.11 dist 误打进 react-dom@18，与 React 19 并存触发 ReactCurrentBatchConfig 白屏；钉 4.1.12 + showcase dedupe；合 main 触发 CI npm 0.1.152
 # 2026-11-09 · 发版：TooltipInfo zIndex + RTE zh-cn/maxHeight（S3-2707）
 - id: P6.3.181
   plane_issue_id: 34bd069d-a71e-4656-a989-df69a8c91f4b
