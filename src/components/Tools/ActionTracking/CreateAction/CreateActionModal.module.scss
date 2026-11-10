@@ -1,8 +1,25 @@
 /* 下发/新建：antd Modal；禁横向条（FormInfo Row gutter 负边距） */
 .create-action-modal {
+  :global(.ant-modal-content) {
+    max-height: min(78vh, 680px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  :global(.ant-modal-body) {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
   :global(.marsun-form-info-modal-body) {
     overflow-x: hidden;
     overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   /* 兜底：若 kne Empty 误挂进 modal content，勿露底栏 No data */
