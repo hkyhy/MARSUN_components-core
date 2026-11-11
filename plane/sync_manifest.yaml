@@ -1,7 +1,20 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.183
+  next_task_id: P6.3.184
 tasks:
+# 2026-11-11 · 发版：CreateAction 换角色清空执行人
+- id: P6.3.183
+  milestone: P6.3
+  name: chore(release)：v0.1.153 CreateAction 换角色清空执行人
+  status: 已完成
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-11-11'
+  end_date: '2026-11-11'
+  tags: [frontend, actions, CreateAction, release]
+  note: |
+    CreateActionForm：角色变更清空 selectedAssigneeOptions/assigneeCache 并 publish；合 main 触发 CI npm 0.1.153
 # 2026-11-10 · 发版：钉 kne react-form-antd 避开 react-dom18 白屏
 - id: P6.3.182
   milestone: P6.3
