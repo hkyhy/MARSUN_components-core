@@ -274,6 +274,9 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
           roleRef.current = nextRole;
           setAssigneeRoleCode(nextRole);
           if (prevRole && nextRole !== prevRole) {
+            setSelectedAssigneeOptions([]);
+            assigneeCacheRef.current.clear();
+            publishAssigneeOptions();
             queueMicrotask(() => {
               formApi.openApi.setFieldValue({ name: 'assigneeUserId' }, '', {
                 runValidate: false,
@@ -308,6 +311,7 @@ const CreateActionForm: React.FC<CreateActionFormProps> = ({
       useLinkedAssignee,
       selectedAssigneeOptions,
       seedAssigneeOption,
+      publishAssigneeOptions,
     ],
   );
 
