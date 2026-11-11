@@ -27,7 +27,9 @@ tasks:
   end_date: '2026-11-10'
   tags: [frontend, deps, form-info, release]
   note: |
+    Related: P6.3.181
     @kne/react-form-antd@4.1.7–4.1.11 dist 误打进 react-dom@18，与 React 19 并存触发 ReactCurrentBatchConfig 白屏；钉 4.1.12 + showcase dedupe；合 main 触发 CI npm 0.1.152
+    发版 commit（Task: 曾误写到 P6-2093 / P6.3.181）：1f18cde · 507c3a1 · b3687ad；Plane 已补评论 + relates_to
 # 2026-11-09 · 发版：TooltipInfo zIndex + RTE zh-cn/maxHeight（S3-2707）
 - id: P6.3.181
   plane_issue_id: 34bd069d-a71e-4656-a989-df69a8c91f4b
