@@ -111,9 +111,11 @@ function FormModalBody({
     </Flex>
   );
 
+  // 对齐 ActionFollowModal：字段区自滚，footer 为兄弟节点（勿让 ant-modal-body 整块滚）
   return (
     <Form
       {..._formProps}
+      plain
       onSubmit={async (data: Record<string, unknown>, ...args: unknown[]) => {
         const res = onSubmit && (await onSubmit(data, { close }, ...args));
         if (res !== false) {
@@ -192,23 +194,6 @@ const FormModal = (props: FormModalProps) => {
       footer={null}
       mask={{ closable: false }}
       className={classnames(style['marsun-form-info-modal'], 'marsun-form-info-modal', className)}
-      styles={{
-        // antd 5：styles 打到 content/body；认领/编辑字段多，取中档限高（过矮难用、顶满又难看）
-        content: {
-          maxHeight: 'min(78vh, 680px)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          paddingBottom: 0,
-        },
-        body: {
-          maxHeight: 'min(68vh, 600px)',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          flex: '1 1 auto',
-          minHeight: 0,
-        },
-      }}
     >
       <FormModalBody
         formProps={formProps}

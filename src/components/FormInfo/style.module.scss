@@ -1465,15 +1465,16 @@ $nest-radius: var(--radius-default, 8px);
   visibility: hidden;
 }
 
-/* FormModal 默认壳 = antd Modal：随内容高度，禁 ReactModal 视口空高。
- * 有 FormModal styles.body 总高时，内层不再二次压矮。 */
+/* FormModal 对齐 ActionFollowModal：仅字段区限高滚动，footer 兄弟钉底 */
 .marsun-form-info-modal-body {
-  max-height: none;
-  overflow: visible;
+  max-height: min(65vh, 600px);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .marsun-form-info-modal-footer {
-  margin-top: 24px;
+  margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid rgba(5, 5, 5, 0.06);
+  background: var(--bg-color, #fff);
 }

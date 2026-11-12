@@ -26,6 +26,8 @@ export interface FormProps {
   data?: Record<string, unknown>;
   onSubmit?: (data: Record<string, unknown>, ...args: unknown[]) => unknown | Promise<unknown>;
   children?: ReactNode;
+  /** FormModal：跳过 InfoPage.Part，便于 body 滚动、footer 钉底 */
+  plain?: boolean;
   [key: string]: unknown;
 }
 
