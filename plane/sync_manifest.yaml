@@ -1,7 +1,21 @@
 meta:
   project_name: '@hkyhy/marsun-components-core'
-  next_task_id: P6.3.184
+  next_task_id: P6.3.185
 tasks:
+# 2026-11-12 · 发版：FormModal 字段区滚动 footer 钉底
+- id: P6.3.184
+  milestone: P6.3
+  name: chore(release)：v0.1.154 FormModal 字段区滚动 footer 钉底
+  status: 已完成
+  priority: P1
+  kind: chore
+  owner: 黄金芳
+  start_date: '2026-11-12'
+  end_date: '2026-11-12'
+  tags: [frontend, FormInfo, FormModal, release]
+  note: |
+    FormModal 对齐 ActionFollowModal：仅 marsun-form-info-modal-body 限高滚动，footer 兄弟钉底；
+    Form plain 跳过 InfoPage.Part；合 main 触发 CI npm 0.1.154
 # 2026-11-11 · 发版：CreateAction 换角色清空执行人
 - id: P6.3.183
   milestone: P6.3
