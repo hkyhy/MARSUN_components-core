@@ -181,11 +181,26 @@ function messageTypeSemanticColor(raw?: string): string {
   return SEMANTIC_COLORS.DEFAULT;
 }
 
+function splitInboxScopeTokens(raw: string): string[] {
+  return String(raw || '')
+    .replace(/,/g, '、')
+    .split('、')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+/** 灰字 meta：多点时品种·指标成对，禁「品种们 · 指标们」把指标甩到最后 */
 function itemMetaLine(item: InboxBellItem): string {
-  return [item.factory, item.variety, item.metric]
-    .map((x) => String(x || '').trim())
-    .filter(Boolean)
-    .join(' · ');
+  const factory = String(item.factory || '').trim();
+  const variety = String(item.variety || '').trim();
+  const metric = String(item.metric || '').trim();
+  const vs = splitInboxScopeTokens(variety);
+  const ms = splitInboxScopeTokens(metric);
+  if (vs.length > 1 && vs.length === ms.length) {
+    const paired = vs.map((v, i) => `${v} · ${ms[i]}`).join('、');
+    return [factory, paired].filter(Boolean).join(' · ');
+  }
+  return [factory, variety, metric].filter(Boolean).join(' · ');
 }
 
 /** 业务传入色；无则 DEFAULT（禁止在 core 造级别→色平行表） */
