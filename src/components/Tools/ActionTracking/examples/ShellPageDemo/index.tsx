@@ -3,32 +3,27 @@ import {
   ActionListTable,
   ActionTrackingShell,
   canQueryActionList,
-  CreateActionModal,
   defaultCreatedRange,
   type ActionListFilters,
-  type CreateActionSubmitPayload,
+  type ActionListRowBase,
 } from '@/components/Tools/ActionTracking';
 import { PageShellProvider } from '@/components/Layout/PageShell';
 import { InputFilterItem, type FilterValue } from '@/components/ReactFilter';
 import { message } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-  ACTION_DIMENSIONS,
   ACTION_LIST_SEED,
-  createActionLoadersFromFixture,
   dimensionLabel,
   statusLabel,
 } from '@/components/Tools/ActionTracking/doc/actionTracking.fixture';
-import type { ActionListRowBase } from '@/components/Tools/ActionTracking';
 
-/** 1. 页壳 + 筛选 + 列表 + 建单弹层（fixture） */
+/** 页壳 + 筛选 + 列表（fixture）；建单 Form 已迁出业务 App */
 const ShellPageDemo: React.FC = () => {
   const range = useMemo(() => defaultCreatedRange(), []);
   const [filters, setFilters] = useState<ActionListFilters>({ ...range });
-  const [createOpen, setCreateOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [rows, setRows] = useState<ActionListRowBase[]>(ACTION_LIST_SEED);
+  const [rows] = useState<ActionListRowBase[]>(ACTION_LIST_SEED);
   const canQuery = canQueryActionList(filters);
 
   const filterValue = useMemo((): FilterValue => {
@@ -70,33 +65,11 @@ const ShellPageDemo: React.FC = () => {
     return visible.slice(start, start + pageSize);
   }, [page, pageSize, visible]);
 
-  const loaders = useMemo(() => createActionLoadersFromFixture(), []);
-
-  const onSubmit = useCallback(async (payload: CreateActionSubmitPayload) => {
-    const id = `act-${Date.now()}`;
-    setRows((prev) => [
-      {
-        id,
-        title: payload.title,
-        status: payload.status,
-        dimension: payload.dimension,
-        assignee: payload.assignee,
-        owner: payload.allocator,
-        factoryName: payload.factoryName || payload.factory,
-        metricName: payload.metric,
-        createdAt: new Date().toISOString(),
-      },
-      ...prev,
-    ]);
-    message.success(`已写入 fixture：${payload.title}`);
-    return id;
-  }, []);
-
   return (
     <PageShellProvider>
       <ActionTrackingShell
         title="行动跟踪（Showcase）"
-        description="loaders / 列 / EP 由 App 注入；本页为 fixture 演示"
+        description="List/Shell 在 core；新建/跟进/取消 Form 由业务 App 实现"
         syncPageMeta={false}
         fillHeight={false}
         actions={[
@@ -104,7 +77,8 @@ const ShellPageDemo: React.FC = () => {
             key: 'create',
             children: '新建任务',
             type: 'primary',
-            onClick: () => setCreateOpen(true),
+            onClick: () =>
+              message.info('建单 Form 已迁出业务 App（见 ActionTracking/BOUNDARY.md）'),
           },
         ]}
         filterSlot={
@@ -154,18 +128,6 @@ const ShellPageDemo: React.FC = () => {
               { title: '分厂', dataIndex: 'factoryName', key: 'factoryName', width: 100 },
             ]}
             scrollX={720}
-          />
-        }
-        modalSlot={
-          <CreateActionModal
-            open={createOpen}
-            onClose={() => setCreateOpen(false)}
-            onCreated={() => setCreateOpen(false)}
-            dimensionOptions={ACTION_DIMENSIONS}
-            loaders={loaders}
-            titlePlaceholder="例如：排查用能 EI 偏高"
-            metricPlaceholder="例如：EI"
-            onSubmit={onSubmit}
           />
         }
       />

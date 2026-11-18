@@ -88,6 +88,7 @@ AgentHub / File 预览 / Llm 走子路径，避免无相关产品首包拖入重
 - **双模式数据**：props 传 `data`/`treeData`/`options` 优先；或 `fetchUrl` + `transformData`
 - **MaybeFn 参数**：`display` / `hidden` / `disabled` 等支持 `boolean | (ctx) => boolean`
 - **Mock 数据**：各组件 `doc/*.mock.json`，仅 dev showcase 使用，不打入 npm 产物
+- **ActionTracking 边界（硬）**：新建/下发/认领/跟进/取消等**业务 Form** 归属各业务 App（EAM / S3 等）；本库只提供 `FormModal`/`FormInfo` 等原子、`ActionTrackingShell`/`ActionListTable` 布局壳，以及 `isActionExecuteHidden` / `canQueryActionList` 等纯函数。禁止再把分域字段面塞进 core。
 
 ## 目录
 
