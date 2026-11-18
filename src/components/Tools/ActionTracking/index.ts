@@ -1,42 +1,10 @@
+/**
+ * ActionTracking（布局壳 + 纯函数）。
+ * 业务 Form（新建/下发/认领/跟进/取消）归属各 App，勿在本库复活。
+ * 见 BOUNDARY.md
+ */
 export { default as ActionTrackingShell } from './Shell';
 export type { ActionTrackingShellProps } from './Shell';
-
-export {
-  CreateActionModal,
-  CreateActionForm,
-  renderPersonOptionLabel,
-  CREATE_ACTION_VARIETY_PAGE_SIZE,
-  PersonRoleCascader,
-  PersonRoleCascaderField,
-  SetFormFields,
-  findPersonCascadePath,
-  cascadePathStillValid,
-  validateCreateActionPersons,
-  createActionPersonWarnMessage,
-  personDisplayName,
-  addDaysYmd,
-} from './CreateAction';
-export type {
-  CreateActionModalProps,
-  CreateActionFormProps,
-  PersonRoleCascaderProps,
-  PersonRoleCascaderFieldProps,
-  CreateActionPrefill,
-  CreateActionScopeLock,
-  CreateActionScopeMode,
-  LockedContextField,
-  ActionPersonCascadeOption,
-  ActionPersonOption,
-  CreateActionPersonCatalog,
-  CreateActionSelectOption,
-  CreateActionDimensionOption,
-  CreateActionLoaders,
-  CreateActionSelectPageQuery,
-  CreateActionSelectPageResult,
-  CreateActionSubmitPayload,
-  CreateActionPersonValidateError,
-  CreateActionPersonValidateResult,
-} from './CreateAction';
 
 export {
   ActionFilterBar,
@@ -55,12 +23,6 @@ export type {
   ActionListColumns,
   ActionListEmptyConfig,
 } from './List';
-
-export { default as ActionFollowModal } from './Follow';
-export type { ActionFollowModalProps, ActionFollowView } from './Follow';
-
-export { default as CancelExecutionModal, CancelExecutionForm } from './Cancel';
-export type { CancelExecutionModalProps } from './Cancel';
 
 export { sanitizeActionHtml, isActionExecuteHidden } from './utils';
 export type { ActionExecuteGateRow, ActionExecuteGateOptions } from './utils';

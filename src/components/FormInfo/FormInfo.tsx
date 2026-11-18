@@ -12,18 +12,15 @@ import style from './style.module.scss';
 
 /** 仅保证嵌套块整行；nestDepth 由 List 在 listRender 里写入，这里不覆盖 */
 const ensureNestBlocksFullWidth = (list: ReactNode[]) =>
-  (Array.isArray(list) ? list : []).map((item) => {
-    if (
-      !item ||
-      typeof item !== 'object' ||
-      !('type' in item) ||
-      !isNestBlockType((item as ReactElement).type) ||
-      (item as ReactElement).props?.block === true
-    ) {
-      return item;
-    }
-    return React.cloneElement(item as ReactElement, { block: true });
-  });
+  (Array.isArray(list) ? list : [])
+    // FieldList 对 null/false 会读 item.props 崩；条件字段须用展开数组而非 : null
+    .filter((item): item is ReactElement => React.isValidElement(item))
+    .map((item) => {
+      if (!isNestBlockType(item.type) || item.props?.block === true) {
+        return item;
+      }
+      return React.cloneElement(item, { block: true });
+    });
 
 /**
  * FormInfo 布局：固定 column 走 Row/Col；column 为断点配置时走本仓 useFlexBox。
