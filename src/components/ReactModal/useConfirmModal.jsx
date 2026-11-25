@@ -128,7 +128,9 @@ const mapConfirmProps = (
     modalMethod: type,
     config: {
       ...otherProps,
-      zIndex: zIndex ?? 1100,
+      // 不写死 zIndex：缺省交给 antd ConfirmDialog 按 zIndexPopupBase 计算，
+      // 否则 core 主题（base=1200）下确认弹窗会被 Modal（1200）压住
+      ...(zIndex !== undefined ? { zIndex } : {}),
       okText: confirmText ?? otherProps.okText,
       cancelText: cancelText ?? otherProps.cancelText,
       onOk: onConfirm ?? otherProps.onOk,
